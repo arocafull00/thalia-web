@@ -114,34 +114,34 @@ export default function CreateClinicPageClient() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-8">
-      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-zinc-200 bg-white p-10 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-canvas p-8">
+      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-border bg-surface p-10 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-medium text-zinc-900">Tu clínica</h1>
-            <p className="mt-1 text-sm text-zinc-500">Introduce los datos de tu clínica estética.</p>
+            <h1 className="text-2xl font-medium text-ink">Tu clínica</h1>
+            <p className="mt-1 text-sm text-ink-secondary">Introduce los datos de tu clínica estética.</p>
           </div>
-          <span className="text-xs uppercase tracking-wide text-zinc-400">
+          <span className="text-xs uppercase tracking-wide text-ink-muted">
             Paso 2 de {OWNER_REGISTRATION_STEP_COUNT}
           </span>
         </div>
         <div className="space-y-4">
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-zinc-500">Nombre</span>
-            <input value={clinicName} onChange={(e) => setClinicName(e.target.value)} className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm" />
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">Nombre</span>
+            <input value={clinicName} onChange={(e) => setClinicName(e.target.value)} className="w-full rounded-xl border border-border px-3 py-2.5 text-sm" />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-zinc-500">Dirección</span>
-            <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm" />
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">Dirección</span>
+            <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full rounded-xl border border-border px-3 py-2.5 text-sm" />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-zinc-500">Teléfono</span>
-            <input value={clinicPhone} onChange={(e) => setClinicPhone(e.target.value)} className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm" />
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">Teléfono</span>
+            <input value={clinicPhone} onChange={(e) => setClinicPhone(e.target.value)} className="w-full rounded-xl border border-border px-3 py-2.5 text-sm" />
           </label>
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
         <div className="flex justify-end gap-3">
-          <Link href="/register-employee" className="rounded-full border border-zinc-200 px-4 py-2 text-xs uppercase tracking-wide">
+          <Link href="/register-employee" className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide">
             Atrás
           </Link>
           <ActionButton title={submitting ? "Creando..." : "Continuar"} disabled={submitting} onClick={() => void handleContinue()} />

@@ -43,7 +43,7 @@ export default function RegisterEmployeePageClient() {
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-50">
+    <div className="flex min-h-screen bg-canvas">
       <RegisterEmployeeSidebar intent={resolvedIntent} stepTotal={stepTotal} />
       <RegisterEmployeeForm
         authDisabled={authDisabled}

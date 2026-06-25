@@ -31,8 +31,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
-        <Theme accentColor="gray" grayColor="slate" radius="large">
+      <body className="min-h-full flex flex-col bg-canvas text-ink">
+        <Theme accentColor="teal" grayColor="gray" radius="large">
           <AuthProvider>
             {children}
             <ToastContainer position="bottom-right" autoClose={4000} />

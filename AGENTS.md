@@ -137,3 +137,28 @@ Utiliza siempre tailwind.
 Utiliza siempre lucide icons, nunca emojis.
 Los estados deben ser globales en muchas ocasiones. Evita el prop drilling. Si un componente no usa una prop, no deberia pasarlo a su hijo. Deberia accederse desde un estado de zustand.
 Coloca código nuevo en la carpeta que corresponda al dominio, no en rutas genéricas.
+
+## Colores y tema
+
+Los colores viven en `app/globals.css` como variables CSS en `:root` y se exponen a Tailwind v4 vía `@theme inline`. **Nunca uses colores hardcodeados** en componentes, layouts ni estilos inline salvo datos dinámicos de usuario (p. ej. color de empleado desde la base de datos).
+
+**Usa siempre clases del tema semántico:**
+
+| Rol | Clases Tailwind |
+|-----|-----------------|
+| Fondo app | `bg-canvas` |
+| Paneles / inputs | `bg-surface` |
+| Acciones / nav activa | `bg-primary`, `hover:bg-primary-hover`, `text-on-primary` |
+| Texto | `text-ink`, `text-ink-secondary`, `text-ink-muted` |
+| Bordes | `border-border`, `border-border-subtle`, `divide-border-subtle` |
+| Focus | `ring-primary` |
+| Estado error | `text-danger`, `bg-danger` |
+| Estado aviso | `text-warning`, `bg-warning` |
+| Estado éxito | `text-success`, `bg-success` |
+| Acentos suaves | `bg-primary-subtle`, `text-primary-light` |
+
+**Prohibido en UI:** valores hex/rgb/oklch literales, paletas de Tailwind no definidas en el tema (`zinc-*`, `red-500`, `emerald-600`, etc.) y `style={{ color: '...' }}` / `backgroundColor` con valores fijos.
+
+**Si falta un token:** añádelo primero en `:root` y `@theme inline` de `globals.css`, luego úsalo en el componente. No introduzcas el color directamente en el JSX.
+
+**Excepción:** colores dinámicos persistidos (color de empleado, marca de clínica). Usa `style` solo con el valor de datos; el fallback cuando falte debe ser una clase del tema (`bg-border`), no un hex.

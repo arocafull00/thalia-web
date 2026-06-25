@@ -41,44 +41,44 @@ export default function RegisterEmployeeForm({
 }: RegisterEmployeeFormProps) {
   return (
     <section className="flex flex-1 items-center justify-center p-8">
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
+      <div className="w-full max-w-md space-y-6 rounded-3xl border border-border bg-surface p-8 shadow-sm">
         <div>
-          <h2 className="text-2xl font-medium text-zinc-900">{copy.title}</h2>
-          <p className="mt-1 text-sm text-zinc-500">{copy.subtitle}</p>
+          <h2 className="text-2xl font-medium text-ink">{copy.title}</h2>
+          <p className="mt-1 text-sm text-ink-secondary">{copy.subtitle}</p>
         </div>
         <div className="space-y-4">
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-zinc-500">
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">
               {REGISTER_EMPLOYEE_FORM_COPY.fullNameLabel}
             </span>
             <input
               value={fullName}
               onChange={(event) => onFullNameChange(event.target.value)}
-              className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none ring-zinc-900 focus:ring-2"
+              className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
             />
           </label>
           {!hasSession ? (
             <>
               <label className="block space-y-1">
-                <span className="text-xs uppercase tracking-wide text-zinc-500">
+                <span className="text-xs uppercase tracking-wide text-ink-secondary">
                   {REGISTER_EMPLOYEE_FORM_COPY.emailLabel}
                 </span>
                 <input
                   value={email}
                   onChange={(event) => onEmailChange(event.target.value)}
                   type="email"
-                  className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none ring-zinc-900 focus:ring-2"
+                  className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
                 />
               </label>
               <label className="block space-y-1">
-                <span className="text-xs uppercase tracking-wide text-zinc-500">
+                <span className="text-xs uppercase tracking-wide text-ink-secondary">
                   {REGISTER_EMPLOYEE_FORM_COPY.passwordLabel}
                 </span>
                 <input
                   value={password}
                   onChange={(event) => onPasswordChange(event.target.value)}
                   type="password"
-                  className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none ring-zinc-900 focus:ring-2"
+                  className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
                 />
               </label>
             </>
@@ -94,9 +94,9 @@ export default function RegisterEmployeeForm({
           onClick={() => void onContinue()}
         />
         {!hasSession ? (
-          <button type="button" onClick={onLoginPress} className="w-full text-center text-sm text-zinc-500">
+          <button type="button" onClick={onLoginPress} className="w-full text-center text-sm text-ink-secondary">
             {REGISTER_EMPLOYEE_FORM_COPY.loginPrompt}{" "}
-            <span className="font-medium text-zinc-900">{REGISTER_EMPLOYEE_FORM_COPY.loginAction}</span>
+            <span className="font-medium text-ink">{REGISTER_EMPLOYEE_FORM_COPY.loginAction}</span>
           </button>
         ) : null}
       </div>

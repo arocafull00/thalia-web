@@ -31,25 +31,25 @@ export default function SettingsProfilePanel({
         type="button"
         disabled={uploadingAvatar}
         onClick={onPickAvatar}
-        className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-zinc-200 bg-zinc-100 disabled:opacity-60"
+        className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-border bg-primary-subtle/40 disabled:opacity-60"
       >
         {displayUri ? (
           <img src={displayUri} alt="" className="h-full w-full object-cover" />
         ) : (
-          <span className="text-sm text-zinc-400">Foto</span>
+          <span className="text-sm text-ink-muted">Foto</span>
         )}
       </button>
       <div>
-        <p className="text-lg font-medium text-zinc-900">{profile.full_name}</p>
-        <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-zinc-400">
+        <p className="text-lg font-medium text-ink">{profile.full_name}</p>
+        <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-ink-muted">
           {buildProfileSubtitle(profile.specialty, profile.role)}
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
         {isAdmin ? (
-          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-600">Administrador de Clínica</span>
+          <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">Administrador de Clínica</span>
         ) : null}
-        <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-600">Suscripción Pro</span>
+        <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">Suscripción Pro</span>
       </div>
       <ActionButton title="Editar perfil" variant="ghost" onClick={() => globalThis.location.assign("/settings/edit")} />
     </div>

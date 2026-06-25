@@ -2,41 +2,131 @@
 
 ## Register
 
-brand
+product
+
+## Product
+
+**Thalia**
+
+---
 
 ## Users
 
-Clinic owners and managers at aesthetic and beauty clinics in Spain (primary language: Spanish). They evaluate Thalia before their team adopts it. They are often juggling reception, professionals, inventory, and finances across spreadsheets, paper agendas, or disconnected tools. They browse on phone or laptop between patients or at end of day. They need to understand quickly whether Thalia fits how their clinic actually runs.
+Clinic owners, managers, receptionists, and healthcare professionals at aesthetic and dental clinics in Spain (primary language: Spanish).
+
+They are responsible for coordinating appointments, patients, treatments, employees, inventory, and finances while delivering an excellent experience to their patients. Many still rely on spreadsheets, paper schedules, WhatsApp conversations, or disconnected software, making daily operations slower and more error-prone.
+
+They typically access Thalia from a desktop computer during working hours and from a tablet or mobile device while moving around the clinic. They need a system that is fast, intuitive, and reflects how a clinic actually operates.
+
+---
 
 ## Product Purpose
 
-Thalia is clinic management software for aesthetic clinics: appointments, patient records, team coordination, inventory, finances, and treatment catalog in one place, usable on mobile, tablet, and browser.
+Thalia is a clinic management platform for aesthetic and dental clinics.
 
-This repository (`thalia-landing`) is the public marketing surface for that product. Success for the first version is credibility and a clear value proposition: visitors understand what Thalia does, who it is for, and why it is trustworthy, without a hard conversion push yet. A waitlist or early-access path may appear later; it is not the primary goal of v1.
+It centralizes appointments, calendars, patient records, treatments, employee management, inventory, finances, reminders, and business settings into a single Progressive Web App (PWA) that works seamlessly across desktop, tablet, and mobile devices.
+
+The goal is to replace fragmented workflows with a unified platform that helps clinics save time, improve organization, and provide a better experience for both staff and patients.
+
+---
+
+## Core Modules
+
+* Dashboard
+* Shared calendar
+* Appointment management
+* Patient management
+* Treatment management
+* Employee management
+* Inventory management
+* Financial management
+* Clinic settings
+* User roles and permissions
+* Automatic reminders
+* Multi-clinic architecture
+
+---
 
 ## Brand Personality
 
-Calm and clinical: trustworthy, orderly, understated luxury. Voice is direct and specific about clinic workflows, never hype-driven. Feels like a tool a serious clinic would trust with patient and business data, not a growth experiment.
+Calm, trustworthy, modern, and professional.
 
-## Anti-references
+The interface should communicate order, confidence, and simplicity. Every interaction should feel purposeful, avoiding unnecessary complexity or visual noise.
 
-- Generic SaaS landing patterns: purple gradients, hero metric blocks (big number + three stats), identical icon-card feature grids, tiny uppercase eyebrows on every section, gradient text, ghost cards (1px border plus wide soft shadow).
-- Marketing buzzwords and aphoristic punch lines that could apply to any product.
-- Visual noise that competes with clarity: glassmorphism as decoration, oversized rounded cards, sketchy placeholder illustrations.
+The product should feel like software built specifically for healthcare professionals, not a generic business management tool.
 
-Named visual references: not locked yet. Direction is calm clinical restraint, not spa cliché or cold hospital stock imagery.
+---
 
 ## Design Principles
 
-1. **Clinic reality first** — Copy and structure reflect real jobs (agenda, fichas, inventario, finanzas), not abstract "platform" language.
-2. **Credibility before conversion** — v1 earns trust through clarity and specificity; CTAs stay secondary until the story lands.
-3. **Restraint reads as premium** — Hierarchy, typography, and spacing carry calm clinical tone; color accents are deliberate, not decorative.
-4. **Show the system, not the template** — Avoid interchangeable SaaS scaffolding; layout and rhythm should feel authored for Thalia.
-5. **Accessible by default** — Public marketing meets WCAG 2.2 AA; motion respects `prefers-reduced-motion`.
+1. **Clinic workflows first** — Every screen should reflect real daily operations inside aesthetic and dental clinics.
+2. **Speed over complexity** — Frequent tasks should require as few interactions as possible.
+3. **Clarity above decoration** — Information hierarchy is more important than visual effects.
+4. **Consistency everywhere** — Similar actions and components should behave the same throughout the application.
+5. **Desktop first, responsive always** — The primary experience is optimized for desktop while remaining fully usable on tablets and mobile devices.
+6. **Accessible by default** — Interfaces should follow WCAG 2.2 AA guidelines whenever possible.
+7. **Scalable architecture** — Every new feature should integrate naturally into the existing system.
 
-## Accessibility & Inclusion
+---
 
-- Target: WCAG 2.2 AA for text contrast, focus visibility, keyboard navigation, and semantic structure.
-- Spanish as primary content language; `lang` on document root must match shipped copy.
-- Respect `prefers-reduced-motion`: no content gated on entrance animations; provide reduced-motion alternatives for any motion beyond opacity or instant state changes.
-- Form controls and waitlist flows (when added) need visible labels, error text, and sufficient touch targets on mobile.
+## Anti-references
+
+Avoid interfaces that look like generic SaaS templates.
+
+Avoid:
+
+* Large marketing metrics without context.
+* Excessive gradients.
+* Glassmorphism used purely for decoration.
+* Oversized rounded cards.
+* Generic illustration packs.
+* Overly colorful dashboards.
+* Unnecessary animations.
+* Marketing buzzwords that could describe any software.
+
+The interface should prioritize readability, information density, and calm visual hierarchy.
+
+---
+
+## Technical Direction
+
+* Progressive Web App (PWA)
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* Radix UI
+* Zustand
+* Supabase
+* Schedule X
+* Responsive design
+* Real-time synchronization
+
+---
+
+## Accessibility
+
+* WCAG 2.2 AA compliance whenever possible.
+* Full keyboard navigation.
+* Visible focus states.
+* High contrast for interactive elements.
+* Respect `prefers-reduced-motion`.
+* Large touch targets on mobile devices.
+* Spanish as the primary application language.
+
+---
+
+## Product Goals
+
+The first version of Thalia should allow a clinic to manage its daily operations from a single platform.
+
+Success means that a clinic can:
+
+* Manage appointments efficiently.
+* Keep patient information organized.
+* Coordinate professionals.
+* Control inventory.
+* Track basic finances.
+* Reduce administrative workload.
+* Replace multiple disconnected tools with one unified system.
+
+Future versions may introduce AI-assisted workflows, online booking, advanced reporting, and additional integrations, but the foundation should always remain fast, reliable, and easy to use.

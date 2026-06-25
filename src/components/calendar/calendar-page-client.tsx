@@ -59,7 +59,7 @@ export default function CalendarPageClient() {
           type="button"
           aria-label="Semana anterior"
           onClick={() => setWeekAnchor(addWeeks(weekAnchor, -1))}
-          className="rounded-full border border-zinc-200 p-2"
+          className="rounded-full border border-border p-2"
         >
           <ChevronLeft size={18} />
         </button>
@@ -67,14 +67,14 @@ export default function CalendarPageClient() {
           type="button"
           aria-label="Semana siguiente"
           onClick={() => setWeekAnchor(addWeeks(weekAnchor, 1))}
-          className="rounded-full border border-zinc-200 p-2"
+          className="rounded-full border border-border p-2"
         >
           <ChevronRight size={18} />
         </button>
         <ActionButton title="Nueva cita" onClick={() => router.push("/appointments/new")} />
       </div>
       <CalendarEmployeeFilter />
-      <div className="min-h-0 flex-1 overflow-hidden rounded-3xl border border-zinc-200 bg-white p-4">
+      <div className="min-h-0 flex-1 overflow-hidden rounded-3xl border border-border bg-surface p-4">
         <ScheduleXCalendar
           weekAnchor={weekAnchor}
           events={events}
@@ -82,7 +82,7 @@ export default function CalendarPageClient() {
         />
       </div>
       {appointments.isLoading ? (
-        <p className="text-sm text-zinc-500">Cargando citas de {format(rangeStart, "dd/MM")}...</p>
+        <p className="text-sm text-ink-secondary">Cargando citas de {format(rangeStart, "dd/MM")}...</p>
       ) : null}
     </div>
   );

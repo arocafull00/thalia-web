@@ -29,7 +29,7 @@ function SidebarItem({ href, label, icon, active }: NavItem & { active: boolean 
     <Link
       href={href}
       className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition ${
-        active ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100"
+        active ? "bg-primary text-on-primary" : "text-ink-secondary hover:bg-primary-subtle/40"
       }`}
     >
       {icon}
@@ -58,10 +58,10 @@ export default function AppSidebar() {
   ];
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 flex w-[280px] flex-col border-r border-zinc-200 bg-zinc-50 p-4">
+    <aside className="fixed inset-y-0 left-0 z-20 flex w-[280px] flex-col border-r border-border bg-canvas p-4">
       <div className="mb-8 pt-2">
-        <p className="text-4xl font-medium text-zinc-900">Thalia</p>
-        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Aesthetic Excellence</p>
+        <p className="text-4xl font-medium text-ink">Thalia</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Aesthetic Excellence</p>
       </div>
       <nav className="flex flex-1 flex-col gap-1">
         {items
@@ -74,17 +74,17 @@ export default function AppSidebar() {
             />
           ))}
       </nav>
-      <div className="mt-auto flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-2">
-        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-100">
+      <div className="mt-auto flex items-center gap-3 rounded-2xl border border-border bg-surface p-2">
+        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary-subtle/40">
           {avatarUrl ? (
             <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
           ) : (
-            <Users size={16} className="text-zinc-400" />
+            <Users size={16} className="text-ink-muted" />
           )}
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-zinc-900">{profile?.full_name ?? "Perfil"}</p>
-          <p className="truncate text-[11px] uppercase text-zinc-400">{profile?.role ?? "Practitioner"}</p>
+          <p className="truncate text-sm font-medium text-ink">{profile?.full_name ?? "Perfil"}</p>
+          <p className="truncate text-[11px] uppercase text-ink-muted">{profile?.role ?? "Practitioner"}</p>
         </div>
       </div>
     </aside>

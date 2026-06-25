@@ -5,7 +5,7 @@ import { supabaseAnonKey, supabaseUrl } from "@/lib/environment";
 
 const publicRoutes = ["/login", "/register-employee", "/create-clinic", "/invite-team"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,

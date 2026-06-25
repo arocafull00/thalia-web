@@ -45,7 +45,7 @@ export default function CalendarEmployeeFilter() {
         <Popover.Trigger asChild>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-700"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary"
           >
             {employeeId === null ? <Users size={16} /> : null}
             {selectedEmployee?.color ? (
@@ -56,12 +56,12 @@ export default function CalendarEmployeeFilter() {
           </button>
         </Popover.Trigger>
         <Popover.Portal>
-          <Popover.Content className="w-72 rounded-2xl border border-zinc-200 bg-white p-3 shadow-lg" sideOffset={8}>
+          <Popover.Content className="w-72 rounded-2xl border border-border bg-surface p-3 shadow-lg" sideOffset={8}>
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar profesional"
-              className="mb-3 w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm"
+              className="mb-3 w-full rounded-xl border border-border px-3 py-2 text-sm"
             />
             <button
               type="button"
@@ -70,7 +70,7 @@ export default function CalendarEmployeeFilter() {
                 setOpen(false);
                 setSearch("");
               }}
-              className="mb-2 w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-50"
+              className="mb-2 w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-canvas"
             >
               Todos
             </button>
@@ -83,9 +83,12 @@ export default function CalendarEmployeeFilter() {
                   setOpen(false);
                   setSearch("");
                 }}
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-zinc-50"
+                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-canvas"
               >
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: employee.color ?? "#d4d4d8" }} />
+                <span
+                  className={`h-2 w-2 rounded-full ${employee.color ? "" : "bg-border"}`}
+                  style={employee.color ? { backgroundColor: employee.color } : undefined}
+                />
                 {employee.full_name}
               </button>
             ))}

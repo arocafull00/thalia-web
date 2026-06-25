@@ -16,7 +16,7 @@ export default function FinancesTabBar({ selectedTab, onTabChange }: FinancesTab
           type="button"
           onClick={() => onTabChange(tab)}
           className={`rounded-full px-4 py-2 text-xs uppercase tracking-wide ${
-            selectedTab === tab ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-600"
+            selectedTab === tab ? "bg-primary text-on-primary" : "bg-primary-subtle/40 text-ink-secondary"
           }`}
         >
           {tab === "income" ? "Ingresos" : tab === "expense" ? "Gastos" : "Resumen"}

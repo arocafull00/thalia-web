@@ -36,12 +36,12 @@ export default function InventoryPageClient() {
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {[
-          { label: "Critico", value: summary.critical, tone: "text-red-600" },
-          { label: "Bajo", value: summary.low, tone: "text-amber-600" },
-          { label: "Optimo", value: summary.optimal, tone: "text-emerald-600" },
+          { label: "Critico", value: summary.critical, tone: "text-danger" },
+          { label: "Bajo", value: summary.low, tone: "text-warning" },
+          { label: "Optimo", value: summary.optimal, tone: "text-success" },
         ].map((entry) => (
-          <div key={entry.label} className="rounded-2xl border border-zinc-200 bg-white p-5">
-            <p className="text-xs uppercase tracking-wide text-zinc-400">{entry.label}</p>
+          <div key={entry.label} className="rounded-2xl border border-border bg-surface p-5">
+            <p className="text-xs uppercase tracking-wide text-ink-muted">{entry.label}</p>
             <p className={`mt-2 text-3xl font-medium ${entry.tone}`}>{entry.value}</p>
           </div>
         ))}
@@ -54,8 +54,8 @@ export default function InventoryPageClient() {
             onClick={() => handleCategoryChange(entry === "Todos" ? "" : entry)}
             className={`rounded-full px-4 py-2 text-sm ${
               (entry === "Todos" && !category) || category === entry
-                ? "bg-zinc-900 text-white"
-                : "bg-white text-zinc-600 ring-1 ring-zinc-200"
+                ? "bg-primary text-on-primary"
+                : "bg-surface text-ink-secondary ring-1 ring-border"
             }`}
           >
             {entry}
@@ -65,8 +65,8 @@ export default function InventoryPageClient() {
       {inventory.isLoading ? <SkeletonList /> : null}
       {inventory.error ? <Notice tone="danger" message="No se pudo cargar el inventario." /> : null}
       {!inventory.isLoading ? (
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-          <div className="grid grid-cols-[1.6fr_0.9fr_1fr_0.8fr_0.9fr] gap-4 border-b border-zinc-200 px-4 py-2 text-xs uppercase tracking-wide text-zinc-400">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="grid grid-cols-[1.6fr_0.9fr_1fr_0.8fr_0.9fr] gap-4 border-b border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-muted">
             <span>Material</span>
             <span>Categoria</span>
             <span>Stock</span>
@@ -83,24 +83,24 @@ export default function InventoryPageClient() {
                 key={item.id}
                 type="button"
                 onClick={() => router.push(`/inventory/${item.id}`)}
-                className="grid w-full grid-cols-[1.6fr_0.9fr_1fr_0.8fr_0.9fr] gap-4 border-b border-zinc-100 px-4 py-4 text-left transition hover:bg-zinc-50"
+                className="grid w-full grid-cols-[1.6fr_0.9fr_1fr_0.8fr_0.9fr] gap-4 border-b border-border-subtle px-4 py-4 text-left transition hover:bg-canvas"
               >
                 <span>
-                  <span className="block truncate font-medium text-zinc-900">{item.name}</span>
-                  <span className="text-xs text-zinc-400">REF: {item.id.slice(0, 8).toUpperCase()}</span>
+                  <span className="block truncate font-medium text-ink">{item.name}</span>
+                  <span className="text-xs text-ink-muted">REF: {item.id.slice(0, 8).toUpperCase()}</span>
                 </span>
-                <span className="truncate text-sm text-zinc-500">{item.category ?? "Sin categoria"}</span>
-                <span className="font-medium tabular-nums text-zinc-900">
+                <span className="truncate text-sm text-ink-secondary">{item.category ?? "Sin categoria"}</span>
+                <span className="font-medium tabular-nums text-ink">
                   {stock} {item.unit ?? "un."}
                 </span>
-                <span className="text-sm tabular-nums text-zinc-500">{minStock}</span>
+                <span className="text-sm tabular-nums text-ink-secondary">{minStock}</span>
                 <span
                   className={`text-xs uppercase tracking-wide ${
                     level === "critical"
-                      ? "text-red-500"
+                      ? "text-danger"
                       : level === "low"
-                        ? "text-amber-600"
-                        : "text-emerald-600"
+                        ? "text-warning"
+                        : "text-success"
                   }`}
                 >
                   {inventoryStockLevelLabel(level)}
@@ -109,9 +109,9 @@ export default function InventoryPageClient() {
             );
           })}
           {filteredItems.length === 0 ? (
-            <p className="p-6 text-center text-zinc-500">No hay materiales con ese criterio.</p>
+            <p className="p-6 text-center text-ink-secondary">No hay materiales con ese criterio.</p>
           ) : null}
-          <div className="flex items-center justify-between px-4 py-3 text-sm text-zinc-500">
+          <div className="flex items-center justify-between px-4 py-3 text-sm text-ink-secondary">
             <span>
               {filteredItems.length === 0 ? 0 : pageStart + 1}-{pageEnd} de {filteredItems.length}
             </span>
@@ -120,7 +120,7 @@ export default function InventoryPageClient() {
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => setPage((current) => Math.max(current - 1, 1))}
-                className="rounded-lg border border-zinc-200 px-3 py-1 disabled:opacity-40"
+                className="rounded-lg border border-border px-3 py-1 disabled:opacity-40"
               >
                 Anterior
               </button>
@@ -128,7 +128,7 @@ export default function InventoryPageClient() {
                 type="button"
                 disabled={currentPage >= totalPages}
                 onClick={() => setPage((current) => Math.min(current + 1, totalPages))}
-                className="rounded-lg border border-zinc-200 px-3 py-1 disabled:opacity-40"
+                className="rounded-lg border border-border px-3 py-1 disabled:opacity-40"
               >
                 Siguiente
               </button>

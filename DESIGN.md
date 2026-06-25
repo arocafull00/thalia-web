@@ -1,165 +1,248 @@
 ---
 name: Thalia Management System
+description: Calm clinic operations UI for aesthetic and dental practices
 colors:
-  surface: '#f9f9f9'
-  surface-dim: '#dadada'
-  surface-bright: '#f9f9f9'
-  surface-container-lowest: '#ffffff'
-  surface-container-low: '#f3f3f3'
-  surface-container: '#eeeeee'
-  surface-container-high: '#e8e8e8'
-  surface-container-highest: '#e2e2e2'
-  on-surface: '#1a1c1c'
-  on-surface-variant: '#444748'
-  inverse-surface: '#2f3131'
-  inverse-on-surface: '#f0f1f1'
-  outline: '#747878'
-  outline-variant: '#c4c7c7'
-  surface-tint: '#5f5e5e'
-  primary: '#000000'
-  on-primary: '#ffffff'
-  primary-container: '#1c1b1b'
-  on-primary-container: '#858383'
-  inverse-primary: '#c8c6c5'
-  secondary: '#5e604d'
-  on-secondary: '#ffffff'
-  secondary-container: '#e1e1c9'
-  on-secondary-container: '#636451'
-  tertiary: '#60603e'
-  on-tertiary: '#ffffff'
-  tertiary-container: '#aead85'
-  on-tertiary-container: '#414122'
-  error: '#ba1a1a'
-  on-error: '#ffffff'
-  error-container: '#ffdad6'
-  on-error-container: '#93000a'
-  primary-fixed: '#e5e2e1'
-  primary-fixed-dim: '#c8c6c5'
-  on-primary-fixed: '#1c1b1b'
-  on-primary-fixed-variant: '#474746'
-  secondary-fixed: '#e4e4cc'
-  secondary-fixed-dim: '#c8c8b0'
-  on-secondary-fixed: '#1b1d0e'
-  on-secondary-fixed-variant: '#474836'
-  tertiary-fixed: '#e6e5b9'
-  tertiary-fixed-dim: '#cac99f'
-  on-tertiary-fixed: '#1d1d03'
-  on-tertiary-fixed-variant: '#484828'
-  background: '#f9f9f9'
-  on-background: '#1a1c1c'
-  surface-variant: '#e2e2e2'
+  canvas: "#FBFCFC"
+  surface: "#ffffff"
+  surface-muted: "#A1EAE0"
+  ink: "#181A1F"
+  ink-secondary: "#5C5F64"
+  ink-muted: "#9AA1A3"
+  border: "#DDE1E2"
+  border-subtle: "#EBEDEE"
+  primary: "#16B49B"
+  primary-hover: "#62A99B"
+  primary-light: "#6CDBCB"
+  primary-subtle: "#A1EAE0"
+  on-primary: "#ffffff"
+  focus-ring: "#16B49B"
+  danger: "#dc2626"
+  warning: "#d97706"
+  success: "#059669"
 typography:
-  display-lg:
-    fontFamily: DM Sans
-    fontSize: 48px
-    fontWeight: '500'
-    lineHeight: 56px
-    letterSpacing: -0.02em
-  display-lg-mobile:
-    fontFamily: DM Sans
-    fontSize: 32px
-    fontWeight: '500'
-    lineHeight: 40px
-    letterSpacing: -0.01em
-  headline-md:
-    fontFamily: DM Sans
-    fontSize: 24px
-    fontWeight: '500'
-    lineHeight: 32px
-    letterSpacing: -0.01em
-  title-lg:
-    fontFamily: DM Sans
-    fontSize: 18px
-    fontWeight: '500'
-    lineHeight: 24px
-  body-lg:
-    fontFamily: DM Sans
-    fontSize: 16px
-    fontWeight: '400'
-    lineHeight: 24px
-  body-md:
-    fontFamily: DM Sans
-    fontSize: 14px
-    fontWeight: '400'
-    lineHeight: 20px
-  label-md:
-    fontFamily: DM Sans
-    fontSize: 12px
-    fontWeight: '600'
-    lineHeight: 16px
-    letterSpacing: 0.05em
-  caption:
-    fontFamily: DM Sans
-    fontSize: 12px
-    fontWeight: '400'
-    lineHeight: 16px
+  display:
+    fontFamily: "Geist, system-ui, sans-serif"
+    fontSize: "3rem"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "-0.025em"
+  headline:
+    fontFamily: "Geist, system-ui, sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 500
+    lineHeight: 1.25
+  title:
+    fontFamily: "Geist, system-ui, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 500
+    lineHeight: 1.33
+  body:
+    fontFamily: "Geist, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.43
+  label:
+    fontFamily: "Geist, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 500
+    lineHeight: 1.33
+    letterSpacing: "0.05em"
+  mono:
+    fontFamily: "Geist Mono, ui-monospace, monospace"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.43
 rounded:
-  sm: 0.25rem
-  DEFAULT: 0.5rem
-  md: 0.75rem
-  lg: 1rem
-  xl: 1.5rem
-  full: 9999px
+  sm: "0.5rem"
+  md: "0.75rem"
+  lg: "1rem"
+  xl: "1.5rem"
+  pill: "9999px"
 spacing:
-  base: 4px
-  xs: 8px
-  sm: 16px
-  md: 24px
-  lg: 40px
-  xl: 64px
-  gutter: 24px
-  margin-mobile: 16px
-  margin-desktop: 48px
+  xs: "0.25rem"
+  sm: "0.5rem"
+  md: "1rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  page: "2rem"
+  sidebar: "280px"
+  topbar: "72px"
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    rounded: "{rounded.pill}"
+    padding: "0.5rem 1rem"
+  button-primary-hover:
+    backgroundColor: "#62A99B"
+    textColor: "{colors.on-primary}"
+    rounded: "{rounded.pill}"
+    padding: "0.5rem 1rem"
+  button-ghost:
+    backgroundColor: "{colors.surface}"
+    textColor: "#5C5F64"
+    rounded: "{rounded.pill}"
+    padding: "0.5rem 1rem"
+  input-field:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.xl}"
+    padding: "0.625rem 0.75rem"
+  card-panel:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.xl}"
+    padding: "2rem"
 ---
 
-## Brand & Style
-The design system is anchored in a philosophy of "Quiet Luxury"—a premium, minimalist aesthetic tailored for high-end aesthetic clinics. It prioritizes clarity, calm, and professional precision. 
+# Design System: Thalia Management System
 
-The style blends **Minimalism** with **Glassmorphism** and **Corporate Modern** influences. It utilizes heavy whitespace to reduce cognitive load for practitioners, while employing sophisticated layer transparency to evoke a sense of lightness and cleanliness. The emotional response should be one of immediate trust and understated elegance, moving away from traditional clinical coldness toward a boutique, hospitality-inspired digital environment.
+## 1. Overview
 
-## Colors
-The palette is strictly desaturated to maintain a high-end, editorial feel. 
+**Creative North Star: "The Quiet Clinic Desk"**
 
-- **Primary (#1A1A1A):** A Soft Black used for typography and high-emphasis interactive elements. It provides the necessary grounding for the lighter palette.
-- **Secondary (#F5F5DC):** Light Beige, used for subtle surface differentiation and "active" states in navigation.
-- **Tertiary (#FFFDD0):** Cream, utilized for soft highlights or specialized notification backgrounds.
-- **Neutral (#FAFAFA):** The core background color. This off-white ensures the UI feels breathable and less harsh than pure white.
-- **Warm Grey (#F0F0F0):** Used for borders, dividers, and secondary button backgrounds to provide structure without adding visual noise.
+Thalia is a product UI for staff who move between reception, treatment rooms, and back-office tasks. The visual system stays calm: a cool off-white canvas, white content panels, and turquoise for actions, selection, and active states. Typography reads quickly at arm's length on a desktop monitor or tablet.
 
-## Typography
-The system utilizes **DM Sans** across all levels to maintain a clean, geometric, and modern appearance. 
+Density is moderate. Lists and tables carry real clinic data without decorative chrome. Surfaces are flat at rest; depth comes from white panels on a light canvas and 1px borders, not glass effects or heavy shadows.
 
-The hierarchy is built on subtle weight shifts rather than dramatic size changes. Headlines use a slight negative letter-spacing to appear tighter and more "designed," similar to high-end editorial layouts. Labels utilize an uppercase treatment with increased tracking for a sophisticated, systematic feel in table headers and small tags. All body text maintains a generous line height to ensure maximum readability for patient notes and schedules.
+**Key Characteristics:**
 
-## Layout & Spacing
-This design system employs a **Fixed Grid** model for desktop and a **Fluid** model for mobile devices. 
+- Geist sans for all UI text; Geist Mono only where code or IDs appear
+- `#FBFCFC` canvas with white content panels and soft gray borders
+- Turquoise primary (`#16B49B`) for buttons, active nav, chips, and progress bars
+- Pill-shaped primary actions; rounded-xl inputs and nav items
+- Radix UI for accessible primitives (callouts, popovers, theme)
+- Spanish-first copy; labels often uppercase with wide tracking
+- Motion limited to hover backgrounds and focus rings (150–250ms)
 
-- **Desktop:** A 12-column grid with a maximum content width of 1440px. Gutters are fixed at 24px to provide a structured, architectural feel.
-- **Mobile:** A 4-column fluid grid with 16px side margins. 
-- **Spacing Philosophy:** We follow an 8pt spatial rhythm. Generous padding (at least 24px) within cards and containers is mandatory to maintain the premium, "airy" aesthetic. Components should never feel cramped; when in doubt, increase the whitespace.
+## 2. Colors
 
-## Elevation & Depth
-Depth is created through **Tonal Layers** and **Glassmorphism**, avoiding heavy, dark shadows.
+The palette is restrained: soft black ink on a cool neutral canvas, turquoise for primary actions and selection, with semantic reds, ambers, and greens reserved for inventory and status.
 
-1.  **Base Layer:** Neutral (#FAFAFA).
-2.  **Floating Layer:** Cards use a high-radius white background with a very soft, diffused ambient shadow (Color: #1A1A1A at 4% opacity, Blur: 20px, Y: 10px).
-3.  **Glassmorphism:** Navigation sidebars and modal overlays utilize a backdrop blur (20px) with a semi-transparent white tint (80% opacity). This maintains the context of the content underneath while creating a "frosted glass" premium effect.
-4.  **Outlines:** Interactive elements use 1px solid borders in Warm Grey (#F0F0F0) to define boundaries without the visual weight of shadows.
+### Primary
 
-## Shapes
-The shape language is defined by large, inviting radii. 
+- **Clinic Turquoise** (#16B49B): Primary buttons, active sidebar items, focus rings, progress bars, highlighted metrics.
+- **Primary Hover** (#62A99B): Hover state for primary buttons and chips.
+- **Primary Light** (#6CDBCB): Decorative accents, soft highlights.
+- **Primary Subtle** (#A1EAE0): Row hovers, skeleton tints, soft badges.
 
-- **Standard Elements:** Buttons, input fields, and small UI components use a 0.5rem (8px) radius.
-- **Containers:** Dashboard cards and modals use `rounded-xl` (1.5rem / 24px) to create a soft, friendly, and modern silhouette. 
-- **Selection Indicators:** Pill-shaped (fully rounded) containers are reserved for tags, chips, and active state indicators within navigation bars.
+### Neutral
 
-## Components
+- **Canvas** (#FBFCFC): App background (`bg-canvas`), sidebar, topbar.
+- **Surface** (#ffffff): Cards, inputs, popovers, table containers.
+- **Border** (#DDE1E2): Standard 1px dividers, input outlines, panel edges.
+- **Border Subtle** (#EBEDEE): Internal table dividers.
+- **Ink** (#181A1F): Headings, primary table cell text.
+- **Ink Secondary** (#5C5F64): Body copy, list items, idle nav text.
+- **Ink Muted** (#9AA1A3): Labels, placeholders, metadata, table headers.
 
-- **Buttons:** Primary buttons are Soft Black (#1A1A1A) with white text. Secondary buttons are Warm Grey (#F0F0F0) with Soft Black text. Use 16px horizontal and 12px vertical padding.
-- **Input Fields:** Use a subtle Warm Grey border. On focus, the border transitions to Soft Black. Use a 14px font size for input text.
-- **Cards:** Floating cards are the primary container. They must feature a 24px border radius and the diffused ambient shadow described in the Elevation section.
-- **Chips/Status:** Use the Light Beige (#F5F5DC) for "pending" or "neutral" states. Use Soft Black for "confirmed" or "active" states. Text should always be DM Sans 12px Medium.
-- **Lists:** Table rows and lists should have a minimum height of 64px to allow for vertical breathing room. Use 1px Warm Grey dividers.
-- **Specialty Components:** 
-    - *Calendar View:* Use Cream (#FFFDD0) for the current day highlight.
-    - *Floating Action Buttons:* High-radius, Soft Black background, centered icon, positioned at the bottom right with significant margin.
+### Semantic
+
+- **Danger** (#dc2626): Errors, critical inventory.
+- **Warning** (#d97706): Warnings, low stock.
+- **Success** (#059669): Optimal stock, positive states.
+
+### Named Rules
+
+**The One Accent Rule.** Clinic Turquoise carries primary actions, active navigation, and focus. Semantic colors appear only where status is the message. No decorative color blocks.
+
+**The Flat Canvas Rule.** Backgrounds stay canvas or surface. Do not stack tinted neutrals for decoration.
+
+## 3. Typography
+
+**Display Font:** Geist (with system-ui fallback)
+**Body Font:** Geist (with system-ui fallback)
+**Mono Font:** Geist Mono (with ui-monospace fallback)
+
+**Character:** Geometric, neutral, and legible at 14px. Hierarchy comes from size and weight, not display typefaces in data screens.
+
+### Hierarchy
+
+- **Display** (500, 3rem, 1.1): Login hero, rare marketing moments inside the app shell.
+- **Headline** (500, 1.5rem, 1.25): Page titles inside panels ("Bienvenido de nuevo").
+- **Title** (500, 1.125rem, 1.33): Section headers, sidebar wordmark scale.
+- **Body** (400, 0.875rem, 1.43): Default UI copy, table cells, inputs. Keep prose under 65–75ch where it runs long.
+- **Label** (500, 0.75rem, uppercase, 0.05em tracking): Field labels, table column headers, tab filters.
+
+### Named Rules
+
+**The Product Sans Rule.** Do not introduce a second sans for UI chrome. One family from login through settings.
+
+**The Label Case Rule.** Uppercase labels are for form fields and column headers only, not sentences or button verbs.
+
+## 4. Elevation
+
+Depth is tonal, not shadow-driven. White panels sit on canvas; borders define edges. A light `shadow-sm` is acceptable on auth and onboarding cards only.
+
+### Shadow Vocabulary
+
+- **Panel lift** (`box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05)`): Login card, onboarding wizard. Sparingly.
+- **Popover** (`box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1)`): Dropdowns and calendar filters.
+
+### Named Rules
+
+**The Flat-By-Default Rule.** Dashboard tables, sidebar, and lists have no drop shadow. If it needs depth, use a white surface and a border first.
+
+**The No Glass Rule.** No backdrop blur on navigation or modals. PRODUCT.md explicitly rejects decorative glassmorphism.
+
+## 5. Components
+
+### Buttons
+
+- **Shape:** Full pill (`rounded-full`, 9999px radius).
+- **Primary:** Turquoise background, white 12px uppercase label, px-4 py-2. Hover to `#62A99B`.
+- **Ghost:** White background, border token, ink-secondary text. Hover to primary-subtle tint.
+- **Disabled:** 50% opacity; no alternate color.
+
+### Chips / Tabs
+
+- **Filter chip active:** Primary fill, on-primary text, pill shape.
+- **Filter chip idle:** Surface or primary-subtle fill, ink-secondary text, ring-1 border optional.
+
+### Cards / Containers
+
+- **Corner Style:** `rounded-2xl` (1rem) for data tables and stat tiles; `rounded-3xl` (1.5rem) for auth and wizard panels.
+- **Background:** Surface on canvas.
+- **Border:** 1px border token; dashed border for empty states.
+- **Internal Padding:** p-5 for stat cards, p-8 for auth panels, p-8 page gutters.
+
+### Inputs / Fields
+
+- **Style:** Surface fill, border token, rounded-xl, 14px text.
+- **Focus:** 2px ring in primary; no glow or gradient.
+- **Labels:** 12px uppercase, ink-muted, tracking-wide above the field.
+
+### Navigation
+
+- **Sidebar:** Fixed 280px, canvas background, border-r. Items: rounded-xl, 14px. Active item: primary fill, on-primary text. Idle: ink-secondary, hover primary-subtle.
+- **Topbar:** 72px min-height, canvas background, border-b. Search input matches field style with left icon inset.
+- **Profile chip:** Surface bordered pill in sidebar footer and topbar link.
+
+### Notices
+
+- **Radix Callout:** size 1, color red / amber / gray by tone. Used for auth errors and config warnings.
+
+### Skeleton
+
+- **List skeleton:** primary-subtle rounded-lg bars, pulse animation.
+
+## 6. Do's and Don'ts
+
+### Do:
+
+- **Do** keep the canvas + surface panel rhythm on every app screen.
+- **Do** use pill buttons with verb + object labels in Spanish ("Entrar", "Continuar con Google").
+- **Do** show focus rings on all interactive controls for keyboard users.
+- **Do** use skeleton loaders for list and block loading states.
+- **Do** respect `prefers-reduced-motion` by keeping transitions to color and opacity only.
+
+### Don't:
+
+- **Don't** use glassmorphism used purely for decoration.
+- **Don't** use excessive gradients or gradient text.
+- **Don't** use oversized rounded cards beyond the xl/2xl scale already in code.
+- **Don't** use generic illustration packs or marketing metric hero blocks inside the app shell.
+- **Don't** use unnecessary animations or orchestrated page-load sequences.
+- **Don't** use marketing buzzwords that could describe any software.
+- **Don't** pair a 1px border with a wide soft shadow on the same element.
+- **Don't** introduce DM Sans or other display faces; Geist is the committed stack.

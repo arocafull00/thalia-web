@@ -50,7 +50,7 @@ export function ActionButton({
         type="button"
         disabled={disabled}
         onClick={onClick}
-        className="rounded-full border border-zinc-200 px-4 py-2 text-xs font-medium uppercase tracking-wide text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+        className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas disabled:opacity-50"
       >
         {title}
       </button>
@@ -62,7 +62,7 @@ export function ActionButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="rounded-full bg-zinc-900 px-4 py-2 text-xs font-medium uppercase tracking-wide text-white hover:bg-zinc-800 disabled:opacity-50"
+      className="rounded-full bg-primary px-4 py-2 text-xs font-medium uppercase tracking-wide text-on-primary hover:bg-primary-hover disabled:opacity-50"
     >
       {title}
     </button>
@@ -73,12 +73,12 @@ export function SkeletonList({ count = 5 }: { count?: number }) {
   return (
     <Flex direction="column" gap="2">
       {Array.from({ length: count }).map((_, index) => (
-        <Box key={index} className="h-14 animate-pulse rounded-lg bg-zinc-100" />
+        <Box key={index} className="h-14 animate-pulse rounded-lg bg-primary-subtle/40" />
       ))}
     </Flex>
   );
 }
 
 export function SkeletonBlock({ height = 120 }: { height?: number }) {
-  return <Box className="animate-pulse rounded-lg bg-zinc-100" style={{ height }} />;
+  return <Box className="animate-pulse rounded-lg bg-primary-subtle/40" style={{ height }} />;
 }

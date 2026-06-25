@@ -80,7 +80,7 @@ export default function EmployeesPageClient() {
             key={entry.value || "all"}
             type="button"
             onClick={() => setRoleFilter(entry.value)}
-            className={`rounded-full px-4 py-2 text-sm ${role === entry.value ? "bg-zinc-900 text-white" : "bg-white text-zinc-600 ring-1 ring-zinc-200"}`}
+            className={`rounded-full px-4 py-2 text-sm ${role === entry.value ? "bg-primary text-on-primary" : "bg-surface text-ink-secondary ring-1 ring-border"}`}
           >
             {entry.label}
           </button>
@@ -89,13 +89,13 @@ export default function EmployeesPageClient() {
       {employees.isLoading ? <SkeletonList /> : null}
       {employees.error ? <Notice tone="danger" message="No se pudo cargar el personal." /> : null}
       {showEmptyState ? (
-        <div className="rounded-2xl border border-dashed border-zinc-200 p-10 text-center text-zinc-500">
+        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
           Todavía no hay personal registrado.
         </div>
       ) : null}
       {!showEmptyState && !employees.isLoading ? (
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-          <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-zinc-200 px-4 py-2 text-xs uppercase tracking-wide text-zinc-400">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-muted">
             <span>Profesional</span>
             <span>Especialidad</span>
             <span>Rol</span>
@@ -106,14 +106,14 @@ export default function EmployeesPageClient() {
               key={employee.id}
               type="button"
               onClick={() => router.push(`/employees/${employee.id}`)}
-              className="grid w-full grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-zinc-100 px-4 py-4 text-left transition hover:bg-zinc-50"
+              className="grid w-full grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-border-subtle px-4 py-4 text-left transition hover:bg-canvas"
             >
-              <span className="truncate font-medium text-zinc-900">{employee.full_name}</span>
-              <span className="truncate text-sm text-zinc-500">{employee.specialty ?? "-"}</span>
-              <span className="text-xs uppercase tracking-wide text-zinc-500">
+              <span className="truncate font-medium text-ink">{employee.full_name}</span>
+              <span className="truncate text-sm text-ink-secondary">{employee.specialty ?? "-"}</span>
+              <span className="text-xs uppercase tracking-wide text-ink-secondary">
                 {employeeRoleLabel(employee.role)}
               </span>
-              <span className={`text-xs uppercase tracking-wide ${employee.active === false ? "text-red-500" : "text-emerald-600"}`}>
+              <span className={`text-xs uppercase tracking-wide ${employee.active === false ? "text-danger" : "text-success"}`}>
                 {employee.active === false ? "Inactivo" : "Activo"}
               </span>
             </button>

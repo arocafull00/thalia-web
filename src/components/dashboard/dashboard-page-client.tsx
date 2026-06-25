@@ -48,8 +48,8 @@ export default function DashboardPageClient() {
     <div className="space-y-6 p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-medium tracking-tight text-zinc-900">Bienvenida, {firstName}</h1>
-          <p className="mt-2 text-zinc-500">
+          <h1 className="text-4xl font-medium tracking-tight text-ink">Bienvenida, {firstName}</h1>
+          <p className="mt-2 text-ink-secondary">
             {formatTodayTitle(today)}. Tienes {appointments.length}{" "}
             {appointments.length === 1 ? "cita programada" : "citas programadas"}.
           </p>
@@ -63,18 +63,18 @@ export default function DashboardPageClient() {
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            className={`rounded-3xl border p-5 ${metric.highlight ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-200 bg-white"}`}
+            className={`rounded-3xl border p-5 ${metric.highlight ? "border-primary bg-primary text-on-primary" : "border-border bg-surface"}`}
           >
-            <p className={`text-xs uppercase tracking-wide ${metric.highlight ? "text-zinc-300" : "text-zinc-400"}`}>{metric.label}</p>
+            <p className={`text-xs uppercase tracking-wide ${metric.highlight ? "text-on-primary/70" : "text-ink-muted"}`}>{metric.label}</p>
             <p className="mt-4 text-3xl font-medium tabular-nums">{metric.value}</p>
           </div>
         ))}
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.8fr_1fr]">
         <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-200 pb-3">
+          <div className="flex items-center justify-between border-b border-border pb-3">
             <h2 className="text-lg font-medium">Próximas citas</h2>
-            <Link href="/calendar" className="text-xs uppercase tracking-wide text-zinc-500">
+            <Link href="/calendar" className="text-xs uppercase tracking-wide text-ink-secondary">
               Ver calendario
             </Link>
           </div>
@@ -84,7 +84,7 @@ export default function DashboardPageClient() {
             ))}
           </div>
           {!isLoading && appointments.length === 0 ? (
-            <p className="py-4 text-zinc-500">No hay citas programadas para hoy.</p>
+            <p className="py-4 text-ink-secondary">No hay citas programadas para hoy.</p>
           ) : null}
           {isLoading ? <SkeletonList count={3} /> : null}
           {error ? <Notice tone="danger" message="No se pudo cargar el dashboard." /> : null}
@@ -92,29 +92,29 @@ export default function DashboardPageClient() {
         <div className="space-y-6">
           <section className="space-y-3">
             <h2 className="text-lg font-medium">Inventario critico</h2>
-            <div className="divide-y divide-zinc-200 border-t border-zinc-200">
+            <div className="divide-y divide-border-subtle border-t border-border">
               {lowStock.slice(0, 4).map((item) => (
                 <Link key={item.id} href={`/inventory/${item.id}`} className="block py-3 hover:opacity-80">
-                  <p className="font-medium text-zinc-900">{item.name}</p>
-                  <p className="text-sm text-zinc-500">
+                  <p className="font-medium text-ink">{item.name}</p>
+                  <p className="text-sm text-ink-secondary">
                     {Number(item.stock ?? 0)} {item.unit ?? "un."} disponibles
                   </p>
                 </Link>
               ))}
               {!isLoading && lowStock.length === 0 ? (
-                <p className="py-3 text-zinc-500">Sin materiales criticos.</p>
+                <p className="py-3 text-ink-secondary">Sin materiales criticos.</p>
               ) : null}
             </div>
           </section>
           <section className="space-y-3">
             <h2 className="text-lg font-medium">Actividad reciente</h2>
-            <div className="divide-y divide-zinc-200 border-t border-zinc-200">
+            <div className="divide-y divide-border-subtle border-t border-border">
               {appointments.slice(0, 3).map((appointment) => (
                 <div key={appointment.id} className="py-3">
-                  <p className="font-medium text-zinc-900">
+                  <p className="font-medium text-ink">
                     Cita {appointment.status ?? "programada"} - {appointment.patients?.full_name ?? "Paciente"}
                   </p>
-                  <p className="text-sm text-zinc-500">Hoy</p>
+                  <p className="text-sm text-ink-secondary">Hoy</p>
                 </div>
               ))}
             </div>

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-25T00:00:00.000Z",
+  "title": "Design System: Thalia Management System",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas",
+        "canonical": "oklch(99.2% 0.002 200)",
+        "tonalRamp": ["#181A1F", "#5C5F64", "#9AA1A3", "#DDE1E2", "#EBEDEE", "#FBFCFC", "#FFFFFF"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#181A1F", "#5C5F64", "#9AA1A3", "#DDE1E2", "#EBEDEE", "#FBFCFC", "#FFFFFF"]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Clinic Turquoise",
+        "canonical": "oklch(68.5% 0.12 175)",
+        "tonalRamp": ["#0D6B5C", "#16B49B", "#62A99B", "#6CDBCB", "#A1EAE0", "#D4F5F0", "#F0FFFC"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "canonical": "oklch(88.5% 0.008 220)",
+        "tonalRamp": ["#5C5F64", "#9AA1A3", "#C4CACC", "#DDE1E2", "#EBEDEE", "#F4F5F6", "#FBFCFC"]
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "Danger",
+        "canonical": "oklch(57% 0.22 27)",
+        "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#fca5a5", "#fef2f2"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Login hero and rare large titles only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Panel titles and page headers inside forms."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI copy, table cells, inputs."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase field labels and table column headers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panel-lift",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Auth and onboarding cards only."
+      },
+      {
+        "name": "popover",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+        "purpose": "Dropdowns and calendar employee filter."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Hover background and color transitions."
+      }
+    ],
+    "breakpoints": [
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main forward action on forms and dialogs.",
+      "html": "<button type=\"button\" class=\"ds-btn-primary\">Entrar</button>",
+      "css": ".ds-btn-primary { background: #16B49B; color: #fff; padding: 0.5rem 1rem; font-family: Geist, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 9999px; cursor: pointer; transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background: #62A99B; } .ds-btn-primary:focus-visible { outline: 2px solid #16B49B; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary actions such as OAuth or cancel paths.",
+      "html": "<button type=\"button\" class=\"ds-btn-ghost\">Continuar con Google</button>",
+      "css": ".ds-btn-ghost { background: #fff; color: #5C5F64; padding: 0.5rem 1rem; font-family: Geist, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid #DDE1E2; border-radius: 9999px; cursor: pointer; transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-ghost:hover { background: #FBFCFC; } .ds-btn-ghost:focus-visible { outline: 2px solid #16B49B; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Standard text and search inputs across auth and topbar.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Correo electrónico</span><input type=\"email\" class=\"ds-input\" placeholder=\"tu@correo.com\" /></label>",
+      "css": ".ds-field { display: block; font-family: Geist, system-ui, sans-serif; } .ds-field-label { display: block; margin-bottom: 0.25rem; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #9AA1A3; } .ds-input { width: 100%; box-sizing: border-box; background: #fff; color: #181A1F; border: 1px solid #DDE1E2; border-radius: 0.75rem; padding: 0.625rem 0.75rem; font-size: 0.875rem; outline: none; transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-input:focus { box-shadow: 0 0 0 2px #16B49B; } .ds-input::placeholder { color: #9AA1A3; }"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": "button-primary",
+      "description": "Active and idle states for primary app navigation.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" class=\"ds-nav-item ds-nav-item-active\">Agenda</a><a href=\"#\" class=\"ds-nav-item\">Pacientes</a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 0.25rem; font-family: Geist, system-ui, sans-serif; } .ds-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.75rem; font-size: 0.875rem; text-decoration: none; color: #5C5F64; transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1); } .ds-nav-item:hover { background: rgba(161, 234, 224, 0.4); } .ds-nav-item-active { background: #16B49B; color: #fff; } .ds-nav-item-active:hover { background: #62A99B; }"
+    },
+    {
+      "name": "Data Table Container",
+      "kind": "card",
+      "refersTo": "card-panel",
+      "description": "White bordered container for patient and inventory lists.",
+      "html": "<div class=\"ds-table-card\"><div class=\"ds-table-head\"><span>Paciente</span><span>Telefono</span><span>Email</span></div><div class=\"ds-table-row\"><span>Ana Garcia</span><span>600 000 000</span><span>ana@clinica.es</span></div></div>",
+      "css": ".ds-table-card { background: #fff; border: 1px solid #DDE1E2; border-radius: 1rem; overflow: hidden; font-family: Geist, system-ui, sans-serif; } .ds-table-head { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 1rem; padding: 0.5rem 1rem; border-bottom: 1px solid #DDE1E2; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #9AA1A3; } .ds-table-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 1rem; padding: 1rem; border-bottom: 1px solid #EBEDEE; font-size: 0.875rem; color: #5C5F64; } .ds-table-row span:first-child { font-weight: 500; color: #181A1F; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "button-primary",
+      "description": "Tab and inventory filter pills.",
+      "html": "<div class=\"ds-chips\"><button type=\"button\" class=\"ds-chip ds-chip-active\">Todos</button><button type=\"button\" class=\"ds-chip\">Critico</button></div>",
+      "css": ".ds-chips { display: flex; gap: 0.5rem; font-family: Geist, system-ui, sans-serif; } .ds-chip { padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; border: none; cursor: pointer; background: #fff; color: #5C5F64; box-shadow: inset 0 0 0 1px #DDE1E2; transition: background 0.2s, color 0.2s; } .ds-chip:hover { background: #FBFCFC; } .ds-chip-active { background: #16B49B; color: #fff; box-shadow: none; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Clinic Desk",
+    "overview": "Thalia is a product UI for staff who move between reception, treatment rooms, and back-office tasks. The visual system stays calm: a cool off-white canvas, white content panels, and turquoise for actions, selection, and active states. Density is moderate. Lists and tables carry real clinic data without decorative chrome.",
+    "keyCharacteristics": [
+      "Geist sans for all UI text",
+      "FBFCFC canvas with white content panels",
+      "Turquoise primary for buttons, nav, and chips",
+      "Radix UI for accessible primitives",
+      "Spanish-first copy",
+      "Motion limited to hover and focus"
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Clinic Turquoise carries primary actions, active navigation, and focus. Semantic colors appear only where status is the message.",
+        "section": "colors"
+      },
+      {
+        "name": "The Flat Canvas Rule",
+        "body": "Backgrounds stay canvas or surface. Do not stack tinted neutrals for decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Product Sans Rule",
+        "body": "Do not introduce a second sans for UI chrome. One family from login through settings.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Dashboard tables, sidebar, and lists have no drop shadow. If it needs depth, use a white surface and a border first.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No Glass Rule",
+        "body": "No backdrop blur on navigation or modals.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the canvas + surface panel rhythm on every app screen.",
+      "Do use pill buttons with verb + object labels in Spanish.",
+      "Do show focus rings on all interactive controls.",
+      "Do use skeleton loaders for list and block loading states."
+    ],
+    "donts": [
+      "Don't use glassmorphism used purely for decoration.",
+      "Don't use excessive gradients or gradient text.",
+      "Don't use oversized rounded cards beyond the xl/2xl scale.",
+      "Don't use generic illustration packs or marketing metric hero blocks.",
+      "Don't use unnecessary animations or orchestrated page-load sequences.",
+      "Don't pair a 1px border with a wide soft shadow on the same element."
+    ]
+  }
+}

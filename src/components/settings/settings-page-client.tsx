@@ -40,7 +40,7 @@ export default function SettingsPageClient() {
     <div className="space-y-6 p-8">
       <PageHeader subtitle="Cuenta, preferencias y gestión de clínica." title="Ajustes" />
       <div className="mx-auto grid max-w-5xl gap-8 xl:grid-cols-[240px_1fr]">
-        <div className="border-r border-zinc-200 pr-8">
+        <div className="border-r border-border pr-8">
           <SettingsProfilePanel
             onPickAvatar={() => fileInputRef.current?.click()}
             uploadingAvatar={uploadAvatar.isPending}
@@ -66,18 +66,18 @@ export default function SettingsPageClient() {
             <h2 className="text-lg font-medium">Cuenta</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <p className="text-xs uppercase tracking-wide text-zinc-400">Correo electrónico</p>
-                <p className="mt-1 text-zinc-900">{user.email ?? "—"}</p>
+                <p className="text-xs uppercase tracking-wide text-ink-muted">Correo electrónico</p>
+                <p className="mt-1 text-ink">{user.email ?? "—"}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-zinc-400">Teléfono</p>
-                <p className="mt-1 text-zinc-900">{profile.phone ?? "—"}</p>
+                <p className="text-xs uppercase tracking-wide text-ink-muted">Teléfono</p>
+                <p className="mt-1 text-ink">{profile.phone ?? "—"}</p>
               </div>
             </div>
             {canViewClinicRequests ? (
-              <Link href="/settings/clinic-requests" className="block rounded-2xl border border-zinc-200 p-4 hover:bg-zinc-50">
-                <p className="font-medium text-zinc-900">Solicitudes de clínica</p>
-                <p className="text-sm text-zinc-500">
+              <Link href="/settings/clinic-requests" className="block rounded-2xl border border-border p-4 hover:bg-canvas">
+                <p className="font-medium text-ink">Solicitudes de clínica</p>
+                <p className="text-sm text-ink-secondary">
                   Clínicas que quieren trabajar contigo ({pendingClinicRequests.length})
                 </p>
               </Link>
@@ -94,19 +94,19 @@ export default function SettingsPageClient() {
             <section className="space-y-4">
               <h2 className="text-lg font-medium">Gestión de clínica</h2>
               <div className="space-y-3">
-                <Link href="/settings/team" className="block rounded-2xl border border-zinc-200 p-4 hover:bg-zinc-50">
+                <Link href="/settings/team" className="block rounded-2xl border border-border p-4 hover:bg-canvas">
                   Añadir al equipo
                 </Link>
-                <Link href="/settings/staff" className="block rounded-2xl border border-zinc-200 p-4 hover:bg-zinc-50">
+                <Link href="/settings/staff" className="block rounded-2xl border border-border p-4 hover:bg-canvas">
                   Personal y especialistas ({activeEmployeesCount} activos)
                 </Link>
-                <Link href="/settings/treatments" className="block rounded-2xl border border-zinc-200 p-4 hover:bg-zinc-50">
+                <Link href="/settings/treatments" className="block rounded-2xl border border-border p-4 hover:bg-canvas">
                   Catálogo de servicios
                 </Link>
               </div>
             </section>
           ) : null}
-          <section className="border-t border-zinc-200 pt-6">
+          <section className="border-t border-border pt-6">
             <ActionButton
               title={signOutSubmitting ? "Cerrando sesión..." : "Cerrar sesión"}
               variant="ghost"

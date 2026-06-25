@@ -126,16 +126,16 @@ export default function InviteTeamPageClient() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-8">
-      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-zinc-200 bg-white p-10 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-canvas p-8">
+      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-border bg-surface p-10 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-medium text-zinc-900">Invita a tu equipo</h1>
-            <p className="mt-1 text-sm text-zinc-500">
+            <h1 className="text-2xl font-medium text-ink">Invita a tu equipo</h1>
+            <p className="mt-1 text-sm text-ink-secondary">
               Añade los correos de quienes trabajarán contigo.
             </p>
           </div>
-          <span className="text-xs uppercase tracking-wide text-zinc-400">
+          <span className="text-xs uppercase tracking-wide text-ink-muted">
             Paso 3 de {OWNER_REGISTRATION_STEP_COUNT}
           </span>
         </div>
@@ -151,30 +151,30 @@ export default function InviteTeamPageClient() {
                 }
                 type="email"
                 placeholder="correo@clinica.com"
-                className="flex-1 rounded-xl border border-zinc-200 px-3 py-2.5 text-sm"
+                className="flex-1 rounded-xl border border-border px-3 py-2.5 text-sm"
               />
               {emails.length > 1 ? (
                 <button
                   type="button"
                   onClick={() => setEmails((current) => current.filter((_, entryIndex) => entryIndex !== index))}
-                  className="rounded-xl border border-zinc-200 px-3 text-sm text-zinc-500"
+                  className="rounded-xl border border-border px-3 text-sm text-ink-secondary"
                 >
                   Quitar
                 </button>
               ) : null}
             </div>
           ))}
-          <button type="button" onClick={() => setEmails((current) => [...current, ""])} className="text-sm font-medium text-zinc-900">
+          <button type="button" onClick={() => setEmails((current) => [...current, ""])} className="text-sm font-medium text-ink">
             Añadir otro correo
           </button>
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
         {notice ? <Notice message={notice} /> : null}
         <div className="flex justify-end gap-3">
-          <Link href="/create-clinic" className="rounded-full border border-zinc-200 px-4 py-2 text-xs uppercase tracking-wide">
+          <Link href="/create-clinic" className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide">
             Atrás
           </Link>
-          <button type="button" onClick={() => void handleSkip()} className="px-4 py-2 text-xs uppercase tracking-wide text-zinc-500">
+          <button type="button" onClick={() => void handleSkip()} className="px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary">
             Saltar
           </button>
           <ActionButton title={submitting ? "Enviando..." : "Continuar"} disabled={submitting} onClick={() => void handleContinue()} />

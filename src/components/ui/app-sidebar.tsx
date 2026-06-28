@@ -7,6 +7,7 @@ import {
   Clock,
   Euro,
   LayoutGrid,
+  LogOut,
   Package,
   Settings,
   UserPlus,
@@ -40,7 +41,7 @@ function SidebarItem({ href, label, icon, active }: NavItem & { active: boolean 
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
   const avatarUrl = useFileUrl(profile?.avatar_url ?? null);
   const showEmployees = useShellStore((state) => state.showEmployees);
   const showFinances = useShellStore((state) => state.showFinances);
@@ -75,17 +76,23 @@ export default function AppSidebar() {
           ))}
       </nav>
       <div className="mt-auto flex items-center gap-3 rounded-2xl border border-border bg-surface p-2">
-        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary-subtle/40">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-subtle/40">
           {avatarUrl ? (
             <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
           ) : (
             <Users size={16} className="text-ink-muted" />
           )}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-ink">{profile?.full_name ?? "Perfil"}</p>
           <p className="truncate text-[11px] uppercase text-ink-muted">{profile?.role ?? "Practitioner"}</p>
         </div>
+        <button
+          onClick={() => void signOut()}
+          className="shrink-0 rounded-lg p-1.5 text-ink-muted hover:text-ink"
+        >
+          <LogOut size={16} />
+        </button>
       </div>
     </aside>
   );

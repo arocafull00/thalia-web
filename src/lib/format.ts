@@ -4,6 +4,7 @@ import { es } from "date-fns/locale";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
+  ClinicMembershipRole,
   EmployeeRole,
   InventoryMovementType,
   InvitationTokenRole,
@@ -160,6 +161,14 @@ export function employeeRoleLabel(role: EmployeeRole) {
   }
 
   return "Doctor";
+}
+
+export function clinicMembershipRoleLabel(role: ClinicMembershipRole) {
+  if (role === "owner") return "Propietario";
+  if (role === "admin") return "Administrador";
+  if (role === "employee") return "Empleado";
+  if (role === "external") return "Externo";
+  return role;
 }
 
 export function invitationTokenRoleLabel(role: InvitationTokenRole | string) {

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
 import { ToastContainer } from "react-toastify";
@@ -22,6 +22,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Thalia",
   description: "Gestión de clínicas estéticas",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#3cac8e",
 };
 
 export default function RootLayout({

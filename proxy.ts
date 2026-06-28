@@ -1,54 +1,30 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 
-import { supabaseAnonKey, supabaseUrl } from "@/lib/environment";
+import { updateSession, withSessionCookies } from "@/lib/supabase/proxy";
 
 const publicRoutes = ["/login", "/register-employee", "/create-clinic", "/invite-team"];
 
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
-
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => {
-          request.cookies.set(name, value);
-        });
-        response = NextResponse.next({
-          request: {
-            headers: request.headers,
-          },
-        });
-        cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
-      },
-    },
-  });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabaseResponse, userId } = await updateSession(request);
 
   const pathname = request.nextUrl.pathname;
   const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
 
-  if (!user && !isPublicRoute && pathname !== "/") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!userId && !isPublicRoute && pathname !== "/") {
+    return withSessionCookies(
+      NextResponse.redirect(new URL("/login", request.url)),
+      supabaseResponse,
+    );
   }
 
-  if (user && (pathname === "/login" || pathname === "/")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (userId && (pathname === "/login" || pathname === "/")) {
+    return withSessionCookies(
+      NextResponse.redirect(new URL("/dashboard", request.url)),
+      supabaseResponse,
+    );
   }
 
-  return response;
+  return supabaseResponse;
 }
 
 export const config = {

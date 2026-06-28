@@ -49,7 +49,7 @@ export const REGISTER_EMPLOYEE_FORM_COPY = {
   savingButton: "Guardando...",
   loginPrompt: "¿Ya tienes cuenta?",
   loginAction: "Iniciar sesión",
-  supabaseWarning: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+  supabaseWarning: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
   errors: {
     fullNameRequired: "Introduce tu nombre completo",
     credentialsRequired: "Introduce email y contraseña",

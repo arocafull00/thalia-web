@@ -107,22 +107,26 @@ Todas las queries a la base de datos viven en `data/`, nunca directamente en com
 - `stores/` — stores Zustand
 - `scripts/` — scripts de mantenimiento
 
-
 ## Nunca setState en useEffect con dependencia circular
 
 Si el estado que seteas está en las `deps` del efecto, es un bug.
 
 **❌**
+
 ```tsx
-useEffect(() => { setFullName(user.name) }, [user, fullName]);
+useEffect(() => {
+  setFullName(user.name);
+}, [user, fullName]);
 ```
 
 **✅ Lazy initializer**
+
 ```tsx
 const [fullName, setFullName] = useState(() => user?.name ?? "");
 ```
 
 **✅ Valor derivado**
+
 ```tsx
 const fullName = user?.name ?? "";
 ```
@@ -130,7 +134,6 @@ const fullName = user?.name ?? "";
 **✅ Zustand: inicializar en el listener de auth, no en efectos de componentes hijos**
 
 > Si un `useEffect` setea estado que está en sus propias `deps`, rediseña: el valor es derivado, no independiente.
-
 
 Utiliza siempre pnpm.
 Utiliza siempre tailwind.
@@ -144,18 +147,18 @@ Los colores viven en `app/globals.css` como variables CSS en `:root` y se expone
 
 **Usa siempre clases del tema semántico:**
 
-| Rol | Clases Tailwind |
-|-----|-----------------|
-| Fondo app | `bg-canvas` |
-| Paneles / inputs | `bg-surface` |
-| Acciones / nav activa | `bg-primary`, `hover:bg-primary-hover`, `text-on-primary` |
-| Texto | `text-ink`, `text-ink-secondary`, `text-ink-muted` |
-| Bordes | `border-border`, `border-border-subtle`, `divide-border-subtle` |
-| Focus | `ring-primary` |
-| Estado error | `text-danger`, `bg-danger` |
-| Estado aviso | `text-warning`, `bg-warning` |
-| Estado éxito | `text-success`, `bg-success` |
-| Acentos suaves | `bg-primary-subtle`, `text-primary-light` |
+| Rol                   | Clases Tailwind                                                 |
+| --------------------- | --------------------------------------------------------------- |
+| Fondo app             | `bg-canvas`                                                     |
+| Paneles / inputs      | `bg-surface`                                                    |
+| Acciones / nav activa | `bg-primary`, `hover:bg-primary-hover`, `text-on-primary`       |
+| Texto                 | `text-ink`, `text-ink-secondary`, `text-ink-muted`              |
+| Bordes                | `border-border`, `border-border-subtle`, `divide-border-subtle` |
+| Focus                 | `ring-primary`                                                  |
+| Estado error          | `text-danger`, `bg-danger`                                      |
+| Estado aviso          | `text-warning`, `bg-warning`                                    |
+| Estado éxito          | `text-success`, `bg-success`                                    |
+| Acentos suaves        | `bg-primary-subtle`, `text-primary-light`                       |
 
 **Prohibido en UI:** valores hex/rgb/oklch literales, paletas de Tailwind no definidas en el tema (`zinc-*`, `red-500`, `emerald-600`, etc.) y `style={{ color: '...' }}` / `backgroundColor` con valores fijos.
 

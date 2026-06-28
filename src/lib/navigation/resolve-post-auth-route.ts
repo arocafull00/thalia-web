@@ -111,7 +111,7 @@ export function resolvePostAuthRoute(input: PostAuthRouteInput): PostAuthRouteRe
   }
 
   if (activeMemberships.length === 0 && input.isAuthenticated) {
-    return { href: "/login" };
+    return { href: "/create-clinic" };
   }
 
   return { href: "/login" };

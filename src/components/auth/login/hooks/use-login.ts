@@ -7,6 +7,7 @@ import { signInWithGoogleFlow } from "@/lib/auth/sign-in-with-google-flow";
 import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
+import { navigateAfterAuth } from "@/lib/navigation/navigate-after-auth";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 
 export function useLogin() {
@@ -30,9 +31,9 @@ export function useLogin() {
 
     try {
       await signIn(email.trim(), password);
+      await navigateAfterAuth();
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "No se pudo iniciar sesión");
-    } finally {
       setSubmitting(false);
     }
   };

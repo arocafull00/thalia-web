@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { LogOut } from "lucide-react";
 
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { captureEvent } from "@/lib/analytics";
@@ -22,7 +23,7 @@ import { ActionButton, Notice } from "@/components/ui/primitives";
 
 export default function CreateClinicPageClient() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const { href, ready } = usePostAuthRedirect(Boolean(user));
   const fetchMemberships = useClinicStore((state) => state.fetchMemberships);
   const setActiveClinic = useClinicStore((state) => state.setActiveClinic);
@@ -32,20 +33,15 @@ export default function CreateClinicPageClient() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (!loading && !user) {
-    router.replace("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (loading) return;
+    if (!user) { router.replace("/login"); return; }
+    if (!hasRegistrationProfile(user)) { router.replace("/register-employee"); return; }
+    if (ready && href && href !== "/create-clinic") { router.replace(href); }
+  }, [loading, user, ready, href, router]);
 
-  if (!loading && user && !hasRegistrationProfile(user)) {
-    router.replace("/register-employee");
-    return null;
-  }
-
-  if (user && ready && href && href !== "/create-clinic") {
-    router.replace(href);
-    return null;
-  }
+  if (loading || !user) return null;
+  if (ready && href && href !== "/create-clinic") return null;
 
   const handleContinue = async () => {
     const clinicValues = { clinicName, address, clinicPhone };
@@ -140,11 +136,20 @@ export default function CreateClinicPageClient() {
           </label>
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
-        <div className="flex justify-end gap-3">
-          <Link href="/register-employee" className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide">
-            Atrás
-          </Link>
-          <ActionButton title={submitting ? "Creando..." : "Continuar"} disabled={submitting} onClick={() => void handleContinue()} />
+        <div className="flex items-center justify-between gap-3">
+          <button
+            onClick={() => void signOut()}
+            className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
+          >
+            <LogOut size={14} />
+            Salir
+          </button>
+          <div className="flex gap-3">
+            <Link href="/register-employee" className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide">
+              Atrás
+            </Link>
+            <ActionButton title={submitting ? "Creando..." : "Continuar"} disabled={submitting} onClick={() => void handleContinue()} />
+          </div>
         </div>
       </div>
     </div>

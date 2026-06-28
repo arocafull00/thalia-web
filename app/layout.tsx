@@ -4,6 +4,7 @@ import { Theme } from "@radix-ui/themes";
 import { ToastContainer } from "react-toastify";
 
 import AuthProvider from "@/components/providers/auth-provider";
+import PwaInstallProvider from "@/components/providers/pwa-install-provider";
 import ServiceWorkerProvider from "@/components/providers/service-worker-provider";
 
 import "./globals.css";
@@ -39,10 +40,12 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-canvas text-ink">
         <Theme accentColor="teal" grayColor="gray" radius="large">
           <ServiceWorkerProvider>
-            <AuthProvider>
-              {children}
-              <ToastContainer position="bottom-right" autoClose={4000} />
-            </AuthProvider>
+            <PwaInstallProvider>
+              <AuthProvider>
+                {children}
+                <ToastContainer position="bottom-right" autoClose={4000} />
+              </AuthProvider>
+            </PwaInstallProvider>
           </ServiceWorkerProvider>
         </Theme>
       </body>

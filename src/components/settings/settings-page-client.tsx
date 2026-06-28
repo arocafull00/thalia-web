@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
+import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
 import SettingsProfilePanel from "@/components/settings/settings-profile-panel";
 import { ActionButton, Notice, PageHeader } from "@/components/ui/primitives";
 import { buildProfileSubtitle, useSettingsPageActions } from "@/lib/hooks/use-settings-page";
@@ -106,6 +107,7 @@ export default function SettingsPageClient() {
               </div>
             </section>
           ) : null}
+          <PwaInstallPanel />
           <section className="border-t border-border pt-6">
             <ActionButton
               title={signOutSubmitting ? "Cerrando sesión..." : "Cerrar sesión"}

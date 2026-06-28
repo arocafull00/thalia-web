@@ -4,6 +4,7 @@ import { Theme } from "@radix-ui/themes";
 import { ToastContainer } from "react-toastify";
 
 import AuthProvider from "@/components/providers/auth-provider";
+import ServiceWorkerProvider from "@/components/providers/service-worker-provider";
 
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
@@ -37,10 +38,12 @@ export default function RootLayout({
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-canvas text-ink">
         <Theme accentColor="teal" grayColor="gray" radius="large">
-          <AuthProvider>
-            {children}
-            <ToastContainer position="bottom-right" autoClose={4000} />
-          </AuthProvider>
+          <ServiceWorkerProvider>
+            <AuthProvider>
+              {children}
+              <ToastContainer position="bottom-right" autoClose={4000} />
+            </AuthProvider>
+          </ServiceWorkerProvider>
         </Theme>
       </body>
     </html>

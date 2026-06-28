@@ -6,10 +6,12 @@ import { useEffect } from "react";
 import RegisterEmployeeForm from "@/components/auth/register-employee/components/register-employee-form";
 import RegisterEmployeeSidebar from "@/components/auth/register-employee/components/register-employee-sidebar";
 import { useRegisterEmployee } from "@/components/auth/register-employee/hooks/use-register-employee";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 
 export default function RegisterEmployeePageClient() {
   const router = useRouter();
+  const { signOut } = useAuth();
   const intent = useOnboardingIntentStore((state) => state.intent);
   const resolvedIntent = intent ?? "owner";
   const {
@@ -58,6 +60,7 @@ export default function RegisterEmployeePageClient() {
         onFullNameChange={onFullNameChange}
         onLoginPress={() => router.replace("/login")}
         onPasswordChange={onPasswordChange}
+        onSignOut={() => hasSession ? void signOut() : router.replace("/login")}
         password={password}
         submitting={submitting}
       />

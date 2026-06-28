@@ -1,3 +1,5 @@
+import { LogOut } from "lucide-react";
+
 import { REGISTER_EMPLOYEE_FORM_COPY } from "@/components/auth/register-employee/register-employee-copy";
 import { ActionButton, Notice } from "@/components/ui/primitives";
 
@@ -19,6 +21,7 @@ type RegisterEmployeeFormProps = {
   onFullNameChange: (value: string) => void;
   onLoginPress: () => void;
   onPasswordChange: (value: string) => void;
+  onSignOut: () => void;
   password: string;
   submitting: boolean;
 };
@@ -36,6 +39,7 @@ export default function RegisterEmployeeForm({
   onFullNameChange,
   onLoginPress,
   onPasswordChange,
+  onSignOut,
   password,
   submitting,
 }: RegisterEmployeeFormProps) {
@@ -88,11 +92,21 @@ export default function RegisterEmployeeForm({
           <Notice tone="warning" message={REGISTER_EMPLOYEE_FORM_COPY.supabaseWarning} />
         ) : null}
         {error ? <Notice tone="danger" message={error} /> : null}
-        <ActionButton
-          title={submitting ? REGISTER_EMPLOYEE_FORM_COPY.savingButton : REGISTER_EMPLOYEE_FORM_COPY.continueButton}
-          disabled={authDisabled}
-          onClick={() => void onContinue()}
-        />
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
+          >
+            <LogOut size={14} />
+            Salir
+          </button>
+          <ActionButton
+            title={submitting ? REGISTER_EMPLOYEE_FORM_COPY.savingButton : REGISTER_EMPLOYEE_FORM_COPY.continueButton}
+            disabled={authDisabled}
+            onClick={() => void onContinue()}
+          />
+        </div>
         {!hasSession ? (
           <button type="button" onClick={onLoginPress} className="w-full text-center text-sm text-ink-secondary">
             {REGISTER_EMPLOYEE_FORM_COPY.loginPrompt}{" "}

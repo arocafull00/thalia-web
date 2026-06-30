@@ -18,15 +18,20 @@ const SIDEBAR_COPY: Record<OnboardingIntent, SidebarCopy> = {
   },
 };
 
-const REGISTER_COPY: Record<OnboardingIntent, Record<"withSession" | "withoutSession", RegisterCopy>> = {
+const REGISTER_COPY: Record<
+  OnboardingIntent,
+  Record<"withSession" | "withoutSession", RegisterCopy>
+> = {
   employee: {
     withSession: {
       title: "Crea tu cuenta",
-      subtitle: "Confirma tu nombre para unirte a las clínicas que te soliciten.",
+      subtitle:
+        "Confirma tu nombre para unirte a las clínicas que te soliciten.",
     },
     withoutSession: {
       title: "Crea tu cuenta",
-      subtitle: "Una cuenta para recibir solicitudes de las clínicas que te añadan.",
+      subtitle:
+        "Una cuenta para recibir solicitudes de las clínicas que te añadan.",
     },
   },
   owner: {
@@ -36,7 +41,8 @@ const REGISTER_COPY: Record<OnboardingIntent, Record<"withSession" | "withoutSes
     },
     withoutSession: {
       title: "Tu perfil",
-      subtitle: "Crea tu cuenta de administrador. En el siguiente paso configurarás la clínica.",
+      subtitle:
+        "Crea tu cuenta de administrador. En el siguiente paso configurarás la clínica.",
     },
   },
 };
@@ -49,7 +55,8 @@ export const REGISTER_EMPLOYEE_FORM_COPY = {
   savingButton: "Guardando...",
   loginPrompt: "¿Ya tienes cuenta?",
   loginAction: "Iniciar sesión",
-  supabaseWarning: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+  supabaseWarning:
+    "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
   errors: {
     fullNameRequired: "Introduce tu nombre completo",
     credentialsRequired: "Introduce email y contraseña",
@@ -62,7 +69,10 @@ export const REGISTER_EMPLOYEE_SIDEBAR_COPY = {
   stepLabel: (current: number, total: number) => `Paso ${current} de ${total}`,
 } as const;
 
-export function getRegisterCopy(intent: OnboardingIntent, hasSession: boolean): RegisterCopy {
+export function getRegisterCopy(
+  intent: OnboardingIntent,
+  hasSession: boolean,
+): RegisterCopy {
   const sessionKey = hasSession ? "withSession" : "withoutSession";
 
   return REGISTER_COPY[intent][sessionKey];

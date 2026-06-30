@@ -2,8 +2,9 @@ import type { FormEvent } from "react";
 
 import LoginAuthTabs from "@/components/auth/login/components/login-auth-tabs";
 import LoginFormFields from "@/components/auth/login/components/login-form-fields";
-import { LOGIN_COPY } from "@/components/auth/login/login-copy";
-import { ActionButton, Notice } from "@/components/ui/primitives";
+import { ActionButton } from "@/components/ui/primitives/action-button";
+import { Notice } from "@/components/ui/primitives/notice";
+import { LOGIN_COPY } from "@/copy/login-copy";
 
 type LoginFormPanelProps = {
   authDisabled: boolean;
@@ -44,13 +45,17 @@ export default function LoginFormPanel({
   return (
     <section className="flex min-h-screen flex-1 flex-col bg-surface">
       <header className="p-6 lg:p-8">
-        <span className="text-xl font-semibold tracking-tight text-ink">{LOGIN_COPY.brand}</span>
+        <span className="text-xl font-semibold tracking-tight text-ink">
+          {LOGIN_COPY.brand}
+        </span>
       </header>
 
       <div className="flex flex-1 items-center justify-center px-6 pb-6 lg:px-8">
         <div className="w-full max-w-[440px] space-y-6">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-medium text-ink">{LOGIN_COPY.title}</h1>
+            <h1 className="text-2xl font-medium text-ink">
+              {LOGIN_COPY.title}
+            </h1>
             <p className="text-sm text-ink-secondary">{LOGIN_COPY.subtitle}</p>
           </div>
 
@@ -81,7 +86,9 @@ export default function LoginFormPanel({
 
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-border-subtle" />
-              <span className="text-xs text-ink-muted">{LOGIN_COPY.divider}</span>
+              <span className="text-xs text-ink-muted">
+                {LOGIN_COPY.divider}
+              </span>
               <div className="h-px flex-1 bg-border-subtle" />
             </div>
 

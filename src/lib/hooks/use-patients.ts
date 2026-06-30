@@ -29,6 +29,10 @@ export function usePatient(patientId: string) {
   const fetchPatient = usePatientsStore((state) => state.fetchPatient);
 
   useEffect(() => {
+    if (!patientId.trim()) {
+      return;
+    }
+
     void fetchPatient(patientId);
   }, [fetchPatient, patientId]);
 
@@ -40,8 +44,12 @@ export function usePatient(patientId: string) {
 }
 
 export function usePatientAppointments(patientId: string) {
-  const entry = usePatientsStore((state) => state.appointmentsByPatientId[patientId]);
-  const fetchPatientAppointments = usePatientsStore((state) => state.fetchPatientAppointments);
+  const entry = usePatientsStore(
+    (state) => state.appointmentsByPatientId[patientId],
+  );
+  const fetchPatientAppointments = usePatientsStore(
+    (state) => state.fetchPatientAppointments,
+  );
 
   useEffect(() => {
     void fetchPatientAppointments(patientId);
@@ -55,7 +63,9 @@ export function usePatientAppointments(patientId: string) {
 }
 
 export function useUpcomingPatientAppointments(patientId: string) {
-  const entry = usePatientsStore((state) => state.upcomingByPatientId[patientId]);
+  const entry = usePatientsStore(
+    (state) => state.upcomingByPatientId[patientId],
+  );
   const fetchUpcomingPatientAppointments = usePatientsStore(
     (state) => state.fetchUpcomingPatientAppointments,
   );
@@ -103,7 +113,9 @@ export function useUpdatePatient() {
 }
 
 export function useUploadPatientAvatar() {
-  const uploadPatientAvatar = usePatientsStore((state) => state.uploadPatientAvatar);
+  const uploadPatientAvatar = usePatientsStore(
+    (state) => state.uploadPatientAvatar,
+  );
   const isPending = usePatientsStore((state) => state.uploadingAvatar);
   const error = usePatientsStore((state) => state.uploadAvatarError);
 
@@ -112,7 +124,9 @@ export function useUploadPatientAvatar() {
       { patientId, imageUri }: { patientId: string; imageUri: string },
       options?: { onSuccess?: () => void },
     ) => {
-      uploadPatientAvatar(patientId, imageUri).then(() => options?.onSuccess?.());
+      uploadPatientAvatar(patientId, imageUri).then(() =>
+        options?.onSuccess?.(),
+      );
     },
     [uploadPatientAvatar],
   );

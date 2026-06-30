@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 
-import { CALENDAR_COPY } from "@/components/calendar/calendar-copy";
-import { ActionButton } from "@/components/ui/primitives";
+import { ActionButton } from "@/components/ui/primitives/action-button";
+import { CALENDAR_COPY } from "@/copy/calendar-copy";
 
 type CalendarToolbarProps = {
   weekRangeLabel: string;
@@ -29,9 +29,13 @@ export default function CalendarToolbar({
     <div className="flex shrink-0 items-center gap-3 border-b border-border bg-surface px-4 py-3">
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="truncate text-sm font-medium text-ink">{weekRangeLabel}</span>
+          <span className="truncate text-sm font-medium text-ink">
+            {weekRangeLabel}
+          </span>
           {isLoading ? (
-            <span className="shrink-0 text-xs text-ink-muted">{loadingLabel}</span>
+            <span className="shrink-0 text-xs text-ink-muted">
+              {loadingLabel}
+            </span>
           ) : null}
         </div>
         <button
@@ -60,7 +64,10 @@ export default function CalendarToolbar({
       </div>
       <div className="flex items-center gap-3">
         {filter}
-        <ActionButton title={CALENDAR_COPY.toolbar.newAppointment} onClick={onNewAppointment} />
+        <ActionButton
+          title={CALENDAR_COPY.toolbar.newAppointment}
+          onClick={onNewAppointment}
+        />
       </div>
     </div>
   );

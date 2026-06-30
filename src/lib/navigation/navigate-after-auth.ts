@@ -1,12 +1,10 @@
+import { resolvePostAuthRoute } from "@/lib/navigation/resolve-post-auth-route";
+import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicStore } from "@/stores/clinic-store";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
-import { supabase } from "@/lib/supabase";
-import {
-  resolvePostAuthRoute,
-} from "@/lib/navigation/resolve-post-auth-route";
-import { usePendingInviteStore } from "@/stores/pending-invite-store";
 import { useOnboardingStore } from "@/stores/onboarding-store";
+import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
 export async function navigateAfterAuth() {
   const session = (await supabase.auth.getSession()).data.session;

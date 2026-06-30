@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
+
+import { ActionButton } from "@/components/ui/primitives/action-button";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
-import { ActionButton } from "@/components/ui/primitives";
 
 type SettingsProfilePanelProps = {
   uploadingAvatar: boolean;
@@ -34,7 +36,14 @@ export default function SettingsProfilePanel({
         className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-border bg-primary-subtle/40 disabled:opacity-60"
       >
         {displayUri ? (
-          <img src={displayUri} alt="" className="h-full w-full object-cover" />
+          <Image
+            src={displayUri}
+            alt=""
+            width={80}
+            height={80}
+            unoptimized
+            className="h-full w-full object-cover"
+          />
         ) : (
           <span className="text-sm text-ink-muted">Foto</span>
         )}
@@ -47,11 +56,19 @@ export default function SettingsProfilePanel({
       </div>
       <div className="flex flex-wrap gap-2">
         {isAdmin ? (
-          <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">Administrador de Clínica</span>
+          <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">
+            Administrador de Clínica
+          </span>
         ) : null}
-        <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">Suscripción Pro</span>
+        <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">
+          Suscripción Pro
+        </span>
       </div>
-      <ActionButton title="Editar perfil" variant="ghost" onClick={() => globalThis.location.assign("/settings/edit")} />
+      <ActionButton
+        title="Editar perfil"
+        variant="ghost"
+        onClick={() => globalThis.location.assign("/settings/edit")}
+      />
     </div>
   );
 }

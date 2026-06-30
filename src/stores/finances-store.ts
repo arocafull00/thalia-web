@@ -4,7 +4,6 @@ import { create } from "zustand";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import {
-  emptyQueryEntry,
   errorQueryEntry,
   loadingQueryEntry,
   successQueryEntry,
@@ -47,7 +46,10 @@ type FinancesStore = {
   summaryByKey: Record<string, QueryEntry<FinancialSummary>>;
   creating: boolean;
   createError: Error | null;
-  fetchTransactions: (month: Date, type: TransactionType | "all") => Promise<void>;
+  fetchTransactions: (
+    month: Date,
+    type: TransactionType | "all",
+  ) => Promise<void>;
   fetchFinancialSummary: (month: Date) => Promise<void>;
   createTransaction: (input: TransactionInput) => Promise<Transaction>;
 };
@@ -61,7 +63,12 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   fetchTransactions: async (month, type) => {
     const key = transactionsKey(month, type);
     const previous = get().transactionsByKey[key];
-    set({ transactionsByKey: { ...get().transactionsByKey, [key]: loadingQueryEntry(previous) } });
+    set({
+      transactionsByKey: {
+        ...get().transactionsByKey,
+        [key]: loadingQueryEntry(previous),
+      },
+    });
 
     try {
       const from = format(startOfMonth(month), "yyyy-MM-dd");
@@ -80,7 +87,10 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       const { data, error } = await query;
       const transactions = unwrapSupabaseList(data, error) as Transaction[];
       set({
-        transactionsByKey: { ...get().transactionsByKey, [key]: successQueryEntry(transactions) },
+        transactionsByKey: {
+          ...get().transactionsByKey,
+          [key]: successQueryEntry(transactions),
+        },
       });
     } catch (cause) {
       set({
@@ -98,7 +108,12 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   fetchFinancialSummary: async (month) => {
     const key = summaryKey(month);
     const previous = get().summaryByKey[key];
-    set({ summaryByKey: { ...get().summaryByKey, [key]: loadingQueryEntry(previous) } });
+    set({
+      summaryByKey: {
+        ...get().summaryByKey,
+        [key]: loadingQueryEntry(previous),
+      },
+    });
 
     try {
       const currentFrom = format(startOfMonth(month), "yyyy-MM-dd");
@@ -108,8 +123,16 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       const previousTo = format(endOfMonth(previousMonth), "yyyy-MM-dd");
 
       const [currentResponse, previousResponse] = await Promise.all([
-        supabase.from("transactions").select("*").gte("date", currentFrom).lte("date", currentTo),
-        supabase.from("transactions").select("*").gte("date", previousFrom).lte("date", previousTo),
+        supabase
+          .from("transactions")
+          .select("*")
+          .gte("date", currentFrom)
+          .lte("date", currentTo),
+        supabase
+          .from("transactions")
+          .select("*")
+          .gte("date", previousFrom)
+          .lte("date", previousTo),
       ]);
 
       const current = unwrapSupabaseList(
@@ -127,7 +150,12 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         .filter((transaction) => transaction.type === "expense")
         .reduce((total, transaction) => total + transaction.amount, 0);
       const previousNet = previousTransactions.reduce((total, transaction) => {
-        return total + (transaction.type === "income" ? transaction.amount : -transaction.amount);
+        return (
+          total +
+          (transaction.type === "income"
+            ? transaction.amount
+            : -transaction.amount)
+        );
       }, 0);
       const net = income - expenses;
 
@@ -155,7 +183,12 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         }),
       };
 
-      set({ summaryByKey: { ...get().summaryByKey, [key]: successQueryEntry(summary) } });
+      set({
+        summaryByKey: {
+          ...get().summaryByKey,
+          [key]: successQueryEntry(summary),
+        },
+      });
     } catch (cause) {
       set({
         summaryByKey: {
@@ -183,15 +216,20 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       const transactionKeys = Object.keys(get().transactionsByKey);
       await Promise.all(
         transactionKeys.map((key) => {
-          const [from, to, type] = key.split(":");
+          const [from, , type] = key.split(":");
           const month = new Date(from);
-          return get().fetchTransactions(month, type as TransactionType | "all");
+          return get().fetchTransactions(
+            month,
+            type as TransactionType | "all",
+          );
         }),
       );
 
       const summaryKeys = Object.keys(get().summaryByKey);
       await Promise.all(
-        summaryKeys.map((key) => get().fetchFinancialSummary(new Date(`${key}-01`))),
+        summaryKeys.map((key) =>
+          get().fetchFinancialSummary(new Date(`${key}-01`)),
+        ),
       );
 
       set({ creating: false });
@@ -220,6 +258,8 @@ export function transactionsToCsv(transactions: Transaction[]) {
   });
 
   return rows
-    .map((row) => row.map((value) => `"${value.replaceAll('"', '""')}"`).join(","))
+    .map((row) =>
+      row.map((value) => `"${value.replaceAll('"', '""')}"`).join(","),
+    )
     .join("\n");
 }

@@ -15,11 +15,13 @@ export { transactionsToCsv };
 export function useTransactions(month: Date, type: TransactionType | "all") {
   const key = transactionsKey(month, type);
   const entry = useFinancesStore((state) => state.transactionsByKey[key]);
-  const fetchTransactions = useFinancesStore((state) => state.fetchTransactions);
+  const fetchTransactions = useFinancesStore(
+    (state) => state.fetchTransactions,
+  );
 
   useEffect(() => {
     void fetchTransactions(month, type);
-  }, [fetchTransactions, key]);
+  }, [fetchTransactions, key, month, type]);
 
   return {
     data: entry?.data ?? undefined,
@@ -31,11 +33,13 @@ export function useTransactions(month: Date, type: TransactionType | "all") {
 export function useFinancialSummary(month: Date) {
   const key = summaryKey(month);
   const entry = useFinancesStore((state) => state.summaryByKey[key]);
-  const fetchFinancialSummary = useFinancesStore((state) => state.fetchFinancialSummary);
+  const fetchFinancialSummary = useFinancesStore(
+    (state) => state.fetchFinancialSummary,
+  );
 
   useEffect(() => {
     void fetchFinancialSummary(month);
-  }, [fetchFinancialSummary, key]);
+  }, [fetchFinancialSummary, key, month]);
 
   return {
     data: entry?.data ?? undefined,
@@ -45,7 +49,9 @@ export function useFinancialSummary(month: Date) {
 }
 
 export function useCreateTransaction() {
-  const createTransaction = useFinancesStore((state) => state.createTransaction);
+  const createTransaction = useFinancesStore(
+    (state) => state.createTransaction,
+  );
   const isPending = useFinancesStore((state) => state.creating);
   const error = useFinancesStore((state) => state.createError);
 
@@ -57,7 +63,9 @@ export function useCreateTransaction() {
       createTransaction(input)
         .then(() => options?.onSuccess?.())
         .catch((cause) =>
-          options?.onError?.(cause instanceof Error ? cause : new Error(String(cause))),
+          options?.onError?.(
+            cause instanceof Error ? cause : new Error(String(cause)),
+          ),
         );
     },
     [createTransaction],

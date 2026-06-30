@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   getRegisterCopy,
   REGISTER_EMPLOYEE_FORM_COPY,
-} from "@/components/auth/register-employee/register-employee-copy";
+} from "@/copy/register-employee-copy";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -14,7 +14,10 @@ import {
   OWNER_REGISTRATION_STEP_COUNT,
 } from "@/lib/registration-metadata";
 import { supabase } from "@/lib/supabase";
-import { useOnboardingIntentStore, type OnboardingIntent } from "@/stores/onboarding-intent-store";
+import {
+  useOnboardingIntentStore,
+  type OnboardingIntent,
+} from "@/stores/onboarding-intent-store";
 
 export function useRegisterEmployee() {
   const { signUp, user } = useAuth();
@@ -27,15 +30,22 @@ export function useRegisterEmployee() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const metadataFullName = typeof user?.user_metadata.full_name === "string" ? user.user_metadata.full_name : "";
+  const metadataFullName =
+    typeof user?.user_metadata.full_name === "string"
+      ? user.user_metadata.full_name
+      : "";
   const fullName = fullNameOverride ?? metadataFullName;
   const resolvedIntent: OnboardingIntent = intent ?? "owner";
   const isOwner = resolvedIntent === "owner";
-  const stepTotal = isOwner ? OWNER_REGISTRATION_STEP_COUNT : EMPLOYEE_REGISTRATION_STEP_COUNT;
+  const stepTotal = isOwner
+    ? OWNER_REGISTRATION_STEP_COUNT
+    : EMPLOYEE_REGISTRATION_STEP_COUNT;
   const hasSession = Boolean(user);
   const copy = getRegisterCopy(resolvedIntent, hasSession);
   const authDisabled = submitting || !isSupabaseConfigured;
-  const shouldRedirect = Boolean(user && ready && href && href !== "/register-employee");
+  const shouldRedirect = Boolean(
+    user && ready && href && href !== "/register-employee",
+  );
   const redirectHref = shouldRedirect ? href : null;
 
   const handleContinue = async () => {
@@ -77,7 +87,11 @@ export function useRegisterEmployee() {
 
       await waitForAuthSessionReady();
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : REGISTER_EMPLOYEE_FORM_COPY.errors.saveFailed);
+      setError(
+        nextError instanceof Error
+          ? nextError.message
+          : REGISTER_EMPLOYEE_FORM_COPY.errors.saveFailed,
+      );
     } finally {
       setSubmitting(false);
     }

@@ -12,14 +12,19 @@ export function useInventoryPage(externalSearch?: string) {
   const [page, setPage] = useState(1);
   const inventory = useInventoryItems();
 
-  const items = inventory.data ?? [];
+  const items = useMemo(() => inventory.data ?? [], [inventory.data]);
   const summary = useMemo(() => inventoryStockSummaryCounts(items), [items]);
 
   const categories = useMemo(() => {
     const uniqueCategories = [
       ...new Set(items.map((item) => item.category).filter(Boolean)),
     ] as string[];
-    return ["Todos", ...uniqueCategories.sort((left, right) => left.localeCompare(right, "es"))];
+    return [
+      "Todos",
+      ...uniqueCategories.sort((left, right) =>
+        left.localeCompare(right, "es"),
+      ),
+    ];
   }, [items]);
 
   const filteredItems = useMemo(() => {

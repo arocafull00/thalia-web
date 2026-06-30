@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
+import { useAuth } from "@/lib/hooks/use-auth";
 import {
   resolvePostAuthRoute,
   resolveUnauthenticatedRoute,
 } from "@/lib/navigation/resolve-post-auth-route";
-import { useAuth } from "@/lib/hooks/use-auth";
 import { supabase } from "@/lib/supabase";
 import { useClinicStore } from "@/stores/clinic-store";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
@@ -43,7 +43,9 @@ export function usePostAuthRedirect(enabled: boolean) {
         }
       }
 
-      const resolvedMemberships = resolvedUser ? await fetchMemberships(resolvedUser.id) : [];
+      const resolvedMemberships = resolvedUser
+        ? await fetchMemberships(resolvedUser.id)
+        : [];
 
       if (cancelled) {
         return;
@@ -82,6 +84,7 @@ export function usePostAuthRedirect(enabled: boolean) {
     enabled,
     authLoading,
     clinicHydrated,
+    user,
     user?.id,
     user?.user_metadata?.full_name,
     user?.user_metadata?.registration_profile_complete,

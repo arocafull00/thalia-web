@@ -1,13 +1,16 @@
 "use client";
 
-import { X } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 
-import { APP_DIALOG_COPY } from "@/components/ui/app-dialog-copy";
+import { APP_DIALOG_COPY } from "@/copy/app-dialog-copy";
 
 type AppDialogCloseProps = Dialog.DialogCloseProps;
 
-export default function AppDialogClose({ className, ...props }: AppDialogCloseProps) {
+export default function AppDialogClose({
+  className,
+  ...props
+}: AppDialogCloseProps) {
   return (
     <Dialog.Close
       className={

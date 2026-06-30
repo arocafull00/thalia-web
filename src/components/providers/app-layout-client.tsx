@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import AppShell from "@/components/ui/app-shell";
-import { Notice } from "@/components/ui/primitives";
-import { useAuth } from "@/lib/hooks/use-auth";
+import { Notice } from "@/components/ui/primitives/notice";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { useShellStore } from "@/stores/shell-store";
 
 type AppLayoutClientProps = {
@@ -20,7 +20,9 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
   const setNavVisibility = useShellStore((state) => state.setNavVisibility);
 
   const canManageClinic =
-    platformRole === "owner" || platformRole === "admin" || platformRole === null;
+    platformRole === "owner" ||
+    platformRole === "admin" ||
+    platformRole === null;
 
   useEffect(() => {
     if (loading) {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 import { useDashboardStore } from "@/stores/dashboard-store";
 

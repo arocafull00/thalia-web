@@ -1,13 +1,25 @@
 "use client";
 
-import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
-import { ActionButton, Notice, PageHeader, SkeletonList } from "@/components/ui/primitives";
+import EmployeeInviteForm from "@/components/employees/components/employee-invite-form";
+import AppDialog from "@/components/ui/app-dialog";
+import AppDialogContent from "@/components/ui/app-dialog-content";
+import AppDialogDescription from "@/components/ui/app-dialog-description";
+import AppDialogFooter from "@/components/ui/app-dialog-footer";
+import AppDialogHeader from "@/components/ui/app-dialog-header";
+import AppDialogTitle from "@/components/ui/app-dialog-title";
+import { ActionButton } from "@/components/ui/primitives/action-button";
+import { Notice } from "@/components/ui/primitives/notice";
+import { PageHeader } from "@/components/ui/primitives/page-header";
+import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { useEmployeeInviteDialog } from "@/lib/hooks/use-employee-invite-dialog";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { useEmployeesUiStore } from "@/stores/employees-ui-store";
 import { useTopbarSearchStore } from "@/stores/topbar-search-store";
@@ -24,6 +36,7 @@ const roles: Array<{ value: EmployeeRole | ""; label: string }> = [
 
 export default function EmployeesPageClient() {
   const router = useRouter();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { profile } = useAuth();
   const { platformRole } = useActiveClinic();
   const employees = useEmployees();
@@ -31,9 +44,12 @@ export default function EmployeesPageClient() {
   const role = useEmployeesUiStore((state) => state.roleFilter);
   const setRoleFilter = useEmployeesUiStore((state) => state.setRoleFilter);
   const debouncedSearch = useDebouncedValue(topbarQuery, SEARCH_DEBOUNCE_MS);
+  const dialog = useEmployeeInviteDialog(() => setDialogOpen(false));
   const canManage =
-    platformRole === "owner" || platformRole === "admin" || profile?.role === "admin";
-  const employeeData = employees.data ?? [];
+    platformRole === "owner" ||
+    platformRole === "admin" ||
+    profile?.role === "admin";
+  const employeeData = useMemo(() => employees.data ?? [], [employees.data]);
 
   const filteredEmployees = useMemo(() => {
     const normalizedSearch = debouncedSearch.trim().toLowerCase();
@@ -58,7 +74,18 @@ export default function EmployeesPageClient() {
   const hasEmployees = employeeData.length > 0;
   const hasActiveFilters = Boolean(debouncedSearch.trim() || role);
   const showEmptyState =
-    !employees.isLoading && !employees.error && !hasActiveFilters && !hasEmployees;
+    !employees.isLoading &&
+    !employees.error &&
+    !hasActiveFilters &&
+    !hasEmployees;
+
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      dialog.reset();
+    }
+
+    setDialogOpen(nextOpen);
+  };
 
   if (!canManage) {
     return (
@@ -71,8 +98,14 @@ export default function EmployeesPageClient() {
   return (
     <div className="space-y-6 p-8">
       <div className="flex items-start justify-between gap-4">
-        <PageHeader subtitle={`${employeeData.length} profesionales registrados`} title="Personal" />
-        <ActionButton title="Invitar personal" onClick={() => router.push("/settings/team")} />
+        <PageHeader
+          subtitle={`${employeeData.length} profesionales registrados`}
+          title="Personal"
+        />
+        <ActionButton
+          title="Invitar personal"
+          onClick={() => setDialogOpen(true)}
+        />
       </div>
       <div className="flex flex-wrap gap-2">
         {roles.map((entry) => (
@@ -87,7 +120,9 @@ export default function EmployeesPageClient() {
         ))}
       </div>
       {employees.isLoading ? <SkeletonList /> : null}
-      {employees.error ? <Notice tone="danger" message="No se pudo cargar el personal." /> : null}
+      {employees.error ? (
+        <Notice tone="danger" message="No se pudo cargar el personal." />
+      ) : null}
       {showEmptyState ? (
         <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
           Todavía no hay personal registrado.
@@ -108,18 +143,64 @@ export default function EmployeesPageClient() {
               onClick={() => router.push(`/employees/${employee.id}`)}
               className="grid w-full grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-border-subtle px-4 py-4 text-left transition hover:bg-canvas"
             >
-              <span className="truncate font-medium text-ink">{employee.full_name}</span>
-              <span className="truncate text-sm text-ink-secondary">{employee.specialty ?? "-"}</span>
+              <span className="truncate font-medium text-ink">
+                {employee.full_name}
+              </span>
+              <span className="truncate text-sm text-ink-secondary">
+                {employee.specialty ?? "-"}
+              </span>
               <span className="text-xs uppercase tracking-wide text-ink-secondary">
                 {employeeRoleLabel(employee.role)}
               </span>
-              <span className={`text-xs uppercase tracking-wide ${employee.active === false ? "text-danger" : "text-success"}`}>
+              <span
+                className={`text-xs uppercase tracking-wide ${employee.active === false ? "text-danger" : "text-success"}`}
+              >
                 {employee.active === false ? "Inactivo" : "Activo"}
               </span>
             </button>
           ))}
         </div>
       ) : null}
+      <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
+        <AppDialogContent className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-surface p-6 shadow-lg focus:outline-none">
+          <AppDialogHeader>
+            <AppDialogTitle>{EMPLOYEE_INVITE_COPY.title}</AppDialogTitle>
+            <AppDialogDescription>
+              {EMPLOYEE_INVITE_COPY.description}
+            </AppDialogDescription>
+          </AppDialogHeader>
+          <EmployeeInviteForm
+            fullName={dialog.fullName}
+            onFullNameChange={dialog.setFullName}
+            email={dialog.email}
+            onEmailChange={dialog.setEmail}
+            role={dialog.role}
+            onRoleChange={dialog.setRole}
+            specialty={dialog.specialty}
+            onSpecialtyChange={dialog.setSpecialty}
+            phone={dialog.phone}
+            onPhoneChange={dialog.setPhone}
+          />
+          <AppDialogFooter>
+            <button
+              type="button"
+              onClick={() => handleDialogOpenChange(false)}
+              className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+            >
+              {EMPLOYEE_INVITE_COPY.actions.cancel}
+            </button>
+            <ActionButton
+              title={
+                dialog.isPending
+                  ? EMPLOYEE_INVITE_COPY.actions.saving
+                  : EMPLOYEE_INVITE_COPY.actions.save
+              }
+              disabled={dialog.isPending}
+              onClick={dialog.handleSubmit}
+            />
+          </AppDialogFooter>
+        </AppDialogContent>
+      </AppDialog>
     </div>
   );
 }

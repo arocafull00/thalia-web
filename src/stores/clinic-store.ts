@@ -1,10 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { createWebPersistStorage } from "@/lib/web-storage";
-
 import { supabase } from "@/lib/supabase";
-import type { ClinicMembershipRole, ClinicMembershipStatus } from "@/types/database.types";
+import { createWebPersistStorage } from "@/lib/web-storage";
+import type {
+  ClinicMembershipRole,
+  ClinicMembershipStatus,
+} from "@/types/database.types";
 
 export type ClinicMembershipView = {
   id: string;
@@ -49,27 +51,33 @@ export const useClinicStore = create<ClinicStore>()(
             throw new Error(error.message);
           }
 
-          const memberships: ClinicMembershipView[] = (data ?? []).map((row) => {
-            const clinicRaw = row.clinics as
-              | { id: string; name: string; logo_url: string | null }
-              | { id: string; name: string; logo_url: string | null }[]
-              | null;
-            const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;
+          const memberships: ClinicMembershipView[] = (data ?? []).map(
+            (row) => {
+              const clinicRaw = row.clinics as
+                | { id: string; name: string; logo_url: string | null }
+                | { id: string; name: string; logo_url: string | null }[]
+                | null;
+              const clinic = Array.isArray(clinicRaw)
+                ? clinicRaw[0]
+                : clinicRaw;
 
-            return {
-              id: row.id,
-              clinicId: row.clinic_id,
-              clinicName: clinic?.name ?? "Clínica",
-              clinicLogoUrl: clinic?.logo_url ?? null,
-              role: row.role as ClinicMembershipRole,
-              status: row.status as ClinicMembershipStatus,
-            };
-          });
+              return {
+                id: row.id,
+                clinicId: row.clinic_id,
+                clinicName: clinic?.name ?? "Clínica",
+                clinicLogoUrl: clinic?.logo_url ?? null,
+                role: row.role as ClinicMembershipRole,
+                status: row.status as ClinicMembershipStatus,
+              };
+            },
+          );
 
           const { activeClinicId } = get();
           const validActive =
             activeClinicId &&
-            memberships.some((membership) => membership.clinicId === activeClinicId)
+            memberships.some(
+              (membership) => membership.clinicId === activeClinicId,
+            )
               ? activeClinicId
               : memberships.length === 1
                 ? memberships[0].clinicId
@@ -98,11 +106,17 @@ export const useClinicStore = create<ClinicStore>()(
           return null;
         }
 
-        return memberships.find((membership) => membership.clinicId === activeClinicId) ?? null;
+        return (
+          memberships.find(
+            (membership) => membership.clinicId === activeClinicId,
+          ) ?? null
+        );
       },
 
       getExternalMemberships: () => {
-        return get().memberships.filter((membership) => membership.role === "external");
+        return get().memberships.filter(
+          (membership) => membership.role === "external",
+        );
       },
     }),
     {

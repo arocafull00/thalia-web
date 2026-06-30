@@ -1,4 +1,4 @@
-import { LOGIN_COPY } from "@/components/auth/login/login-copy";
+import { LOGIN_COPY } from "@/copy/login-copy";
 
 type LoginAuthTabsProps = {
   onRegisterPress: () => void;

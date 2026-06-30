@@ -1,11 +1,15 @@
 "use client";
 
+import { useState } from "react";
+
+import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import CalendarEmployeeFilter from "@/components/calendar/calendar-employee-filter";
 import CalendarToolbar from "@/components/calendar/components/calendar-toolbar";
 import { useCalendarPage } from "@/components/calendar/hooks/use-calendar-page";
 import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
 
 export default function CalendarPageClient() {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const {
     weekRangeLabel,
     isLoading,
@@ -13,7 +17,6 @@ export default function CalendarPageClient() {
     onPreviousWeek,
     onNextWeek,
     onToday,
-    onNewAppointment,
   } = useCalendarPage();
 
   return (
@@ -26,11 +29,12 @@ export default function CalendarPageClient() {
         onPreviousWeek={onPreviousWeek}
         onNextWeek={onNextWeek}
         onToday={onToday}
-        onNewAppointment={onNewAppointment}
+        onNewAppointment={() => setDialogOpen(true)}
       />
       <div className="min-h-0 flex-1 bg-surface">
         <ScheduleXCalendar />
       </div>
+      <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }

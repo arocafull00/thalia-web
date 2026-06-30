@@ -1,10 +1,10 @@
 "use client";
 
+import * as Popover from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import * as Popover from "@radix-ui/react-popover";
+import { useRef, useState } from "react";
 
 import { useFinancesUiStore } from "@/stores/finances-ui-store";
 
@@ -14,13 +14,17 @@ export default function FinancesMonthSelector() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(format(month, "yyyy-MM"));
   const containerRef = useRef<HTMLDivElement>(null);
-  const monthLabel = format(month, "MMMM yyyy", { locale: es }).replace(/^\w/, (character) =>
-    character.toUpperCase(),
+  const monthLabel = format(month, "MMMM yyyy", { locale: es }).replace(
+    /^\w/,
+    (character) => character.toUpperCase(),
   );
 
-  useEffect(() => {
-    setValue(format(month, "yyyy-MM"));
-  }, [month]);
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      setValue(format(month, "yyyy-MM"));
+    }
+    setOpen(nextOpen);
+  };
 
   const handleSelect = () => {
     const [year, monthPart] = value.split("-").map(Number);
@@ -31,7 +35,7 @@ export default function FinancesMonthSelector() {
   return (
     <div ref={containerRef} className="flex items-center justify-between">
       <h2 className="text-lg font-medium capitalize text-ink">{monthLabel}</h2>
-      <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Root open={open} onOpenChange={handleOpenChange}>
         <Popover.Trigger asChild>
           <button
             type="button"
@@ -42,7 +46,10 @@ export default function FinancesMonthSelector() {
           </button>
         </Popover.Trigger>
         <Popover.Portal>
-          <Popover.Content className="rounded-2xl border border-border bg-surface p-4 shadow-lg" sideOffset={8}>
+          <Popover.Content
+            className="rounded-2xl border border-border bg-surface p-4 shadow-lg"
+            sideOffset={8}
+          >
             <input
               type="month"
               value={value}

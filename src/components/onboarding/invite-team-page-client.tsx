@@ -4,19 +4,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { ActionButton } from "@/components/ui/primitives/action-button";
+import { Notice } from "@/components/ui/primitives/notice";
 import { captureEvent } from "@/lib/analytics";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { normalizeInviteEmails, validateInviteEmails } from "@/lib/invite-team-emails";
-import { navigateAfterAuth } from "@/lib/navigation/navigate-after-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
+import {
+  normalizeInviteEmails,
+  validateInviteEmails,
+} from "@/lib/invite-team-emails";
+import { navigateAfterAuth } from "@/lib/navigation/navigate-after-auth";
 import {
   hasPendingTeamInvites,
   OWNER_REGISTRATION_STEP_COUNT,
 } from "@/lib/registration-metadata";
 import { supabase } from "@/lib/supabase";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
-import { ActionButton, Notice } from "@/components/ui/primitives";
 
 export default function InviteTeamPageClient() {
   const router = useRouter();
@@ -39,7 +43,13 @@ export default function InviteTeamPageClient() {
     return null;
   }
 
-  if (user && ready && href && href !== "/invite-team" && !hasPendingTeamInvites(user)) {
+  if (
+    user &&
+    ready &&
+    href &&
+    href !== "/invite-team" &&
+    !hasPendingTeamInvites(user)
+  ) {
     router.replace(href);
     return null;
   }
@@ -56,7 +66,9 @@ export default function InviteTeamPageClient() {
       throw new Error(updateError.message);
     }
 
-    captureEvent(skipped ? "onboarding_invites_skipped" : "onboarding_invites_sent");
+    captureEvent(
+      skipped ? "onboarding_invites_skipped" : "onboarding_invites_sent",
+    );
     clearIntent();
     await waitForAuthSessionReady();
     await navigateAfterAuth();
@@ -69,7 +81,9 @@ export default function InviteTeamPageClient() {
     try {
       await finishInvites(true);
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "No se pudo continuar");
+      setError(
+        nextError instanceof Error ? nextError.message : "No se pudo continuar",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -98,9 +112,12 @@ export default function InviteTeamPageClient() {
       const failures: string[] = [];
 
       for (const inviteEmail of normalized) {
-        const { error: invokeError } = await supabase.functions.invoke("invite-employee", {
-          body: { email: inviteEmail, role: "employee" },
-        });
+        const { error: invokeError } = await supabase.functions.invoke(
+          "invite-employee",
+          {
+            body: { email: inviteEmail, role: "employee" },
+          },
+        );
 
         if (invokeError) {
           failures.push(`${inviteEmail}: ${invokeError.message}`);
@@ -119,7 +136,11 @@ export default function InviteTeamPageClient() {
 
       await finishInvites(false);
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "No se pudo invitar al equipo");
+      setError(
+        nextError instanceof Error
+          ? nextError.message
+          : "No se pudo invitar al equipo",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -130,7 +151,9 @@ export default function InviteTeamPageClient() {
       <div className="w-full max-w-xl space-y-6 rounded-3xl border border-border bg-surface p-10 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-medium text-ink">Invita a tu equipo</h1>
+            <h1 className="text-2xl font-medium text-ink">
+              Invita a tu equipo
+            </h1>
             <p className="mt-1 text-sm text-ink-secondary">
               Añade los correos de quienes trabajarán contigo.
             </p>
@@ -146,7 +169,9 @@ export default function InviteTeamPageClient() {
                 value={entry}
                 onChange={(event) =>
                   setEmails((current) =>
-                    current.map((value, entryIndex) => (entryIndex === index ? event.target.value : value)),
+                    current.map((value, entryIndex) =>
+                      entryIndex === index ? event.target.value : value,
+                    ),
                   )
                 }
                 type="email"
@@ -156,7 +181,11 @@ export default function InviteTeamPageClient() {
               {emails.length > 1 ? (
                 <button
                   type="button"
-                  onClick={() => setEmails((current) => current.filter((_, entryIndex) => entryIndex !== index))}
+                  onClick={() =>
+                    setEmails((current) =>
+                      current.filter((_, entryIndex) => entryIndex !== index),
+                    )
+                  }
                   className="rounded-xl border border-border px-3 text-sm text-ink-secondary"
                 >
                   Quitar
@@ -164,20 +193,35 @@ export default function InviteTeamPageClient() {
               ) : null}
             </div>
           ))}
-          <button type="button" onClick={() => setEmails((current) => [...current, ""])} className="text-sm font-medium text-ink">
+          <button
+            type="button"
+            onClick={() => setEmails((current) => [...current, ""])}
+            className="text-sm font-medium text-ink"
+          >
             Añadir otro correo
           </button>
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
         {notice ? <Notice message={notice} /> : null}
         <div className="flex justify-end gap-3">
-          <Link href="/create-clinic" className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide">
+          <Link
+            href="/create-clinic"
+            className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
+          >
             Atrás
           </Link>
-          <button type="button" onClick={() => void handleSkip()} className="px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary">
+          <button
+            type="button"
+            onClick={() => void handleSkip()}
+            className="px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary"
+          >
             Saltar
           </button>
-          <ActionButton title={submitting ? "Enviando..." : "Continuar"} disabled={submitting} onClick={() => void handleContinue()} />
+          <ActionButton
+            title={submitting ? "Enviando..." : "Continuar"}
+            disabled={submitting}
+            onClick={() => void handleContinue()}
+          />
         </div>
       </div>
     </div>

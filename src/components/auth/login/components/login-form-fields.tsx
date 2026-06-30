@@ -1,6 +1,6 @@
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
-import { LOGIN_COPY } from "@/components/auth/login/login-copy";
+import { LOGIN_COPY } from "@/copy/login-copy";
 
 type LoginFormFieldsProps = {
   email: string;
@@ -56,10 +56,16 @@ export default function LoginFormFields({
           <button
             type="button"
             onClick={onTogglePassword}
-            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            aria-label={
+              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
             className="absolute top-1/2 right-3 -translate-y-1/2 text-ink-muted hover:text-ink-secondary"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </label>

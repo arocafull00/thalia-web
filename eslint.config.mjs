@@ -5,13 +5,65 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+  {
+    rules: {
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+          ],
+          "newlines-between": "always",
+          alphabetize: { order: "asc", caseInsensitive: true },
+          pathGroups: [
+            { pattern: "@/**", group: "internal", position: "before" },
+          ],
+          pathGroupsExcludedImportTypes: ["builtin"],
+        },
+      ],
+      "import/no-duplicates": "error",
+      "import/newline-after-import": "error",
+      "react/no-multi-comp": ["error", { ignoreStateless: false }],
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/**/index", "./*/index", "../*/index"],
+              message:
+                "No importes desde barrel files (index.ts). Importa directamente desde el módulo.",
+            },
+          ],
+        },
+      ],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+          fixStyle: "inline-type-imports",
+        },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+    },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "*.tsbuildinfo",
+    ".vercel/**",
+    "certificates/**",
+    ".agents/**",
   ]),
 ]);
 

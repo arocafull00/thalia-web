@@ -1,7 +1,8 @@
 export const PWA_INSTALL_COPY = {
   sectionTitle: "Aplicación",
   title: "Instalar Thalia",
-  description: "Accede más rápido desde la pantalla de inicio, como una app nativa.",
+  description:
+    "Accede más rápido desde la pantalla de inicio, como una app nativa.",
   installButton: "Instalar Thalia",
   inAppBrowser:
     "Abre esta página en Chrome o Safari para instalar la app. Los navegadores dentro de otras apps no permiten la instalación.",

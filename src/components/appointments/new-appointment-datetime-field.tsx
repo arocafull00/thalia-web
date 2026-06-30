@@ -1,6 +1,6 @@
 "use client";
 
-import { AppDateField } from "@/components/ui/app-date-picker-popover";
+import AppDateField from "@/components/ui/app-date-field";
 
 type NewAppointmentDatetimeFieldProps = {
   value: Date;
@@ -11,5 +11,7 @@ export default function NewAppointmentDatetimeField({
   value,
   onChange,
 }: NewAppointmentDatetimeFieldProps) {
-  return <AppDateField value={value} onChange={onChange} mode="datetime-local" />;
+  return (
+    <AppDateField value={value} onChange={onChange} mode="datetime-local" />
+  );
 }

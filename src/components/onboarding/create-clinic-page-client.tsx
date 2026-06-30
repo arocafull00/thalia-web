@@ -1,12 +1,14 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
 
-import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
+import { ActionButton } from "@/components/ui/primitives/action-button";
+import { Notice } from "@/components/ui/primitives/notice";
 import { captureEvent } from "@/lib/analytics";
+import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import {
@@ -19,7 +21,6 @@ import {
 } from "@/lib/registration-metadata";
 import { supabase } from "@/lib/supabase";
 import { useClinicStore } from "@/stores/clinic-store";
-import { ActionButton, Notice } from "@/components/ui/primitives";
 
 export default function CreateClinicPageClient() {
   const router = useRouter();
@@ -35,9 +36,17 @@ export default function CreateClinicPageClient() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) { router.replace("/login"); return; }
-    if (!hasRegistrationProfile(user)) { router.replace("/register-employee"); return; }
-    if (ready && href && href !== "/create-clinic") { router.replace(href); }
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+    if (!hasRegistrationProfile(user)) {
+      router.replace("/register-employee");
+      return;
+    }
+    if (ready && href && href !== "/create-clinic") {
+      router.replace(href);
+    }
   }, [loading, user, ready, href, router]);
 
   if (loading || !user) return null;
@@ -53,7 +62,8 @@ export default function CreateClinicPageClient() {
     }
 
     const fullName =
-      (typeof user?.user_metadata.full_name === "string" && user.user_metadata.full_name.trim()) ||
+      (typeof user?.user_metadata.full_name === "string" &&
+        user.user_metadata.full_name.trim()) ||
       "";
 
     if (!fullName) {
@@ -72,10 +82,9 @@ export default function CreateClinicPageClient() {
     setSubmitting(true);
 
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke<{ clinicId: string }>(
-        "create-clinic",
-        { body: payload },
-      );
+      const { data, error: invokeError } = await supabase.functions.invoke<{
+        clinicId: string;
+      }>("create-clinic", { body: payload });
 
       if (invokeError) {
         throw new Error(invokeError.message);
@@ -103,7 +112,11 @@ export default function CreateClinicPageClient() {
       await waitForAuthSessionReady();
       router.replace("/invite-team");
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "No se pudo crear la clínica");
+      setError(
+        nextError instanceof Error
+          ? nextError.message
+          : "No se pudo crear la clínica",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -115,7 +128,9 @@ export default function CreateClinicPageClient() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-medium text-ink">Tu clínica</h1>
-            <p className="mt-1 text-sm text-ink-secondary">Introduce los datos de tu clínica estética.</p>
+            <p className="mt-1 text-sm text-ink-secondary">
+              Introduce los datos de tu clínica estética.
+            </p>
           </div>
           <span className="text-xs uppercase tracking-wide text-ink-muted">
             Paso 2 de {OWNER_REGISTRATION_STEP_COUNT}
@@ -123,16 +138,34 @@ export default function CreateClinicPageClient() {
         </div>
         <div className="space-y-4">
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-ink-secondary">Nombre</span>
-            <input value={clinicName} onChange={(e) => setClinicName(e.target.value)} className="w-full rounded-xl border border-border px-3 py-2.5 text-sm" />
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">
+              Nombre
+            </span>
+            <input
+              value={clinicName}
+              onChange={(e) => setClinicName(e.target.value)}
+              className="w-full rounded-xl border border-border px-3 py-2.5 text-sm"
+            />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-ink-secondary">Dirección</span>
-            <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full rounded-xl border border-border px-3 py-2.5 text-sm" />
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">
+              Dirección
+            </span>
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full rounded-xl border border-border px-3 py-2.5 text-sm"
+            />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs uppercase tracking-wide text-ink-secondary">Teléfono</span>
-            <input value={clinicPhone} onChange={(e) => setClinicPhone(e.target.value)} className="w-full rounded-xl border border-border px-3 py-2.5 text-sm" />
+            <span className="text-xs uppercase tracking-wide text-ink-secondary">
+              Teléfono
+            </span>
+            <input
+              value={clinicPhone}
+              onChange={(e) => setClinicPhone(e.target.value)}
+              className="w-full rounded-xl border border-border px-3 py-2.5 text-sm"
+            />
           </label>
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
@@ -145,10 +178,17 @@ export default function CreateClinicPageClient() {
             Salir
           </button>
           <div className="flex gap-3">
-            <Link href="/register-employee" className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide">
+            <Link
+              href="/register-employee"
+              className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
+            >
               Atrás
             </Link>
-            <ActionButton title={submitting ? "Creando..." : "Continuar"} disabled={submitting} onClick={() => void handleContinue()} />
+            <ActionButton
+              title={submitting ? "Creando..." : "Continuar"}
+              disabled={submitting}
+              onClick={() => void handleContinue()}
+            />
           </div>
         </div>
       </div>

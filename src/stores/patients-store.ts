@@ -5,7 +5,6 @@ import { uploadFile } from "@/lib/storage";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import {
-  emptyQueryEntry,
   errorQueryEntry,
   loadingQueryEntry,
   successQueryEntry,
@@ -31,7 +30,10 @@ function patientsListKey(search: string) {
 type PatientsStore = {
   listBySearch: Record<string, QueryEntry<Patient[]>>;
   byId: Record<string, QueryEntry<Patient>>;
-  appointmentsByPatientId: Record<string, QueryEntry<AppointmentWithRelations[]>>;
+  appointmentsByPatientId: Record<
+    string,
+    QueryEntry<AppointmentWithRelations[]>
+  >;
   upcomingByPatientId: Record<string, QueryEntry<AppointmentWithRelations[]>>;
   creating: boolean;
   createError: Error | null;
@@ -44,8 +46,14 @@ type PatientsStore = {
   fetchPatientAppointments: (patientId: string) => Promise<void>;
   fetchUpcomingPatientAppointments: (patientId: string) => Promise<void>;
   createPatient: (input: PatientFormInput) => Promise<Patient>;
-  updatePatient: (id: string, values: Partial<PatientFormInput>) => Promise<Patient>;
-  uploadPatientAvatar: (patientId: string, imageUri: string) => Promise<Patient>;
+  updatePatient: (
+    id: string,
+    values: Partial<PatientFormInput>,
+  ) => Promise<Patient>;
+  uploadPatientAvatar: (
+    patientId: string,
+    imageUri: string,
+  ) => Promise<Patient>;
 };
 
 export const usePatientsStore = create<PatientsStore>((set, get) => ({
@@ -63,7 +71,12 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   fetchPatients: async (search) => {
     const key = patientsListKey(search);
     const previous = get().listBySearch[key];
-    set({ listBySearch: { ...get().listBySearch, [key]: loadingQueryEntry(previous) } });
+    set({
+      listBySearch: {
+        ...get().listBySearch,
+        [key]: loadingQueryEntry(previous),
+      },
+    });
 
     try {
       let query = supabase.from("patients").select("*").order("full_name");
@@ -74,12 +87,19 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       }
 
       if (search.trim()) {
-        query = query.or(`full_name.ilike.%${search.trim()}%,phone.ilike.%${search.trim()}%`);
+        query = query.or(
+          `full_name.ilike.%${search.trim()}%,phone.ilike.%${search.trim()}%`,
+        );
       }
 
       const { data, error } = await query;
       const patients = unwrapSupabaseList(data, error) as Patient[];
-      set({ listBySearch: { ...get().listBySearch, [key]: successQueryEntry(patients) } });
+      set({
+        listBySearch: {
+          ...get().listBySearch,
+          [key]: successQueryEntry(patients),
+        },
+      });
     } catch (cause) {
       set({
         listBySearch: {
@@ -136,7 +156,10 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         .eq("patient_id", patientId)
         .order("starts_at", { ascending: false });
 
-      const appointments = unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+      const appointments = unwrapSupabaseList(
+        data,
+        error,
+      ) as AppointmentWithRelations[];
       set({
         appointmentsByPatientId: {
           ...get().appointmentsByPatientId,
@@ -175,7 +198,10 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         .gt("starts_at", new Date().toISOString())
         .order("starts_at");
 
-      const appointments = unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+      const appointments = unwrapSupabaseList(
+        data,
+        error,
+      ) as AppointmentWithRelations[];
       set({
         upcomingByPatientId: {
           ...get().upcomingByPatientId,
@@ -199,11 +225,17 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     set({ creating: true, createError: null });
 
     try {
-      const { data, error } = await supabase.from("patients").insert(input).select("*").single();
+      const { data, error } = await supabase
+        .from("patients")
+        .insert(input)
+        .select("*")
+        .single();
       const patient = unwrapSupabase(data, error) as Patient;
 
       const keys = Object.keys(get().listBySearch);
-      await Promise.all(keys.map((key) => get().fetchPatients(key === "__all__" ? "" : key)));
+      await Promise.all(
+        keys.map((key) => get().fetchPatients(key === "__all__" ? "" : key)),
+      );
       set({ creating: false });
       return patient;
     } catch (cause) {
@@ -226,7 +258,9 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       const patient = unwrapSupabase(data, error) as Patient;
 
       const keys = Object.keys(get().listBySearch);
-      await Promise.all(keys.map((key) => get().fetchPatients(key === "__all__" ? "" : key)));
+      await Promise.all(
+        keys.map((key) => get().fetchPatients(key === "__all__" ? "" : key)),
+      );
       await get().fetchPatient(id);
       set({ updating: false });
       return patient;
@@ -241,7 +275,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     set({ uploadingAvatar: true, uploadAvatarError: null });
 
     try {
-      const key = await uploadFile(`patients/${patientId}/avatar.jpg`, imageUri, "image/jpeg");
+      const key = await uploadFile(
+        `patients/${patientId}/avatar.jpg`,
+        imageUri,
+        "image/jpeg",
+      );
       const { data, error } = await supabase
         .from("patients")
         .update({ avatar_url: key })
@@ -252,7 +290,9 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
 
       const keys = Object.keys(get().listBySearch);
       await Promise.all(
-        keys.map((searchKey) => get().fetchPatients(searchKey === "__all__" ? "" : searchKey)),
+        keys.map((searchKey) =>
+          get().fetchPatients(searchKey === "__all__" ? "" : searchKey),
+        ),
       );
       await get().fetchPatient(patientId);
       set({ uploadingAvatar: false });

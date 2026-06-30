@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
@@ -40,7 +40,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       }
 
       refreshProfile()
-        .then(() => useClinicStore.getState().fetchMemberships(nextSession.user.id))
+        .then(() =>
+          useClinicStore.getState().fetchMemberships(nextSession.user.id),
+        )
         .catch(() => useAuthStore.setState({ profile: null }));
     });
 
@@ -50,12 +52,20 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   return children;
 }
 
+const subscribeToClientHydration = () => () => {};
+
+function getClientHydratedSnapshot() {
+  return true;
+}
+
+function getServerHydratedSnapshot() {
+  return false;
+}
+
 export function useAuthHydrated() {
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  return hydrated;
+  return useSyncExternalStore(
+    subscribeToClientHydration,
+    getClientHydratedSnapshot,
+    getServerHydratedSnapshot,
+  );
 }

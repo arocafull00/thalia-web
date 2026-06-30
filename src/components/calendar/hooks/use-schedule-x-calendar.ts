@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { endOfWeek, startOfWeek } from "date-fns";
-import { useRouter } from "next/navigation";
-import { useNextCalendarApp } from "@schedule-x/react";
 import { createViewWeek } from "@schedule-x/calendar";
 import { createCalendarControlsPlugin } from "@schedule-x/calendar-controls";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
+import { useNextCalendarApp } from "@schedule-x/react";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Temporal } from "temporal-polyfill";
 import "temporal-polyfill/global";
 
 import CalendarEmptyHeader from "@/components/calendar/components/calendar-empty-header";
-import { CALENDAR_COPY } from "@/components/calendar/calendar-copy";
+import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { CALENDAR_END_HOUR, CALENDAR_START_HOUR } from "@/lib/calendar-grid";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useCalendarStore } from "@/stores/calendar-store";
@@ -25,7 +25,9 @@ function toPlainDate(date: Date) {
 }
 
 function toZonedDateTime(iso: string) {
-  return Temporal.Instant.from(iso).toZonedDateTimeISO(Temporal.Now.timeZoneId());
+  return Temporal.Instant.from(iso).toZonedDateTimeISO(
+    Temporal.Now.timeZoneId(),
+  );
 }
 
 export function useScheduleXCalendar() {
@@ -35,13 +37,19 @@ export function useScheduleXCalendar() {
 
   const rangeStart = startOfWeek(weekAnchor, { weekStartsOn: 1 });
   const rangeEnd = endOfWeek(weekAnchor, { weekStartsOn: 1 });
-  const appointments = useAppointments({ start: rangeStart, end: rangeEnd }, employeeId);
+  const appointments = useAppointments(
+    { start: rangeStart, end: rangeEnd },
+    employeeId,
+  );
 
   const eventsService = useState(() => createEventsServicePlugin())[0];
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
 
   const routerRef = useRef(router);
-  routerRef.current = router;
+
+  useEffect(() => {
+    routerRef.current = router;
+  });
 
   const weekView = createViewWeek();
 

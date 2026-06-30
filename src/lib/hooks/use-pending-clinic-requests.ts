@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
-import { normalizeEmail, type PendingClinicRequest } from "@/lib/clinic-requests";
+import {
+  normalizeEmail,
+  type PendingClinicRequest,
+} from "@/lib/clinic-requests";
 import { supabase } from "@/lib/supabase";
 
 type UsePendingClinicRequestsResult = {
@@ -46,7 +49,8 @@ export function usePendingClinicRequests(
     }
 
     const mapped = (data ?? []).flatMap((row) => {
-      const clinicRaw = row.clinics as { name: string } | { name: string }[] | null;
+      const clinicRaw = row.clinics as
+        { name: string } | { name: string }[] | null;
       const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;
 
       if (!clinic?.name) {
@@ -66,10 +70,6 @@ export function usePendingClinicRequests(
     setRequests(mapped);
     setLoading(false);
   }, [email, enabled]);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
 
   return { requests, loading, error, refresh };
 }

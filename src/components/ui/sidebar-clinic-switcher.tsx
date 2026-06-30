@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { Building2, Check, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-import { SIDEBAR_COPY } from "@/components/ui/sidebar-copy";
+import { SIDEBAR_COPY } from "@/copy/sidebar-copy";
 import type { ClinicMembershipView } from "@/stores/clinic-store";
 
 type SidebarClinicSwitcherProps = {
@@ -29,7 +29,10 @@ export default function SidebarClinicSwitcher({
     }
 
     const handler = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -40,7 +43,10 @@ export default function SidebarClinicSwitcher({
 
   if (!canSwitch) {
     return (
-      <p className="mt-0.5 flex min-w-0 items-center gap-1.5 truncate text-xs text-ink-muted" title={clinicName}>
+      <p
+        className="mt-0.5 flex min-w-0 items-center gap-1.5 truncate text-xs text-ink-muted"
+        title={clinicName}
+      >
         <Building2 size={12} className="shrink-0" />
         <span className="truncate">{clinicName}</span>
       </p>
@@ -73,7 +79,9 @@ export default function SidebarClinicSwitcher({
               }}
               className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-canvas"
             >
-              <span className="flex-1 truncate text-ink">{membership.clinicName}</span>
+              <span className="flex-1 truncate text-ink">
+                {membership.clinicName}
+              </span>
               {membership.clinicId === activeClinicId ? (
                 <Check size={14} className="shrink-0 text-primary" />
               ) : null}

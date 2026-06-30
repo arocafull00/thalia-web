@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 
 import { getFileUrl, peekCachedFileUrl } from "@/lib/storage";
 
+type AsyncFileUrl = {
+  key: string;
+  url: string | null;
+};
+
 export function useFileUrl(key: string | null) {
-  const [url, setUrl] = useState(() => peekCachedFileUrl(key));
+  const cachedUrl = peekCachedFileUrl(key);
+  const [asyncUrl, setAsyncUrl] = useState<AsyncFileUrl | null>(null);
 
   useEffect(() => {
-    const cachedUrl = peekCachedFileUrl(key);
-    setUrl(cachedUrl);
-
     if (!key) {
       return;
     }
 
-    if (cachedUrl) {
+    if (peekCachedFileUrl(key)) {
       return;
     }
 
@@ -22,12 +25,12 @@ export function useFileUrl(key: string | null) {
     getFileUrl(key)
       .then((resolvedUrl) => {
         if (!cancelled) {
-          setUrl(resolvedUrl);
+          setAsyncUrl({ key, url: resolvedUrl });
         }
       })
       .catch(() => {
         if (!cancelled) {
-          setUrl(null);
+          setAsyncUrl({ key, url: null });
         }
       });
 
@@ -36,5 +39,17 @@ export function useFileUrl(key: string | null) {
     };
   }, [key]);
 
-  return url;
+  if (!key) {
+    return null;
+  }
+
+  if (cachedUrl) {
+    return cachedUrl;
+  }
+
+  if (asyncUrl?.key === key) {
+    return asyncUrl.url;
+  }
+
+  return null;
 }

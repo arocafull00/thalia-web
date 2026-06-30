@@ -1,5 +1,5 @@
-import { addMinutes, endOfDay, startOfDay } from "date-fns";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { addMinutes } from "date-fns";
 import { create } from "zustand";
 
 import { getActiveClinicId } from "@/lib/active-clinic-id";
@@ -7,7 +7,6 @@ import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import {
-  emptyQueryEntry,
   errorQueryEntry,
   loadingQueryEntry,
   successQueryEntry,
@@ -33,7 +32,11 @@ export type AppointmentUpdateInput = AppointmentFormInput & {
   id: string;
 };
 
-function appointmentsKey(start: string, end: string, employeeId: string | null) {
+function appointmentsKey(
+  start: string,
+  end: string,
+  employeeId: string | null,
+) {
   return JSON.stringify({ start, end, employeeId });
 }
 
@@ -69,7 +72,11 @@ async function refreshAllAppointmentEntries() {
         end: string;
         employeeId: string | null;
       };
-      return fetchAppointments({ start: new Date(start), end: new Date(end), employeeId });
+      return fetchAppointments({
+        start: new Date(start),
+        end: new Date(end),
+        employeeId,
+      });
     }),
   );
 }
@@ -83,10 +90,14 @@ function subscribeAppointmentsRealtime() {
 
   appointmentsRealtimeChannel = supabase
     .channel("appointments-realtime")
-    .on("postgres_changes", { event: "*", schema: "public", table: "appointments" }, () => {
-      void refreshAllAppointmentEntries();
-      void useDashboardStore.getState().fetchDashboard();
-    })
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "appointments" },
+      () => {
+        void refreshAllAppointmentEntries();
+        void useDashboardStore.getState().fetchDashboard();
+      },
+    )
     .on(
       "postgres_changes",
       { event: "*", schema: "public", table: "appointment_treatments" },
@@ -134,8 +145,15 @@ type AppointmentsStore = {
   fetchAppointment: (appointmentId: string) => Promise<void>;
   createAppointment: (input: AppointmentFormInput) => Promise<Appointment>;
   updateAppointment: (input: AppointmentUpdateInput) => Promise<Appointment>;
-  updateAppointmentStatus: (id: string, status: AppointmentStatus) => Promise<Appointment>;
-  rescheduleAppointment: (id: string, startsAt: Date, endsAt: Date) => Promise<Appointment>;
+  updateAppointmentStatus: (
+    id: string,
+    status: AppointmentStatus,
+  ) => Promise<Appointment>;
+  rescheduleAppointment: (
+    id: string,
+    startsAt: Date,
+    endsAt: Date,
+  ) => Promise<Appointment>;
 };
 
 export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
@@ -181,8 +199,13 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       }
 
       const { data, error } = await query;
-      const appointments = unwrapSupabaseList(data, error) as AppointmentWithRelations[];
-      set({ byRange: { ...get().byRange, [key]: successQueryEntry(appointments) } });
+      const appointments = unwrapSupabaseList(
+        data,
+        error,
+      ) as AppointmentWithRelations[];
+      set({
+        byRange: { ...get().byRange, [key]: successQueryEntry(appointments) },
+      });
     } catch (cause) {
       set({
         byRange: {
@@ -198,7 +221,9 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
   fetchAppointment: async (appointmentId) => {
     const previous = get().byId[appointmentId];
-    set({ byId: { ...get().byId, [appointmentId]: loadingQueryEntry(previous) } });
+    set({
+      byId: { ...get().byId, [appointmentId]: loadingQueryEntry(previous) },
+    });
 
     try {
       const { data, error } = await supabase
@@ -209,8 +234,16 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         .eq("id", appointmentId)
         .single();
 
-      const appointment = unwrapSupabase(data, error) as AppointmentWithRelations;
-      set({ byId: { ...get().byId, [appointmentId]: successQueryEntry(appointment) } });
+      const appointment = unwrapSupabase(
+        data,
+        error,
+      ) as AppointmentWithRelations;
+      set({
+        byId: {
+          ...get().byId,
+          [appointmentId]: successQueryEntry(appointment),
+        },
+      });
     } catch (cause) {
       set({
         byId: {
@@ -244,7 +277,10 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         .select("*")
         .single();
 
-      const createdAppointment = unwrapSupabase(appointment, error) as Appointment;
+      const createdAppointment = unwrapSupabase(
+        appointment,
+        error,
+      ) as Appointment;
 
       const rows = treatments.map((treatment) => ({
         appointment_id: createdAppointment.id,
@@ -252,7 +288,9 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         price_at_booking: treatment.price ?? 0,
       }));
 
-      const { error: treatmentsError } = await supabase.from("appointment_treatments").insert(rows);
+      const { error: treatmentsError } = await supabase
+        .from("appointment_treatments")
+        .insert(rows);
 
       if (treatmentsError) {
         throw treatmentsError;
@@ -356,7 +394,10 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     try {
       const { data, error } = await supabase
         .from("appointments")
-        .update({ starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString() })
+        .update({
+          starts_at: startsAt.toISOString(),
+          ends_at: endsAt.toISOString(),
+        })
         .eq("id", id)
         .select("*")
         .single();

@@ -1,20 +1,22 @@
 import { useShallow } from "zustand/react/shallow";
 
-import { useClinicStore } from "@/stores/clinic-store";
 import { useAuthStore } from "@/stores/auth-store";
+import { useClinicStore } from "@/stores/clinic-store";
 
 export function useActiveClinic() {
   const profile = useAuthStore((state) => state.profile);
-  const { memberships, activeClinicId, loading, setActiveClinic } = useClinicStore(
-    useShallow((state) => ({
-      memberships: state.memberships,
-      activeClinicId: state.activeClinicId,
-      loading: state.loading,
-      setActiveClinic: state.setActiveClinic,
-    })),
-  );
+  const { memberships, activeClinicId, loading, setActiveClinic } =
+    useClinicStore(
+      useShallow((state) => ({
+        memberships: state.memberships,
+        activeClinicId: state.activeClinicId,
+        loading: state.loading,
+        setActiveClinic: state.setActiveClinic,
+      })),
+    );
 
-  const membership = memberships.find((item) => item.clinicId === activeClinicId) ?? null;
+  const membership =
+    memberships.find((item) => item.clinicId === activeClinicId) ?? null;
   const clinicId = activeClinicId ?? profile?.clinic_id ?? null;
 
   return {

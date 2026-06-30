@@ -19,7 +19,8 @@ export const LOGIN_COPY = {
   },
   divider: "O continúa con",
   google: "Continuar con Google",
-  supabaseWarning: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+  supabaseWarning:
+    "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
   footer: {
     copyright: "© Thalia. Todos los derechos reservados",
     terms: "Términos y condiciones",

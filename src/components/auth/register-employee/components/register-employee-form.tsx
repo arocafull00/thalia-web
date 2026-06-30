@@ -1,7 +1,8 @@
 import { LogOut } from "lucide-react";
 
-import { REGISTER_EMPLOYEE_FORM_COPY } from "@/components/auth/register-employee/register-employee-copy";
-import { ActionButton, Notice } from "@/components/ui/primitives";
+import { ActionButton } from "@/components/ui/primitives/action-button";
+import { Notice } from "@/components/ui/primitives/notice";
+import { REGISTER_EMPLOYEE_FORM_COPY } from "@/copy/register-employee-copy";
 
 type RegisterEmployeeFormCopy = {
   title: string;
@@ -89,7 +90,10 @@ export default function RegisterEmployeeForm({
           ) : null}
         </div>
         {!isSupabaseConfigured ? (
-          <Notice tone="warning" message={REGISTER_EMPLOYEE_FORM_COPY.supabaseWarning} />
+          <Notice
+            tone="warning"
+            message={REGISTER_EMPLOYEE_FORM_COPY.supabaseWarning}
+          />
         ) : null}
         {error ? <Notice tone="danger" message={error} /> : null}
         <div className="flex items-center justify-between gap-3">
@@ -102,15 +106,25 @@ export default function RegisterEmployeeForm({
             Salir
           </button>
           <ActionButton
-            title={submitting ? REGISTER_EMPLOYEE_FORM_COPY.savingButton : REGISTER_EMPLOYEE_FORM_COPY.continueButton}
+            title={
+              submitting
+                ? REGISTER_EMPLOYEE_FORM_COPY.savingButton
+                : REGISTER_EMPLOYEE_FORM_COPY.continueButton
+            }
             disabled={authDisabled}
             onClick={() => void onContinue()}
           />
         </div>
         {!hasSession ? (
-          <button type="button" onClick={onLoginPress} className="w-full text-center text-sm text-ink-secondary">
+          <button
+            type="button"
+            onClick={onLoginPress}
+            className="w-full text-center text-sm text-ink-secondary"
+          >
             {REGISTER_EMPLOYEE_FORM_COPY.loginPrompt}{" "}
-            <span className="font-medium text-ink">{REGISTER_EMPLOYEE_FORM_COPY.loginAction}</span>
+            <span className="font-medium text-ink">
+              {REGISTER_EMPLOYEE_FORM_COPY.loginAction}
+            </span>
           </button>
         ) : null}
       </div>

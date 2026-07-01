@@ -1,0 +1,1 @@
+ALTER TABLE inventory_items ADD COLUMN IF NOT EXISTS unit_price NUMERIC(10,2);

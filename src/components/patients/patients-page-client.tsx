@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import PatientCreateForm from "@/components/patients/components/patient-create-form";
+import PatientsTable from "@/components/patients/components/patients-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -67,36 +68,10 @@ export default function PatientsPageClient() {
         </div>
       ) : null}
       {!showEmptyState && !patients.isLoading ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="grid grid-cols-[1.4fr_1fr_1fr] gap-4 border-b border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-muted">
-            <span>Paciente</span>
-            <span>Telefono</span>
-            <span>Email</span>
-          </div>
-          {patientData.map((patient) => (
-            <button
-              key={patient.id}
-              type="button"
-              onClick={() => router.push(`/patients/${patient.id}`)}
-              className="grid w-full grid-cols-[1.4fr_1fr_1fr] gap-4 border-b border-border-subtle px-4 py-4 text-left transition hover:bg-canvas"
-            >
-              <span className="truncate font-medium text-ink">
-                {patient.full_name}
-              </span>
-              <span className="truncate text-sm text-ink-secondary">
-                {patient.phone ?? "Sin telefono"}
-              </span>
-              <span className="truncate text-sm text-ink-secondary">
-                {patient.email ?? "-"}
-              </span>
-            </button>
-          ))}
-          {!hasPatients ? (
-            <p className="p-6 text-center text-ink-secondary">
-              No hay pacientes con ese criterio.
-            </p>
-          ) : null}
-        </div>
+        <PatientsTable
+          patients={patientData}
+          onRowClick={(id) => router.push(`/patients/${id}`)}
+        />
       ) : null}
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>

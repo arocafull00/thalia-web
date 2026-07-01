@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import InventoryItemCreateForm from "@/components/inventory/components/inventory-item-create-form";
+import InventoryTable from "@/components/inventory/components/inventory-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -17,10 +18,6 @@ import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import { useInventoryItemCreateDialog } from "@/lib/hooks/use-inventory-item-create-dialog";
 import { useInventoryPage } from "@/lib/hooks/use-inventory-page";
-import {
-  getInventoryStockLevel,
-  inventoryStockLevelLabel,
-} from "@/lib/inventory-stock";
 import { useTopbarSearchStore } from "@/stores/topbar-search-store";
 
 export default function InventoryPageClient() {
@@ -31,16 +28,10 @@ export default function InventoryPageClient() {
   const {
     categories,
     category,
-    currentPage,
     filteredItems,
     handleCategoryChange,
     inventory,
-    pageEnd,
-    pageItems,
-    pageStart,
-    setPage,
     summary,
-    totalPages,
   } = useInventoryPage(topbarQuery);
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
@@ -103,89 +94,10 @@ export default function InventoryPageClient() {
         <Notice tone="danger" message="No se pudo cargar el inventario." />
       ) : null}
       {!inventory.isLoading ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="grid grid-cols-[1.6fr_0.9fr_1fr_0.8fr_0.9fr] gap-4 border-b border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-muted">
-            <span>Material</span>
-            <span>Categoria</span>
-            <span>Stock</span>
-            <span>Minimo</span>
-            <span>Estado</span>
-          </div>
-          {pageItems.map((item) => {
-            const stock = Number(item.stock ?? 0);
-            const minStock = Number(item.min_stock ?? 0);
-            const level = getInventoryStockLevel(stock, minStock);
-
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => router.push(`/inventory/${item.id}`)}
-                className="grid w-full grid-cols-[1.6fr_0.9fr_1fr_0.8fr_0.9fr] gap-4 border-b border-border-subtle px-4 py-4 text-left transition hover:bg-canvas"
-              >
-                <span>
-                  <span className="block truncate font-medium text-ink">
-                    {item.name}
-                  </span>
-                  <span className="text-xs text-ink-muted">
-                    REF: {item.id.slice(0, 8).toUpperCase()}
-                  </span>
-                </span>
-                <span className="truncate text-sm text-ink-secondary">
-                  {item.category ?? "Sin categoria"}
-                </span>
-                <span className="font-medium tabular-nums text-ink">
-                  {stock} {item.unit ?? "un."}
-                </span>
-                <span className="text-sm tabular-nums text-ink-secondary">
-                  {minStock}
-                </span>
-                <span
-                  className={`text-xs uppercase tracking-wide ${
-                    level === "critical"
-                      ? "text-danger"
-                      : level === "low"
-                        ? "text-warning"
-                        : "text-success"
-                  }`}
-                >
-                  {inventoryStockLevelLabel(level)}
-                </span>
-              </button>
-            );
-          })}
-          {filteredItems.length === 0 ? (
-            <p className="p-6 text-center text-ink-secondary">
-              No hay materiales con ese criterio.
-            </p>
-          ) : null}
-          <div className="flex items-center justify-between px-4 py-3 text-sm text-ink-secondary">
-            <span>
-              {filteredItems.length === 0 ? 0 : pageStart + 1}-{pageEnd} de{" "}
-              {filteredItems.length}
-            </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                disabled={currentPage <= 1}
-                onClick={() => setPage((current) => Math.max(current - 1, 1))}
-                className="rounded-lg border border-border px-3 py-1 disabled:opacity-40"
-              >
-                Anterior
-              </button>
-              <button
-                type="button"
-                disabled={currentPage >= totalPages}
-                onClick={() =>
-                  setPage((current) => Math.min(current + 1, totalPages))
-                }
-                className="rounded-lg border border-border px-3 py-1 disabled:opacity-40"
-              >
-                Siguiente
-              </button>
-            </div>
-          </div>
-        </div>
+        <InventoryTable
+          items={filteredItems}
+          onRowClick={(id) => router.push(`/inventory/${id}`)}
+        />
       ) : null}
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>

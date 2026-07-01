@@ -7,6 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
+      "react-hooks/incompatible-library": "off",
       "import/order": [
         "error",
         {
@@ -59,6 +60,7 @@ const eslintConfig = defineConfig([
     files: [
       "src/components/ui/combobox.tsx",
       "src/components/ui/input-group.tsx",
+      "src/components/ui/table.tsx",
     ],
     rules: {
       "react/no-multi-comp": "off",

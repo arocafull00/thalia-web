@@ -1,20 +1,29 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
+import TransactionCreateForm from "@/components/finances/components/transaction-create-form";
+import TransactionsTable from "@/components/finances/components/transactions-table";
 import FinancesMonthSelector from "@/components/finances/finances-month-selector";
 import FinancesTabBar from "@/components/finances/finances-tab-bar";
+import AppDialog from "@/components/ui/app-dialog";
+import AppDialogDescription from "@/components/ui/app-dialog-description";
+import AppDialogFooter from "@/components/ui/app-dialog-footer";
+import AppDialogHeader from "@/components/ui/app-dialog-header";
+import AppDialogTitle from "@/components/ui/app-dialog-title";
+import AppSheetContent from "@/components/ui/app-sheet-content";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
-import { SkeletonBlock } from "@/components/ui/primitives/skeleton-block";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
-import { formatCurrency, transactionTypeLabel } from "@/lib/format";
+import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
+import { formatCurrency } from "@/lib/format";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
+import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
 import { useFinancesUiStore } from "@/stores/finances-ui-store";
 
 export default function FinancesPageClient() {
-  const router = useRouter();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const setTab = useFinancesUiStore((state) => state.setTab);
   const {
     categoryBreakdown,
@@ -25,6 +34,22 @@ export default function FinancesPageClient() {
     transactions,
     visibleTransactions,
   } = useFinancesPage();
+  const dialog = useTransactionCreateDialog(fabType, () =>
+    setDialogOpen(false),
+  );
+
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      dialog.reset();
+    }
+
+    setDialogOpen(nextOpen);
+  };
+
+  const handleOpenCreateDialog = () => {
+    dialog.prepare(fabType);
+    setDialogOpen(true);
+  };
 
   if (!isAdmin) {
     return (
@@ -43,16 +68,10 @@ export default function FinancesPageClient() {
         />
         <ActionButton
           title="Nuevo movimiento"
-          onClick={() => router.push(`/finances/new?type=${fabType}`)}
+          onClick={handleOpenCreateDialog}
         />
       </div>
       <FinancesMonthSelector />
-      {summary.isLoading ? (
-        <div className="space-y-4">
-          <SkeletonBlock height={120} />
-          <SkeletonBlock height={180} />
-        </div>
-      ) : null}
       {summary.error ? (
         <Notice tone="danger" message="No se pudo cargar el resumen." />
       ) : null}
@@ -152,39 +171,44 @@ export default function FinancesPageClient() {
           />
         ) : null}
         {!transactions.isLoading ? (
-          <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-            {visibleTransactions.map((transaction) => (
-              <div
-                key={transaction.id}
-                className="grid grid-cols-[1fr_1.2fr_1.6fr_0.8fr_0.8fr] gap-4 border-b border-border-subtle px-4 py-4 text-sm"
-              >
-                <span className="text-ink-secondary">
-                  {transaction.date ?? "-"}
-                </span>
-                <span className="font-medium text-ink">
-                  {transaction.category ?? "Sin categoria"}
-                </span>
-                <span className="truncate text-ink-secondary">
-                  {transaction.description ?? "-"}
-                </span>
-                <span className="text-xs uppercase tracking-wide text-ink-secondary">
-                  {transactionTypeLabel(transaction.type)}
-                </span>
-                <span
-                  className={`text-right font-medium tabular-nums ${
-                    transaction.type === "income"
-                      ? "text-success"
-                      : "text-danger"
-                  }`}
-                >
-                  {transaction.type === "income" ? "+" : "-"}
-                  {formatCurrency(transaction.amount)}
-                </span>
-              </div>
-            ))}
-          </div>
+          <TransactionsTable transactions={visibleTransactions} />
         ) : null}
       </div>
+      <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
+        <AppSheetContent>
+          <AppDialogHeader>
+            <AppDialogTitle>{TRANSACTION_CREATE_COPY.title}</AppDialogTitle>
+            <AppDialogDescription>
+              {TRANSACTION_CREATE_COPY.description}
+            </AppDialogDescription>
+          </AppDialogHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto px-1">
+            <TransactionCreateForm
+              register={dialog.register}
+              control={dialog.control}
+              errors={dialog.errors}
+            />
+          </div>
+          <AppDialogFooter>
+            <button
+              type="button"
+              onClick={() => handleDialogOpenChange(false)}
+              className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+            >
+              {TRANSACTION_CREATE_COPY.actions.cancel}
+            </button>
+            <ActionButton
+              title={
+                dialog.isPending
+                  ? TRANSACTION_CREATE_COPY.actions.saving
+                  : TRANSACTION_CREATE_COPY.actions.save
+              }
+              disabled={dialog.isPending}
+              onClick={dialog.handleSubmit}
+            />
+          </AppDialogFooter>
+        </AppSheetContent>
+      </AppDialog>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 "use client";
 
-import AppDatePopoverField from "@/components/ui/app-date-popover-field";
 import {
+  formatLocalDateInputValue,
   formatLocalDatetimeInputValue,
+  parseLocalDateInputValue,
   parseLocalDatetimeInputValue,
 } from "@/lib/date-input";
 
@@ -33,5 +34,14 @@ export default function AppDateField({
     );
   }
 
-  return <AppDatePopoverField value={value} onChange={onChange} />;
+  return (
+    <input
+      type="date"
+      value={formatLocalDateInputValue(value)}
+      onChange={(event) =>
+        onChange(parseLocalDateInputValue(event.target.value))
+      }
+      className={fieldClassName}
+    />
+  );
 }

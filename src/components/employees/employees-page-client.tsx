@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import EmployeeInviteForm from "@/components/employees/components/employee-invite-form";
+import EmployeesTable from "@/components/employees/components/employees-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -15,7 +16,6 @@ import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
-import { employeeRoleLabel } from "@/lib/format";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
@@ -129,37 +129,10 @@ export default function EmployeesPageClient() {
         </div>
       ) : null}
       {!showEmptyState && !employees.isLoading ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-muted">
-            <span>Profesional</span>
-            <span>Especialidad</span>
-            <span>Rol</span>
-            <span>Estado</span>
-          </div>
-          {filteredEmployees.map((employee) => (
-            <button
-              key={employee.id}
-              type="button"
-              onClick={() => router.push(`/employees/${employee.id}`)}
-              className="grid w-full grid-cols-[1.4fr_1fr_0.8fr_0.7fr] gap-4 border-b border-border-subtle px-4 py-4 text-left transition hover:bg-canvas"
-            >
-              <span className="truncate font-medium text-ink">
-                {employee.full_name}
-              </span>
-              <span className="truncate text-sm text-ink-secondary">
-                {employee.specialty ?? "-"}
-              </span>
-              <span className="text-xs uppercase tracking-wide text-ink-secondary">
-                {employeeRoleLabel(employee.role)}
-              </span>
-              <span
-                className={`text-xs uppercase tracking-wide ${employee.active === false ? "text-danger" : "text-success"}`}
-              >
-                {employee.active === false ? "Inactivo" : "Activo"}
-              </span>
-            </button>
-          ))}
-        </div>
+        <EmployeesTable
+          employees={filteredEmployees}
+          onRowClick={(id) => router.push(`/employees/${id}`)}
+        />
       ) : null}
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>

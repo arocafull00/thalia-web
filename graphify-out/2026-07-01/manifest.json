@@ -255,8 +255,8 @@
     "semantic_hash": "39801d13ce78f013a084007de5e4dbe8"
   },
   "src/components/settings/settings-page-client.tsx": {
-    "mtime": 1782928116.8416874,
-    "ast_hash": "06e2941da1e55608b58723d4bdbbbf3a",
+    "mtime": 1782928342.9258492,
+    "ast_hash": "690404a33cc193016165ea2503b4cca2",
     "semantic_hash": ""
   },
   "src/components/settings/settings-profile-panel.tsx": {
@@ -2702,6 +2702,36 @@
   "src/copy/patient-detail-copy.ts": {
     "mtime": 1782925960.6608713,
     "ast_hash": "b93cb2d0309e12121addc25c35386721",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-account-panel.tsx": {
+    "mtime": 1782928330.7741096,
+    "ast_hash": "974b4ffeda45820c8d62d1fafe923bbe",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-action-row.tsx": {
+    "mtime": 1782928305.8971622,
+    "ast_hash": "c179ed9e7f8e389b3c7c3e64704d31aa",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-management-panel.tsx": {
+    "mtime": 1782928343.9627142,
+    "ast_hash": "5090bc2018e6ff36a1d0a57ec1d5b733",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-profile-card.tsx": {
+    "mtime": 1782928346.343145,
+    "ast_hash": "f3bd72fc776752083b08eabaf78aac98",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-stat-item.tsx": {
+    "mtime": 1782928341.976293,
+    "ast_hash": "98386295787b56d1326f5857dc9e8677",
+    "semantic_hash": ""
+  },
+  "src/copy/settings-copy.ts": {
+    "mtime": 1782928303.9543154,
+    "ast_hash": "6ed47e12e3517fb9c036d3f75b956c56",
     "semantic_hash": ""
   }
 }

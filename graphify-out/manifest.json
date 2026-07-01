@@ -255,8 +255,8 @@
     "semantic_hash": "39801d13ce78f013a084007de5e4dbe8"
   },
   "src/components/settings/settings-page-client.tsx": {
-    "mtime": 1782928342.9258492,
-    "ast_hash": "690404a33cc193016165ea2503b4cca2",
+    "mtime": 1782928404.9731996,
+    "ast_hash": "cfd2af85550aebf2c4f4a4b15f98c090",
     "semantic_hash": ""
   },
   "src/components/settings/settings-profile-panel.tsx": {
@@ -2705,33 +2705,38 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-account-panel.tsx": {
-    "mtime": 1782928330.7741096,
-    "ast_hash": "974b4ffeda45820c8d62d1fafe923bbe",
+    "mtime": 1782928404.8679912,
+    "ast_hash": "c53f15a8c6894a31c14c765a26207c0d",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-action-row.tsx": {
-    "mtime": 1782928305.8971622,
-    "ast_hash": "c179ed9e7f8e389b3c7c3e64704d31aa",
+    "mtime": 1782928404.8903556,
+    "ast_hash": "a49896d90d67508792028c53cf24fcc0",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-management-panel.tsx": {
-    "mtime": 1782928343.9627142,
-    "ast_hash": "5090bc2018e6ff36a1d0a57ec1d5b733",
+    "mtime": 1782928404.9074533,
+    "ast_hash": "38bd7ea1a5e3aea8f00a18aa2b21057a",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-profile-card.tsx": {
-    "mtime": 1782928346.343145,
-    "ast_hash": "f3bd72fc776752083b08eabaf78aac98",
+    "mtime": 1782928404.9420967,
+    "ast_hash": "7d3b702cbda297422c53761ca39a46e1",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-stat-item.tsx": {
-    "mtime": 1782928341.976293,
-    "ast_hash": "98386295787b56d1326f5857dc9e8677",
+    "mtime": 1782928404.953551,
+    "ast_hash": "6390d85a458640f7feb4c49f14e1e658",
     "semantic_hash": ""
   },
   "src/copy/settings-copy.ts": {
-    "mtime": 1782928303.9543154,
-    "ast_hash": "6ed47e12e3517fb9c036d3f75b956c56",
+    "mtime": 1782928404.985788,
+    "ast_hash": "85ffa2d4fe903c58f66b02e694bef407",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-management-tile.tsx": {
+    "mtime": 1782928404.9179177,
+    "ast_hash": "872d3c6f2b5041ad5f0c2fffe1e9f8cf",
     "semantic_hash": ""
   }
 }

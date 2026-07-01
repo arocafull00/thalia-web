@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 type SettingsManagementTileProps = {
@@ -28,10 +28,6 @@ export default function SettingsManagementTile({
         <p className="text-sm font-semibold text-ink">{title}</p>
         <p className="mt-1 text-xs text-ink-muted">{description}</p>
       </div>
-      <ChevronRight
-        className="h-4 w-4 text-ink-muted transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
-        aria-hidden="true"
-      />
     </Link>
   );
 }

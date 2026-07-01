@@ -20,7 +20,6 @@ export default function SettingsPageClient() {
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
   const displayUri = localAvatarUri ?? resolvedAvatarUrl;
   const {
-    activeEmployeesCount,
     canViewClinicRequests,
     handleAvatarPress,
     handleChangePassword,
@@ -43,10 +42,6 @@ export default function SettingsPageClient() {
   }
 
   const statItems = [
-    {
-      label: SETTINGS_COPY.stats.activeEmployees,
-      value: String(activeEmployeesCount),
-    },
     ...(canViewClinicRequests
       ? [
           {
@@ -56,15 +51,6 @@ export default function SettingsPageClient() {
                 ? ("warning" as const)
                 : ("default" as const),
             value: String(pendingClinicRequests.length),
-          },
-        ]
-      : []),
-    ...(isAdmin
-      ? [
-          {
-            label: SETTINGS_COPY.stats.platformRole,
-            tone: "success" as const,
-            value: "Admin",
           },
         ]
       : []),

@@ -1,10 +1,8 @@
 "use client";
 
-import { ChevronRight, Mail, Pencil, Phone } from "lucide-react";
+import { Mail, Pencil, Phone } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
-import SettingsStatItem from "@/components/settings/components/settings-stat-item";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
@@ -27,18 +25,14 @@ type SettingsProfileCardProps = {
 };
 
 export default function SettingsProfileCard({
-  canViewClinicRequests,
   displayUri,
   isAdmin,
   onPickAvatar,
-  pendingRequestsCount,
   profile,
-  statItems,
   uploadPending,
   userEmail,
 }: SettingsProfileCardProps) {
   const profileSubtitle = buildProfileSubtitle(profile.specialty, profile.role);
-  const hasPendingRequests = pendingRequestsCount > 0;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-surface">
@@ -122,37 +116,6 @@ export default function SettingsProfileCard({
             />
           </div>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-5 px-6 py-6 lg:px-8">
-        <div className="flex flex-col divide-y divide-border-subtle sm:flex-row sm:divide-x sm:divide-y-0">
-          {statItems.map((item) => (
-            <SettingsStatItem key={item.label} {...item} />
-          ))}
-        </div>
-
-        {canViewClinicRequests ? (
-          <Link
-            href="/settings/clinic-requests"
-            className={`flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-colors ${
-              hasPendingRequests
-                ? "border-warning/30 bg-warning-subtle text-ink hover:bg-warning-subtle/80"
-                : "border-border-subtle text-ink-secondary hover:border-border hover:bg-canvas hover:text-ink"
-            }`}
-          >
-            <span className="font-medium">
-              {SETTINGS_COPY.stats.viewClinicRequests}
-            </span>
-            <span className="flex items-center gap-2">
-              {hasPendingRequests ? (
-                <span className="rounded-full bg-warning px-2 py-0.5 text-xs font-semibold tabular-nums text-on-primary">
-                  {pendingRequestsCount}
-                </span>
-              ) : null}
-              <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-            </span>
-          </Link>
-        ) : null}
       </div>
     </div>
   );

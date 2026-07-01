@@ -20,6 +20,7 @@ type AppSearchableComboboxProps = {
   searchPlaceholder?: string;
   disabled?: boolean;
   loading?: boolean;
+  searching?: boolean;
   emptyMessage?: string;
   allowClear?: boolean;
   clearLabel?: string;
@@ -35,6 +36,9 @@ const inputTriggerClassName =
 const pillTriggerClassName =
   "inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary disabled:opacity-50";
 
+const popoverContentClassName =
+  "pointer-events-auto z-100 w-(--radix-popover-trigger-width) min-w-72 rounded-2xl border border-border bg-surface p-3 shadow-lg";
+
 export default function AppSearchableCombobox({
   value,
   onValueChange,
@@ -43,6 +47,7 @@ export default function AppSearchableCombobox({
   searchPlaceholder = COMBOBOX_COPY.searchPlaceholder,
   disabled = false,
   loading = false,
+  searching = false,
   emptyMessage = COMBOBOX_COPY.empty,
   allowClear = false,
   clearLabel,
@@ -87,6 +92,11 @@ export default function AppSearchableCombobox({
     return placeholder;
   }, [allowClear, clearLabel, placeholder, selectedOption, value]);
 
+  const showInitialLoading = loading && !selectedOption;
+  const showListLoading = loading || searching;
+  const showEmptyState =
+    !showListLoading && open && filteredOptions.length === 0;
+
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
 
@@ -116,7 +126,7 @@ export default function AppSearchableCombobox({
       <Popover.Trigger asChild>
         <button
           type="button"
-          disabled={disabled || loading}
+          disabled={disabled || showInitialLoading}
           className={`${triggerClassName} ${className ?? ""}`}
         >
           <span className="flex min-w-0 flex-1 items-center gap-2 text-left">
@@ -125,17 +135,14 @@ export default function AppSearchableCombobox({
             <span
               className={`truncate ${selectedOption ? "text-ink" : "text-ink-muted"}`}
             >
-              {loading ? COMBOBOX_COPY.loading : triggerLabel}
+              {showInitialLoading ? COMBOBOX_COPY.loading : triggerLabel}
             </span>
           </span>
           <ChevronDown size={16} className="shrink-0 text-ink-muted" />
         </button>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content
-          className="z-50 w-(--radix-popover-trigger-width) min-w-72 rounded-2xl border border-border bg-surface p-3 shadow-lg"
-          sideOffset={8}
-        >
+        <Popover.Content className={popoverContentClassName} sideOffset={8}>
           <input
             value={search}
             onChange={(event) => handleSearchChange(event.target.value)}
@@ -153,21 +160,23 @@ export default function AppSearchableCombobox({
                 {clearLabel}
               </button>
             ) : null}
-            {loading ? (
+            {showListLoading ? (
               <p className="px-3 py-2 text-sm text-ink-muted">
                 {COMBOBOX_COPY.loading}
               </p>
             ) : null}
-            {!loading && filteredOptions.length === 0 ? (
+            {showEmptyState ? (
               <p className="px-3 py-2 text-sm text-ink-muted">{emptyMessage}</p>
             ) : null}
-            {!loading
+            {!showListLoading
               ? filteredOptions.map((option) => (
                   <button
                     key={option.value}
                     type="button"
                     onClick={() => handleSelect(option.value)}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-canvas"
+                    className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-canvas ${
+                      option.value === value ? "bg-primary-subtle text-ink" : ""
+                    }`}
                   >
                     {option.leading}
                     {option.label}

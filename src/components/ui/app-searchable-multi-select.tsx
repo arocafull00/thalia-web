@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import AppSearchableMultiSelectOption from "@/components/ui/app-searchable-multi-select-option";
 import { COMBOBOX_COPY } from "@/copy/combobox-copy";
 
 export type AppSearchableMultiSelectOption = {
@@ -56,23 +57,18 @@ export default function AppSearchableMultiSelect({
         placeholder={searchPlaceholder}
         className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none ring-primary focus:ring-2"
       />
-      <div className="max-h-32 space-y-2 overflow-y-auto rounded-xl border border-border-subtle p-3">
+      <div className="h-32 space-y-1 overflow-y-auto rounded-xl border border-border-subtle p-2">
         {filteredOptions.length === 0 ? (
-          <p className="text-sm text-ink-muted">{emptyMessage}</p>
+          <p className="px-2 py-1.5 text-sm text-ink-muted">{emptyMessage}</p>
         ) : null}
         {filteredOptions.map((option) => (
-          <label
+          <AppSearchableMultiSelectOption
             key={option.id}
-            className="flex cursor-pointer items-center gap-2 text-sm text-ink"
-          >
-            <input
-              type="checkbox"
-              checked={selectedIds.includes(option.id)}
-              onChange={() => onToggle(option.id)}
-              className="rounded border-border text-primary focus:ring-primary"
-            />
-            <span>{option.label}</span>
-          </label>
+            id={option.id}
+            label={option.label}
+            checked={selectedIds.includes(option.id)}
+            onToggle={onToggle}
+          />
         ))}
       </div>
     </div>

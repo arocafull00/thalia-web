@@ -1,26 +1,30 @@
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
+} from "react-hook-form";
+
 import NewAppointmentDatetimeField from "@/components/appointments/new-appointment-datetime-field";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSearchableMultiSelect from "@/components/ui/app-searchable-multi-select";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
+import type { AppointmentFormValues } from "@/lib/hooks/use-appointment-create-dialog";
 import type { Employee, Patient, TreatmentType } from "@/types/database.types";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type AppointmentCreateFormProps = {
-  patientId: string;
-  onPatientIdChange: (value: string) => void;
-  onPatientSearchChange: (value: string) => void;
-  employeeId: string;
-  onEmployeeIdChange: (value: string) => void;
-  startsAt: Date;
-  onStartsAtChange: (value: Date) => void;
+  register: UseFormRegister<AppointmentFormValues>;
+  control: Control<AppointmentFormValues>;
+  errors: FieldErrors<AppointmentFormValues>;
   treatmentTypeIds: string[];
   onToggleTreatmentType: (treatmentTypeId: string) => void;
-  notes: string;
-  onNotesChange: (value: string) => void;
+  onPatientSearchChange: (value: string) => void;
   patients: Patient[];
   patientsLoading: boolean;
+  patientsSearching: boolean;
   employees: Employee[];
   employeesLoading: boolean;
   treatmentTypes: TreatmentType[];
@@ -28,19 +32,15 @@ type AppointmentCreateFormProps = {
 };
 
 export default function AppointmentCreateForm({
-  patientId,
-  onPatientIdChange,
-  onPatientSearchChange,
-  employeeId,
-  onEmployeeIdChange,
-  startsAt,
-  onStartsAtChange,
+  register,
+  control,
+  errors,
   treatmentTypeIds,
   onToggleTreatmentType,
-  notes,
-  onNotesChange,
+  onPatientSearchChange,
   patients,
   patientsLoading,
+  patientsSearching,
   employees,
   employeesLoading,
   treatmentTypes,
@@ -76,16 +76,27 @@ export default function AppointmentCreateForm({
             {APPOINTMENT_CREATE_COPY.fields.requiredMark}
           </span>
         </span>
-        <AppSearchableCombobox
-          value={patientId || null}
-          onValueChange={(value) => onPatientIdChange(value ?? "")}
-          options={patientOptions}
-          placeholder={APPOINTMENT_CREATE_COPY.fields.selectPlaceholder}
-          searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchPatient}
-          disabled={patientsLoading}
-          loading={patientsLoading}
-          onSearchChange={onPatientSearchChange}
+        <Controller
+          name="patientId"
+          control={control}
+          render={({ field }) => (
+            <AppSearchableCombobox
+              value={field.value || null}
+              onValueChange={(value) => field.onChange(value ?? "")}
+              options={patientOptions}
+              placeholder={APPOINTMENT_CREATE_COPY.fields.selectPlaceholder}
+              searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchPatient}
+              loading={patientsLoading}
+              searching={patientsSearching}
+              onSearchChange={onPatientSearchChange}
+            />
+          )}
         />
+        {errors.patientId ? (
+          <span className="text-sm text-danger">
+            {errors.patientId.message}
+          </span>
+        ) : null}
       </label>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
@@ -94,15 +105,26 @@ export default function AppointmentCreateForm({
             {APPOINTMENT_CREATE_COPY.fields.requiredMark}
           </span>
         </span>
-        <AppSearchableCombobox
-          value={employeeId || null}
-          onValueChange={(value) => onEmployeeIdChange(value ?? "")}
-          options={employeeOptions}
-          placeholder={APPOINTMENT_CREATE_COPY.fields.selectPlaceholder}
-          searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchEmployee}
-          disabled={employeesLoading}
-          loading={employeesLoading}
+        <Controller
+          name="employeeId"
+          control={control}
+          render={({ field }) => (
+            <AppSearchableCombobox
+              value={field.value || null}
+              onValueChange={(value) => field.onChange(value ?? "")}
+              options={employeeOptions}
+              placeholder={APPOINTMENT_CREATE_COPY.fields.selectPlaceholder}
+              searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchEmployee}
+              disabled={employeesLoading}
+              loading={employeesLoading}
+            />
+          )}
         />
+        {errors.employeeId ? (
+          <span className="text-sm text-danger">
+            {errors.employeeId.message}
+          </span>
+        ) : null}
       </label>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
@@ -111,10 +133,19 @@ export default function AppointmentCreateForm({
             {APPOINTMENT_CREATE_COPY.fields.requiredMark}
           </span>
         </span>
-        <NewAppointmentDatetimeField
-          value={startsAt}
-          onChange={onStartsAtChange}
+        <Controller
+          name="startsAt"
+          control={control}
+          render={({ field }) => (
+            <NewAppointmentDatetimeField
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
+        {errors.startsAt ? (
+          <span className="text-sm text-danger">{errors.startsAt.message}</span>
+        ) : null}
       </label>
       <fieldset className="space-y-2">
         <legend className="text-sm text-ink-secondary">
@@ -128,17 +159,20 @@ export default function AppointmentCreateForm({
           emptyMessage={APPOINTMENT_CREATE_COPY.fields.noTreatments}
           searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchTreatment}
         />
+        {errors.treatmentTypeIds ? (
+          <span className="text-sm text-danger">
+            {errors.treatmentTypeIds.message}
+          </span>
+        ) : null}
       </fieldset>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.notes}
         </span>
-        <textarea
-          value={notes}
-          onChange={(event) => onNotesChange(event.target.value)}
-          rows={3}
-          className={inputClassName}
-        />
+        <textarea {...register("notes")} rows={3} className={inputClassName} />
+        {errors.notes ? (
+          <span className="text-sm text-danger">{errors.notes.message}</span>
+        ) : null}
       </label>
     </div>
   );

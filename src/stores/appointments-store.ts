@@ -3,6 +3,11 @@ import { addMinutes } from "date-fns";
 import { create } from "zustand";
 
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import {
+  appointmentSchema,
+  appointmentUpdateSchema,
+} from "@/lib/schemas/appointment-schema";
+import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import { useDashboardStore } from "@/stores/dashboard-store";
@@ -261,17 +266,24 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     set({ creating: true, createError: null });
 
     try {
-      const treatments = await getTreatments(input.treatmentTypeIds);
-      const endsAt = calculateEndDate(input.startsAt, treatments);
+      const parsed = appointmentSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
+      const validated = parsed.data;
+      const treatments = await getTreatments(validated.treatmentTypeIds);
+      const endsAt = calculateEndDate(validated.startsAt, treatments);
       const { data: appointment, error } = await supabase
         .from("appointments")
         .insert({
-          clinic_id: input.clinicId,
-          patient_id: input.patientId,
-          employee_id: input.employeeId,
-          starts_at: input.startsAt.toISOString(),
+          clinic_id: validated.clinicId,
+          patient_id: validated.patientId,
+          employee_id: validated.employeeId,
+          starts_at: validated.startsAt.toISOString(),
           ends_at: endsAt.toISOString(),
-          notes: input.notes,
+          notes: validated.notes,
           status: "scheduled",
         })
         .select("*")
@@ -311,18 +323,25 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     set({ updating: true, updateError: null });
 
     try {
-      const treatments = await getTreatments(input.treatmentTypeIds);
-      const endsAt = calculateEndDate(input.startsAt, treatments);
+      const parsed = appointmentUpdateSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
+      const validated = parsed.data;
+      const treatments = await getTreatments(validated.treatmentTypeIds);
+      const endsAt = calculateEndDate(validated.startsAt, treatments);
       const { data, error } = await supabase
         .from("appointments")
         .update({
-          patient_id: input.patientId,
-          employee_id: input.employeeId,
-          starts_at: input.startsAt.toISOString(),
+          patient_id: validated.patientId,
+          employee_id: validated.employeeId,
+          starts_at: validated.startsAt.toISOString(),
           ends_at: endsAt.toISOString(),
-          notes: input.notes,
+          notes: validated.notes,
         })
-        .eq("id", input.id)
+        .eq("id", validated.id)
         .select("*")
         .single();
 
@@ -331,7 +350,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       const { error: deleteError } = await supabase
         .from("appointment_treatments")
         .delete()
-        .eq("appointment_id", input.id);
+        .eq("appointment_id", validated.id);
 
       if (deleteError) {
         throw deleteError;
@@ -339,7 +358,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
       if (treatments.length > 0) {
         const rows = treatments.map((treatment) => ({
-          appointment_id: input.id,
+          appointment_id: validated.id,
           treatment_type_id: treatment.id,
           price_at_booking: treatment.price ?? 0,
         }));
@@ -354,7 +373,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       }
 
       await refreshAllAppointmentEntries();
-      await get().fetchAppointment(input.id);
+      await get().fetchAppointment(validated.id);
       await useDashboardStore.getState().fetchDashboard();
       set({ updating: false });
       return appointment;

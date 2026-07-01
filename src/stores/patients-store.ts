@@ -1,6 +1,11 @@
 import { create } from "zustand";
 
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import {
+  patientSchema,
+  patientUpdateSchema,
+} from "@/lib/schemas/patient-schema";
+import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { uploadFile } from "@/lib/storage";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
@@ -225,9 +230,15 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     set({ creating: true, createError: null });
 
     try {
+      const parsed = patientSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
       const { data, error } = await supabase
         .from("patients")
-        .insert(input)
+        .insert(parsed.data)
         .select("*")
         .single();
       const patient = unwrapSupabase(data, error) as Patient;
@@ -249,9 +260,15 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     set({ updating: true, updateError: null });
 
     try {
+      const parsed = patientUpdateSchema.safeParse(values);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
       const { data, error } = await supabase
         .from("patients")
-        .update(values)
+        .update(parsed.data)
         .eq("id", id)
         .select("*")
         .single();

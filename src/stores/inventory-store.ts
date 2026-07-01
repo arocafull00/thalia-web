@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { inventorySchema } from "@/lib/schemas/inventory-schema";
+import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import {
@@ -29,7 +31,10 @@ export type InventoryItemInput = {
 type InventoryStore = {
   list: QueryEntry<InventoryItem[]>;
   byId: Record<string, QueryEntry<InventoryItem>>;
-  movementsByItemId: Record<string, QueryEntry<InventoryMovementWithEmployee[]>>;
+  movementsByItemId: Record<
+    string,
+    QueryEntry<InventoryMovementWithEmployee[]>
+  >;
   creating: boolean;
   createError: Error | null;
   recording: boolean;
@@ -108,7 +113,10 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   fetchInventoryMovements: async (itemId) => {
     const previous = get().movementsByItemId[itemId];
     set({
-      movementsByItemId: { ...get().movementsByItemId, [itemId]: loadingQueryEntry(previous) },
+      movementsByItemId: {
+        ...get().movementsByItemId,
+        [itemId]: loadingQueryEntry(previous),
+      },
     });
 
     try {
@@ -118,9 +126,15 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         .eq("item_id", itemId)
         .order("created_at", { ascending: false });
 
-      const movements = unwrapSupabaseList(data, error) as InventoryMovementWithEmployee[];
+      const movements = unwrapSupabaseList(
+        data,
+        error,
+      ) as InventoryMovementWithEmployee[];
       set({
-        movementsByItemId: { ...get().movementsByItemId, [itemId]: successQueryEntry(movements) },
+        movementsByItemId: {
+          ...get().movementsByItemId,
+          [itemId]: successQueryEntry(movements),
+        },
       });
     } catch (cause) {
       set({
@@ -139,9 +153,15 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     set({ creating: true, createError: null });
 
     try {
+      const parsed = inventorySchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
       const { data, error } = await supabase
         .from("inventory_items")
-        .insert(input)
+        .insert(parsed.data)
         .select("*")
         .single();
       const item = unwrapSupabase(data, error) as InventoryItem;

@@ -21,7 +21,7 @@ export default function AppDatePickerPopover({
       <Popover.Anchor />
       <Popover.Portal>
         <Popover.Content
-          className="rounded-2xl border border-border bg-surface p-4 shadow-lg"
+          className="pointer-events-auto z-100 rounded-2xl border border-border bg-surface p-4 shadow-lg"
           sideOffset={8}
         >
           {children}

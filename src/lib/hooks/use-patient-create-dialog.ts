@@ -1,94 +1,90 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useCreatePatient } from "@/lib/hooks/use-patients";
+import { patientSchema } from "@/lib/schemas/patient-schema";
+import { formatZodError } from "@/lib/schemas/schema-helpers";
+
+const patientFormSchema = patientSchema
+  .omit({ clinic_id: true, birth_date: true })
+  .extend({
+    birth_date: z.date().nullable(),
+  });
+
+export type PatientFormValues = z.input<typeof patientFormSchema>;
+
+const defaultValues: PatientFormValues = {
+  full_name: "",
+  dni: "",
+  birth_date: null,
+  phone: "",
+  email: "",
+  address: "",
+  notes: "",
+};
 
 export function usePatientCreateDialog(onSuccess: () => void) {
   const clinicId = useClinicId();
   const { mutateAsync, isPending } = useCreatePatient();
 
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [dni, setDni] = useState("");
-  const [birthDate, setBirthDate] = useState<Date | null>(null);
-  const [address, setAddress] = useState("");
-  const [notes, setNotes] = useState("");
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<PatientFormValues>({
+    resolver: zodResolver(patientFormSchema),
+    defaultValues,
+  });
 
-  const reset = useCallback(() => {
-    setFullName("");
-    setPhone("");
-    setEmail("");
-    setDni("");
-    setBirthDate(null);
-    setAddress("");
-    setNotes("");
-  }, []);
-
-  const handleSubmit = useCallback(async () => {
-    if (!fullName.trim()) {
-      toast.error(PATIENT_CREATE_COPY.validation.fullNameRequired);
-      return;
-    }
-
+  const onSubmit = handleSubmit(async (data) => {
     if (!clinicId) {
       toast.error(PATIENT_CREATE_COPY.validation.clinicRequired);
       return;
     }
 
+    const parsed = patientSchema.safeParse({
+      clinic_id: clinicId,
+      full_name: data.full_name,
+      dni: data.dni,
+      birth_date: data.birth_date
+        ? format(data.birth_date, "yyyy-MM-dd")
+        : null,
+      phone: data.phone,
+      email: data.email,
+      address: data.address,
+      notes: data.notes,
+    });
+
+    if (!parsed.success) {
+      toast.error(formatZodError(parsed.error));
+      return;
+    }
+
     try {
-      await mutateAsync({
-        clinic_id: clinicId,
-        full_name: fullName.trim(),
-        dni: dni.trim() || null,
-        birth_date: birthDate ? format(birthDate, "yyyy-MM-dd") : null,
-        phone: phone.trim() || null,
-        email: email.trim() || null,
-        address: address.trim() || null,
-        notes: notes.trim() || null,
-      });
+      await mutateAsync(parsed.data);
       toast.success(PATIENT_CREATE_COPY.success);
-      reset();
+      reset(defaultValues);
       onSuccess();
     } catch (cause) {
       toast.error(
         cause instanceof Error ? cause.message : PATIENT_CREATE_COPY.error,
       );
     }
-  }, [
-    address,
-    birthDate,
-    clinicId,
-    dni,
-    email,
-    fullName,
-    mutateAsync,
-    notes,
-    onSuccess,
-    phone,
-    reset,
-  ]);
+  });
 
   return {
-    fullName,
-    setFullName,
-    phone,
-    setPhone,
-    email,
-    setEmail,
-    dni,
-    setDni,
-    birthDate,
-    setBirthDate,
-    address,
-    setAddress,
-    notes,
-    setNotes,
-    isPending,
-    reset,
-    handleSubmit,
+    register,
+    control,
+    errors,
+    isPending: isPending || isSubmitting,
+    reset: () => reset(defaultValues),
+    handleSubmit: onSubmit,
   };
 }

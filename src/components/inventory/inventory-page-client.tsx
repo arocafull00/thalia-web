@@ -5,11 +5,11 @@ import { useState } from "react";
 
 import InventoryItemCreateForm from "@/components/inventory/components/inventory-item-create-form";
 import AppDialog from "@/components/ui/app-dialog";
-import AppDialogContent from "@/components/ui/app-dialog-content";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
+import AppSheetContent from "@/components/ui/app-sheet-content";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
@@ -188,27 +188,19 @@ export default function InventoryPageClient() {
         </div>
       ) : null}
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
-        <AppDialogContent className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-surface p-6 shadow-lg focus:outline-none">
+        <AppSheetContent>
           <AppDialogHeader>
             <AppDialogTitle>{INVENTORY_ITEM_CREATE_COPY.title}</AppDialogTitle>
             <AppDialogDescription>
               {INVENTORY_ITEM_CREATE_COPY.description}
             </AppDialogDescription>
           </AppDialogHeader>
-          <InventoryItemCreateForm
-            name={dialog.name}
-            onNameChange={dialog.setName}
-            category={dialog.category}
-            onCategoryChange={dialog.setCategory}
-            unit={dialog.unit}
-            onUnitChange={dialog.setUnit}
-            stock={dialog.stock}
-            onStockChange={dialog.setStock}
-            minStock={dialog.minStock}
-            onMinStockChange={dialog.setMinStock}
-            unitPrice={dialog.unitPrice}
-            onUnitPriceChange={dialog.setUnitPrice}
-          />
+          <div className="min-h-0 flex-1 overflow-y-auto px-1">
+            <InventoryItemCreateForm
+              register={dialog.register}
+              errors={dialog.errors}
+            />
+          </div>
           <AppDialogFooter>
             <button
               type="button"
@@ -227,7 +219,7 @@ export default function InventoryPageClient() {
               onClick={dialog.handleSubmit}
             />
           </AppDialogFooter>
-        </AppDialogContent>
+        </AppSheetContent>
       </AppDialog>
     </div>
   );

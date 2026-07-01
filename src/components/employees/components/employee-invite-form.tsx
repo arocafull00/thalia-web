@@ -1,4 +1,12 @@
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
+} from "react-hook-form";
+
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
+import type { EmployeeFormValues } from "@/lib/hooks/use-employee-invite-dialog";
 import type { EmployeeRole } from "@/types/database.types";
 
 const inputClassName =
@@ -12,29 +20,15 @@ const roleOptions: EmployeeRole[] = [
 ];
 
 type EmployeeInviteFormProps = {
-  fullName: string;
-  onFullNameChange: (value: string) => void;
-  email: string;
-  onEmailChange: (value: string) => void;
-  role: EmployeeRole;
-  onRoleChange: (value: EmployeeRole) => void;
-  specialty: string;
-  onSpecialtyChange: (value: string) => void;
-  phone: string;
-  onPhoneChange: (value: string) => void;
+  register: UseFormRegister<EmployeeFormValues>;
+  control: Control<EmployeeFormValues>;
+  errors: FieldErrors<EmployeeFormValues>;
 };
 
 export default function EmployeeInviteForm({
-  fullName,
-  onFullNameChange,
-  email,
-  onEmailChange,
-  role,
-  onRoleChange,
-  specialty,
-  onSpecialtyChange,
-  phone,
-  onPhoneChange,
+  register,
+  control,
+  errors,
 }: EmployeeInviteFormProps) {
   return (
     <div className="mt-4 space-y-4">
@@ -45,11 +39,10 @@ export default function EmployeeInviteForm({
             {EMPLOYEE_INVITE_COPY.fields.requiredMark}
           </span>
         </span>
-        <input
-          value={fullName}
-          onChange={(event) => onFullNameChange(event.target.value)}
-          className={inputClassName}
-        />
+        <input {...register("fullName")} className={inputClassName} />
+        {errors.fullName ? (
+          <span className="text-sm text-danger">{errors.fullName.message}</span>
+        ) : null}
       </label>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
@@ -58,12 +51,10 @@ export default function EmployeeInviteForm({
             {EMPLOYEE_INVITE_COPY.fields.requiredMark}
           </span>
         </span>
-        <input
-          value={email}
-          onChange={(event) => onEmailChange(event.target.value)}
-          type="email"
-          className={inputClassName}
-        />
+        <input {...register("email")} type="email" className={inputClassName} />
+        {errors.email ? (
+          <span className="text-sm text-danger">{errors.email.message}</span>
+        ) : null}
       </label>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
@@ -72,39 +63,49 @@ export default function EmployeeInviteForm({
             {EMPLOYEE_INVITE_COPY.fields.requiredMark}
           </span>
         </span>
-        <select
-          value={role}
-          onChange={(event) => onRoleChange(event.target.value as EmployeeRole)}
-          className={inputClassName}
-        >
-          {roleOptions.map((option) => (
-            <option key={option} value={option}>
-              {EMPLOYEE_INVITE_COPY.roles[option]}
-            </option>
-          ))}
-        </select>
+        <Controller
+          name="role"
+          control={control}
+          render={({ field }) => (
+            <select
+              value={field.value}
+              onChange={(event) =>
+                field.onChange(event.target.value as EmployeeRole)
+              }
+              className={inputClassName}
+            >
+              {roleOptions.map((option) => (
+                <option key={option} value={option}>
+                  {EMPLOYEE_INVITE_COPY.roles[option]}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        {errors.role ? (
+          <span className="text-sm text-danger">{errors.role.message}</span>
+        ) : null}
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {EMPLOYEE_INVITE_COPY.fields.specialty}
           </span>
-          <input
-            value={specialty}
-            onChange={(event) => onSpecialtyChange(event.target.value)}
-            className={inputClassName}
-          />
+          <input {...register("specialty")} className={inputClassName} />
+          {errors.specialty ? (
+            <span className="text-sm text-danger">
+              {errors.specialty.message}
+            </span>
+          ) : null}
         </label>
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {EMPLOYEE_INVITE_COPY.fields.phone}
           </span>
-          <input
-            value={phone}
-            onChange={(event) => onPhoneChange(event.target.value)}
-            type="tel"
-            className={inputClassName}
-          />
+          <input {...register("phone")} type="tel" className={inputClassName} />
+          {errors.phone ? (
+            <span className="text-sm text-danger">{errors.phone.message}</span>
+          ) : null}
         </label>
       </div>
     </div>

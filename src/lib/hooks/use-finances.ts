@@ -7,6 +7,7 @@ import {
   useFinancesStore,
   type TransactionInput,
 } from "@/stores/finances-store";
+import { isInitialLoading } from "@/stores/query-state";
 import type { TransactionType } from "@/types/database.types";
 
 export type { TransactionInput };
@@ -25,7 +26,7 @@ export function useTransactions(month: Date, type: TransactionType | "all") {
 
   return {
     data: entry?.data ?? undefined,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
@@ -43,7 +44,7 @@ export function useFinancialSummary(month: Date) {
 
   return {
     data: entry?.data ?? undefined,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }

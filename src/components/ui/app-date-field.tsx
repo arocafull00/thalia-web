@@ -1,7 +1,13 @@
 "use client";
 
-import * as Popover from "@radix-ui/react-popover";
-import { useState } from "react";
+import AppDatePopoverField from "@/components/ui/app-date-popover-field";
+import {
+  formatLocalDatetimeInputValue,
+  parseLocalDatetimeInputValue,
+} from "@/lib/date-input";
+
+const fieldClassName =
+  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type AppDateFieldProps = {
   value: Date;
@@ -14,33 +20,18 @@ export default function AppDateField({
   onChange,
   mode = "date",
 }: AppDateFieldProps) {
-  const [open, setOpen] = useState(false);
-  const inputType = mode === "datetime-local" ? "datetime-local" : "date";
-  const inputValue =
-    mode === "datetime-local"
-      ? value.toISOString().slice(0, 16)
-      : value.toISOString().slice(0, 10);
+  if (mode === "datetime-local") {
+    return (
+      <input
+        type="datetime-local"
+        value={formatLocalDatetimeInputValue(value)}
+        onChange={(event) =>
+          onChange(parseLocalDatetimeInputValue(event.target.value))
+        }
+        className={fieldClassName}
+      />
+    );
+  }
 
-  return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>
-        <button
-          type="button"
-          className="rounded-xl border border-border px-3 py-2 text-sm"
-        >
-          {inputValue}
-        </button>
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Content className="rounded-2xl border border-border bg-surface p-4 shadow-lg">
-          <input
-            type={inputType}
-            value={inputValue}
-            onChange={(event) => onChange(new Date(event.target.value))}
-            className="rounded-xl border border-border px-3 py-2 text-sm"
-          />
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
-  );
+  return <AppDatePopoverField value={value} onChange={onChange} />;
 }

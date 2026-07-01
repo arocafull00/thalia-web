@@ -5,6 +5,7 @@ import {
   usePatientsStore,
   type PatientFormInput,
 } from "@/stores/patients-store";
+import { isInitialLoading } from "@/stores/query-state";
 
 export type { PatientFormInput };
 
@@ -19,7 +20,7 @@ export function usePatients(search: string) {
 
   return {
     data: entry?.data ?? undefined,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
@@ -38,7 +39,7 @@ export function usePatient(patientId: string) {
 
   return {
     data: entry?.data,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
@@ -57,7 +58,7 @@ export function usePatientAppointments(patientId: string) {
 
   return {
     data: entry?.data ?? undefined,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
@@ -76,7 +77,7 @@ export function useUpcomingPatientAppointments(patientId: string) {
 
   return {
     data: entry?.data ?? undefined,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }

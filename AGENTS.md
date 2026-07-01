@@ -36,6 +36,18 @@ No asumas APIs de versiones anteriores ni de la documentación sin versionar.
 
 **Server Actions:** Usa Server Actions para mutaciones. Valida la entrada con Zod en el servidor.
 
+## Formularios
+
+Todo formulario con 2 o más campos usa **react-hook-form** (`useForm`) con **zodResolver** sobre un schema de `src/lib/schemas/`. Nunca uses `useState` individual por campo ni un `reset` manual que limpie cada setter.
+
+- El **hook** del formulario (`hooks/use-[feature].ts` o `src/lib/hooks/use-*-dialog.ts`) configura `useForm`, define `defaultValues`, expone `register`, `control`, `handleSubmit`, `formState.errors`, `reset` e `isPending`. Los campos que el usuario no rellena (p. ej. `clinic_id`) se omiten del schema de formulario con `.omit()` y se inyectan en el submit.
+- El **subcomponente de formulario** recibe `register`, `control` y `errors` por props; muestra errores de campo con `text-danger`. No recibe `value`/`onChange` por campo.
+- Inputs nativos (`input`, `textarea`, `select` simple) → `{...register("campo")}`.
+- Componentes custom (date pickers, combobox, multi-select) → `Controller` de react-hook-form.
+- Estado auxiliar de UI que no es un campo persistido (p. ej. texto de búsqueda en un picker) puede quedarse en `useState` aparte del formulario.
+- Errores de validación globales o de submit siguen usando `toast.error(...)` además de los mensajes inline por campo.
+- Referencia: `src/lib/hooks/use-patient-create-dialog.ts` + `src/components/patients/components/patient-create-form.tsx`.
+
 ## Arquitectura de componentes: separación por capas
 
 Todo componente que mezcle lógica de negocio con JSX debe dividirse en tres capas:

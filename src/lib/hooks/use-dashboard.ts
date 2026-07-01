@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { useDashboardStore } from "@/stores/dashboard-store";
+import { isInitialLoading } from "@/stores/query-state";
 
 export function useDashboard() {
   const entry = useDashboardStore((state) => state.data);
@@ -12,7 +13,7 @@ export function useDashboard() {
 
   return {
     data: entry.data ?? undefined,
-    isLoading: entry.loading,
+    isLoading: isInitialLoading(entry),
     error: entry.error,
     refresh: fetchDashboard,
   };

@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { isInitialLoading } from "@/stores/query-state";
 import {
   useTreatmentTypesStore,
   type TreatmentTypeInput,
@@ -14,7 +15,9 @@ export type {
 
 export function useTreatmentTypes() {
   const entry = useTreatmentTypesStore((state) => state.list);
-  const fetchTreatmentTypes = useTreatmentTypesStore((state) => state.fetchTreatmentTypes);
+  const fetchTreatmentTypes = useTreatmentTypesStore(
+    (state) => state.fetchTreatmentTypes,
+  );
 
   useEffect(() => {
     void fetchTreatmentTypes();
@@ -22,14 +25,16 @@ export function useTreatmentTypes() {
 
   return {
     data: entry.data ?? undefined,
-    isLoading: entry.loading,
+    isLoading: isInitialLoading(entry),
     error: entry.error,
   };
 }
 
 export function useTreatmentType(treatmentTypeId: string) {
   const entry = useTreatmentTypesStore((state) => state.byId[treatmentTypeId]);
-  const fetchTreatmentType = useTreatmentTypesStore((state) => state.fetchTreatmentType);
+  const fetchTreatmentType = useTreatmentTypesStore(
+    (state) => state.fetchTreatmentType,
+  );
 
   useEffect(() => {
     void fetchTreatmentType(treatmentTypeId);
@@ -37,13 +42,15 @@ export function useTreatmentType(treatmentTypeId: string) {
 
   return {
     data: entry?.data,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
 export function useCreateTreatmentType() {
-  const createTreatmentType = useTreatmentTypesStore((state) => state.createTreatmentType);
+  const createTreatmentType = useTreatmentTypesStore(
+    (state) => state.createTreatmentType,
+  );
   const isPending = useTreatmentTypesStore((state) => state.creating);
   const error = useTreatmentTypesStore((state) => state.createError);
 
@@ -55,7 +62,9 @@ export function useCreateTreatmentType() {
       createTreatmentType(input)
         .then(() => options?.onSuccess?.())
         .catch((cause) =>
-          options?.onError?.(cause instanceof Error ? cause : new Error(String(cause))),
+          options?.onError?.(
+            cause instanceof Error ? cause : new Error(String(cause)),
+          ),
         );
     },
     [createTreatmentType],
@@ -65,7 +74,9 @@ export function useCreateTreatmentType() {
 }
 
 export function useUpdateTreatmentType() {
-  const updateTreatmentType = useTreatmentTypesStore((state) => state.updateTreatmentType);
+  const updateTreatmentType = useTreatmentTypesStore(
+    (state) => state.updateTreatmentType,
+  );
   const isPending = useTreatmentTypesStore((state) => state.updating);
   const error = useTreatmentTypesStore((state) => state.updateError);
 
@@ -78,7 +89,9 @@ export function useUpdateTreatmentType() {
       updateTreatmentType(treatmentTypeId, input)
         .then(() => options?.onSuccess?.())
         .catch((cause) =>
-          options?.onError?.(cause instanceof Error ? cause : new Error(String(cause))),
+          options?.onError?.(
+            cause instanceof Error ? cause : new Error(String(cause)),
+          ),
         );
     },
     [updateTreatmentType],

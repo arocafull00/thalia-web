@@ -16,6 +16,10 @@ export function useCalendarPage() {
   const employeeId = useCalendarStore((state) => state.employeeId);
   const setWeekAnchor = useCalendarStore((state) => state.setWeekAnchor);
   const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
+  const dialogOpen = useCalendarStore((state) => state.dialogOpen);
+  const createStartsAt = useCalendarStore((state) => state.createStartsAt);
+  const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
+  const closeDialog = useCalendarStore((state) => state.closeDialog);
 
   const rangeStart = startOfWeek(weekAnchor, { weekStartsOn: 1 });
   const rangeEnd = endOfWeek(weekAnchor, { weekStartsOn: 1 });
@@ -39,6 +43,10 @@ export function useCalendarPage() {
     weekRangeLabel,
     isLoading: appointments.isLoading,
     loadingLabel,
+    dialogOpen,
+    createStartsAt,
+    openCreateDialog,
+    closeDialog,
     onPreviousWeek: () => setWeekAnchor(addWeeks(weekAnchor, -1)),
     onNextWeek: () => setWeekAnchor(addWeeks(weekAnchor, 1)),
     onToday: () => setWeekAnchor(new Date()),

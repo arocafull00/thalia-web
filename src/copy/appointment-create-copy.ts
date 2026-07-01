@@ -1,5 +1,6 @@
 export const APPOINTMENT_CREATE_COPY = {
   title: "Nueva cita",
+  titleEdit: "Editar cita",
   description: "Programa una cita con paciente, profesional y tratamiento.",
   fields: {
     patient: "Paciente",
@@ -25,5 +26,7 @@ export const APPOINTMENT_CREATE_COPY = {
     clinicRequired: "No hay clínica activa.",
   },
   success: "Cita creada correctamente.",
+  successEdit: "Cita actualizada correctamente.",
   error: "No se pudo crear la cita.",
+  errorEdit: "No se pudo actualizar la cita.",
 } as const;

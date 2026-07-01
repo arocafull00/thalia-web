@@ -1,13 +1,19 @@
 import { useCallback, useEffect } from "react";
 
-import { useInventoryStore, type InventoryItemInput } from "@/stores/inventory-store";
+import {
+  useInventoryStore,
+  type InventoryItemInput,
+} from "@/stores/inventory-store";
+import { isInitialLoading } from "@/stores/query-state";
 import type { InventoryMovementType } from "@/types/database.types";
 
 export type { InventoryItemInput };
 
 export function useInventoryItems() {
   const entry = useInventoryStore((state) => state.list);
-  const fetchInventoryItems = useInventoryStore((state) => state.fetchInventoryItems);
+  const fetchInventoryItems = useInventoryStore(
+    (state) => state.fetchInventoryItems,
+  );
 
   useEffect(() => {
     void fetchInventoryItems();
@@ -15,14 +21,16 @@ export function useInventoryItems() {
 
   return {
     data: entry.data ?? undefined,
-    isLoading: entry.loading,
+    isLoading: isInitialLoading(entry),
     error: entry.error,
   };
 }
 
 export function useInventoryItem(itemId: string) {
   const entry = useInventoryStore((state) => state.byId[itemId]);
-  const fetchInventoryItem = useInventoryStore((state) => state.fetchInventoryItem);
+  const fetchInventoryItem = useInventoryStore(
+    (state) => state.fetchInventoryItem,
+  );
 
   useEffect(() => {
     void fetchInventoryItem(itemId);
@@ -30,14 +38,16 @@ export function useInventoryItem(itemId: string) {
 
   return {
     data: entry?.data,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
 export function useInventoryMovements(itemId: string) {
   const entry = useInventoryStore((state) => state.movementsByItemId[itemId]);
-  const fetchInventoryMovements = useInventoryStore((state) => state.fetchInventoryMovements);
+  const fetchInventoryMovements = useInventoryStore(
+    (state) => state.fetchInventoryMovements,
+  );
 
   useEffect(() => {
     void fetchInventoryMovements(itemId);
@@ -45,13 +55,15 @@ export function useInventoryMovements(itemId: string) {
 
   return {
     data: entry?.data ?? undefined,
-    isLoading: entry?.loading ?? true,
+    isLoading: isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
 export function useCreateInventoryItem() {
-  const createInventoryItem = useInventoryStore((state) => state.createInventoryItem);
+  const createInventoryItem = useInventoryStore(
+    (state) => state.createInventoryItem,
+  );
   const isPending = useInventoryStore((state) => state.creating);
   const error = useInventoryStore((state) => state.createError);
 
@@ -63,7 +75,9 @@ export function useCreateInventoryItem() {
       createInventoryItem(input)
         .then(() => options?.onSuccess?.())
         .catch((cause) =>
-          options?.onError?.(cause instanceof Error ? cause : new Error(String(cause))),
+          options?.onError?.(
+            cause instanceof Error ? cause : new Error(String(cause)),
+          ),
         );
     },
     [createInventoryItem],
@@ -73,7 +87,9 @@ export function useCreateInventoryItem() {
 }
 
 export function useRecordInventoryMovement() {
-  const recordInventoryMovement = useInventoryStore((state) => state.recordInventoryMovement);
+  const recordInventoryMovement = useInventoryStore(
+    (state) => state.recordInventoryMovement,
+  );
   const isPending = useInventoryStore((state) => state.recording);
   const error = useInventoryStore((state) => state.recordError);
 
@@ -91,7 +107,9 @@ export function useRecordInventoryMovement() {
       recordInventoryMovement(input)
         .then(() => options?.onSuccess?.())
         .catch((cause) =>
-          options?.onError?.(cause instanceof Error ? cause : new Error(String(cause))),
+          options?.onError?.(
+            cause instanceof Error ? cause : new Error(String(cause)),
+          ),
         );
     },
     [recordInventoryMovement],

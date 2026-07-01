@@ -5,11 +5,11 @@ import { useState } from "react";
 
 import PatientCreateForm from "@/components/patients/components/patient-create-form";
 import AppDialog from "@/components/ui/app-dialog";
-import AppDialogContent from "@/components/ui/app-dialog-content";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
+import AppSheetContent from "@/components/ui/app-sheet-content";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
@@ -99,29 +99,20 @@ export default function PatientsPageClient() {
         </div>
       ) : null}
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
-        <AppDialogContent className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-surface p-6 shadow-lg focus:outline-none">
+        <AppSheetContent>
           <AppDialogHeader>
             <AppDialogTitle>{PATIENT_CREATE_COPY.title}</AppDialogTitle>
             <AppDialogDescription>
               {PATIENT_CREATE_COPY.description}
             </AppDialogDescription>
           </AppDialogHeader>
-          <PatientCreateForm
-            fullName={dialog.fullName}
-            onFullNameChange={dialog.setFullName}
-            phone={dialog.phone}
-            onPhoneChange={dialog.setPhone}
-            email={dialog.email}
-            onEmailChange={dialog.setEmail}
-            dni={dialog.dni}
-            onDniChange={dialog.setDni}
-            birthDate={dialog.birthDate}
-            onBirthDateChange={dialog.setBirthDate}
-            address={dialog.address}
-            onAddressChange={dialog.setAddress}
-            notes={dialog.notes}
-            onNotesChange={dialog.setNotes}
-          />
+          <div className="min-h-0 flex-1 overflow-y-auto px-1">
+            <PatientCreateForm
+              register={dialog.register}
+              control={dialog.control}
+              errors={dialog.errors}
+            />
+          </div>
           <AppDialogFooter>
             <button
               type="button"
@@ -137,10 +128,10 @@ export default function PatientsPageClient() {
                   : PATIENT_CREATE_COPY.actions.save
               }
               disabled={dialog.isPending}
-              onClick={() => void dialog.handleSubmit()}
+              onClick={dialog.handleSubmit}
             />
           </AppDialogFooter>
-        </AppDialogContent>
+        </AppSheetContent>
       </AppDialog>
     </div>
   );

@@ -30,10 +30,15 @@ function toZonedDateTime(iso: string) {
   );
 }
 
+function zonedDateTimeToDate(dateTime: Temporal.ZonedDateTime) {
+  return new Date(dateTime.epochMilliseconds);
+}
+
 export function useScheduleXCalendar() {
   const router = useRouter();
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
   const employeeId = useCalendarStore((state) => state.employeeId);
+  const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
 
   const rangeStart = startOfWeek(weekAnchor, { weekStartsOn: 1 });
   const rangeEnd = endOfWeek(weekAnchor, { weekStartsOn: 1 });
@@ -46,9 +51,11 @@ export function useScheduleXCalendar() {
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
 
   const routerRef = useRef(router);
+  const openCreateDialogRef = useRef(openCreateDialog);
 
   useEffect(() => {
     routerRef.current = router;
+    openCreateDialogRef.current = openCreateDialog;
   });
 
   const weekView = createViewWeek();
@@ -65,9 +72,16 @@ export function useScheduleXCalendar() {
     },
     events: [],
     plugins: [eventsService, calendarControls],
+    skipAnimations: true,
     callbacks: {
       onEventClick: (event) => {
         routerRef.current.push(`/appointments/${String(event.id)}`);
+      },
+      onClickDateTime: (dateTime) => {
+        openCreateDialogRef.current(zonedDateTimeToDate(dateTime));
+      },
+      onRender: (app) => {
+        app.config.skipAnimations = false;
       },
     },
   });

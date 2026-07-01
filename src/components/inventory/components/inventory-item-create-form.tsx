@@ -1,36 +1,19 @@
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
+
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
+import type { InventoryFormValues } from "@/lib/hooks/use-inventory-item-create-dialog";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type InventoryItemCreateFormProps = {
-  name: string;
-  onNameChange: (value: string) => void;
-  category: string;
-  onCategoryChange: (value: string) => void;
-  unit: string;
-  onUnitChange: (value: string) => void;
-  stock: string;
-  onStockChange: (value: string) => void;
-  minStock: string;
-  onMinStockChange: (value: string) => void;
-  unitPrice: string;
-  onUnitPriceChange: (value: string) => void;
+  register: UseFormRegister<InventoryFormValues>;
+  errors: FieldErrors<InventoryFormValues>;
 };
 
 export default function InventoryItemCreateForm({
-  name,
-  onNameChange,
-  category,
-  onCategoryChange,
-  unit,
-  onUnitChange,
-  stock,
-  onStockChange,
-  minStock,
-  onMinStockChange,
-  unitPrice,
-  onUnitPriceChange,
+  register,
+  errors,
 }: InventoryItemCreateFormProps) {
   return (
     <div className="mt-4 space-y-4">
@@ -41,32 +24,31 @@ export default function InventoryItemCreateForm({
             {INVENTORY_ITEM_CREATE_COPY.fields.requiredMark}
           </span>
         </span>
-        <input
-          value={name}
-          onChange={(event) => onNameChange(event.target.value)}
-          className={inputClassName}
-        />
+        <input {...register("name")} className={inputClassName} />
+        {errors.name ? (
+          <span className="text-sm text-danger">{errors.name.message}</span>
+        ) : null}
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {INVENTORY_ITEM_CREATE_COPY.fields.category}
           </span>
-          <input
-            value={category}
-            onChange={(event) => onCategoryChange(event.target.value)}
-            className={inputClassName}
-          />
+          <input {...register("category")} className={inputClassName} />
+          {errors.category ? (
+            <span className="text-sm text-danger">
+              {errors.category.message}
+            </span>
+          ) : null}
         </label>
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {INVENTORY_ITEM_CREATE_COPY.fields.unit}
           </span>
-          <input
-            value={unit}
-            onChange={(event) => onUnitChange(event.target.value)}
-            className={inputClassName}
-          />
+          <input {...register("unit")} className={inputClassName} />
+          {errors.unit ? (
+            <span className="text-sm text-danger">{errors.unit.message}</span>
+          ) : null}
         </label>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
@@ -75,37 +57,47 @@ export default function InventoryItemCreateForm({
             {INVENTORY_ITEM_CREATE_COPY.fields.stock}
           </span>
           <input
-            value={stock}
-            onChange={(event) => onStockChange(event.target.value)}
+            {...register("stock")}
             type="number"
             min="0"
             className={inputClassName}
           />
+          {errors.stock ? (
+            <span className="text-sm text-danger">{errors.stock.message}</span>
+          ) : null}
         </label>
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {INVENTORY_ITEM_CREATE_COPY.fields.minStock}
           </span>
           <input
-            value={minStock}
-            onChange={(event) => onMinStockChange(event.target.value)}
+            {...register("min_stock")}
             type="number"
             min="0"
             className={inputClassName}
           />
+          {errors.min_stock ? (
+            <span className="text-sm text-danger">
+              {errors.min_stock.message}
+            </span>
+          ) : null}
         </label>
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {INVENTORY_ITEM_CREATE_COPY.fields.unitPrice}
           </span>
           <input
-            value={unitPrice}
-            onChange={(event) => onUnitPriceChange(event.target.value)}
+            {...register("unit_price")}
             type="number"
             min="0"
             step="0.01"
             className={inputClassName}
           />
+          {errors.unit_price ? (
+            <span className="text-sm text-danger">
+              {errors.unit_price.message}
+            </span>
+          ) : null}
         </label>
       </div>
     </div>

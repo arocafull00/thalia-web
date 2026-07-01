@@ -1,16 +1,16 @@
 # Graph Report - thalia-web  (2026-07-01)
 
 ## Corpus Check
-- 534 files · ~395,469 words
+- 540 files · ~396,428 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4710 nodes · 8577 edges · 368 communities (244 shown, 124 thin omitted)
+- 4728 nodes · 8869 edges · 365 communities (243 shown, 122 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 107 edges (avg confidence: 0.65)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d8da1b9f`
+- Built from commit: `b077a7be`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,15 +21,15 @@
 - [[_COMMUNITY_Appointments & Dashboard|Appointments & Dashboard]]
 - [[_COMMUNITY_Searchable Combobox UI|Searchable Combobox UI]]
 - [[_COMMUNITY_Login & Settings Auth|Login & Settings Auth]]
-- [[_COMMUNITY_Calendar & Scheduling|Calendar & Scheduling]]
+- [[_COMMUNITY_renderDesignVisual|renderDesignVisual]]
 - [[_COMMUNITY_Appointment Hooks|Appointment Hooks]]
 - [[_COMMUNITY_Employee Detail & Edit|Employee Detail & Edit]]
 - [[_COMMUNITY_Inventory Module|Inventory Module]]
-- [[_COMMUNITY_Finances Module|Finances Module]]
+- [[_COMMUNITY_action-button.tsx|action-button.tsx]]
 - [[_COMMUNITY_Settings & Clinic Requests|Settings & Clinic Requests]]
 - [[_COMMUNITY_Root Layout & PWA|Root Layout & PWA]]
 - [[_COMMUNITY_Appointment & Date Forms|Appointment & Date Forms]]
-- [[_COMMUNITY_App Shell & Sidebar|App Shell & Sidebar]]
+- [[_COMMUNITY_use-register-employee.ts|use-register-employee.ts]]
 - [[_COMMUNITY_Clinic Onboarding Forms|Clinic Onboarding Forms]]
 - [[_COMMUNITY_Supabase Session|Supabase Session]]
 - [[_COMMUNITY_Date Picker Popover|Date Picker Popover]]
@@ -57,20 +57,20 @@
 - [[_COMMUNITY_live-inject.mjs|live-inject.mjs]]
 - [[_COMMUNITY_hook-admin.mjs|hook-admin.mjs]]
 - [[_COMMUNITY_Features|Features]]
-- [[_COMMUNITY_schema-helpers.ts|schema-helpers.ts]]
+- [[_COMMUNITY_inventory-page-client.tsx|inventory-page-client.tsx]]
 - [[_COMMUNITY_detect-antipatterns.mjs|detect-antipatterns.mjs]]
 - [[_COMMUNITY_css-cascade.mjs|css-cascade.mjs]]
 - [[_COMMUNITY_hook-before-edit.mjs|hook-before-edit.mjs]]
 - [[_COMMUNITY_Plan de migración `thalia` web - `thalia-web` (Next.js)|Plan de migración `thalia` web -> `thalia-web` (Next.js)]]
 - [[_COMMUNITY_design-parser.mjs|design-parser.mjs]]
 - [[_COMMUNITY_renderDesignVisual|renderDesignVisual]]
-- [[_COMMUNITY_use-inventory-item-create-dialog.ts|use-inventory-item-create-dialog.ts]]
+- [[_COMMUNITY_parseRgb|parseRgb]]
 - [[_COMMUNITY_colorize|colorize.md]]
 - [[_COMMUNITY_live-accept.mjs|live-accept.mjs]]
 - [[_COMMUNITY_dependencies|dependencies]]
 - [[_COMMUNITY_onAnnotDown|onAnnotDown]]
 - [[_COMMUNITY_live-copy-edit-agent.mjs|live-copy-edit-agent.mjs]]
-- [[_COMMUNITY_clinic-store.ts|clinic-store.ts]]
+- [[_COMMUNITY_use-patients.ts|use-patients.ts]]
 - [[_COMMUNITY_context.mjs|context.mjs]]
 - [[_COMMUNITY_parseRgb|parseRgb]]
 - [[_COMMUNITY_Directives|Directives]]
@@ -82,7 +82,7 @@
 - [[_COMMUNITY_init|init]]
 - [[_COMMUNITY_5. Components|5. Components]]
 - [[_COMMUNITY_SKILL|SKILL.md]]
-- [[_COMMUNITY_typeset|typeset.md]]
+- [[_COMMUNITY_app-layout-client.tsx|app-layout-client.tsx]]
 - [[_COMMUNITY_manual-edit-routes.mjs|manual-edit-routes.mjs]]
 - [[_COMMUNITY_insert-ui.mjs|insert-ui.mjs]]
 - [[_COMMUNITY_TypeScript Advanced Types|TypeScript Advanced Types]]
@@ -139,7 +139,7 @@
 - [[_COMMUNITY_event-validation.mjs|event-validation.mjs]]
 - [[_COMMUNITY_Tailwind CSS Accessibility Guidelines|Tailwind CSS Accessibility Guidelines]]
 - [[_COMMUNITY_Tailwind CSS Configuration|Tailwind CSS Configuration]]
-- [[_COMMUNITY_resolve-post-auth-route.ts|resolve-post-auth-route.ts]]
+- [[_COMMUNITY_bolder|bolder.md]]
 - [[_COMMUNITY_devDependencies|devDependencies]]
 - [[_COMMUNITY_discoverRootsForPattern|discoverRootsForPattern]]
 - [[_COMMUNITY_critique-storage.mjs|critique-storage.mjs]]
@@ -151,8 +151,8 @@
 - [[_COMMUNITY_File Conventions|File Conventions]]
 - [[_COMMUNITY_Font Optimization|Font Optimization]]
 - [[_COMMUNITY_6. Rendering Performance|6. Rendering Performance]]
-- [[_COMMUNITY_sidebar-profile-footer.tsx|sidebar-profile-footer.tsx]]
-- [[_COMMUNITY_inventory-table.tsx|inventory-table.tsx]]
+- [[_COMMUNITY_session-store.mjs|session-store.mjs]]
+- [[_COMMUNITY_settings-account-panel.tsx|settings-account-panel.tsx]]
 - [[_COMMUNITY_WCAG 2.2 Quick Reference|WCAG 2.2 Quick Reference]]
 - [[_COMMUNITY_React Composition Patterns|React Composition Patterns]]
 - [[_COMMUNITY_critique|critique.md]]
@@ -160,18 +160,18 @@
 - [[_COMMUNITY_Handle `generate`|Handle `generate`]]
 - [[_COMMUNITY_quieter|quieter.md]]
 - [[_COMMUNITY_detect-csp.mjs|detect-csp.mjs]]
-- [[_COMMUNITY_register-employee-copy.ts|register-employee-copy.ts]]
+- [[_COMMUNITY_Responsive Design|Responsive Design]]
 - [[_COMMUNITY_palette.mjs|palette.mjs]]
 - [[_COMMUNITY_pin.mjs|pin.mjs]]
 - [[_COMMUNITY_General rules|General rules]]
 - [[_COMMUNITY_3. Server-Side Performance|3. Server-Side Performance]]
 - [[_COMMUNITY_Dark Mode|Dark Mode]]
 - [[_COMMUNITY_Creating a PWA with Next.js|Creating a PWA with Next.js]]
-- [[_COMMUNITY_app-sheet-content.tsx|app-sheet-content.tsx]]
+- [[_COMMUNITY_Craft Flow|Craft Flow]]
 - [[_COMMUNITY_Accessibility (a11y)|Accessibility (a11y)]]
 - [[_COMMUNITY_React Composition Patterns|React Composition Patterns]]
-- [[_COMMUNITY_Responsive Design|Responsive Design]]
-- [[_COMMUNITY_Craft Flow|Craft Flow]]
+- [[_COMMUNITY_Technical Implementation|Technical Implementation]]
+- [[_COMMUNITY_Extract Flow|Extract Flow]]
 - [[_COMMUNITY_Generate Combined Critique Report|Generate Combined Critique Report]]
 - [[_COMMUNITY_Product register|Product register]]
 - [[_COMMUNITY_inline-ignores.mjs|inline-ignores.mjs]]
@@ -200,9 +200,9 @@
 - [[_COMMUNITY_employees-table.tsx|employees-table.tsx]]
 - [[_COMMUNITY_Common ARIA patterns|Common ARIA patterns]]
 - [[_COMMUNITY_Understandable|Understandable]]
-- [[_COMMUNITY_Technical Implementation|Technical Implementation]]
+- [[_COMMUNITY_sidebar-clinic-switcher.tsx|sidebar-clinic-switcher.tsx]]
 - [[_COMMUNITY_Persona-Based Design Testing|Persona-Based Design Testing]]
-- [[_COMMUNITY_Extract Flow|Extract Flow]]
+- [[_COMMUNITY_isNeutralColor|isNeutralColor]]
 - [[_COMMUNITY_Init Flow|Init Flow]]
 - [[_COMMUNITY_cli|cli]]
 - [[_COMMUNITY_isScreenReaderOnlyTextStyle|isScreenReaderOnlyTextStyle]]
@@ -232,10 +232,8 @@
 - [[_COMMUNITY_11. Plan de implementación por fases|11. Plan de implementación por fases]]
 - [[_COMMUNITY_3. Flujos de onboarding|3. Flujos de onboarding]]
 - [[_COMMUNITY_package.json|package.json]]
-- [[_COMMUNITY_4. Plan three variants identity first, then mode, then axes|4. Plan three variants: identity first, then mode, then axes]]
-- [[_COMMUNITY_Handle fallback|Handle fallback]]
+- [[_COMMUNITY_use-pending-clinic-requests.ts|use-pending-clinic-requests.ts]]
 - [[_COMMUNITY_checkElementHeroEyebrow|checkElementHeroEyebrow]]
-- [[_COMMUNITY_topbar-search-store.ts|topbar-search-store.ts]]
 - [[_COMMUNITY_8. Advanced Patterns|8. Advanced Patterns]]
 - [[_COMMUNITY_13. Checklist de aceptación por flujo|13. Checklist de aceptación por flujo]]
 - [[_COMMUNITY_9. Máquina de estados y routing|9. Máquina de estados y routing]]
@@ -374,9 +372,9 @@
 - [[_COMMUNITY_postcss.config.mjs|postcss.config.mjs]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 32 edges
-2. `runHook()` - 30 edges
-3. `useAuth()` - 30 edges
+1. `cn()` - 41 edges
+2. `useAuth()` - 34 edges
+3. `runHook()` - 30 edges
 4. `handleKeyDown()` - 27 edges
 5. `collectBrowserFindings()` - 26 edges
 6. `setLiveState()` - 26 edges
@@ -400,71 +398,71 @@
 ## Import Cycles
 - 3-file cycle: `src/lib/active-clinic-id.ts -> src/stores/auth-store.ts -> src/stores/employees-store.ts -> src/lib/active-clinic-id.ts`
 
-## Communities (368 total, 124 thin omitted)
+## Communities (365 total, 122 thin omitted)
 
 ### Community 0 - "Auth & Onboarding"
 Cohesion: 0.12
-Nodes (25): useLogin(), useRegisterEmployee(), RegisterEmployeePageClient(), CreateClinicPageClient(), InviteTeamPageClient(), getRegisterCopy(), captureEvent(), waitForAuthSessionReady() (+17 more)
+Nodes (22): CreateClinicPageClient(), InviteTeamPageClient(), captureEvent(), waitForAuthSessionReady(), usePostAuthRedirect(), normalizeInviteEmails(), validateInviteEmails(), externalMemberships() (+14 more)
 
 ### Community 1 - "Schemas & Validation"
-Cohesion: 0.09
-Nodes (36): getActiveClinicId(), useDashboard(), assertSupabaseConfigured(), unwrapSupabase(), unwrapSupabaseList(), supabase, AppointmentFormInput, AppointmentsStore (+28 more)
+Cohesion: 0.10
+Nodes (34): AuthProviderProps, getClientHydratedSnapshot(), getServerHydratedSnapshot(), subscribeToClientHydration(), useAuthHydrated(), getActiveClinicId(), formatZodError(), uploadFile() (+26 more)
 
 ### Community 2 - "Entity List Pages"
 Cohesion: 0.07
-Nodes (32): AppointmentCreateDialogProps, AppointmentCreateFormProps, NewAppointmentDatetimeField(), NewAppointmentDatetimeFieldProps, EmployeeEditDialog(), EmployeeEditDialogProps, AppConfirmDialogProps, AppDialog() (+24 more)
+Nodes (37): @schedule-x/calendar, AppointmentCreateDialog(), AppointmentCreateDialogProps, AppointmentCreateFormProps, CalendarEmployeeFilter(), CalendarPageClient(), CalendarEmptyHeader(), CalendarToolbar() (+29 more)
 
 ### Community 3 - "Appointments & Dashboard"
-Cohesion: 0.11
-Nodes (21): AppointmentDetailPageClient(), DashboardAppointmentRow(), DashboardAppointmentRowProps, EmployeeAppointmentRow(), EmployeeAppointmentRowProps, appointmentStatusLabel(), formatAppointmentDay(), formatAppointmentDetailDay() (+13 more)
+Cohesion: 0.09
+Nodes (28): AppointmentDetailPageClient(), AppointmentDetailPageClientProps, AppointmentDetailTreatmentItem(), AppointmentDetailTreatmentItemProps, DashboardAppointmentRow(), DashboardAppointmentRowProps, EmployeeAppointmentRow(), EmployeeAppointmentRowProps (+20 more)
 
 ### Community 4 - "Searchable Combobox UI"
-Cohesion: 0.09
-Nodes (36): AppSearchableCombobox(), AppSearchableComboboxOption, AppSearchableComboboxProps, AppSearchableComboboxItem(), AppSearchableComboboxItemProps, AppSearchableMultiSelectOption, AppSearchableMultiSelectProps, AppSearchableMultiSelectOption() (+28 more)
+Cohesion: 0.07
+Nodes (45): AppSearchableCombobox(), AppSearchableComboboxOption, AppSearchableComboboxProps, AppSearchableComboboxItem(), AppSearchableComboboxItemProps, AppSearchableMultiSelectOption, AppSearchableMultiSelectProps, AppSearchableMultiSelectOption() (+37 more)
 
 ### Community 5 - "Login & Settings Auth"
-Cohesion: 0.15
-Nodes (10): LoginAuthTabs(), LoginAuthTabsProps, LoginFormFieldsProps, LoginFormPanel(), LoginFormPanelProps, LoginHeroIllustration(), loginIllustrationSvg, HERO_INDICATORS (+2 more)
+Cohesion: 0.17
+Nodes (8): LoginFormPanel(), LoginHeroIllustration(), loginIllustrationSvg, HERO_INDICATORS, useLogin(), LoginPageClient(), signInWithGoogleFlow(), navigateAfterAuth()
 
-### Community 6 - "Calendar & Scheduling"
-Cohesion: 0.22
-Nodes (11): AppointmentColumnLayout, appointmentLayout(), getDayEnd(), getDayStart(), getNowIndicatorOffset(), getWeekDays(), getWeekRange(), isDayInWeek() (+3 more)
+### Community 6 - "renderDesignVisual"
+Cohesion: 0.08
+Nodes (35): buildCollapsible(), buildColorModels(), buildDesignHeader(), buildRadiiModels(), buildTypographyModels(), cssSafe(), designPanelCss(), escapeHtml() (+27 more)
 
 ### Community 7 - "Appointment Hooks"
-Cohesion: 0.29
-Nodes (7): Amplify the Design, Color Intensification, Composition Boldness, Motion & Animation, Spatial Drama, Typography Amplification, Visual Effects
+Cohesion: 0.15
+Nodes (11): Assess Current Typography, Establish Hierarchy, Fix Readability, Font Selection, Improve Typography Systematically, Live-mode signature params, Plan Typography Improvements, Refine Details (+3 more)
 
 ### Community 8 - "Employee Detail & Edit"
-Cohesion: 0.18
-Nodes (14): EmployeeStatCard(), EmployeeStatCardProps, EmployeeStatusConfirmDialog(), EmployeeStatusConfirmDialogProps, EmployeeDetailPageClient(), EmployeeDetailPageClientProps, EMPLOYEE_DETAIL_COPY, EMPLOYEE_STATUS_COPY (+6 more)
+Cohesion: 0.12
+Nodes (25): EmployeeStatCard(), EmployeeStatCardProps, EmployeeStatusConfirmDialog(), EmployeeStatusConfirmDialogProps, EmployeeDetailPageClient(), EmployeeDetailPageClientProps, EMPLOYEE_DETAIL_COPY, EMPLOYEE_STATUS_COPY (+17 more)
 
 ### Community 9 - "Inventory Module"
 Cohesion: 0.22
 Nodes (9): Always Use next/image, Blur Placeholder, Common Mistakes, Image Optimization, Priority Loading, Remote Images Configuration, Required Props, Responsive Images (+1 more)
 
-### Community 10 - "Finances Module"
-Cohesion: 0.17
-Nodes (18): FinancesTabBarProps, FinancesTabValue, transactionTypeForTab(), useFinancesPage(), useCreateTransaction(), useFinancialSummary(), useTransactions(), FinancesStore (+10 more)
+### Community 10 - "action-button.tsx"
+Cohesion: 0.13
+Nodes (14): LoginAuthTabs(), LoginAuthTabsProps, LoginFormFieldsProps, LoginFormPanelProps, RegisterEmployeeFormCopy, RegisterEmployeeFormProps, DashboardPageClient(), formatTodayTitle() (+6 more)
 
 ### Community 11 - "Settings & Clinic Requests"
-Cohesion: 0.10
-Nodes (24): appointmentFieldsSchema, appointmentSchema, AppointmentSchemaInput, appointmentUpdateSchema, AppointmentUpdateSchemaInput, employeeFieldsSchema, employeeRoleSchema, employeeSchema (+16 more)
+Cohesion: 0.09
+Nodes (27): appointmentFieldsSchema, appointmentSchema, AppointmentSchemaInput, appointmentUpdateSchema, AppointmentUpdateSchemaInput, employeeFieldsSchema, employeeRoleSchema, employeeSchema (+19 more)
 
 ### Community 12 - "Root Layout & PWA"
-Cohesion: 0.10
-Nodes (22): geistMono, geistSans, metadata, viewport, AuthProvider(), AuthProviderProps, getClientHydratedSnapshot(), getServerHydratedSnapshot() (+14 more)
+Cohesion: 0.11
+Nodes (18): geistMono, geistSans, metadata, viewport, AuthProvider(), PwaInstallProvider(), PwaInstallProviderProps, ServiceWorkerProvider() (+10 more)
 
 ### Community 13 - "Appointment & Date Forms"
-Cohesion: 0.09
-Nodes (29): @schedule-x/calendar, AppointmentCreateDialog(), CalendarEmployeeFilter(), CalendarPageClient(), CalendarEmptyHeader(), CalendarToolbar(), CalendarToolbarProps, useCalendarPage() (+21 more)
+Cohesion: 0.22
+Nodes (11): AppointmentColumnLayout, appointmentLayout(), getDayEnd(), getDayStart(), getNowIndicatorOffset(), getWeekDays(), getWeekRange(), isDayInWeek() (+3 more)
 
-### Community 14 - "App Shell & Sidebar"
-Cohesion: 0.18
-Nodes (10): AppLayoutClient(), AppLayoutClientProps, AppShell(), AppShellProps, AppSidebar(), NavItem, SidebarItem(), SidebarItemProps (+2 more)
+### Community 14 - "use-register-employee.ts"
+Cohesion: 0.14
+Nodes (18): RegisterEmployeeSidebar(), RegisterEmployeeSidebarProps, useRegisterEmployee(), RegisterEmployeePageClient(), getRegisterCopy(), getSidebarCopy(), REGISTER_COPY, REGISTER_EMPLOYEE_FORM_COPY (+10 more)
 
 ### Community 15 - "Clinic Onboarding Forms"
-Cohesion: 0.07
-Nodes (29): EmployeeEditFormProps, roleOptions, EMPLOYEE_EDIT_COPY, employeeColors, employeeRoles, employeeEditFormSchema, EmployeeEditFormValues, toFormValues() (+21 more)
+Cohesion: 0.21
+Nodes (9): mapOperationalRoleToEmployeeRole(), OperationalRoleOption, operationalRoleOptions, buildCreateClinicPayload(), buildCreateClinicPayloadFromProfile(), CreateClinicPayload, OwnerClinicFormValues, OwnerClinicOnlyValues (+1 more)
 
 ### Community 16 - "Supabase Session"
 Cohesion: 0.21
@@ -483,8 +481,8 @@ Cohesion: 0.06
 Nodes (65): addBrowserFindings(), addVisualContrastFindings(), addVisualContrastResult(), analyzeVisualContrast(), analyzeVisualContrastCandidate(), blendRgba(), browserDesignSystemConfig(), browserFindingsFromMap() (+57 more)
 
 ### Community 28 - "invite-team-page-client.tsx"
-Cohesion: 0.09
-Nodes (18): AppointmentDetailPageClientProps, AppointmentDetailTreatmentItem(), AppointmentDetailTreatmentItemProps, RegisterEmployeeFormCopy, RegisterEmployeeFormProps, DashboardPageClient(), formatTodayTitle(), SettingsProfilePanelProps (+10 more)
+Cohesion: 0.05
+Nodes (53): AppointmentsPageClient(), EmployeeEditDialog(), EmployeeEditDialogProps, EmployeeEditFormProps, roleOptions, EmployeeInviteFormProps, roleOptions, EmployeesPageClient() (+45 more)
 
 ### Community 29 - "handleKeyDown"
 Cohesion: 0.10
@@ -558,9 +556,9 @@ Nodes (39): ACTIONS, addIgnoreFile(), addIgnoreRule(), addIgnoreValue(), DETECTO
 Cohesion: 0.05
 Nodes (39): Autenticación, Búsqueda, Calendario, Configuración, Configuración del equipo, Creación de clínica, Dashboard, Features (+31 more)
 
-### Community 47 - "schema-helpers.ts"
-Cohesion: 0.20
-Nodes (22): checkColors(), checkElementAIPaletteDOM(), checkElementColors(), checkElementColorsDOM(), checkElementGlow(), checkElementGlowDOM(), checkElementIconTile(), checkElementIconTileDOM() (+14 more)
+### Community 47 - "inventory-page-client.tsx"
+Cohesion: 0.15
+Nodes (18): InventoryItemCreateForm(), InventoryItemCreateFormProps, InventoryPageClient(), INVENTORY_ITEM_CREATE_COPY, useClinicId(), defaultValues, inventoryFormSchema, InventoryFormValues (+10 more)
 
 ### Community 48 - "detect-antipatterns.mjs"
 Cohesion: 0.10
@@ -583,16 +581,16 @@ Cohesion: 0.15
 Nodes (33): buildColor(), CANONICAL_SECTIONS, collectBullets(), collectColorValues(), collectParagraphs(), detectFormat(), extractColors(), extractComponents() (+25 more)
 
 ### Community 53 - "renderDesignVisual"
-Cohesion: 0.08
-Nodes (35): buildCollapsible(), buildColorModels(), buildDesignHeader(), buildRadiiModels(), buildTypographyModels(), cssSafe(), designPanelCss(), escapeHtml() (+27 more)
+Cohesion: 0.13
+Nodes (15): Alpha Is A Design Smell, Building Functional Palettes, Color & Contrast, Color Spaces: Use OKLCH, Contrast & Accessibility, Dangerous Color Combinations, Dark Mode Is Not Inverted Light Mode, Palette Structure (+7 more)
 
-### Community 54 - "use-inventory-item-create-dialog.ts"
-Cohesion: 0.12
-Nodes (17): EmployeeInviteFormProps, roleOptions, InventoryItemCreateFormProps, EMPLOYEE_INVITE_COPY, INVENTORY_ITEM_CREATE_COPY, useClinicId(), defaultValues, employeeFormSchema (+9 more)
+### Community 54 - "parseRgb"
+Cohesion: 0.20
+Nodes (22): checkColors(), checkElementAIPaletteDOM(), checkElementColors(), checkElementColorsDOM(), checkElementGlow(), checkElementGlowDOM(), checkElementIconTile(), checkElementIconTileDOM() (+14 more)
 
 ### Community 55 - "colorize.md"
-Cohesion: 0.06
-Nodes (32): Accent Color Application, Accessibility, Alpha Is A Design Smell, Assess Color Opportunity, Background & Surfaces, Balance & Refinement, Borders & Accents, Building Functional Palettes (+24 more)
+Cohesion: 0.11
+Nodes (17): Accent Color Application, Accessibility, Assess Color Opportunity, Background & Surfaces, Balance & Refinement, Borders & Accents, Cohesion, Data Visualization (+9 more)
 
 ### Community 56 - "live-accept.mjs"
 Cohesion: 0.14
@@ -610,17 +608,17 @@ Nodes (32): applyPlaceholderDimensions(), applyPlaceholderSizingStyles(), beginE
 Cohesion: 0.13
 Nodes (31): applyMockWrites(), buildCopyEditBatchPrompt(), checkFrameworkSourceSyntax(), chooseCopyEditAgent(), COMMAND_AUTH_CACHE, commandAuthed(), commandExists(), compactBatchForPrompt() (+23 more)
 
-### Community 60 - "clinic-store.ts"
-Cohesion: 0.17
-Nodes (22): useCreateInventoryItem(), useInventoryItem(), useInventoryItems(), useInventoryMovements(), useRecordInventoryMovement(), useCreatePatient(), usePatient(), usePatientAppointments() (+14 more)
+### Community 60 - "use-patients.ts"
+Cohesion: 0.20
+Nodes (13): PatientDetailPageClient(), PatientDetailPageClientProps, PATIENT_DETAIL_COPY, useCreatePatient(), usePatient(), usePatientAppointments(), usePatients(), useUpcomingPatientAppointments() (+5 more)
 
 ### Community 61 - "context.mjs"
 Cohesion: 0.11
 Nodes (27): buildUpdateDirective(), compareSemver(), computeUpdateDirective(), DESIGN_NAMES, FALLBACK_DIRS, fetchLatestSkillVersion(), findMonorepoRoot(), hasFallbackWorkspaceChildren() (+19 more)
 
 ### Community 62 - "parseRgb"
-Cohesion: 0.13
-Nodes (30): analyzeVisualContrast(), analyzeVisualContrastCandidate(), checkColors(), checkElementAIPaletteDOM(), checkElementColors(), checkElementColorsDOM(), checkElementGlow(), checkElementGlowDOM() (+22 more)
+Cohesion: 0.12
+Nodes (32): analyzeVisualContrast(), analyzeVisualContrastCandidate(), checkColors(), checkElementAIPaletteDOM(), checkElementColors(), checkElementColorsDOM(), checkElementGlow(), checkElementGlowDOM() (+24 more)
 
 ### Community 63 - "Directives"
 Cohesion: 0.29
@@ -658,9 +656,9 @@ Nodes (24): 1. Overview, 2. Colors, 3. Typography, 4. Elevation, 5. Components, 
 Cohesion: 0.12
 Nodes (15): Assess Adaptation Challenge, Content Adaptation, Desktop Adaptation (Mobile → Desktop), Email Adaptation (Web → Email), Implement Adaptations, Layout Adaptation Techniques, Mobile Adaptation (Desktop → Mobile), Navigation Adaptation (+7 more)
 
-### Community 72 - "typeset.md"
-Cohesion: 0.33
-Nodes (6): Establish Hierarchy, Fix Readability, Font Selection, Improve Typography Systematically, Refine Details, Weight Consistency
+### Community 72 - "app-layout-client.tsx"
+Cohesion: 0.18
+Nodes (10): AppLayoutClient(), AppLayoutClientProps, AppShell(), AppShellProps, AppSidebar(), NavItem, SidebarItem(), SidebarItemProps (+2 more)
 
 ### Community 73 - "manual-edit-routes.mjs"
 Cohesion: 0.18
@@ -675,16 +673,16 @@ Cohesion: 0.08
 Nodes (23): 1. Generics, 1. Infer Keyword, 2. Conditional Types, 2. Type Guards, 3. Assertion Functions, 3. Mapped Types, 4. Template Literal Types, 5. Utility Types (+15 more)
 
 ### Community 76 - "use-settings-page.ts"
-Cohesion: 0.15
-Nodes (16): SettingsPageClient(), SettingsProfilePanel(), signInWithGoogleFlow(), normalizeEmail(), PendingClinicRequest, employeeRoleLabel(), useActiveClinic(), useUpdateProfile() (+8 more)
+Cohesion: 0.14
+Nodes (21): SettingsProfileCard(), SettingsProfileCardProps, SettingsStatItem(), SettingsStatItemProps, SettingsPageClient(), SettingsProfilePanel(), SettingsProfilePanelProps, SidebarProfileFooter() (+13 more)
 
 ### Community 77 - "onboard.md"
 Cohesion: 0.09
 Nodes (22): Assess Onboarding Needs, Context Over Ceremony, Contextual Help, Design Onboarding Experiences, Documentation & Help, Empty State Design, Feature Discovery & Adoption, Guided Tours & Walkthroughs (+14 more)
 
 ### Community 78 - "finances-page-client.tsx"
-Cohesion: 0.16
-Nodes (11): TransactionCreateFormProps, FinancesMonthSelector(), FinancesPageClient(), TRANSACTION_CREATE_COPY, createDefaultValues(), transactionFormSchema, TransactionFormValues, useTransactionCreateDialog() (+3 more)
+Cohesion: 0.11
+Nodes (28): TransactionCreateFormProps, FinancesMonthSelector(), FinancesPageClient(), FinancesTabBar(), FinancesTabBarProps, FinancesTabValue, TRANSACTION_CREATE_COPY, transactionTypeForTab() (+20 more)
 
 ### Community 79 - "mountSvelteComponentVariant"
 Cohesion: 0.14
@@ -719,8 +717,8 @@ Cohesion: 0.10
 Nodes (19): Clean Up, Code Quality, Color & Contrast, Content & Copy, Design System Discovery, Edge Cases & Error States, Final Verification, Forms & Inputs (+11 more)
 
 ### Community 87 - "readLiveServerInfo"
-Cohesion: 0.13
-Nodes (24): completeCli(), completeThroughServer(), parseArgs(), readServerInfo(), collectManualApplyFiles(), manualApplyReplyCommand(), manualApplyResumeHint(), parseArgs() (+16 more)
+Cohesion: 0.21
+Nodes (17): isLiveServerPidReachable(), readLiveServerInfo(), completeCli(), completeThroughServer(), parseArgs(), readServerInfo(), collectManualApplyFiles(), manualApplyReplyCommand() (+9 more)
 
 ### Community 88 - "Next.js Best Practices"
 Cohesion: 0.10
@@ -735,8 +733,8 @@ Cohesion: 0.11
 Nodes (18): Appropriate to Context, Assess Delight Opportunities, Celebration Moments, Compound Over Time, Delight Amplifies, Never Blocks, Delight Principles, Delight Techniques, Easter Eggs & Hidden Delights (+10 more)
 
 ### Community 91 - "impeccable-paths.mjs"
-Cohesion: 0.20
-Nodes (20): resolveProjectRoot(), firstExisting(), getDesignSidecarCandidates(), getDesignSidecarPath(), getImpeccableDir(), getLegacyLiveAnnotationsDir(), getLegacyLiveConfigPath(), getLegacyLiveServerPath() (+12 more)
+Cohesion: 0.22
+Nodes (18): resolveProjectRoot(), firstExisting(), getDesignSidecarCandidates(), getDesignSidecarPath(), getImpeccableDir(), getLegacyLiveAnnotationsDir(), getLegacyLiveConfigPath(), getLegacyLiveServerPath() (+10 more)
 
 ### Community 92 - "SKILL.md"
 Cohesion: 0.20
@@ -767,8 +765,8 @@ Cohesion: 0.21
 Nodes (12): resolveTargetSelection(), parseTargetOptions(), parseTargetPath(), TargetArgError, __dirname, ensureServerRunning(), liveCli(), missingLiveContext() (+4 more)
 
 ### Community 99 - "sampleCssBackground"
-Cohesion: 0.17
-Nodes (17): blendRgba(), clampByte(), contrastRatio(), firstCssUrl(), getLayerValue(), loadVisualContrastImage(), parseObjectPosition(), parsePositionPair() (+9 more)
+Cohesion: 0.20
+Nodes (15): blendRgba(), clampByte(), firstCssUrl(), getLayerValue(), loadVisualContrastImage(), parseObjectPosition(), parsePositionPair(), parsePositionToken() (+7 more)
 
 ### Community 100 - "Tailwind CSS Layout Patterns"
 Cohesion: 0.12
@@ -779,8 +777,8 @@ Cohesion: 0.12
 Nodes (17): Applying Variants in CSS, Arbitrary Values, Color System, Custom Theme Configuration, Custom Utilities, Custom Variants, Dark Mode, Functions and Directives (+9 more)
 
 ### Community 102 - "calendar.tsx"
-Cohesion: 0.17
-Nodes (10): PatientCreateFormProps, NewPatientDateField(), NewPatientDateFieldProps, AppDateField(), AppDateFieldProps, PATIENT_CREATE_COPY, defaultValues, patientFormSchema (+2 more)
+Cohesion: 0.26
+Nodes (11): NewAppointmentDatetimeField(), NewAppointmentDatetimeFieldProps, AppDateField(), AppDateFieldProps, AppDatePopoverField(), AppDatePopoverFieldProps, formatLocalDateInputValue(), formatLocalDatetimeInputValue() (+3 more)
 
 ### Community 103 - "Landora — Guía para agentes"
 Cohesion: 0.12
@@ -859,8 +857,8 @@ Cohesion: 0.14
 Nodes (13): Assess Current Layout, Break Card Grid Monotony, Choose the Right Layout Tool, Create Visual Rhythm, Establish a Spacing System, Improve Layout Systematically, Live-mode signature params, Manage Depth & Elevation (+5 more)
 
 ### Community 122 - "live.md"
-Cohesion: 0.08
-Nodes (25): append-arrays, append-string, Cleanup, Consent prompt template, CSP detection (first-time only), Drift-heal warning, Exit, First-time setup (config missing or invalid) (+17 more)
+Cohesion: 0.14
+Nodes (13): Cleanup, Exit, Handle `accept`, Handle `discard`, Handle `manual_edit_apply`, Handle `prefetch`, Handle `steer`, Poll loop (+5 more)
 
 ### Community 123 - "optimize.md"
 Cohesion: 0.14
@@ -882,9 +880,9 @@ Nodes (13): Accessibility Checklist, Alert Dialog, ARIA Patterns with Tailwind, 
 Cohesion: 0.14
 Nodes (13): Advanced v4.1 Features, Creating a Reusable Preset, CSS-First Configuration (v4.1+), Custom Plugin Example, Custom Utilities, Enhanced Arbitrary Values, JavaScript Configuration (Legacy), Native CSS Custom Properties (+5 more)
 
-### Community 129 - "resolve-post-auth-route.ts"
-Cohesion: 0.29
-Nodes (10): externalMemberships(), needsClinicSelector(), PostAuthRouteInput, PostAuthRouteResult, resolvePostAuthRoute(), resolveUnauthenticatedRoute(), buildOwnerProfileMetadata(), hasPendingTeamInvites() (+2 more)
+### Community 129 - "bolder.md"
+Cohesion: 0.17
+Nodes (11): Amplify the Design, Assess Current State, Color Intensification, Composition Boldness, Motion & Animation, Plan Amplification, Register, Spatial Drama (+3 more)
 
 ### Community 130 - "devDependencies"
 Cohesion: 0.14
@@ -930,13 +928,13 @@ Nodes (11): Common Mistakes, Display Strategy, Don't Use Manual Font Links, Font
 Cohesion: 0.17
 Nodes (12): 6.10 Use React DOM Resource Hints, 6.11 Use useTransition Over Manual Loading States, 6.1 Animate SVG Wrapper Instead of SVG Element, 6.2 CSS content-visibility for Long Lists, 6.3 Hoist Static JSX Elements, 6.4 Optimize SVG Precision, 6.5 Prevent Hydration Mismatch Without Flickering, 6.6 Suppress Expected Hydration Mismatches (+4 more)
 
-### Community 141 - "sidebar-profile-footer.tsx"
-Cohesion: 0.27
-Nodes (6): SidebarClinicSwitcherProps, SidebarProfileFooter(), SIDEBAR_COPY, clinicMembershipRoleLabel(), useFileUrl(), ClinicMembershipView
+### Community 141 - "session-store.mjs"
+Cohesion: 0.26
+Nodes (9): applyEvent(), baseSnapshot(), COMPLETED_PHASES, getJournalPath(), getSnapshotPath(), rebuildSnapshotFromJournal(), safeSessionId(), toPendingEvent() (+1 more)
 
-### Community 142 - "inventory-table.tsx"
-Cohesion: 0.25
-Nodes (5): inventoryColumns, InventoryTable(), InventoryTableProps, InventoryPageClient(), useInventoryPage()
+### Community 142 - "settings-account-panel.tsx"
+Cohesion: 0.21
+Nodes (5): SettingsAccountPanelProps, SettingsActionRow(), SettingsActionRowProps, MANAGEMENT_LINKS, SETTINGS_COPY
 
 ### Community 143 - "WCAG 2.2 Quick Reference"
 Cohesion: 0.18
@@ -955,8 +953,8 @@ Cohesion: 0.18
 Nodes (11): 10. Help and Documentation, 1. Visibility of System Status, 2. Match Between System and Real World, 3. User Control and Freedom, 4. Consistency and Standards, 5. Error Prevention, 6. Recognition Rather Than Recall, 7. Flexibility and Efficiency of Use (+3 more)
 
 ### Community 147 - "Handle `generate`"
-Cohesion: 0.12
-Nodes (16): 1. Read the screenshot (if present), 2. Wrap the element, 3. Load the action's reference, 4. Plan three variants: identity first, then mode, then axes, 5. Apply the freeform prompt (if present), 6. Write all variants in a single edit, 7. Parameters (composition-sized, 0–4 per variant), 8. Signal done (+8 more)
+Cohesion: 0.18
+Nodes (11): 1. Read the screenshot (if present), 2. Wrap the element, 3. Load the action's reference, 5. Apply the freeform prompt (if present), 6. Write all variants in a single edit, 7. Parameters (composition-sized, 0–4 per variant), 8. Signal done, Aborting an in-flight session (+3 more)
 
 ### Community 148 - "quieter.md"
 Cohesion: 0.18
@@ -966,9 +964,9 @@ Nodes (10): Assess Current State, Color Refinement, Composition Refinement, Moti
 Cohesion: 0.20
 Nodes (10): detectCsp(), INLINE_HEADER_SIGNALS, LAYOUT_EXTS, MONOREPO_HELPER_SIGNALS, NUXT_ROUTE_RULES_SIGNALS, NUXT_SECURITY_SIGNALS, SCAN_EXTS, SKIP_DIRS (+2 more)
 
-### Community 150 - "register-employee-copy.ts"
-Cohesion: 0.25
-Nodes (9): RegisterEmployeeSidebar(), RegisterEmployeeSidebarProps, getSidebarCopy(), REGISTER_COPY, REGISTER_EMPLOYEE_SIDEBAR_COPY, RegisterCopy, SIDEBAR_COPY, SidebarCopy (+1 more)
+### Community 150 - "Responsive Design"
+Cohesion: 0.20
+Nodes (10): Breakpoints: Content-Driven, Detect Input Method, Not Just Screen Size, Layout Adaptation Patterns, Mobile-First: Write It Right, Picture Element for Art Direction, Responsive Design, Responsive Images: Get It Right, Safe Areas: Handle the Notch (+2 more)
 
 ### Community 151 - "palette.mjs"
 Cohesion: 0.24
@@ -994,9 +992,9 @@ Nodes (10): Basic Dark Mode Support, Container Queries (v4.1+), Dark Mode, Dark 
 Cohesion: 0.18
 Nodes (10): 1. Creating the Web App Manifest, 2. Implementing Web Push Notifications, 3. Implementing Server Actions, 4. Generating VAPID Keys, 5. Creating a Service Worker, 6. Adding to Home Screen, 7. Testing Locally, 8. Securing your application (+2 more)
 
-### Community 157 - "app-sheet-content.tsx"
-Cohesion: 0.29
-Nodes (7): DataTableProps, Table(), TableBody(), TableCell(), TableHead(), TableHeader(), TableRow()
+### Community 157 - "Craft Flow"
+Cohesion: 0.20
+Nodes (10): Craft Flow, Gates: do not compress, Production bar, Step 0: Project Foundation, Step 1: Shape the Design, Step 2: Load References, Step 3: Visual Direction & Assets (Harness-Gated), Step 4: Build to Production Quality (+2 more)
 
 ### Community 158 - "Accessibility (a11y)"
 Cohesion: 0.20
@@ -1006,13 +1004,13 @@ Nodes (10): Accessibility (a11y), ARIA usage (4.1.2), Automated testing, Conform
 Cohesion: 0.20
 Nodes (9): Component Architecture (CRITICAL), Core Principles, Creating a New Rule, Impact Levels, Implementation Patterns (MEDIUM), React Composition Patterns, Rules, State Management (HIGH) (+1 more)
 
-### Community 160 - "Responsive Design"
-Cohesion: 0.20
-Nodes (10): Breakpoints: Content-Driven, Detect Input Method, Not Just Screen Size, Layout Adaptation Patterns, Mobile-First: Write It Right, Picture Element for Art Direction, Responsive Design, Responsive Images: Get It Right, Safe Areas: Handle the Notch (+2 more)
+### Community 160 - "Technical Implementation"
+Cohesion: 0.25
+Nodes (8): Accessibility, CSS Animations, JavaScript Animation, Motion Materials, Perceived Performance, Performance, Technical Implementation, Timing & Easing
 
-### Community 161 - "Craft Flow"
-Cohesion: 0.20
-Nodes (10): Craft Flow, Gates: do not compress, Production bar, Step 0: Project Foundation, Step 1: Shape the Design, Step 2: Load References, Step 3: Visual Direction & Assets (Harness-Gated), Step 4: Build to Production Quality (+2 more)
+### Community 161 - "Extract Flow"
+Cohesion: 0.25
+Nodes (7): Extract Flow, Step 1: Discover the Design System, Step 2: Identify Patterns, Step 3: Plan Extraction, Step 4: Extract & Enrich, Step 5: Migrate, Step 6: Document
 
 ### Community 162 - "Generate Combined Critique Report"
 Cohesion: 0.20
@@ -1099,8 +1097,8 @@ Cohesion: 0.33
 Nodes (8): appendStyleToLiveUiRoot(), appendToLiveUiRoot(), escapeCssIdent(), getLiveUiElementById(), LIVE_CHROME_MOUNT_CONTRACT, LIVE_UI_COMPONENT_IDS, LIVE_UI_SURFACES, resolveLiveUiRoot()
 
 ### Community 183 - "appointments-table.tsx"
-Cohesion: 0.24
-Nodes (3): appointmentsColumns, AppointmentsTable(), AppointmentsTableProps
+Cohesion: 0.43
+Nodes (6): CachedFileUrl, fileUrlCache, fileUrlInflight, getFileUrl(), peekCachedFileUrl(), resolvePublicFileUrl()
 
 ### Community 184 - "graphify reference: extra exports and benchmark"
 Cohesion: 0.22
@@ -1115,8 +1113,8 @@ Cohesion: 0.22
 Nodes (9): scripts, build, dev, dev:https, lint, lint:staged, prepare, start (+1 more)
 
 ### Community 187 - "employees-table.tsx"
-Cohesion: 0.24
-Nodes (4): employeesColumns, EmployeesTable(), EmployeesTableProps, roles
+Cohesion: 0.32
+Nodes (4): AppDialogClose(), AppDialogCloseProps, AppDialogContentProps, APP_DIALOG_COPY
 
 ### Community 188 - "Common ARIA patterns"
 Cohesion: 0.25
@@ -1126,21 +1124,21 @@ Nodes (8): Buttons, Common ARIA patterns, Error states, Form fields, Links, Live
 Cohesion: 0.25
 Nodes (8): Accessible authentication (3.3.8) — new in 2.2, Consistent help (3.2.6) — new in 2.2, Consistent navigation (3.2.3), Error handling (3.3.1, 3.3.3), Form labels (3.3.2), Page language (3.1.1), Redundant entry (3.3.7) — new in 2.2, Understandable
 
-### Community 190 - "Technical Implementation"
-Cohesion: 0.25
-Nodes (8): Accessibility, CSS Animations, JavaScript Animation, Motion Materials, Perceived Performance, Performance, Technical Implementation, Timing & Easing
+### Community 190 - "sidebar-clinic-switcher.tsx"
+Cohesion: 0.40
+Nodes (3): SidebarClinicSwitcherProps, SIDEBAR_COPY, ClinicMembershipView
 
 ### Community 191 - "Persona-Based Design Testing"
 Cohesion: 0.25
 Nodes (8): 1. Impatient Power User: "Alex", 2. Confused First-Timer: "Jordan", 3. Accessibility-Dependent User: "Sam", 4. Deliberate Stress Tester: "Riley", 5. Distracted Mobile User: "Casey", Persona-Based Design Testing, Project-Specific Personas, Selecting Personas
 
-### Community 192 - "Extract Flow"
-Cohesion: 0.25
-Nodes (7): Extract Flow, Step 1: Discover the Design System, Step 2: Identify Patterns, Step 3: Plan Extraction, Step 4: Extract & Enrich, Step 5: Migrate, Step 6: Document
+### Community 192 - "isNeutralColor"
+Cohesion: 0.40
+Nodes (5): isNeutralBorderColor(), checkBorders(), checkElementBorders(), checkElementBordersDOM(), isNeutralColor()
 
 ### Community 193 - "Init Flow"
-Cohesion: 0.13
-Nodes (14): Accessibility & Inclusion, Brand & Personality, Init Flow, Interview mode, not confirmation mode, Minimum viable interview, Register (ask first; it shapes everything below), Step 1: Load current state, Step 2: Explore the codebase (+6 more)
+Cohesion: 0.25
+Nodes (7): Init Flow, Step 1: Load current state, Step 2: Explore the codebase, Step 4: Write PRODUCT.md, Step 5: Decide on DESIGN.md, Step 6: Configure live mode (when code exists), Step 7: Recommend starting points, then wrap up
 
 ### Community 194 - "cli"
 Cohesion: 0.29
@@ -1167,24 +1165,24 @@ Cohesion: 0.29
 Nodes (7): Cognitive Load Assessment, Cognitive Load Checklist, Extraneous Load: Bad Design, Germane Load: Learning Effort, Intrinsic Load: The Task Itself, The Working Memory Rule, Three Types of Cognitive Load
 
 ### Community 200 - "$impeccable hooks"
-Cohesion: 0.09
-Nodes (20): Assess Current State, Plan Amplification, Register, Verify Quality, Constraints, Failure modes, Flow, $impeccable hooks (+12 more)
+Cohesion: 0.15
+Nodes (11): Constraints, Failure modes, Flow, $impeccable hooks, Intentional findings, Routing, Commands, Hooks (+3 more)
 
 ### Community 201 - "Step 3: Ask strategic questions (for PRODUCT.md)"
-Cohesion: 0.24
-Nodes (4): PatientAppointmentRow(), PatientAppointmentRowProps, PatientDetailPageClientProps, PATIENT_DETAIL_COPY
+Cohesion: 0.29
+Nodes (7): Accessibility & Inclusion, Brand & Personality, Interview mode, not confirmation mode, Minimum viable interview, Register (ask first; it shapes everything below), Step 3: Ask strategic questions (for PRODUCT.md), Users & Purpose
 
 ### Community 202 - "CSP detection (first-time only)"
-Cohesion: 0.31
-Nodes (8): AsyncFileUrl, CachedFileUrl, fileUrlCache, fileUrlInflight, getFileUrl(), peekCachedFileUrl(), resolvePublicFileUrl(), uploadFile()
+Cohesion: 0.29
+Nodes (7): append-arrays, append-string, Consent prompt template, CSP detection (first-time only), Drift-heal warning, First-time setup (config missing or invalid), Troubleshooting
 
 ### Community 203 - "checkElementGptBorderShadowDOM"
 Cohesion: 0.38
 Nodes (7): borderColorsFromStyle(), borderWidthsFromStyle(), checkElementGptBorderShadow(), checkElementGptBorderShadowDOM(), checkGptThinBorderWideShadow(), shadowLayerAlpha(), shadowMaxBlurPx()
 
 ### Community 204 - "patients-table.tsx"
-Cohesion: 0.28
-Nodes (3): patientsColumns, PatientsTable(), PatientsTableProps
+Cohesion: 0.40
+Nodes (5): 4. Plan three variants: identity first, then mode, then axes, Phase A: Extract the identity (non-skippable), Phase B: Pick mode (default vs departure), Phase C: Plan three variants, Phase D: Squint test
 
 ### Community 205 - "collectRepeatedSectionKickerCandidates"
 Cohesion: 0.33
@@ -1199,8 +1197,8 @@ Cohesion: 0.29
 Nodes (6): 1. Async Client Components Are Invalid, 2. Non-Serializable Props to Client Components, 3. Server Actions Are the Exception, Detection Rules, Quick Reference, RSC Boundaries
 
 ### Community 208 - "transactions-table.tsx"
-Cohesion: 0.28
-Nodes (6): transactionsColumns, TransactionsTable(), TransactionsTableProps, DataTable(), SortableTableHead(), SortableTableHeadProps
+Cohesion: 0.06
+Nodes (38): appointmentsColumns, AppointmentsTable(), AppointmentsTableProps, employeesColumns, EmployeesTable(), EmployeesTableProps, transactionsColumns, TransactionsTable() (+30 more)
 
 ### Community 209 - "1. Eliminating Waterfalls"
 Cohesion: 0.29
@@ -1223,8 +1221,8 @@ Cohesion: 0.33
 Nodes (5): 1. Component Architecture (architecture), 2. State Management (state), 3. Implementation Patterns (patterns), 4. React 19 APIs (react19), Sections
 
 ### Community 214 - "date-input.ts"
-Cohesion: 0.39
-Nodes (6): AppDatePopoverField(), AppDatePopoverFieldProps, formatLocalDateInputValue(), formatLocalDatetimeInputValue(), pad(), parseLocalDateInputValue()
+Cohesion: 0.40
+Nodes (5): Handle fallback, Step 1: Identify where the element actually lives, Step 2: Show three variants in the DOM for preview, Step 3: On accept, write to true source, Step 4: On discard, clean up the served file
 
 ### Community 215 - "React Best Practices"
 Cohesion: 0.33
@@ -1254,9 +1252,9 @@ Nodes (6): 3.1 Flujo A — Dueño de clínica, 3.2 Flujo B — Empleado / Freela
 Cohesion: 0.33
 Nodes (5): lint-staged, *.{ts,tsx}, name, private, version
 
-### Community 222 - "4. Plan three variants: identity first, then mode, then axes"
-Cohesion: 0.40
-Nodes (5): isNeutralBorderColor(), checkBorders(), checkElementBorders(), checkElementBordersDOM(), isNeutralColor()
+### Community 222 - "use-pending-clinic-requests.ts"
+Cohesion: 0.60
+Nodes (3): normalizeEmail(), PendingClinicRequest, UsePendingClinicRequestsResult
 
 ### Community 224 - "checkElementHeroEyebrow"
 Cohesion: 0.40
@@ -1335,24 +1333,24 @@ Cohesion: 0.67
 Nodes (3): 2. Roles y permisos, Matriz de permisos recomendada, Reglas de membresía
 
 ## Knowledge Gaps
-- **1658 isolated node(s):** `eslintConfig`, `name`, `version`, `private`, `dev` (+1653 more)
+- **1661 isolated node(s):** `COMMON_DEV_PORTS`, `SCANNABLE_EXT`, `SOURCE_DIRS`, `PRODUCT_NAMES`, `DESIGN_NAMES` (+1656 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **124 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **122 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `confirm()` connect `showToast` to `detect-antipatterns.mjs`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
+  _High betweenness centrality (0.061) - this node is a cross-community bridge._
 - **Why does `pickVariantContent()` connect `refreshParamsPanel` to `live-browser.js`, `insert-ui.mjs`, `handleKeyDown`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **Why does `resolveInsertSessionAnchor()` connect `insert-ui.mjs` to `refreshParamsPanel`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `handleKeyDown()` (e.g. with `activeElementDeep()` and `init()`) actually correct?**
   _`handleKeyDown()` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `eslintConfig`, `name`, `version` to the rest of the system?**
-  _1658 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `COMMON_DEV_PORTS`, `SCANNABLE_EXT`, `SOURCE_DIRS` to the rest of the system?**
+  _1661 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Auth & Onboarding` be split into smaller, more focused modules?**
-  _Cohesion score 0.11933395004625347 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11942959001782531 - nodes in this community are weakly interconnected._
 - **Should `Schemas & Validation` be split into smaller, more focused modules?**
-  _Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09774436090225563 - nodes in this community are weakly interconnected._

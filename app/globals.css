@@ -18,8 +18,11 @@
   --border-subtle: oklch(93.5% 0.006 220);
   --on-primary: oklch(100% 0 0);
   --danger: oklch(57% 0.22 27);
+  --danger-subtle: oklch(94% 0.04 27);
   --warning: oklch(66% 0.16 55);
+  --warning-subtle: oklch(94% 0.05 55);
   --success: oklch(55% 0.14 160);
+  --success-subtle: oklch(92% 0.05 160);
   --background: var(--canvas);
   --foreground: var(--ink);
   --card: var(--surface);
@@ -66,8 +69,11 @@
   --color-border-subtle: var(--border-subtle);
   --color-on-primary: var(--on-primary);
   --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
   --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
   --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);

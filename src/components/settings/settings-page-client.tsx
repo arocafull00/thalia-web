@@ -1,18 +1,24 @@
 "use client";
 
-import Link from "next/link";
 import { useRef } from "react";
 
 import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
-import SettingsProfilePanel from "@/components/settings/settings-profile-panel";
-import { ActionButton } from "@/components/ui/primitives/action-button";
+import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
+import SettingsManagementPanel from "@/components/settings/components/settings-management-panel";
+import SettingsProfileCard from "@/components/settings/components/settings-profile-card";
 import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
+import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useSettingsPageActions } from "@/lib/hooks/use-settings-page";
+import { useSettingsUiStore } from "@/stores/settings-ui-store";
 
 export default function SettingsPageClient() {
   const { profile, user } = useAuth();
+  const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
+  const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
+  const displayUri = localAvatarUri ?? resolvedAvatarUrl;
   const {
     activeEmployeesCount,
     canViewClinicRequests,
@@ -31,112 +37,85 @@ export default function SettingsPageClient() {
   if (!profile || !user) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8">
-        <Notice tone="danger" message="No se pudo cargar el perfil." />
+        <Notice tone="danger" message={SETTINGS_COPY.page.profileError} />
       </div>
     );
   }
 
+  const statItems = [
+    {
+      label: SETTINGS_COPY.stats.activeEmployees,
+      value: String(activeEmployeesCount),
+    },
+    ...(canViewClinicRequests
+      ? [
+          {
+            label: SETTINGS_COPY.stats.pendingRequests,
+            tone:
+              pendingClinicRequests.length > 0
+                ? ("warning" as const)
+                : ("default" as const),
+            value: String(pendingClinicRequests.length),
+          },
+        ]
+      : []),
+    ...(isAdmin
+      ? [
+          {
+            label: SETTINGS_COPY.stats.platformRole,
+            tone: "success" as const,
+            value: "Admin",
+          },
+        ]
+      : []),
+  ];
+
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-8 p-8">
       <PageHeader
-        subtitle="Cuenta, preferencias y gestión de clínica."
-        title="Ajustes"
+        subtitle={SETTINGS_COPY.page.subtitle}
+        title={SETTINGS_COPY.page.title}
       />
-      <div className="mx-auto grid max-w-5xl gap-8 xl:grid-cols-[240px_1fr]">
-        <div className="border-r border-border pr-8">
-          <SettingsProfilePanel
-            onPickAvatar={() => fileInputRef.current?.click()}
-            uploadingAvatar={uploadAvatar.isPending}
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
 
-              if (!file) {
-                return;
-              }
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          handleAvatarPress(URL.createObjectURL(file));
+        }}
+      />
 
-              handleAvatarPress(URL.createObjectURL(file));
-            }}
-          />
-        </div>
-        <div className="space-y-8">
-          <section className="space-y-4">
-            <h2 className="text-lg font-medium">Cuenta</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-ink-muted">
-                  Correo electrónico
-                </p>
-                <p className="mt-1 text-ink">{user.email ?? "—"}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wide text-ink-muted">
-                  Teléfono
-                </p>
-                <p className="mt-1 text-ink">{profile.phone ?? "—"}</p>
-              </div>
-            </div>
-            {canViewClinicRequests ? (
-              <Link
-                href="/settings/clinic-requests"
-                className="block rounded-2xl border border-border p-4 hover:bg-canvas"
-              >
-                <p className="font-medium text-ink">Solicitudes de clínica</p>
-                <p className="text-sm text-ink-secondary">
-                  Clínicas que quieren trabajar contigo (
-                  {pendingClinicRequests.length})
-                </p>
-              </Link>
-            ) : null}
-            {passwordMessage ? <Notice message={passwordMessage} /> : null}
-            <ActionButton
-              title={passwordSubmitting ? "Enviando..." : "Cambiar contraseña"}
-              variant="ghost"
-              disabled={passwordSubmitting}
-              onClick={() => void handleChangePassword()}
-            />
-          </section>
-          {isAdmin ? (
-            <section className="space-y-4">
-              <h2 className="text-lg font-medium">Gestión de clínica</h2>
-              <div className="space-y-3">
-                <Link
-                  href="/settings/team"
-                  className="block rounded-2xl border border-border p-4 hover:bg-canvas"
-                >
-                  Añadir al equipo
-                </Link>
-                <Link
-                  href="/settings/staff"
-                  className="block rounded-2xl border border-border p-4 hover:bg-canvas"
-                >
-                  Personal y especialistas ({activeEmployeesCount} activos)
-                </Link>
-                <Link
-                  href="/settings/treatments"
-                  className="block rounded-2xl border border-border p-4 hover:bg-canvas"
-                >
-                  Catálogo de servicios
-                </Link>
-              </div>
-            </section>
-          ) : null}
-          <PwaInstallPanel />
-          <section className="border-t border-border pt-6">
-            <ActionButton
-              title={signOutSubmitting ? "Cerrando sesión..." : "Cerrar sesión"}
-              variant="ghost"
-              disabled={signOutSubmitting}
-              onClick={() => void handleSignOut()}
-            />
-          </section>
-        </div>
+      <SettingsProfileCard
+        canViewClinicRequests={canViewClinicRequests}
+        displayUri={displayUri}
+        isAdmin={isAdmin}
+        onPickAvatar={() => fileInputRef.current?.click()}
+        pendingRequestsCount={pendingClinicRequests.length}
+        profile={profile}
+        statItems={statItems}
+        uploadPending={uploadAvatar.isPending}
+        userEmail={user.email}
+      />
+
+      <div className="grid gap-8 lg:grid-cols-2">
+        <SettingsAccountPanel
+          onChangePassword={() => void handleChangePassword()}
+          onSignOut={() => void handleSignOut()}
+          passwordMessage={passwordMessage}
+          passwordSubmitting={passwordSubmitting}
+          signOutSubmitting={signOutSubmitting}
+        />
+
+        {isAdmin ? <SettingsManagementPanel /> : null}
       </div>
+
+      <PwaInstallPanel />
     </div>
   );
 }

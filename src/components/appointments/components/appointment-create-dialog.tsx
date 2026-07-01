@@ -59,10 +59,8 @@ export default function AppointmentCreateDialog({
             errors={dialog.errors}
             treatmentTypeIds={dialog.treatmentTypeIds}
             onToggleTreatmentType={dialog.toggleTreatmentType}
-            onPatientSearchChange={dialog.setPatientSearch}
             patients={dialog.patients}
             patientsLoading={dialog.patientsLoading}
-            patientsSearching={dialog.patientsSearching}
             employees={dialog.employees}
             employeesLoading={dialog.employeesLoading}
             treatmentTypes={dialog.treatmentTypes}

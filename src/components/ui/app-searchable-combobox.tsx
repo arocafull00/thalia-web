@@ -1,10 +1,25 @@
 "use client";
 
-import * as Popover from "@radix-ui/react-popover";
-import { ChevronDown } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { matchSorter } from "match-sorter";
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
+import AppSearchableComboboxItem from "@/components/ui/app-searchable-combobox-item";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxList,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import { COMBOBOX_COPY } from "@/copy/combobox-copy";
+import { cn } from "@/lib/utils";
 
 export type AppSearchableComboboxOption = {
   value: string;
@@ -20,24 +35,22 @@ type AppSearchableComboboxProps = {
   searchPlaceholder?: string;
   disabled?: boolean;
   loading?: boolean;
-  searching?: boolean;
   emptyMessage?: string;
   allowClear?: boolean;
   clearLabel?: string;
-  onSearchChange?: (query: string) => void;
   variant?: "input" | "pill";
   triggerLeading?: ReactNode;
   className?: string;
 };
 
 const inputTriggerClassName =
-  "flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2 disabled:opacity-50";
+  "flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus-visible:ring-2 disabled:opacity-50 [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
 
 const pillTriggerClassName =
-  "inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary disabled:opacity-50";
+  "inline-flex w-full items-center justify-between gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary disabled:opacity-50 [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
 
-const popoverContentClassName =
-  "pointer-events-auto z-100 w-(--radix-popover-trigger-width) min-w-72 rounded-2xl border border-border bg-surface p-3 shadow-lg";
+const popupClassName =
+  "pointer-events-auto z-100 min-w-72 rounded-2xl border border-border bg-surface p-3 shadow-lg ring-0";
 
 export default function AppSearchableCombobox({
   value,
@@ -47,33 +60,52 @@ export default function AppSearchableCombobox({
   searchPlaceholder = COMBOBOX_COPY.searchPlaceholder,
   disabled = false,
   loading = false,
-  searching = false,
   emptyMessage = COMBOBOX_COPY.empty,
   allowClear = false,
   clearLabel,
-  onSearchChange,
   variant = "input",
   triggerLeading,
   className,
 }: AppSearchableComboboxProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<
+    HTMLElement | undefined
+  >(undefined);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  const filteredOptions = useMemo(() => {
-    if (onSearchChange) {
-      return options;
+  useLayoutEffect(() => {
+    const dialog = rootRef.current?.closest('[role="dialog"]');
+
+    if (dialog instanceof HTMLElement) {
+      setPortalContainer(dialog);
+      return;
     }
 
-    const normalizedSearch = search.trim().toLowerCase();
+    setPortalContainer(undefined);
+  }, []);
+
+  const filteredOptions = useMemo(() => {
+    const normalizedSearch = search.trim();
 
     if (!normalizedSearch) {
       return options;
     }
 
-    return options.filter((option) =>
-      option.label.toLowerCase().includes(normalizedSearch),
-    );
-  }, [onSearchChange, options, search]);
+    const matches = matchSorter(options, normalizedSearch, {
+      keys: ["label", "value"],
+    });
+
+    const selected = value
+      ? options.find((option) => option.value === value)
+      : null;
+
+    if (selected && !matches.some((match) => match.value === selected.value)) {
+      matches.push(selected);
+    }
+
+    return matches;
+  }, [options, search, value]);
 
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? null,
@@ -93,61 +125,76 @@ export default function AppSearchableCombobox({
   }, [allowClear, clearLabel, placeholder, selectedOption, value]);
 
   const showInitialLoading = loading && !selectedOption;
-  const showListLoading = loading || searching;
-  const showEmptyState =
-    !showListLoading && open && filteredOptions.length === 0;
+  const showListLoading = loading;
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
 
     if (!nextOpen) {
       setSearch("");
-      onSearchChange?.("");
     }
   };
 
   const handleSearchChange = (nextSearch: string) => {
     setSearch(nextSearch);
-    onSearchChange?.(nextSearch);
   };
 
   const handleSelect = (nextValue: string | null) => {
     onValueChange(nextValue);
     setOpen(false);
     setSearch("");
-    onSearchChange?.("");
+  };
+
+  const handleValueChange = (option: AppSearchableComboboxOption | null) => {
+    handleSelect(option ? option.value : null);
   };
 
   const triggerClassName =
     variant === "pill" ? pillTriggerClassName : inputTriggerClassName;
 
   return (
-    <Popover.Root open={open} onOpenChange={handleOpenChange}>
-      <Popover.Trigger asChild>
-        <button
-          type="button"
-          disabled={disabled || showInitialLoading}
-          className={`${triggerClassName} ${className ?? ""}`}
-        >
+    <div
+      ref={rootRef}
+      className={variant === "pill" ? "inline-block" : "w-full"}
+    >
+      <Combobox
+        items={filteredOptions}
+        filter={null}
+        autoComplete="none"
+        modal={false}
+        value={selectedOption}
+        onValueChange={handleValueChange}
+        isItemEqualToValue={(item, selected) => item.value === selected.value}
+        itemToStringValue={(option) => option.label}
+        inputValue={search}
+        onInputValueChange={handleSearchChange}
+        open={open}
+        onOpenChange={handleOpenChange}
+        disabled={disabled || showInitialLoading}
+      >
+        <ComboboxTrigger className={cn(triggerClassName, className)}>
           <span className="flex min-w-0 flex-1 items-center gap-2 text-left">
             {!selectedOption && triggerLeading ? triggerLeading : null}
             {selectedOption?.leading ?? null}
             <span
-              className={`truncate ${selectedOption ? "text-ink" : "text-ink-muted"}`}
+              className={cn(
+                "truncate",
+                selectedOption ? "text-ink" : "text-ink-muted",
+              )}
             >
               {showInitialLoading ? COMBOBOX_COPY.loading : triggerLabel}
             </span>
           </span>
-          <ChevronDown size={16} className="shrink-0 text-ink-muted" />
-        </button>
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Content className={popoverContentClassName} sideOffset={8}>
-          <input
-            value={search}
-            onChange={(event) => handleSearchChange(event.target.value)}
+        </ComboboxTrigger>
+        <ComboboxContent
+          container={portalContainer}
+          sideOffset={8}
+          className={cn(popupClassName, "max-h-none")}
+        >
+          <ComboboxInput
+            showTrigger={false}
             placeholder={searchPlaceholder}
-            className="mb-3 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none ring-primary focus:ring-2"
+            className="mb-3 w-full rounded-xl border border-border bg-surface shadow-none ring-primary focus-within:ring-2"
           />
           <div className="max-h-48 overflow-y-auto">
             {allowClear && clearLabel ? (
@@ -165,27 +212,24 @@ export default function AppSearchableCombobox({
                 {COMBOBOX_COPY.loading}
               </p>
             ) : null}
-            {showEmptyState ? (
-              <p className="px-3 py-2 text-sm text-ink-muted">{emptyMessage}</p>
+            {!showListLoading ? (
+              <>
+                <ComboboxEmpty className="px-3 py-2 text-ink-muted">
+                  {emptyMessage}
+                </ComboboxEmpty>
+                <ComboboxList className="max-h-none p-0">
+                  {(option: AppSearchableComboboxOption) => (
+                    <AppSearchableComboboxItem
+                      key={option.value}
+                      option={option}
+                    />
+                  )}
+                </ComboboxList>
+              </>
             ) : null}
-            {!showListLoading
-              ? filteredOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => handleSelect(option.value)}
-                    className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-canvas ${
-                      option.value === value ? "bg-primary-subtle text-ink" : ""
-                    }`}
-                  >
-                    {option.leading}
-                    {option.label}
-                  </button>
-                ))
-              : null}
           </div>
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
+        </ComboboxContent>
+      </Combobox>
+    </div>
   );
 }

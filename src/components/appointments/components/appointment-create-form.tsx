@@ -21,10 +21,8 @@ type AppointmentCreateFormProps = {
   errors: FieldErrors<AppointmentFormValues>;
   treatmentTypeIds: string[];
   onToggleTreatmentType: (treatmentTypeId: string) => void;
-  onPatientSearchChange: (value: string) => void;
   patients: Patient[];
   patientsLoading: boolean;
-  patientsSearching: boolean;
   employees: Employee[];
   employeesLoading: boolean;
   treatmentTypes: TreatmentType[];
@@ -37,10 +35,8 @@ export default function AppointmentCreateForm({
   errors,
   treatmentTypeIds,
   onToggleTreatmentType,
-  onPatientSearchChange,
   patients,
   patientsLoading,
-  patientsSearching,
   employees,
   employeesLoading,
   treatmentTypes,
@@ -87,8 +83,6 @@ export default function AppointmentCreateForm({
               placeholder={APPOINTMENT_CREATE_COPY.fields.selectPlaceholder}
               searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchPatient}
               loading={patientsLoading}
-              searching={patientsSearching}
-              onSearchChange={onPatientSearchChange}
             />
           )}
         />

@@ -6,8 +6,6 @@ import { CALENDAR_COPY } from "@/copy/calendar-copy";
 
 type CalendarToolbarProps = {
   weekRangeLabel: string;
-  isLoading: boolean;
-  loadingLabel: string;
   filter: ReactNode;
   onPreviousWeek: () => void;
   onNextWeek: () => void;

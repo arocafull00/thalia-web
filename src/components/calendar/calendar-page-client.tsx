@@ -9,8 +9,6 @@ import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
 export default function CalendarPageClient() {
   const {
     weekRangeLabel,
-    isLoading,
-    loadingLabel,
     dialogOpen,
     createStartsAt,
     openCreateDialog,
@@ -24,8 +22,6 @@ export default function CalendarPageClient() {
     <div className="flex h-dvh flex-col overflow-hidden">
       <CalendarToolbar
         weekRangeLabel={weekRangeLabel}
-        isLoading={isLoading}
-        loadingLabel={loadingLabel}
         filter={<CalendarEmployeeFilter />}
         onPreviousWeek={onPreviousWeek}
         onNextWeek={onNextWeek}

@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import type { z } from "zod";
@@ -10,7 +10,6 @@ import {
   useCreateAppointment,
   useUpdateAppointment,
 } from "@/lib/hooks/use-appointments";
-import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePatient, usePatients } from "@/lib/hooks/use-patients";
 import { useTreatmentTypes } from "@/lib/hooks/use-treatment-types";
@@ -20,8 +19,6 @@ import {
 } from "@/lib/schemas/appointment-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import type { AppointmentWithRelations } from "@/types/database.types";
-
-const PATIENT_SEARCH_DEBOUNCE_MS = 300;
 
 const appointmentFormSchema = appointmentSchema.omit({ clinicId: true });
 
@@ -70,15 +67,9 @@ export function useAppointmentCreateDialog(
   const { mutate, isPending: isCreating } = useCreateAppointment();
   const { mutateAsync: updateAppointment, isPending: isUpdating } =
     useUpdateAppointment();
-  const [patientSearch, setPatientSearch] = useState("");
   const isEditing = Boolean(appointment);
 
-  const debouncedPatientSearch = useDebouncedValue(
-    patientSearch,
-    PATIENT_SEARCH_DEBOUNCE_MS,
-  );
-
-  const patients = usePatients(debouncedPatientSearch);
+  const patients = usePatients("");
   const employees = useEmployees();
   const treatmentTypes = useTreatmentTypes();
 
@@ -126,10 +117,6 @@ export function useAppointmentCreateDialog(
   const patientsInitialLoading =
     patients.isLoading && patients.data === undefined;
 
-  const patientsSearching =
-    patientSearch.trim() !== debouncedPatientSearch.trim() ||
-    (patients.isLoading && patients.data !== undefined);
-
   const activeEmployees = useMemo(
     () =>
       (employees.data ?? []).filter((employee) => employee.active !== false),
@@ -138,7 +125,6 @@ export function useAppointmentCreateDialog(
 
   const resetDialog = useCallback(() => {
     reset(createDefaultValues(appointment, initialStartsAt));
-    setPatientSearch("");
   }, [reset, appointment, initialStartsAt]);
 
   const toggleTreatmentType = useCallback(
@@ -231,11 +217,8 @@ export function useAppointmentCreateDialog(
     errors,
     treatmentTypeIds,
     toggleTreatmentType,
-    patientSearch,
-    setPatientSearch,
     patients: patientsForPicker,
     patientsLoading: patientsInitialLoading,
-    patientsSearching,
     employees: activeEmployees,
     employeesLoading: employees.isLoading,
     treatmentTypes: treatmentTypes.data ?? [],

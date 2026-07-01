@@ -55,6 +55,15 @@ const eslintConfig = defineConfig([
       "no-console": ["warn", { allow: ["warn", "error"] }],
     },
   },
+  {
+    files: [
+      "src/components/ui/combobox.tsx",
+      "src/components/ui/input-group.tsx",
+    ],
+    rules: {
+      "react/no-multi-comp": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

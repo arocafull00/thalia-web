@@ -175,8 +175,8 @@
     "semantic_hash": "2a755d8823371501597d08f3ae6223c9"
   },
   "src/components/finances/finances-page-client.tsx": {
-    "mtime": 1782924838.89228,
-    "ast_hash": "1b54589bcbc2af1f42bceb206a000c55",
+    "mtime": 1782925068.0026908,
+    "ast_hash": "e704831b3b9c5a1612be0c6ace2c1c79",
     "semantic_hash": ""
   },
   "src/components/finances/finances-tab-bar.tsx": {
@@ -2662,6 +2662,26 @@
   "src/components/ui/table.tsx": {
     "mtime": 1782924783.6485195,
     "ast_hash": "f51aea8eb022e6017f928b02f2471e79",
+    "semantic_hash": ""
+  },
+  "src/components/finances/components/transaction-create-form.tsx": {
+    "mtime": 1782925046.949905,
+    "ast_hash": "8b05cdc196f09fb08ae22ef28e636e2d",
+    "semantic_hash": ""
+  },
+  "src/copy/transaction-create-copy.ts": {
+    "mtime": 1782925036.4294834,
+    "ast_hash": "d33d46a44c15834737edf77587ed9cf3",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-transaction-create-dialog.ts": {
+    "mtime": 1782925043.685425,
+    "ast_hash": "0d547c7f6dc76a7146ea3fa06f6239b7",
+    "semantic_hash": ""
+  },
+  "src/lib/schemas/transaction-schema.ts": {
+    "mtime": 1782925037.2074203,
+    "ast_hash": "796a6cdeb2e3c2b6d6d55c6acde89185",
     "semantic_hash": ""
   }
 }

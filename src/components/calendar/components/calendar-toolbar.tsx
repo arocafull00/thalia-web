@@ -17,8 +17,6 @@ type CalendarToolbarProps = {
 
 export default function CalendarToolbar({
   weekRangeLabel,
-  isLoading,
-  loadingLabel,
   filter,
   onPreviousWeek,
   onNextWeek,
@@ -32,11 +30,6 @@ export default function CalendarToolbar({
           <span className="truncate text-sm font-medium text-ink">
             {weekRangeLabel}
           </span>
-          {isLoading ? (
-            <span className="shrink-0 text-xs text-ink-muted">
-              {loadingLabel}
-            </span>
-          ) : null}
         </div>
         <button
           type="button"

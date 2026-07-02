@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
@@ -14,12 +15,14 @@ import {
   OWNER_REGISTRATION_STEP_COUNT,
 } from "@/lib/registration-metadata";
 import { supabase } from "@/lib/supabase";
+import { useAuthStore } from "@/stores/auth-store";
 import {
   useOnboardingIntentStore,
   type OnboardingIntent,
 } from "@/stores/onboarding-intent-store";
 
 export function useRegisterEmployee() {
+  const router = useRouter();
   const { signUp, user } = useAuth();
   const intent = useOnboardingIntentStore((state) => state.intent);
   const setIntent = useOnboardingIntentStore((state) => state.setIntent);
@@ -85,7 +88,22 @@ export function useRegisterEmployee() {
         throw new Error(updateError.message);
       }
 
-      await waitForAuthSessionReady();
+      const { data: freshUserData } = await supabase.auth.getUser();
+
+      if (freshUserData.user) {
+        const currentSession = useAuthStore.getState().session;
+
+        if (currentSession) {
+          useAuthStore
+            .getState()
+            .setSession({ ...currentSession, user: freshUserData.user });
+        }
+      }
+
+      if (resolvedIntent === "owner") {
+        router.push("/create-clinic");
+        return;
+      }
     } catch (nextError) {
       setError(
         nextError instanceof Error

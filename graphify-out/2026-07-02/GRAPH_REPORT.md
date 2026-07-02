@@ -1,8 +1,7 @@
-# Graph Report - thalia-web  (2026-07-02)
+# Graph Report - .  (2026-07-02)
 
 ## Corpus Check
-- 235 files · ~59,084 words
-- Verdict: corpus is large enough that graph structure adds value.
+- cluster-only mode — file stats not available
 
 ## Summary
 - 918 nodes · 2175 edges · 44 communities (37 shown, 7 thin omitted)

@@ -1,0 +1,19 @@
+# Agent / IDE tooling — not application code
+.agents/
+.claude/
+.cursor/
+.husky/
+.impeccable/
+
+# Agent instruction files at repo root
+AGENTS.md
+CLAUDE.md
+CHANGELOG.md
+APUNTES.md
+skills-lock.json
+
+# Code-only graph
+*.md
+
+# graphify output (belt-and-suspenders; also in graphify _SKIP_DIRS)
+graphify-out/

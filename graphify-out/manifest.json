@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
-    "mtime": 1783098123.0867832,
-    "ast_hash": "c3134da0c7f52a584f8ff5acc32bb51b",
+    "mtime": 1783098868.6032064,
+    "ast_hash": "65eae157c345da4b00a7e0cbc7583fb6",
     "semantic_hash": ""
   },
   "src/components/employees/employees-page-client.tsx": {

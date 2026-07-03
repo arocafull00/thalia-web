@@ -174,7 +174,7 @@ export function useScheduleXCalendar() {
     calendarControls.setView(
       viewMode === "month" ? monthView.name : weekView.name,
     );
-  }, [calendarControls, viewMode]);
+  }, [calendarControls, monthView.name, viewMode, weekView.name]);
 
   return {
     calendarApp,

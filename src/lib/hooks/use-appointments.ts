@@ -5,11 +5,16 @@ import {
   appointmentsKey,
   useAppointmentsStore,
   type AppointmentFormInput,
+  type AppointmentInventoryLinkInput,
   type AppointmentUpdateInput,
 } from "@/stores/appointments-store";
 import { isInitialLoading } from "@/stores/query-state";
 
-export type { AppointmentFormInput, AppointmentUpdateInput };
+export type {
+  AppointmentFormInput,
+  AppointmentInventoryLinkInput,
+  AppointmentUpdateInput,
+};
 
 export function useAppointments(
   dateOrRange: Date | { start: Date; end: Date },
@@ -151,6 +156,50 @@ export function useRescheduleAppointment() {
     ({ id, startsAt, endsAt }: { id: string; startsAt: Date; endsAt: Date }) =>
       rescheduleAppointment(id, startsAt, endsAt),
     [rescheduleAppointment],
+  );
+
+  return { mutateAsync, isPending, error };
+}
+
+export function useAppointmentInventoryItems(appointmentId: string) {
+  const entry = useAppointmentsStore(
+    (state) => state.appointmentInventoryById[appointmentId],
+  );
+  const fetchAppointmentInventoryItems = useAppointmentsStore(
+    (state) => state.fetchAppointmentInventoryItems,
+  );
+
+  useEffect(() => {
+    if (!appointmentId) {
+      return;
+    }
+
+    void fetchAppointmentInventoryItems(appointmentId);
+  }, [appointmentId, fetchAppointmentInventoryItems]);
+
+  return {
+    data: entry?.data,
+    isLoading: isInitialLoading(entry),
+    error: entry?.error,
+  };
+}
+
+export function useReplaceAppointmentInventoryItems() {
+  const replaceAppointmentInventoryItems = useAppointmentsStore(
+    (state) => state.replaceAppointmentInventoryItems,
+  );
+  const isPending = useAppointmentsStore((state) => state.replacingInventory);
+  const error = useAppointmentsStore((state) => state.replaceInventoryError);
+
+  const mutateAsync = useCallback(
+    ({
+      appointmentId,
+      items,
+    }: {
+      appointmentId: string;
+      items: AppointmentInventoryLinkInput[];
+    }) => replaceAppointmentInventoryItems(appointmentId, items),
+    [replaceAppointmentInventoryItems],
   );
 
   return { mutateAsync, isPending, error };

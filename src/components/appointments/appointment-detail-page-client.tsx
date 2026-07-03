@@ -6,6 +6,7 @@ import Link from "next/link";
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentDetailSidebar from "@/components/appointments/components/appointment-detail-sidebar";
 import AppointmentHeader from "@/components/appointments/components/appointment-header";
+import AppointmentMaterialsSection from "@/components/appointments/components/appointment-materials-section";
 import AppointmentPatientCard from "@/components/appointments/components/appointment-patient-card";
 import AppointmentProfessionalCard from "@/components/appointments/components/appointment-professional-card";
 import AppointmentTreatmentsSection from "@/components/appointments/components/appointment-treatments-section";
@@ -21,13 +22,13 @@ type AppointmentDetailPageClientProps = {
 
 function resolveTotalDurationMinutes(
   treatments: {
-    treatment_types: { duration_minutes: number | null } | null;
+    treatment: { duration_minutes: number | null } | null;
   }[],
   startsAt: string,
   endsAt: string,
 ) {
   const fromTreatments = treatments.reduce(
-    (sum, entry) => sum + (entry.treatment_types?.duration_minutes ?? 0),
+    (sum, entry) => sum + (entry.treatment?.duration_minutes ?? 0),
     0,
   );
 
@@ -122,6 +123,7 @@ export default function AppointmentDetailPageClient({
             treatments={treatments}
             totalDurationMinutes={totalDurationMinutes}
           />
+          <AppointmentMaterialsSection appointment={appointment} />
         </div>
         <AppointmentDetailSidebar appointment={appointment} />
       </div>

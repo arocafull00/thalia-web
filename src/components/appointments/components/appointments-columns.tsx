@@ -13,8 +13,7 @@ import type { AppointmentWithRelations } from "@/types/database.types";
 
 function getTreatmentName(appointment: AppointmentWithRelations) {
   return (
-    appointment.appointment_treatments[0]?.treatment_types?.name ??
-    "Sin tratamiento"
+    appointment.appointment_treatments[0]?.treatment?.name ?? "Sin tratamiento"
   );
 }
 

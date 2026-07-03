@@ -36,7 +36,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       let appointmentsQuery = supabase
         .from("appointments")
         .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment_types(id, name, color, price))",
+          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
         )
         .gte("starts_at", todayStart)
         .lte("starts_at", todayEnd)

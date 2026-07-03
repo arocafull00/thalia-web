@@ -18,7 +18,7 @@ Deno.serve(async () => {
   const { data: appointments, error } = await supabase
     .from("appointments")
     .select(
-      "*, patients(full_name, phone), employees(full_name), appointment_treatments(treatment_types(name))",
+      "*, patients(full_name, phone), employees(full_name), appointment_treatments(treatment(name))",
     )
     .eq("reminder_sent", false)
     .eq("status", "scheduled")
@@ -37,8 +37,8 @@ Deno.serve(async () => {
     const treatments =
       appointment.appointment_treatments
         ?.map(
-          (item: { treatment_types: { name: string } | null }) =>
-            item.treatment_types?.name,
+          (item: { treatment: { name: string } | null }) =>
+            item.treatment?.name,
         )
         .filter(Boolean)
         .join(", ") ?? "";

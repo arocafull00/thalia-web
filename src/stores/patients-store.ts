@@ -156,7 +156,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       const { data, error } = await supabase
         .from("appointments")
         .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment_types(id, name, color, price))",
+          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
         )
         .eq("patient_id", patientId)
         .order("starts_at", { ascending: false });
@@ -197,7 +197,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       const { data, error } = await supabase
         .from("appointments")
         .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment_types(id, name, color, price))",
+          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
         )
         .eq("patient_id", patientId)
         .gt("starts_at", new Date().toISOString())

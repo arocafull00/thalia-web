@@ -10,7 +10,7 @@ import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSearchableMultiSelect from "@/components/ui/app-searchable-multi-select";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
 import type { AppointmentFormValues } from "@/lib/hooks/use-appointment-create-dialog";
-import type { Employee, Patient, TreatmentType } from "@/types/database.types";
+import type { Employee, Patient, Treatment } from "@/types/database.types";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
@@ -19,28 +19,28 @@ type AppointmentCreateFormProps = {
   register: UseFormRegister<AppointmentFormValues>;
   control: Control<AppointmentFormValues>;
   errors: FieldErrors<AppointmentFormValues>;
-  treatmentTypeIds: string[];
-  onToggleTreatmentType: (treatmentTypeId: string) => void;
+  treatmentIds: string[];
+  onToggleTreatment: (treatmentId: string) => void;
   patients: Patient[];
   patientsLoading: boolean;
   employees: Employee[];
   employeesLoading: boolean;
-  treatmentTypes: TreatmentType[];
-  treatmentTypesLoading: boolean;
+  treatments: Treatment[];
+  treatmentsLoading: boolean;
 };
 
 export default function AppointmentCreateForm({
   register,
   control,
   errors,
-  treatmentTypeIds,
-  onToggleTreatmentType,
+  treatmentIds,
+  onToggleTreatment,
   patients,
   patientsLoading,
   employees,
   employeesLoading,
-  treatmentTypes,
-  treatmentTypesLoading,
+  treatments,
+  treatmentsLoading,
 }: AppointmentCreateFormProps) {
   const patientOptions = patients.map((patient) => ({
     value: patient.id,
@@ -58,7 +58,7 @@ export default function AppointmentCreateForm({
     ),
   }));
 
-  const treatmentOptions = treatmentTypes.map((treatment) => ({
+  const treatmentOptions = treatments.map((treatment) => ({
     id: treatment.id,
     label: treatment.name,
   }));
@@ -146,16 +146,16 @@ export default function AppointmentCreateForm({
           {APPOINTMENT_CREATE_COPY.fields.treatments}
         </legend>
         <AppSearchableMultiSelect
-          selectedIds={treatmentTypeIds}
-          onToggle={onToggleTreatmentType}
+          selectedIds={treatmentIds}
+          onToggle={onToggleTreatment}
           options={treatmentOptions}
-          loading={treatmentTypesLoading}
+          loading={treatmentsLoading}
           emptyMessage={APPOINTMENT_CREATE_COPY.fields.noTreatments}
           searchPlaceholder={APPOINTMENT_CREATE_COPY.fields.searchTreatment}
         />
-        {errors.treatmentTypeIds ? (
+        {errors.treatmentIds ? (
           <span className="text-sm text-danger">
-            {errors.treatmentTypeIds.message}
+            {errors.treatmentIds.message}
           </span>
         ) : null}
       </fieldset>

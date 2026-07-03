@@ -15,7 +15,7 @@ const appointmentFieldsSchema = z.object({
       (date) => date.getTime() > Date.now(),
       "La fecha no puede ser en el pasado.",
     ),
-  treatmentTypeIds: z.array(uuidSchema("El tratamiento no es válido.")),
+  treatmentIds: z.array(uuidSchema("El tratamiento no es válido.")),
   notes: nullableTrimmedString(1000, "Las notas son demasiado largas."),
 });
 

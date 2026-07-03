@@ -12,7 +12,7 @@ import {
 } from "@/lib/hooks/use-appointments";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePatient, usePatients } from "@/lib/hooks/use-patients";
-import { useTreatmentTypes } from "@/lib/hooks/use-treatment-types";
+import { useTreatments } from "@/lib/hooks/use-treatment";
 import {
   appointmentSchema,
   appointmentUpdateSchema,
@@ -43,8 +43,8 @@ function createDefaultValues(
       patientId: appointment.patient_id,
       employeeId: appointment.employee_id,
       startsAt: new Date(appointment.starts_at),
-      treatmentTypeIds: appointment.appointment_treatments
-        .map((entry) => entry.treatment_types?.id)
+      treatmentIds: appointment.appointment_treatments
+        .map((entry) => entry.treatment?.id)
         .filter((id): id is string => Boolean(id)),
       notes: appointment.notes ?? "",
     };
@@ -54,7 +54,7 @@ function createDefaultValues(
     patientId: initialPatientId ?? "",
     employeeId: "",
     startsAt: initialStartsAt ?? createDefaultStartsAt(),
-    treatmentTypeIds: [],
+    treatmentIds: [],
     notes: "",
   };
 }
@@ -73,7 +73,7 @@ export function useAppointmentCreateDialog(
 
   const patients = usePatients("");
   const employees = useEmployees();
-  const treatmentTypes = useTreatmentTypes();
+  const treatments = useTreatments();
 
   const {
     register,
@@ -97,8 +97,7 @@ export function useAppointmentCreateDialog(
   }, [appointment, initialPatientId, initialStartsAt, reset]);
 
   const patientId = useWatch({ control, name: "patientId" }) ?? "";
-  const treatmentTypeIds =
-    useWatch({ control, name: "treatmentTypeIds" }) ?? [];
+  const treatmentIds = useWatch({ control, name: "treatmentIds" }) ?? [];
 
   const selectedPatient = usePatient(patientId);
 
@@ -133,19 +132,19 @@ export function useAppointmentCreateDialog(
     reset(createDefaultValues(appointment, initialStartsAt, initialPatientId));
   }, [reset, appointment, initialPatientId, initialStartsAt]);
 
-  const toggleTreatmentType = useCallback(
-    (treatmentTypeId: string) => {
-      const current = getValues("treatmentTypeIds");
+  const toggleTreatment = useCallback(
+    (treatmentId: string) => {
+      const current = getValues("treatmentIds");
 
-      if (current.includes(treatmentTypeId)) {
+      if (current.includes(treatmentId)) {
         setValue(
-          "treatmentTypeIds",
-          current.filter((id) => id !== treatmentTypeId),
+          "treatmentIds",
+          current.filter((id) => id !== treatmentId),
         );
         return;
       }
 
-      setValue("treatmentTypeIds", [...current, treatmentTypeId]);
+      setValue("treatmentIds", [...current, treatmentId]);
     },
     [getValues, setValue],
   );
@@ -221,14 +220,14 @@ export function useAppointmentCreateDialog(
     register,
     control,
     errors,
-    treatmentTypeIds,
-    toggleTreatmentType,
+    treatmentIds,
+    toggleTreatment,
     patients: patientsForPicker,
     patientsLoading: patientsInitialLoading,
     employees: activeEmployees,
     employeesLoading: employees.isLoading,
-    treatmentTypes: treatmentTypes.data ?? [],
-    treatmentTypesLoading: treatmentTypes.isLoading,
+    treatments: treatments.data ?? [],
+    treatmentsLoading: treatments.isLoading,
     isPending: isCreating || isUpdating || isSubmitting,
     reset: resetDialog,
     handleSubmit: onSubmit,

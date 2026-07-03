@@ -32,7 +32,5 @@ export const SETTINGS_COPY = {
     teamDescription: "Invita y gestiona accesos",
     staff: "Personal",
     staffDescription: "Profesionales y horarios",
-    treatments: "Tratamientos",
-    treatmentsDescription: "Catálogo de la clínica",
   },
 } as const;

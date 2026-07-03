@@ -12,7 +12,10 @@ export function useAppointmentsPage(externalSearch?: string) {
     return { rangeEnd: endOfDay(addDays(today, 13)), rangeStart: today };
   }, []);
 
-  const appointments = useAppointments({ end: rangeEnd, start: rangeStart }, null);
+  const appointments = useAppointments(
+    { end: rangeEnd, start: rangeStart },
+    null,
+  );
 
   const groupedAppointments = useMemo(() => {
     const items = appointments.data ?? [];
@@ -22,8 +25,12 @@ export function useAppointmentsPage(externalSearch?: string) {
       ? items.filter((appt) => {
           const patientName = appt.patients?.full_name?.toLowerCase() ?? "";
           const treatment =
-            appt.appointment_treatments[0]?.treatment_types?.name?.toLowerCase() ?? "";
-          return patientName.includes(normalizedSearch) || treatment.includes(normalizedSearch);
+            appt.appointment_treatments[0]?.treatment?.name?.toLowerCase() ??
+            "";
+          return (
+            patientName.includes(normalizedSearch) ||
+            treatment.includes(normalizedSearch)
+          );
         })
       : items;
 
@@ -46,8 +53,10 @@ export function useAppointmentsPage(externalSearch?: string) {
   );
 
   const hasResults = groupedAppointments.length > 0;
-  const showEmptyState = !appointments.isLoading && !appointments.error && !hasResults;
-  const listData = showEmptyState || appointments.isLoading ? [] : groupedAppointments;
+  const showEmptyState =
+    !appointments.isLoading && !appointments.error && !hasResults;
+  const listData =
+    showEmptyState || appointments.isLoading ? [] : groupedAppointments;
 
   return {
     appointments,

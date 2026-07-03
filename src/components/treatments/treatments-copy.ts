@@ -1,0 +1,70 @@
+export const TREATMENTS_COPY = {
+  page: {
+    title: "Tratamientos",
+    subtitle:
+      "Define el catálogo de tratamientos y los materiales estándar de cada uno.",
+    add: "Nuevo tratamiento",
+    empty: "No hay tratamientos configurados.",
+    loadError: "No se pudo cargar el catálogo de tratamientos.",
+    allCategories: "Todos",
+  },
+  row: {
+    duration: "min",
+    materials: "materiales",
+    noMaterials: "Sin materiales",
+    edit: "Editar",
+    delete: "Eliminar",
+  },
+  dialog: {
+    createTitle: "Nuevo tratamiento",
+    editTitle: "Editar tratamiento",
+    createDescription: "Añade un tratamiento al catálogo de la clínica.",
+    editDescription: "Actualiza los datos y materiales del tratamiento.",
+    cancel: "Cancelar",
+    save: "Guardar",
+    saving: "Guardando…",
+    successCreate: "Tratamiento creado.",
+    successUpdate: "Tratamiento actualizado.",
+    error: "No se pudo guardar el tratamiento.",
+    clinicRequired: "Selecciona una clínica activa.",
+  },
+  delete: {
+    title: "Eliminar tratamiento",
+    description: (name: string) =>
+      `¿Seguro que quieres eliminar "${name}"? Esta acción no se puede deshacer.`,
+    confirm: "Eliminar",
+    pending: "Eliminando…",
+    cancel: "Cancelar",
+    success: "Tratamiento eliminado.",
+  },
+  form: {
+    name: "Nombre",
+    category: "Categoría",
+    duration: "Duración (min)",
+    price: "Precio",
+    color: "Color distintivo",
+    materials: "Materiales estándar",
+    materialsHint:
+      "Estos materiales se consumirán automáticamente al completar una cita, salvo que se personalicen en la cita.",
+    addMaterial: "Añadir material",
+    removeMaterial: "Quitar",
+    material: "Material",
+    quantity: "Cantidad",
+    selectMaterial: "Seleccionar material",
+    searchMaterial: "Buscar material…",
+    requiredMark: "*",
+  },
+} as const;
+
+export const TREATMENT_COLOR_PRESETS = [
+  "#6366f1",
+  "#8b5cf6",
+  "#ec4899",
+  "#f43f5e",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#0ea5e9",
+  "#64748b",
+] as const;

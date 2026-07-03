@@ -130,8 +130,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-page-client.tsx": {
-    "mtime": 1783096441.8035421,
-    "ast_hash": "1238d8e8e1369a2d4894744ca24a9234",
+    "mtime": 1783099648.6613111,
+    "ast_hash": "28d5da88f1df861802223a1b7275f81e",
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/hooks/use-schedule-x-calendar.ts": {
-    "mtime": 1783098817.9521859,
-    "ast_hash": "7b55399769cb0b496b8751b48566c1cd",
+    "mtime": 1783098937.850453,
+    "ast_hash": "c02f2b8a40a3c6f82a1ec6513ec414f2",
     "semantic_hash": ""
   },
   "src/components/calendar/schedule-x-calendar.tsx": {
@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
-    "mtime": 1783098123.0867832,
-    "ast_hash": "c3134da0c7f52a584f8ff5acc32bb51b",
+    "mtime": 1783098868.6032064,
+    "ast_hash": "65eae157c345da4b00a7e0cbc7583fb6",
     "semantic_hash": ""
   },
   "src/components/employees/employees-page-client.tsx": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-detail-copy.ts": {
-    "mtime": 1783096393.8123662,
-    "ast_hash": "5ff731991e98658552911a0d00c3d842",
+    "mtime": 1783099638.4100938,
+    "ast_hash": "854e3b61dfedbef92e5f2e8ab431df62",
     "semantic_hash": ""
   },
   "src/copy/calendar-copy.ts": {
@@ -820,8 +820,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointments.ts": {
-    "mtime": 1782906180.792341,
-    "ast_hash": "4dc70a9ff25f279b1a88f84c4457b4cf",
+    "mtime": 1783099656.757632,
+    "ast_hash": "d0ce57faefcb3f5b07aefb5c46f3b9e5",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-auth.ts": {
@@ -925,8 +925,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-treatment-types.ts": {
-    "mtime": 1782906180.9677744,
-    "ast_hash": "51210d02f6351dba81d7e260d76929bf",
+    "mtime": 1783099656.7541165,
+    "ast_hash": "c5f1b60e649e9a64e99641d49325690d",
     "semantic_hash": ""
   },
   "src/lib/inventory-stock.ts": {
@@ -1055,8 +1055,8 @@
     "semantic_hash": ""
   },
   "src/stores/appointments-store.ts": {
-    "mtime": 1783096395.0860002,
-    "ast_hash": "f86d3735d8a4d78f1629e3d139ac7f31",
+    "mtime": 1783099690.2775617,
+    "ast_hash": "325d5cf23a57eb99ef26ddf93470f5fc",
     "semantic_hash": ""
   },
   "src/stores/auth-store.ts": {
@@ -1150,13 +1150,13 @@
     "semantic_hash": ""
   },
   "src/stores/treatment-types-store.ts": {
-    "mtime": 1782338444.4254398,
-    "ast_hash": "7d0e80946d993f24585ee146d18a3ac9",
+    "mtime": 1783099632.8873715,
+    "ast_hash": "8debde5882f6ca756e84416c2d3d32a4",
     "semantic_hash": ""
   },
   "src/types/database.types.ts": {
-    "mtime": 1783098818.5192077,
-    "ast_hash": "02f3600ba1af77f19dbb71696d417f3d",
+    "mtime": 1783099587.3510983,
+    "ast_hash": "1d3cf871aabc1e0ef6100110f44666a6",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -1467,6 +1467,91 @@
   "src/components/finances/components/finances-movements-section.tsx": {
     "mtime": 1783098818.1844594,
     "ast_hash": "3bbb71dcf02d54cb56e4568ac43e964d",
+    "semantic_hash": ""
+  },
+  "app/(app)/settings/treatments/page.tsx": {
+    "mtime": 1783099627.8626008,
+    "ast_hash": "7c673b73a5cce7f4ee86a233f485483e",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/components/appointment-materials-override-dialog.tsx": {
+    "mtime": 1783099646.3662593,
+    "ast_hash": "d74c486e0793fa88dd601376f768b30a",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/components/appointment-materials-override-form.tsx": {
+    "mtime": 1783099644.7922232,
+    "ast_hash": "b90528e88fab9bb022c633d15694a98f",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/components/appointment-materials-section.tsx": {
+    "mtime": 1783099662.4129603,
+    "ast_hash": "a5f07385ca0b9447b1864336fab376d8",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/hooks/use-appointment-materials-override-dialog.ts": {
+    "mtime": 1783099641.816351,
+    "ast_hash": "b309c8ac2be01639edbd4e4c5b28ee66",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/hooks/use-appointment-materials.ts": {
+    "mtime": 1783099694.1831589,
+    "ast_hash": "11a8d1c3cb94c961a48b38fee35e087b",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/components/treatment-inventory-links-field.tsx": {
+    "mtime": 1783099695.3456278,
+    "ast_hash": "7ee62eb26929e24c9b9abbbc10a6b28c",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/components/treatment-type-dialog.tsx": {
+    "mtime": 1783099696.3139098,
+    "ast_hash": "5aa185bde57d441b9fc99c1c96a43b33",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/components/treatment-type-form.tsx": {
+    "mtime": 1783099696.318931,
+    "ast_hash": "ee32703993f0e1e3b9b6084fb0ba03ee",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/components/treatment-type-row.tsx": {
+    "mtime": 1783099617.2459435,
+    "ast_hash": "a871f94589d66f9bc945f4803aa447f5",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/hooks/use-treatment-type-dialog.ts": {
+    "mtime": 1783099713.1439002,
+    "ast_hash": "eb92aeb07b75722e6eb88b05b0803ae6",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/hooks/use-treatments-page.ts": {
+    "mtime": 1783099613.2804093,
+    "ast_hash": "73ee994bb7f67978495b76b51baa8004",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/treatments-copy.ts": {
+    "mtime": 1783099609.9502084,
+    "ast_hash": "c2d57cd6747aeab2854cfbb067b30db1",
+    "semantic_hash": ""
+  },
+  "src/components/settings/treatments/treatments-page-client.tsx": {
+    "mtime": 1783099634.3468218,
+    "ast_hash": "bcc5050cbcfd909596111e40418d2720",
+    "semantic_hash": ""
+  },
+  "src/lib/appointment-inventory.ts": {
+    "mtime": 1783099600.0058148,
+    "ast_hash": "0a89d160ec814be91f2e9752c3e73f90",
+    "semantic_hash": ""
+  },
+  "src/lib/schemas/treatment-type-schema.ts": {
+    "mtime": 1783099656.4479253,
+    "ast_hash": "1649d33d5e8f6eae9c6ea30a7b26b8d4",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/007_appointment_inventory.sql": {
+    "mtime": 1783099586.108141,
+    "ast_hash": "3a66bf23cedd7a59f80fe4713f7cedd9",
     "semantic_hash": ""
   }
 }

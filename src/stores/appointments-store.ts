@@ -4,6 +4,10 @@ import { create } from "zustand";
 
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import {
+  fetchDefaultMaterialsForTreatments,
+  type EffectiveAppointmentMaterial,
+} from "@/lib/appointment-inventory";
+import {
   appointmentSchema,
   appointmentUpdateSchema,
 } from "@/lib/schemas/appointment-schema";
@@ -11,6 +15,7 @@ import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import { useDashboardStore } from "@/stores/dashboard-store";
+import { useInventoryStore } from "@/stores/inventory-store";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -19,17 +24,23 @@ import {
 } from "@/stores/query-state";
 import type {
   Appointment,
+  AppointmentInventoryItemWithInventory,
   AppointmentStatus,
   AppointmentWithRelations,
-  TreatmentType,
+  Treatment,
 } from "@/types/database.types";
+
+export type AppointmentInventoryLinkInput = {
+  inventory_item_id: string;
+  quantity: number;
+};
 
 export type AppointmentFormInput = {
   clinicId: string;
   patientId: string;
   employeeId: string;
   startsAt: Date;
-  treatmentTypeIds: string[];
+  treatmentIds: string[];
   notes: string | null;
 };
 
@@ -48,19 +59,19 @@ function appointmentsKey(
 let appointmentsRealtimeChannel: RealtimeChannel | null = null;
 let appointmentsRealtimeSubscribers = 0;
 
-async function getTreatments(treatmentTypeIds: string[]) {
-  if (treatmentTypeIds.length === 0) {
+async function getTreatments(treatmentIds: string[]) {
+  if (treatmentIds.length === 0) {
     return [];
   }
 
   const { data, error } = await supabase
-    .from("treatment_types")
+    .from("treatment")
     .select("*")
-    .in("id", treatmentTypeIds);
-  return unwrapSupabaseList(data, error) as TreatmentType[];
+    .in("id", treatmentIds);
+  return unwrapSupabaseList(data, error) as Treatment[];
 }
 
-function calculateEndDate(startsAt: Date, treatments: TreatmentType[]) {
+function calculateEndDate(startsAt: Date, treatments: Treatment[]) {
   const duration = treatments.reduce(
     (total, treatment) => total + (treatment.duration_minutes ?? 30),
     0,
@@ -129,9 +140,57 @@ function unsubscribeAppointmentsRealtime() {
   appointmentsRealtimeChannel = null;
 }
 
+const appointmentInventorySelect = "*, inventory_items(id, name, unit)";
+
+function defaultMaterialsKey(treatmentIds: string[]) {
+  return [...treatmentIds].sort().join(",");
+}
+
+async function replaceAppointmentInventoryLinks(
+  appointmentId: string,
+  items: AppointmentInventoryLinkInput[],
+) {
+  const { error: deleteError } = await supabase
+    .from("appointment_inventory_items")
+    .delete()
+    .eq("appointment_id", appointmentId);
+
+  if (deleteError) {
+    throw deleteError;
+  }
+
+  if (items.length === 0) {
+    return;
+  }
+
+  const rows = items.map((item) => ({
+    appointment_id: appointmentId,
+    inventory_item_id: item.inventory_item_id,
+    quantity: item.quantity,
+  }));
+
+  const { error: insertError } = await supabase
+    .from("appointment_inventory_items")
+    .insert(rows);
+
+  if (insertError) {
+    throw insertError;
+  }
+}
+
 type AppointmentsStore = {
   byRange: Record<string, QueryEntry<AppointmentWithRelations[]>>;
   byId: Record<string, QueryEntry<AppointmentWithRelations>>;
+  appointmentInventoryById: Record<
+    string,
+    QueryEntry<AppointmentInventoryItemWithInventory[]>
+  >;
+  defaultMaterialsByKey: Record<
+    string,
+    QueryEntry<EffectiveAppointmentMaterial[]>
+  >;
+  replacingInventory: boolean;
+  replaceInventoryError: Error | null;
   creating: boolean;
   createError: Error | null;
   updatingStatus: boolean;
@@ -148,6 +207,12 @@ type AppointmentsStore = {
     employeeId: string | null;
   }) => Promise<void>;
   fetchAppointment: (appointmentId: string) => Promise<void>;
+  fetchAppointmentInventoryItems: (appointmentId: string) => Promise<void>;
+  fetchDefaultMaterials: (treatmentIds: string[]) => Promise<void>;
+  replaceAppointmentInventoryItems: (
+    appointmentId: string,
+    items: AppointmentInventoryLinkInput[],
+  ) => Promise<void>;
   createAppointment: (input: AppointmentFormInput) => Promise<Appointment>;
   updateAppointment: (input: AppointmentUpdateInput) => Promise<Appointment>;
   updateAppointmentStatus: (
@@ -164,6 +229,10 @@ type AppointmentsStore = {
 export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   byRange: {},
   byId: {},
+  appointmentInventoryById: {},
+  defaultMaterialsByKey: {},
+  replacingInventory: false,
+  replaceInventoryError: null,
   creating: false,
   createError: null,
   updatingStatus: false,
@@ -187,7 +256,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       let query = supabase
         .from("appointments")
         .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment_types(id, name, color, price))",
+          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
         )
         .gte("starts_at", startIso)
         .lte("starts_at", endIso)
@@ -234,7 +303,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       const { data, error } = await supabase
         .from("appointments")
         .select(
-          "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role, avatar_url), appointment_treatments(*, treatment_types(id, name, color, price, duration_minutes))",
+          "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role, avatar_url), appointment_treatments(*, treatment(id, name, color, price, duration_minutes))",
         )
         .eq("id", appointmentId)
         .single();
@@ -262,6 +331,89 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     }
   },
 
+  fetchAppointmentInventoryItems: async (appointmentId) => {
+    const previous = get().appointmentInventoryById[appointmentId];
+    set({
+      appointmentInventoryById: {
+        ...get().appointmentInventoryById,
+        [appointmentId]: loadingQueryEntry(previous),
+      },
+    });
+
+    try {
+      const { data, error } = await supabase
+        .from("appointment_inventory_items")
+        .select(appointmentInventorySelect)
+        .eq("appointment_id", appointmentId);
+
+      const items = unwrapSupabaseList(
+        data,
+        error,
+      ) as AppointmentInventoryItemWithInventory[];
+      set({
+        appointmentInventoryById: {
+          ...get().appointmentInventoryById,
+          [appointmentId]: successQueryEntry(items),
+        },
+      });
+    } catch (cause) {
+      set({
+        appointmentInventoryById: {
+          ...get().appointmentInventoryById,
+          [appointmentId]: errorQueryEntry(
+            cause instanceof Error ? cause : new Error(String(cause)),
+            previous,
+          ),
+        },
+      });
+    }
+  },
+
+  fetchDefaultMaterials: async (treatmentIds) => {
+    const key = defaultMaterialsKey(treatmentIds);
+    const previous = get().defaultMaterialsByKey[key];
+    set({
+      defaultMaterialsByKey: {
+        ...get().defaultMaterialsByKey,
+        [key]: loadingQueryEntry(previous),
+      },
+    });
+
+    try {
+      const materials = await fetchDefaultMaterialsForTreatments(treatmentIds);
+      set({
+        defaultMaterialsByKey: {
+          ...get().defaultMaterialsByKey,
+          [key]: successQueryEntry(materials),
+        },
+      });
+    } catch (cause) {
+      set({
+        defaultMaterialsByKey: {
+          ...get().defaultMaterialsByKey,
+          [key]: errorQueryEntry(
+            cause instanceof Error ? cause : new Error(String(cause)),
+            previous,
+          ),
+        },
+      });
+    }
+  },
+
+  replaceAppointmentInventoryItems: async (appointmentId, items) => {
+    set({ replacingInventory: true, replaceInventoryError: null });
+
+    try {
+      await replaceAppointmentInventoryLinks(appointmentId, items);
+      await get().fetchAppointmentInventoryItems(appointmentId);
+      set({ replacingInventory: false });
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      set({ replacingInventory: false, replaceInventoryError: error });
+      throw error;
+    }
+  },
+
   createAppointment: async (input) => {
     set({ creating: true, createError: null });
 
@@ -273,7 +425,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       }
 
       const validated = parsed.data;
-      const treatments = await getTreatments(validated.treatmentTypeIds);
+      const treatments = await getTreatments(validated.treatmentIds);
       const endsAt = calculateEndDate(validated.startsAt, treatments);
       const { data: appointment, error } = await supabase
         .from("appointments")
@@ -296,7 +448,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
       const rows = treatments.map((treatment) => ({
         appointment_id: createdAppointment.id,
-        treatment_type_id: treatment.id,
+        treatment_id: treatment.id,
         price_at_booking: treatment.price ?? 0,
       }));
 
@@ -330,7 +482,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       }
 
       const validated = parsed.data;
-      const treatments = await getTreatments(validated.treatmentTypeIds);
+      const treatments = await getTreatments(validated.treatmentIds);
       const endsAt = calculateEndDate(validated.startsAt, treatments);
       const { data, error } = await supabase
         .from("appointments")
@@ -359,7 +511,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       if (treatments.length > 0) {
         const rows = treatments.map((treatment) => ({
           appointment_id: validated.id,
-          treatment_type_id: treatment.id,
+          treatment_id: treatment.id,
           price_at_booking: treatment.price ?? 0,
         }));
 
@@ -398,6 +550,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       await refreshAllAppointmentEntries();
       await get().fetchAppointment(id);
       await useDashboardStore.getState().fetchDashboard();
+
+      if (status === "completed") {
+        void useInventoryStore.getState().fetchInventoryItems();
+      }
+
       set({ updatingStatus: false });
       return appointment;
     } catch (cause) {

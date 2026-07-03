@@ -6,6 +6,7 @@ import {
   Euro,
   LayoutGrid,
   Package,
+  Scissors,
   Settings,
   UserPlus,
   Users,
@@ -52,6 +53,12 @@ export default function AppSidebar() {
       href: "/patients",
       label: "Pacientes",
       icon: <Users size={18} />,
+      visible: true,
+    },
+    {
+      href: "/treatments",
+      label: "Tratamientos",
+      icon: <Scissors size={18} />,
       visible: true,
     },
     {

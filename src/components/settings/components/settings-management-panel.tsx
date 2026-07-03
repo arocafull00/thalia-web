@@ -1,6 +1,6 @@
 "use client";
 
-import { Scissors, User, Users } from "lucide-react";
+import { User, Users } from "lucide-react";
 
 import SettingsManagementLink from "@/components/settings/components/settings-management-link";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
@@ -17,12 +17,6 @@ const MANAGEMENT_LINKS = [
     href: "/settings/staff",
     icon: User,
     title: SETTINGS_COPY.management.staff,
-  },
-  {
-    description: SETTINGS_COPY.management.treatmentsDescription,
-    href: "/settings/treatments",
-    icon: Scissors,
-    title: SETTINGS_COPY.management.treatments,
   },
 ] as const;
 

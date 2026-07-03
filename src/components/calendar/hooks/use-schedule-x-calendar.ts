@@ -45,7 +45,7 @@ function buildScheduleEvents(
   return (data ?? []).map((appointment) => ({
     id: appointment.id,
     title: `${appointment.patients?.full_name ?? CALENDAR_COPY.event.defaultPatient} · ${
-      appointment.appointment_treatments[0]?.treatment_types?.name ??
+      appointment.appointment_treatments[0]?.treatment?.name ??
       CALENDAR_COPY.event.defaultTreatment
     }`,
     start: toZonedDateTime(appointment.starts_at),

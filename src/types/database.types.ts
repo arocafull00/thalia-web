@@ -87,7 +87,7 @@ export type Patient = {
   updated_at: string | null;
 };
 
-export type TreatmentType = {
+export type Treatment = {
   id: string;
   clinic_id: string;
   name: string;
@@ -99,16 +99,16 @@ export type TreatmentType = {
   updated_at: string | null;
 };
 
-export type TreatmentTypeInventoryItem = {
+export type TreatmentInventoryItem = {
   id: string;
-  treatment_type_id: string;
+  treatment_id: string;
   inventory_item_id: string;
   quantity: number;
   created_at: string | null;
 };
 
-export type TreatmentTypeWithInventory = TreatmentType & {
-  treatment_type_inventory_items: (TreatmentTypeInventoryItem & {
+export type TreatmentWithInventory = Treatment & {
+  treatment_inventory_items: (TreatmentInventoryItem & {
     inventory_items: Pick<InventoryItem, "id" | "name" | "unit"> | null;
   })[];
 };
@@ -130,9 +130,21 @@ export type Appointment = {
 export type AppointmentTreatment = {
   id: string;
   appointment_id: string;
-  treatment_type_id: string;
+  treatment_id: string;
   price_at_booking: number;
   created_at: string | null;
+};
+
+export type AppointmentInventoryItem = {
+  id: string;
+  appointment_id: string;
+  inventory_item_id: string;
+  quantity: number;
+  created_at: string | null;
+};
+
+export type AppointmentInventoryItemWithInventory = AppointmentInventoryItem & {
+  inventory_items: Pick<InventoryItem, "id" | "name" | "unit"> | null;
 };
 
 export type InventoryItem = {
@@ -179,11 +191,12 @@ export type AppointmentWithRelations = Appointment & {
     "id" | "full_name" | "color" | "specialty" | "role" | "avatar_url"
   > | null;
   appointment_treatments: (AppointmentTreatment & {
-    treatment_types: Pick<
-      TreatmentType,
+    treatment: Pick<
+      Treatment,
       "id" | "name" | "color" | "price" | "duration_minutes"
     > | null;
   })[];
+  appointment_inventory_items?: AppointmentInventoryItemWithInventory[];
 };
 
 export type InventoryMovementWithEmployee = InventoryMovement & {
@@ -212,15 +225,15 @@ type Tables = {
     Insert: Partial<Patient>;
     Update: Partial<Patient>;
   };
-  treatment_types: {
-    Row: TreatmentType;
-    Insert: Partial<TreatmentType>;
-    Update: Partial<TreatmentType>;
+  treatment: {
+    Row: Treatment;
+    Insert: Partial<Treatment>;
+    Update: Partial<Treatment>;
   };
-  treatment_type_inventory_items: {
-    Row: TreatmentTypeInventoryItem;
-    Insert: Partial<TreatmentTypeInventoryItem>;
-    Update: Partial<TreatmentTypeInventoryItem>;
+  treatment_inventory_items: {
+    Row: TreatmentInventoryItem;
+    Insert: Partial<TreatmentInventoryItem>;
+    Update: Partial<TreatmentInventoryItem>;
   };
   appointments: {
     Row: Appointment;
@@ -231,6 +244,11 @@ type Tables = {
     Row: AppointmentTreatment;
     Insert: Partial<AppointmentTreatment>;
     Update: Partial<AppointmentTreatment>;
+  };
+  appointment_inventory_items: {
+    Row: AppointmentInventoryItem;
+    Insert: Partial<AppointmentInventoryItem>;
+    Update: Partial<AppointmentInventoryItem>;
   };
   inventory_items: {
     Row: InventoryItem;

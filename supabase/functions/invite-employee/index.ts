@@ -90,7 +90,8 @@ Deno.serve(async (req) => {
     );
   }
 
-  const inviteUrl = `thalia://invite/${invitation.token}`;
+  const appUrl = Deno.env.get("APP_URL") ?? "";
+  const inviteUrl = `${appUrl}/invite/${invitation.token}`;
 
   return Response.json(
     {

@@ -86,18 +86,26 @@ export default function AppointmentMaterialsOverrideForm({
                 <Controller
                   name={`items.${index}.quantity`}
                   control={control}
-                  render={({ field: controllerField }) => (
-                    <input
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      value={controllerField.value}
-                      onChange={(event) =>
-                        controllerField.onChange(event.target.value)
-                      }
-                      className={inputClassName}
-                    />
-                  )}
+                  render={({ field: controllerField }) => {
+                    const quantityValue =
+                      typeof controllerField.value === "number" ||
+                      typeof controllerField.value === "string"
+                        ? controllerField.value
+                        : "";
+
+                    return (
+                      <input
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={quantityValue}
+                        onChange={(event) =>
+                          controllerField.onChange(event.target.value)
+                        }
+                        className={inputClassName}
+                      />
+                    );
+                  }}
                 />
                 {errors.items?.[index]?.quantity ? (
                   <span className="text-sm text-danger">

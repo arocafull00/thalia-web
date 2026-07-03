@@ -10,7 +10,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_app_appointments_id_page",
-      "community": 50,
+      "community": 54,
       "norm_label": "page.tsx"
     },
     {
@@ -20,7 +20,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "app_app_appointments_id_page_appointmentdetailpage",
-      "community": 50,
+      "community": 54,
       "norm_label": "appointmentdetailpage()"
     },
     {
@@ -70,7 +70,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_app_dashboard_page",
-      "community": 56,
+      "community": 63,
       "norm_label": "page.tsx"
     },
     {
@@ -80,7 +80,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "app_app_dashboard_page_dashboardpage",
-      "community": 56,
+      "community": 63,
       "norm_label": "dashboardpage()"
     },
     {
@@ -150,7 +150,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_app_inventory_page",
-      "community": 42,
+      "community": 8,
       "norm_label": "page.tsx"
     },
     {
@@ -160,7 +160,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "app_app_inventory_page_inventorypage",
-      "community": 42,
+      "community": 8,
       "norm_label": "inventorypage()"
     },
     {
@@ -210,7 +210,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_app_patients_page",
-      "community": 8,
+      "community": 60,
       "norm_label": "page.tsx"
     },
     {
@@ -220,7 +220,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "app_app_patients_page_patientspage",
-      "community": 8,
+      "community": 60,
       "norm_label": "patientspage()"
     },
     {
@@ -330,7 +330,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_onboarding_invite_team_page",
-      "community": 39,
+      "community": 11,
       "norm_label": "page.tsx"
     },
     {
@@ -340,7 +340,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "app_onboarding_invite_team_page_inviteteampage",
-      "community": 39,
+      "community": 11,
       "norm_label": "inviteteampage()"
     },
     {
@@ -1390,7 +1390,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_appointment_detail_page_client",
-      "community": 50,
+      "community": 54,
       "norm_label": "appointment-detail-page-client.tsx"
     },
     {
@@ -1400,7 +1400,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_components_appointments_appointment_detail_page_client_appointmentdetailpageclientprops",
-      "community": 50,
+      "community": 54,
       "norm_label": "appointmentdetailpageclientprops"
     },
     {
@@ -1410,7 +1410,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_components_appointments_appointment_detail_page_client_resolvetotaldurationminutes",
-      "community": 50,
+      "community": 54,
       "norm_label": "resolvetotaldurationminutes()"
     },
     {
@@ -1420,7 +1420,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_components_appointments_appointment_detail_page_client_appointmentdetailpageclient",
-      "community": 50,
+      "community": 54,
       "norm_label": "appointmentdetailpageclient()"
     },
     {
@@ -1450,7 +1450,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_create_dialog",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointment-create-dialog.tsx"
     },
     {
@@ -1460,7 +1460,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_create_dialog_appointmentcreatedialogprops",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointmentcreatedialogprops"
     },
     {
@@ -1470,7 +1470,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_create_dialog_appointmentcreatedialog",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointmentcreatedialog()"
     },
     {
@@ -1480,7 +1480,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_create_form",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointment-create-form.tsx"
     },
     {
@@ -1490,7 +1490,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_create_form_appointmentcreateformprops",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointmentcreateformprops"
     },
     {
@@ -1500,7 +1500,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_create_form_appointmentcreateform",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointmentcreateform()"
     },
     {
@@ -1510,7 +1510,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_detail_card",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointment-detail-card.tsx"
     },
     {
@@ -1520,7 +1520,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_detail_card_appointmentdetailcardprops",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentdetailcardprops"
     },
     {
@@ -1530,7 +1530,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_detail_card_appointmentdetailcard",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentdetailcard()"
     },
     {
@@ -1630,7 +1630,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_header_appointmentheader",
-      "community": 37,
+      "community": 54,
       "norm_label": "appointmentheader()"
     },
     {
@@ -1690,7 +1690,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_materials_override_form_appointmentmaterialsoverrideform",
-      "community": 56,
+      "community": 4,
       "norm_label": "appointmentmaterialsoverrideform()"
     },
     {
@@ -1750,7 +1750,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_patient_card",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointment-patient-card.tsx"
     },
     {
@@ -1760,7 +1760,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_patient_card_appointmentpatientcardprops",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentpatientcardprops"
     },
     {
@@ -1770,7 +1770,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_patient_card_appointmentpatientcard",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentpatientcard()"
     },
     {
@@ -1780,7 +1780,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_person_avatar",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointment-person-avatar.tsx"
     },
     {
@@ -1790,7 +1790,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_person_avatar_appointmentpersonavatarprops",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentpersonavatarprops"
     },
     {
@@ -1800,7 +1800,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_person_avatar_getinitials",
-      "community": 50,
+      "community": 13,
       "norm_label": "getinitials()"
     },
     {
@@ -1810,7 +1810,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_person_avatar_appointmentpersonavatar",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentpersonavatar()"
     },
     {
@@ -1820,7 +1820,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_professional_card",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointment-professional-card.tsx"
     },
     {
@@ -1830,7 +1830,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_professional_card_appointmentprofessionalcardprops",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentprofessionalcardprops"
     },
     {
@@ -1840,7 +1840,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_appointments_components_appointment_professional_card_appointmentprofessionalcard",
-      "community": 50,
+      "community": 13,
       "norm_label": "appointmentprofessionalcard()"
     },
     {
@@ -2040,7 +2040,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_appointments_hooks_use_appointment_materials",
-      "community": 50,
+      "community": 53,
       "norm_label": "use-appointment-materials.ts"
     },
     {
@@ -2050,7 +2050,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_appointments_hooks_use_appointment_materials_defaultmaterialskey",
-      "community": 50,
+      "community": 53,
       "norm_label": "defaultmaterialskey()"
     },
     {
@@ -2060,7 +2060,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_appointments_hooks_use_appointment_materials_useappointmentmaterials",
-      "community": 50,
+      "community": 53,
       "norm_label": "useappointmentmaterials()"
     },
     {
@@ -2630,7 +2630,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_dashboard_dashboard_page_client",
-      "community": 56,
+      "community": 63,
       "norm_label": "dashboard-page-client.tsx"
     },
     {
@@ -2640,7 +2640,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_dashboard_dashboard_page_client_formattodaytitle",
-      "community": 56,
+      "community": 63,
       "norm_label": "formattodaytitle()"
     },
     {
@@ -2650,7 +2650,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_components_dashboard_dashboard_page_client_dashboardpageclient",
-      "community": 56,
+      "community": 63,
       "norm_label": "dashboardpageclient()"
     },
     {
@@ -2760,7 +2760,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_invite_form",
-      "community": 1,
+      "community": 3,
       "norm_label": "employee-invite-form.tsx"
     },
     {
@@ -2770,7 +2770,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_invite_form_roleoptions",
-      "community": 1,
+      "community": 3,
       "norm_label": "roleoptions"
     },
     {
@@ -2780,7 +2780,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_invite_form_employeeinviteformprops",
-      "community": 1,
+      "community": 3,
       "norm_label": "employeeinviteformprops"
     },
     {
@@ -2790,7 +2790,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_invite_form_employeeinviteform",
-      "community": 1,
+      "community": 3,
       "norm_label": "employeeinviteform()"
     },
     {
@@ -2900,7 +2900,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_quick_actions",
-      "community": 42,
+      "community": 8,
       "norm_label": "employee-quick-actions.tsx"
     },
     {
@@ -2910,7 +2910,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_quick_actions_employeequickactionsprops",
-      "community": 42,
+      "community": 8,
       "norm_label": "employeequickactionsprops"
     },
     {
@@ -2920,7 +2920,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_employees_components_employee_quick_actions_employeequickactions",
-      "community": 42,
+      "community": 8,
       "norm_label": "employeequickactions()"
     },
     {
@@ -3440,7 +3440,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_finances_components_transactions_table_transactionstable",
-      "community": 10,
+      "community": 9,
       "norm_label": "transactionstable()"
     },
     {
@@ -3610,7 +3610,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_inventory_inventory_page_client",
-      "community": 42,
+      "community": 8,
       "norm_label": "inventory-page-client.tsx"
     },
     {
@@ -3620,7 +3620,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_components_inventory_inventory_page_client_inventorypageclient",
-      "community": 42,
+      "community": 8,
       "norm_label": "inventorypageclient()"
     },
     {
@@ -3640,7 +3640,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_components_onboarding_create_clinic_page_client_createclinicpageclient",
-      "community": 43,
+      "community": 11,
       "norm_label": "createclinicpageclient()"
     },
     {
@@ -3650,7 +3650,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_onboarding_invite_team_page_client",
-      "community": 39,
+      "community": 11,
       "norm_label": "invite-team-page-client.tsx"
     },
     {
@@ -3780,7 +3780,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_info_section",
-      "community": 53,
+      "community": 59,
       "norm_label": "patient-info-section.tsx"
     },
     {
@@ -3790,7 +3790,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_info_section_patientinfosectionprops",
-      "community": 53,
+      "community": 59,
       "norm_label": "patientinfosectionprops"
     },
     {
@@ -3800,7 +3800,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_info_section_patientinfosection",
-      "community": 53,
+      "community": 52,
       "norm_label": "patientinfosection()"
     },
     {
@@ -3840,7 +3840,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_profile_sidebar",
-      "community": 53,
+      "community": 59,
       "norm_label": "patient-profile-sidebar.tsx"
     },
     {
@@ -3850,7 +3850,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_profile_sidebar_patientprofilesidebarprops",
-      "community": 53,
+      "community": 59,
       "norm_label": "patientprofilesidebarprops"
     },
     {
@@ -3860,7 +3860,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_profile_sidebar_patientprofilesidebar",
-      "community": 53,
+      "community": 59,
       "norm_label": "patientprofilesidebar()"
     },
     {
@@ -3870,7 +3870,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_quick_actions",
-      "community": 53,
+      "community": 59,
       "norm_label": "patient-quick-actions.tsx"
     },
     {
@@ -3880,7 +3880,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_quick_actions_patientquickactionsprops",
-      "community": 53,
+      "community": 59,
       "norm_label": "patientquickactionsprops"
     },
     {
@@ -3890,7 +3890,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_patients_components_patient_quick_actions_patientquickactions",
-      "community": 53,
+      "community": 59,
       "norm_label": "patientquickactions()"
     },
     {
@@ -3990,7 +3990,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_patients_new_patient_date_field",
-      "community": 102,
+      "community": 55,
       "norm_label": "new-patient-date-field.tsx"
     },
     {
@@ -4000,7 +4000,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_components_patients_new_patient_date_field_newpatientdatefieldprops",
-      "community": 102,
+      "community": 55,
       "norm_label": "newpatientdatefieldprops"
     },
     {
@@ -4050,7 +4050,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_patients_patients_page_client",
-      "community": 8,
+      "community": 60,
       "norm_label": "patients-page-client.tsx"
     },
     {
@@ -4060,7 +4060,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_components_patients_patients_page_client_patientspageclient",
-      "community": 8,
+      "community": 60,
       "norm_label": "patientspageclient()"
     },
     {
@@ -4540,7 +4540,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_components_settings_settings_page_client_settingspageclient",
-      "community": 59,
+      "community": 5,
       "norm_label": "settingspageclient()"
     },
     {
@@ -4724,13 +4724,53 @@
       "norm_label": "treatmentform()"
     },
     {
+      "label": "treatment-inventory-link-row.tsx",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatment_inventory_link_row",
+      "community": 4,
+      "norm_label": "treatment-inventory-link-row.tsx"
+    },
+    {
+      "label": "InventoryOption",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatment_inventory_link_row_inventoryoption",
+      "community": 4,
+      "norm_label": "inventoryoption"
+    },
+    {
+      "label": "TreatmentInventoryLinkRowProps",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatment_inventory_link_row_treatmentinventorylinkrowprops",
+      "community": 4,
+      "norm_label": "treatmentinventorylinkrowprops"
+    },
+    {
+      "label": "TreatmentInventoryLinkRow()",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatment_inventory_link_row_treatmentinventorylinkrow",
+      "community": 4,
+      "norm_label": "treatmentinventorylinkrow()"
+    },
+    {
       "label": "treatment-inventory-links-field.tsx",
       "file_type": "code",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_treatments_components_treatment_inventory_links_field",
-      "community": 56,
+      "community": 4,
       "norm_label": "treatment-inventory-links-field.tsx"
     },
     {
@@ -4740,7 +4780,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_components_treatments_components_treatment_inventory_links_field_treatmentinventorylinksfieldprops",
-      "community": 56,
+      "community": 4,
       "norm_label": "treatmentinventorylinksfieldprops"
     },
     {
@@ -4750,38 +4790,98 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_components_treatments_components_treatment_inventory_links_field_treatmentinventorylinksfield",
-      "community": 56,
+      "community": 4,
       "norm_label": "treatmentinventorylinksfield()"
     },
     {
-      "label": "treatment-row.tsx",
+      "label": "treatment-row-actions.tsx",
       "file_type": "code",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_components_treatments_components_treatment_row",
-      "community": 41,
-      "norm_label": "treatment-row.tsx"
+      "id": "src_components_treatments_components_treatment_row_actions",
+      "community": 56,
+      "norm_label": "treatment-row-actions.tsx"
     },
     {
-      "label": "TreatmentRowProps",
+      "label": "TreatmentRowActionsProps",
       "file_type": "code",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L7",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
+      "source_location": "L6",
       "_origin": "ast",
-      "id": "src_components_treatments_components_treatment_row_treatmentrowprops",
-      "community": 41,
-      "norm_label": "treatmentrowprops"
+      "id": "src_components_treatments_components_treatment_row_actions_treatmentrowactionsprops",
+      "community": 56,
+      "norm_label": "treatmentrowactionsprops"
     },
     {
-      "label": "TreatmentRow()",
+      "label": "TreatmentRowActions()",
       "file_type": "code",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L14",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
+      "source_location": "L12",
       "_origin": "ast",
-      "id": "src_components_treatments_components_treatment_row_treatmentrow",
-      "community": 41,
-      "norm_label": "treatmentrow()"
+      "id": "src_components_treatments_components_treatment_row_actions_treatmentrowactions",
+      "community": 56,
+      "norm_label": "treatmentrowactions()"
+    },
+    {
+      "label": "treatments-columns.tsx",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatments_columns",
+      "community": 56,
+      "norm_label": "treatments-columns.tsx"
+    },
+    {
+      "label": "GetTreatmentsColumnsParams",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatments_columns_gettreatmentscolumnsparams",
+      "community": 56,
+      "norm_label": "gettreatmentscolumnsparams"
+    },
+    {
+      "label": "getTreatmentsColumns()",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatments_columns_gettreatmentscolumns",
+      "community": 56,
+      "norm_label": "gettreatmentscolumns()"
+    },
+    {
+      "label": "treatments-table.tsx",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatments_table",
+      "community": 56,
+      "norm_label": "treatments-table.tsx"
+    },
+    {
+      "label": "TreatmentsTableProps",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatments_table_treatmentstableprops",
+      "community": 56,
+      "norm_label": "treatmentstableprops"
+    },
+    {
+      "label": "TreatmentsTable()",
+      "file_type": "code",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "src_components_treatments_components_treatments_table_treatmentstable",
+      "community": 56,
+      "norm_label": "treatmentstable()"
     },
     {
       "label": "use-treatment-catalog.ts",
@@ -5170,7 +5270,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_app_dialog_header",
-      "community": 13,
+      "community": 42,
       "norm_label": "app-dialog-header.tsx"
     },
     {
@@ -5180,7 +5280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_app_dialog_header_appdialogheaderprops",
-      "community": 13,
+      "community": 42,
       "norm_label": "appdialogheaderprops"
     },
     {
@@ -5190,7 +5290,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_components_ui_app_dialog_header_appdialogheader",
-      "community": 13,
+      "community": 42,
       "norm_label": "appdialogheader()"
     },
     {
@@ -5200,7 +5300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_app_dialog_title",
-      "community": 42,
+      "community": 60,
       "norm_label": "app-dialog-title.tsx"
     },
     {
@@ -5210,7 +5310,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_components_ui_app_dialog_title_appdialogtitleprops",
-      "community": 42,
+      "community": 60,
       "norm_label": "appdialogtitleprops"
     },
     {
@@ -5220,7 +5320,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_ui_app_dialog_title_appdialogtitle",
-      "community": 42,
+      "community": 60,
       "norm_label": "appdialogtitle()"
     },
     {
@@ -5860,7 +5960,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_primitives_action_button",
-      "community": 42,
+      "community": 8,
       "norm_label": "action-button.tsx"
     },
     {
@@ -5870,7 +5970,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_components_ui_primitives_action_button_actionbutton",
-      "community": 42,
+      "community": 8,
       "norm_label": "actionbutton()"
     },
     {
@@ -5950,7 +6050,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_primitives_skeleton_list_item",
-      "community": 56,
+      "community": 7,
       "norm_label": "skeleton-list-item.tsx"
     },
     {
@@ -5960,7 +6060,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_components_ui_primitives_skeleton_list_item_skeletonlistitem",
-      "community": 56,
+      "community": 7,
       "norm_label": "skeletonlistitem()"
     },
     {
@@ -5970,7 +6070,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_primitives_skeleton_list",
-      "community": 56,
+      "community": 7,
       "norm_label": "skeleton-list.tsx"
     },
     {
@@ -5980,7 +6080,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_ui_primitives_skeleton_list_skeletonlist",
-      "community": 56,
+      "community": 7,
       "norm_label": "skeletonlist()"
     },
     {
@@ -6050,7 +6150,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_info_row",
-      "community": 53,
+      "community": 59,
       "norm_label": "profile-info-row.tsx"
     },
     {
@@ -6060,7 +6160,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_info_row_profileinforowprops",
-      "community": 53,
+      "community": 59,
       "norm_label": "profileinforowprops"
     },
     {
@@ -6070,7 +6170,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_info_row_profileinforow",
-      "community": 53,
+      "community": 59,
       "norm_label": "profileinforow()"
     },
     {
@@ -6110,7 +6210,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_item",
-      "community": 61,
+      "community": 7,
       "norm_label": "profile-timeline-item.tsx"
     },
     {
@@ -6120,7 +6220,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_item_profiletimelineitem",
-      "community": 61,
+      "community": 7,
       "norm_label": "profiletimelineitem"
     },
     {
@@ -6130,7 +6230,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_item_profiletimelineitemrowprops",
-      "community": 61,
+      "community": 7,
       "norm_label": "profiletimelineitemrowprops"
     },
     {
@@ -6140,7 +6240,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_item_dotclassnames",
-      "community": 61,
+      "community": 7,
       "norm_label": "dotclassnames"
     },
     {
@@ -6150,7 +6250,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_item_profiletimelineitemrow",
-      "community": 61,
+      "community": 7,
       "norm_label": "profiletimelineitemrow()"
     },
     {
@@ -6160,7 +6260,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline",
-      "community": 61,
+      "community": 7,
       "norm_label": "profile-timeline.tsx"
     },
     {
@@ -6170,7 +6270,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_profiletimelineprops",
-      "community": 61,
+      "community": 7,
       "norm_label": "profiletimelineprops"
     },
     {
@@ -6180,7 +6280,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_groupitemsbymonth",
-      "community": 61,
+      "community": 7,
       "norm_label": "groupitemsbymonth()"
     },
     {
@@ -6190,7 +6290,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_components_ui_profile_profile_timeline_profiletimeline",
-      "community": 61,
+      "community": 7,
       "norm_label": "profiletimeline()"
     },
     {
@@ -6440,7 +6540,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_copy_appointment_create_copy",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointment-create-copy.ts"
     },
     {
@@ -6450,7 +6550,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_copy_appointment_create_copy_appointment_create_copy",
-      "community": 13,
+      "community": 53,
       "norm_label": "appointment_create_copy"
     },
     {
@@ -6560,7 +6660,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_copy_employee_invite_copy",
-      "community": 1,
+      "community": 3,
       "norm_label": "employee-invite-copy.ts"
     },
     {
@@ -6570,7 +6670,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_copy_employee_invite_copy_employee_invite_copy",
-      "community": 1,
+      "community": 3,
       "norm_label": "employee_invite_copy"
     },
     {
@@ -6680,7 +6780,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_copy_patient_detail_copy",
-      "community": 53,
+      "community": 59,
       "norm_label": "patient-detail-copy.ts"
     },
     {
@@ -6690,7 +6790,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_copy_patient_detail_copy_patient_detail_copy",
-      "community": 53,
+      "community": 59,
       "norm_label": "patient_detail_copy"
     },
     {
@@ -6960,7 +7060,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_auth_sign_in_with_google_flow",
-      "community": 11,
+      "community": 43,
       "norm_label": "sign-in-with-google-flow.ts"
     },
     {
@@ -6970,7 +7070,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_auth_sign_in_with_google_flow_signinwithgoogleflow",
-      "community": 11,
+      "community": 43,
       "norm_label": "signinwithgoogleflow()"
     },
     {
@@ -7170,7 +7270,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_clinic_requests",
-      "community": 59,
+      "community": 5,
       "norm_label": "clinic-requests.ts"
     },
     {
@@ -7180,7 +7280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_clinic_requests_pendingclinicrequest",
-      "community": 59,
+      "community": 5,
       "norm_label": "pendingclinicrequest"
     },
     {
@@ -7190,7 +7290,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_lib_clinic_requests_normalizeemail",
-      "community": 59,
+      "community": 5,
       "norm_label": "normalizeemail()"
     },
     {
@@ -7200,7 +7300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_constants",
-      "community": 10,
+      "community": 1,
       "norm_label": "constants.ts"
     },
     {
@@ -7210,7 +7310,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_constants_employeecolors",
-      "community": 10,
+      "community": 1,
       "norm_label": "employeecolors"
     },
     {
@@ -7220,7 +7320,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_lib_constants_employeeroles",
-      "community": 10,
+      "community": 1,
       "norm_label": "employeeroles"
     },
     {
@@ -7570,7 +7670,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_lib_hooks_use_active_clinic_useclinicid",
-      "community": 56,
+      "community": 58,
       "norm_label": "useclinicid()"
     },
     {
@@ -7640,7 +7740,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointment_detail",
-      "community": 50,
+      "community": 53,
       "norm_label": "use-appointment-detail.ts"
     },
     {
@@ -7650,7 +7750,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointment_detail_useappointmentdetail",
-      "community": 50,
+      "community": 53,
       "norm_label": "useappointmentdetail()"
     },
     {
@@ -7680,7 +7780,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointments",
-      "community": 50,
+      "community": 53,
       "norm_label": "use-appointments.ts"
     },
     {
@@ -7700,7 +7800,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointments_useappointment",
-      "community": 50,
+      "community": 53,
       "norm_label": "useappointment()"
     },
     {
@@ -7730,7 +7830,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointments_useupdateappointmentstatus",
-      "community": 50,
+      "community": 53,
       "norm_label": "useupdateappointmentstatus()"
     },
     {
@@ -7740,7 +7840,7 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointments_userescheduleappointment",
-      "community": 50,
+      "community": 53,
       "norm_label": "userescheduleappointment()"
     },
     {
@@ -7750,7 +7850,7 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointments_useappointmentinventoryitems",
-      "community": 50,
+      "community": 53,
       "norm_label": "useappointmentinventoryitems()"
     },
     {
@@ -7760,7 +7860,7 @@
       "source_location": "L187",
       "_origin": "ast",
       "id": "src_lib_hooks_use_appointments_usereplaceappointmentinventoryitems",
-      "community": 50,
+      "community": 53,
       "norm_label": "usereplaceappointmentinventoryitems()"
     },
     {
@@ -7770,7 +7870,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_auth",
-      "community": 11,
+      "community": 43,
       "norm_label": "use-auth.ts"
     },
     {
@@ -7790,7 +7890,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_lib_hooks_use_auth_useupdateprofile",
-      "community": 11,
+      "community": 58,
       "norm_label": "useupdateprofile()"
     },
     {
@@ -7800,7 +7900,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_lib_hooks_use_auth_useuploadprofileavatar",
-      "community": 59,
+      "community": 5,
       "norm_label": "useuploadprofileavatar()"
     },
     {
@@ -7830,7 +7930,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_debounced_value",
-      "community": 8,
+      "community": 60,
       "norm_label": "use-debounced-value.ts"
     },
     {
@@ -7840,7 +7940,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_hooks_use_debounced_value_usedebouncedvalue",
-      "community": 8,
+      "community": 60,
       "norm_label": "usedebouncedvalue()"
     },
     {
@@ -7900,7 +8000,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_employee_invite_dialog",
-      "community": 1,
+      "community": 3,
       "norm_label": "use-employee-invite-dialog.ts"
     },
     {
@@ -7910,7 +8010,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_hooks_use_employee_invite_dialog_employeeformvalues",
-      "community": 1,
+      "community": 3,
       "norm_label": "employeeformvalues"
     },
     {
@@ -7920,7 +8020,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_lib_hooks_use_employee_invite_dialog_defaultvalues",
-      "community": 1,
+      "community": 3,
       "norm_label": "defaultvalues"
     },
     {
@@ -8150,7 +8250,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_item_create_dialog_useinventoryitemcreatedialog",
-      "community": 42,
+      "community": 8,
       "norm_label": "useinventoryitemcreatedialog()"
     },
     {
@@ -8170,7 +8270,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_page_useinventorypage",
-      "community": 42,
+      "community": 8,
       "norm_label": "useinventorypage()"
     },
     {
@@ -8180,7 +8280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory",
-      "community": 0,
+      "community": 61,
       "norm_label": "use-inventory.ts"
     },
     {
@@ -8190,7 +8290,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_useinventoryitems",
-      "community": 56,
+      "community": 4,
       "norm_label": "useinventoryitems()"
     },
     {
@@ -8200,7 +8300,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_useinventoryitem",
-      "community": 0,
+      "community": 61,
       "norm_label": "useinventoryitem()"
     },
     {
@@ -8210,7 +8310,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_useinventorymovements",
-      "community": 0,
+      "community": 61,
       "norm_label": "useinventorymovements()"
     },
     {
@@ -8220,7 +8320,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_usecreateinventoryitem",
-      "community": 0,
+      "community": 61,
       "norm_label": "usecreateinventoryitem()"
     },
     {
@@ -8230,7 +8330,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "src_lib_hooks_use_inventory_userecordinventorymovement",
-      "community": 0,
+      "community": 61,
       "norm_label": "userecordinventorymovement()"
     },
     {
@@ -8280,7 +8380,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_patient_create_dialog",
-      "community": 49,
+      "community": 55,
       "norm_label": "use-patient-create-dialog.ts"
     },
     {
@@ -8290,7 +8390,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_lib_hooks_use_patient_create_dialog_patientformschema",
-      "community": 49,
+      "community": 55,
       "norm_label": "patientformschema"
     },
     {
@@ -8310,7 +8410,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_lib_hooks_use_patient_create_dialog_defaultvalues",
-      "community": 49,
+      "community": 55,
       "norm_label": "defaultvalues"
     },
     {
@@ -8320,7 +8420,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_lib_hooks_use_patient_create_dialog_usepatientcreatedialog",
-      "community": 8,
+      "community": 60,
       "norm_label": "usepatientcreatedialog()"
     },
     {
@@ -8450,7 +8550,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_pending_clinic_requests",
-      "community": 59,
+      "community": 5,
       "norm_label": "use-pending-clinic-requests.ts"
     },
     {
@@ -8460,7 +8560,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_lib_hooks_use_pending_clinic_requests_usependingclinicrequestsresult",
-      "community": 59,
+      "community": 5,
       "norm_label": "usependingclinicrequestsresult"
     },
     {
@@ -8470,7 +8570,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_lib_hooks_use_pending_clinic_requests_usependingclinicrequests",
-      "community": 59,
+      "community": 5,
       "norm_label": "usependingclinicrequests()"
     },
     {
@@ -8480,7 +8580,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_post_auth_redirect",
-      "community": 46,
+      "community": 43,
       "norm_label": "use-post-auth-redirect.ts"
     },
     {
@@ -8500,7 +8600,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_hooks_use_settings_page",
-      "community": 59,
+      "community": 5,
       "norm_label": "use-settings-page.ts"
     },
     {
@@ -8520,7 +8620,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_lib_hooks_use_settings_page_usesettingspageactions",
-      "community": 59,
+      "community": 5,
       "norm_label": "usesettingspageactions()"
     },
     {
@@ -8690,7 +8790,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_invite_team_emails",
-      "community": 39,
+      "community": 11,
       "norm_label": "invite-team-emails.ts"
     },
     {
@@ -8700,7 +8800,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_invite_team_emails_normalizeinviteemails",
-      "community": 39,
+      "community": 11,
       "norm_label": "normalizeinviteemails()"
     },
     {
@@ -8710,7 +8810,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_lib_invite_team_emails_validateinviteemails",
-      "community": 39,
+      "community": 11,
       "norm_label": "validateinviteemails()"
     },
     {
@@ -8730,7 +8830,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_lib_navigation_navigate_after_auth_navigateafterauth",
-      "community": 39,
+      "community": 11,
       "norm_label": "navigateafterauth()"
     },
     {
@@ -8800,7 +8900,7 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "src_lib_navigation_resolve_post_auth_route_resolveunauthenticatedroute",
-      "community": 46,
+      "community": 39,
       "norm_label": "resolveunauthenticatedroute()"
     },
     {
@@ -9120,7 +9220,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema",
-      "community": 60,
+      "community": 49,
       "norm_label": "employee-schema.ts"
     },
     {
@@ -9130,7 +9230,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeroleschema",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeeroleschema"
     },
     {
@@ -9140,7 +9240,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_clinicmembershipinvitationroleschema",
-      "community": 60,
+      "community": 49,
       "norm_label": "clinicmembershipinvitationroleschema"
     },
     {
@@ -9150,7 +9250,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeefieldsschema",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeefieldsschema"
     },
     {
@@ -9160,7 +9260,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeschema",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeeschema"
     },
     {
@@ -9170,7 +9270,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeinviteschema",
-      "community": 60,
+      "community": 3,
       "norm_label": "employeeinviteschema"
     },
     {
@@ -9180,7 +9280,7 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeinviteschemainput",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeeinviteschemainput"
     },
     {
@@ -9190,7 +9290,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeupdateschema",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeeupdateschema"
     },
     {
@@ -9200,7 +9300,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeschemainput",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeeschemainput"
     },
     {
@@ -9210,7 +9310,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "src_lib_schemas_employee_schema_employeeupdateschemainput",
-      "community": 60,
+      "community": 49,
       "norm_label": "employeeupdateschemainput"
     },
     {
@@ -9280,7 +9380,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_lib_schemas_patient_schema_patientschema",
-      "community": 49,
+      "community": 55,
       "norm_label": "patientschema"
     },
     {
@@ -9340,7 +9440,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_schemas_schema_helpers_formatzoderror",
-      "community": 49,
+      "community": 0,
       "norm_label": "formatzoderror()"
     },
     {
@@ -9420,7 +9520,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_lib_schemas_transaction_schema_transactionschema",
-      "community": 9,
+      "community": 49,
       "norm_label": "transactionschema"
     },
     {
@@ -9890,7 +9990,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_stores_appointments_store_appointmentinventorylinkinput",
-      "community": 50,
+      "community": 53,
       "norm_label": "appointmentinventorylinkinput"
     },
     {
@@ -9900,7 +10000,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "src_stores_appointments_store_appointmentforminput",
-      "community": 50,
+      "community": 48,
       "norm_label": "appointmentforminput"
     },
     {
@@ -9910,7 +10010,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_stores_appointments_store_appointmentupdateinput",
-      "community": 50,
+      "community": 48,
       "norm_label": "appointmentupdateinput"
     },
     {
@@ -10010,7 +10110,7 @@
       "source_location": "L229",
       "_origin": "ast",
       "id": "src_stores_appointments_store_useappointmentsstore",
-      "community": 50,
+      "community": 53,
       "norm_label": "useappointmentsstore"
     },
     {
@@ -10050,7 +10150,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_stores_auth_store_useauthstore",
-      "community": 11,
+      "community": 58,
       "norm_label": "useauthstore"
     },
     {
@@ -10100,7 +10200,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_stores_clinic_store",
-      "community": 46,
+      "community": 58,
       "norm_label": "clinic-store.ts"
     },
     {
@@ -10120,7 +10220,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_stores_clinic_store_clinicstore",
-      "community": 46,
+      "community": 58,
       "norm_label": "clinicstore"
     },
     {
@@ -10270,7 +10370,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_stores_finances_store",
-      "community": 28,
+      "community": 9,
       "norm_label": "finances-store.ts"
     },
     {
@@ -10320,7 +10420,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_stores_finances_store_financesstore",
-      "community": 28,
+      "community": 9,
       "norm_label": "financesstore"
     },
     {
@@ -10390,7 +10490,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_stores_inventory_store",
-      "community": 28,
+      "community": 61,
       "norm_label": "inventory-store.ts"
     },
     {
@@ -10400,7 +10500,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_stores_inventory_store_inventoryiteminput",
-      "community": 0,
+      "community": 61,
       "norm_label": "inventoryiteminput"
     },
     {
@@ -10410,7 +10510,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_stores_inventory_store_inventorystore",
-      "community": 28,
+      "community": 61,
       "norm_label": "inventorystore"
     },
     {
@@ -10420,7 +10520,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_stores_inventory_store_useinventorystore",
-      "community": 0,
+      "community": 61,
       "norm_label": "useinventorystore"
     },
     {
@@ -10580,7 +10680,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_stores_pending_invite_store_usependinginvitestore",
-      "community": 46,
+      "community": 43,
       "norm_label": "usependinginvitestore"
     },
     {
@@ -10880,7 +10980,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_types_database_types_clinicmembershipinvitationrole",
-      "community": 1,
+      "community": 3,
       "norm_label": "clinicmembershipinvitationrole"
     },
     {
@@ -10920,7 +11020,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_types_database_types_inventorymovementtype",
-      "community": 0,
+      "community": 61,
       "norm_label": "inventorymovementtype"
     },
     {
@@ -10980,7 +11080,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_types_database_types_patient",
-      "community": 55,
+      "community": 10,
       "norm_label": "patient"
     },
     {
@@ -10990,7 +11090,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "src_types_database_types_treatment",
-      "community": 41,
+      "community": 56,
       "norm_label": "treatment"
     },
     {
@@ -27350,6 +27450,135 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_components_treatment_inventory_link_row_inventoryoption",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_components_treatment_inventory_link_row_treatmentinventorylinkrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_components_treatment_inventory_link_row_treatmentinventorylinkrowprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_hooks_use_treatment_dialog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_hooks_use_treatment_dialog_treatmentformvalues",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_treatments_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_treatments_treatments_copy_treatments_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_ui_app_searchable_combobox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_ui_table",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_ui_table_tablecell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-link-row.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_link_row",
+      "target": "src_components_ui_table_tablerow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_treatments_components_treatment_inventory_link_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
       "source_location": "L22",
       "weight": 1.0,
@@ -27372,7 +27601,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L9",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
       "target": "src_components_treatments_hooks_use_treatment_dialog",
@@ -27383,7 +27612,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L9",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
       "target": "src_components_treatments_hooks_use_treatment_dialog_treatmentformvalues",
@@ -27394,7 +27623,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L10",
+      "source_location": "L6",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
       "target": "src_components_treatments_treatments_copy",
@@ -27405,7 +27634,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L10",
+      "source_location": "L6",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
       "target": "src_components_treatments_treatments_copy_treatments_copy",
@@ -27416,10 +27645,76 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L11",
+      "source_location": "L7",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
-      "target": "src_components_ui_app_searchable_combobox",
+      "target": "src_components_ui_table",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_ui_table_table",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_ui_table_tablebody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_ui_table_tablecell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_ui_table_tablehead",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_ui_table_tableheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_inventory_links_field",
+      "target": "src_components_ui_table_tablerow",
       "confidence_score": 1.0
     },
     {
@@ -27427,7 +27722,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
       "target": "src_lib_hooks_use_inventory",
@@ -27438,7 +27733,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/treatments/components/treatment-inventory-links-field.tsx",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0,
       "source": "src_components_treatments_components_treatment_inventory_links_field",
       "target": "src_lib_hooks_use_inventory_useinventoryitems",
@@ -27458,31 +27753,31 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L14",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
+      "source_location": "L12",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
-      "target": "src_components_treatments_components_treatment_row_treatmentrow",
+      "source": "src_components_treatments_components_treatment_row_actions",
+      "target": "src_components_treatments_components_treatment_row_actions_treatmentrowactions",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L7",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
+      "source_location": "L6",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
-      "target": "src_components_treatments_components_treatment_row_treatmentrowprops",
+      "source": "src_components_treatments_components_treatment_row_actions",
+      "target": "src_components_treatments_components_treatment_row_actions_treatmentrowactionsprops",
       "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
       "source_location": "L3",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
+      "source": "src_components_treatments_components_treatment_row_actions",
       "target": "src_components_treatments_treatments_copy",
       "confidence_score": 1.0
     },
@@ -27490,10 +27785,10 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
       "source_location": "L3",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
+      "source": "src_components_treatments_components_treatment_row_actions",
       "target": "src_components_treatments_treatments_copy_treatments_copy",
       "confidence_score": 1.0
     },
@@ -27501,32 +27796,10 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
       "source_location": "L4",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
-      "target": "src_lib_format",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
-      "target": "src_lib_format_formatcurrency",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
+      "source": "src_components_treatments_components_treatment_row_actions",
       "target": "src_types_database_types",
       "confidence_score": 1.0
     },
@@ -27534,11 +27807,249 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
+      "source_file": "src/components/treatments/components/treatment-row-actions.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatment_row_actions",
+      "target": "src_types_database_types_treatmentwithinventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
       "source_location": "L5",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row",
-      "target": "src_types_database_types_treatment",
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_treatments_components_treatment_row_actions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_treatments_components_treatment_row_actions_treatmentrowactions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_treatments_components_treatments_columns_gettreatmentscolumns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_treatments_components_treatments_columns_gettreatmentscolumnsparams",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_treatments_treatments_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_treatments_treatments_copy_treatments_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_ui_sortable_table_head",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_components_ui_sortable_table_head_sortabletablehead",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_lib_format",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_lib_format_formatcurrency",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_types_database_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-columns.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_columns",
+      "target": "src_types_database_types_treatmentwithinventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_treatments_components_treatments_columns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_treatments_components_treatments_columns_gettreatmentscolumns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_treatments_components_treatments_table_treatmentstable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_treatments_components_treatments_table_treatmentstableprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_treatments_treatments_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_treatments_treatments_copy_treatments_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_ui_data_table",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_components_ui_data_table_datatable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_types_database_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/treatments/components/treatments-table.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_treatments_components_treatments_table",
+      "target": "src_types_database_types_treatmentwithinventory",
       "confidence_score": 1.0
     },
     {
@@ -27549,19 +28060,19 @@
       "source_location": "L6",
       "weight": 1.0,
       "source": "src_components_treatments_treatments_page_client",
-      "target": "src_components_treatments_components_treatment_row",
+      "target": "src_components_treatments_components_treatments_table",
       "confidence_score": 1.0
     },
     {
-      "relation": "calls",
-      "context": "call",
+      "relation": "imports",
+      "context": "import",
       "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/treatments/components/treatment-row.tsx",
-      "source_location": "L38",
+      "source_file": "src/components/treatments/treatments-page-client.tsx",
+      "source_location": "L6",
       "weight": 1.0,
-      "source": "src_components_treatments_components_treatment_row_treatmentrow",
-      "target": "src_lib_format_formatcurrency"
+      "source": "src_components_treatments_treatments_page_client",
+      "target": "src_components_treatments_components_treatments_table_treatmentstable",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",

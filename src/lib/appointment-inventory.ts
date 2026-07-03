@@ -20,15 +20,14 @@ export async function fetchDefaultMaterialsForTreatments(
     .select("inventory_item_id, quantity, inventory_items(id, name, unit)")
     .in("treatment_id", treatmentIds);
 
-  const rows = unwrapSupabaseList(data, error) as {
-    inventory_item_id: string;
-    quantity: number;
-    inventory_items: { id: string; name: string; unit: string | null } | null;
-  }[];
+  const rows = unwrapSupabaseList(data, error);
 
   const aggregated = new Map<string, EffectiveAppointmentMaterial>();
 
   for (const row of rows) {
+    const inventoryItem = Array.isArray(row.inventory_items)
+      ? (row.inventory_items[0] ?? null)
+      : row.inventory_items;
     const existing = aggregated.get(row.inventory_item_id);
 
     if (existing) {
@@ -39,8 +38,8 @@ export async function fetchDefaultMaterialsForTreatments(
     aggregated.set(row.inventory_item_id, {
       inventory_item_id: row.inventory_item_id,
       quantity: row.quantity,
-      name: row.inventory_items?.name ?? "Material",
-      unit: row.inventory_items?.unit ?? null,
+      name: inventoryItem?.name ?? "Material",
+      unit: inventoryItem?.unit ?? null,
     });
   }
 

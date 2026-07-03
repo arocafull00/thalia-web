@@ -3,7 +3,7 @@
 import TreatmentCategoryFilter from "@/components/treatments/components/treatment-category-filter";
 import TreatmentDeleteConfirmDialog from "@/components/treatments/components/treatment-delete-confirm-dialog";
 import TreatmentDialog from "@/components/treatments/components/treatment-dialog";
-import TreatmentRow from "@/components/treatments/components/treatment-row";
+import TreatmentsTable from "@/components/treatments/components/treatments-table";
 import { useTreatmentCatalog } from "@/components/treatments/hooks/use-treatment-catalog";
 import { useTreatmentsPage } from "@/components/treatments/hooks/use-treatments-page";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
@@ -51,25 +51,11 @@ export default function TreatmentsPageClient() {
       ) : null}
 
       {!treatments.isLoading && !treatments.error ? (
-        <section className="rounded-2xl border border-border bg-surface px-5">
-          {filteredTreatments.length === 0 ? (
-            <p className="py-8 text-sm text-ink-secondary">
-              {TREATMENTS_COPY.page.empty}
-            </p>
-          ) : (
-            <div className="divide-y divide-border-subtle">
-              {filteredTreatments.map((treatment) => (
-                <TreatmentRow
-                  key={treatment.id}
-                  treatment={treatment}
-                  materialCount={treatment.treatment_inventory_items.length}
-                  onEdit={() => page.openEditDialog(treatment)}
-                  onDelete={() => page.openDeleteDialog(treatment)}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        <TreatmentsTable
+          treatments={filteredTreatments}
+          onEdit={page.openEditDialog}
+          onDelete={page.openDeleteDialog}
+        />
       ) : null}
 
       <TreatmentDialog

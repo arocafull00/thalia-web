@@ -1,18 +1,18 @@
-import { Plus, Trash2 } from "lucide-react";
-import {
-  Controller,
-  useFieldArray,
-  type Control,
-  type FieldErrors,
-} from "react-hook-form";
+import { Plus } from "lucide-react";
+import { useFieldArray, type Control, type FieldErrors } from "react-hook-form";
 
+import TreatmentInventoryLinkRow from "@/components/treatments/components/treatment-inventory-link-row";
 import type { TreatmentFormValues } from "@/components/treatments/hooks/use-treatment-dialog";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
-import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useInventoryItems } from "@/lib/hooks/use-inventory";
-
-const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type TreatmentInventoryLinksFieldProps = {
   control: Control<TreatmentFormValues>;
@@ -46,87 +46,44 @@ export default function TreatmentInventoryLinksField({
       <p className="text-sm text-ink-muted">
         {TREATMENTS_COPY.form.materialsHint}
       </p>
-      {fields.length === 0 ? (
-        <p className="text-sm text-ink-secondary">
-          {TREATMENTS_COPY.row.noMaterials}
-        </p>
-      ) : (
-        <div className="space-y-3">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="grid gap-3 rounded-xl border border-border-subtle p-3 sm:grid-cols-[1fr_120px_auto]"
-            >
-              <label className="block space-y-1.5">
-                <span className="text-sm text-ink-secondary">
-                  {TREATMENTS_COPY.form.material}
-                </span>
-                <Controller
-                  name={`inventoryLinks.${index}.inventory_item_id`}
-                  control={control}
-                  render={({ field: controllerField }) => (
-                    <AppSearchableCombobox
-                      value={controllerField.value || null}
-                      onValueChange={(value) =>
-                        controllerField.onChange(value ?? "")
-                      }
-                      options={inventoryOptions.filter(
-                        (option) =>
-                          option.value === controllerField.value ||
-                          !selectedIds.includes(option.value),
-                      )}
-                      placeholder={TREATMENTS_COPY.form.selectMaterial}
-                      searchPlaceholder={TREATMENTS_COPY.form.searchMaterial}
-                      loading={inventory.isLoading}
-                    />
-                  )}
-                />
-                {errors.inventoryLinks?.[index]?.inventory_item_id ? (
-                  <span className="text-sm text-danger">
-                    {errors.inventoryLinks[index]?.inventory_item_id?.message}
-                  </span>
-                ) : null}
-              </label>
-              <label className="block space-y-1.5">
-                <span className="text-sm text-ink-secondary">
-                  {TREATMENTS_COPY.form.quantity}
-                </span>
-                <Controller
-                  name={`inventoryLinks.${index}.quantity`}
-                  control={control}
-                  render={({ field: controllerField }) => (
-                    <input
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      value={controllerField.value}
-                      onChange={(event) =>
-                        controllerField.onChange(event.target.value)
-                      }
-                      className={inputClassName}
-                    />
-                  )}
-                />
-                {errors.inventoryLinks?.[index]?.quantity ? (
-                  <span className="text-sm text-danger">
-                    {errors.inventoryLinks[index]?.quantity?.message}
-                  </span>
-                ) : null}
-              </label>
-              <div className="flex items-end">
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
-                >
-                  <Trash2 className="size-3.5" aria-hidden="true" />
-                  {TREATMENTS_COPY.form.removeMaterial}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="px-4 pb-3 pt-1">
+              {TREATMENTS_COPY.form.material}
+            </TableHead>
+            <TableHead className="w-[120px] px-4 pb-3 pt-1">
+              {TREATMENTS_COPY.form.quantity}
+            </TableHead>
+            <TableHead className="w-12 px-4 pb-3 pt-1" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {fields.length === 0 ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell
+                colSpan={3}
+                className="py-6 text-center text-ink-secondary"
+              >
+                {TREATMENTS_COPY.row.noMaterials}
+              </TableCell>
+            </TableRow>
+          ) : (
+            fields.map((field, index) => (
+              <TreatmentInventoryLinkRow
+                key={field.id}
+                index={index}
+                control={control}
+                errors={errors}
+                inventoryOptions={inventoryOptions}
+                selectedIds={selectedIds}
+                loading={inventory.isLoading}
+                onRemove={() => remove(index)}
+              />
+            ))
+          )}
+        </TableBody>
+      </Table>
       <button
         type="button"
         onClick={() => append({ inventory_item_id: "", quantity: 1 })}

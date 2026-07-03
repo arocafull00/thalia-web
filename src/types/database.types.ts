@@ -2,6 +2,11 @@ export type EmployeeRole = "admin" | "reception" | "doctor" | "auxiliary";
 
 export type ClinicMembershipRole = "owner" | "admin" | "employee" | "external";
 
+export type ClinicMembershipInvitationRole = Exclude<
+  ClinicMembershipRole,
+  "owner"
+>;
+
 export type ClinicMembershipStatus = "pending" | "active" | "suspended";
 
 export type InvitationTokenRole = "admin" | "employee" | "external";
@@ -169,7 +174,10 @@ export type Transaction = {
 
 export type AppointmentWithRelations = Appointment & {
   patients: Pick<Patient, "id" | "full_name" | "phone" | "avatar_url"> | null;
-  employees: Pick<Employee, "id" | "full_name" | "color" | "specialty" | "role"> | null;
+  employees: Pick<
+    Employee,
+    "id" | "full_name" | "color" | "specialty" | "role"
+  > | null;
   appointment_treatments: (AppointmentTreatment & {
     treatment_types: Pick<
       TreatmentType,
@@ -194,8 +202,16 @@ type Tables = {
     Insert: Partial<InvitationToken>;
     Update: Partial<InvitationToken>;
   };
-  employees: { Row: Employee; Insert: Partial<Employee>; Update: Partial<Employee> };
-  patients: { Row: Patient; Insert: Partial<Patient>; Update: Partial<Patient> };
+  employees: {
+    Row: Employee;
+    Insert: Partial<Employee>;
+    Update: Partial<Employee>;
+  };
+  patients: {
+    Row: Patient;
+    Insert: Partial<Patient>;
+    Update: Partial<Patient>;
+  };
   treatment_types: {
     Row: TreatmentType;
     Insert: Partial<TreatmentType>;
@@ -206,7 +222,11 @@ type Tables = {
     Insert: Partial<TreatmentTypeInventoryItem>;
     Update: Partial<TreatmentTypeInventoryItem>;
   };
-  appointments: { Row: Appointment; Insert: Partial<Appointment>; Update: Partial<Appointment> };
+  appointments: {
+    Row: Appointment;
+    Insert: Partial<Appointment>;
+    Update: Partial<Appointment>;
+  };
   appointment_treatments: {
     Row: AppointmentTreatment;
     Insert: Partial<AppointmentTreatment>;
@@ -222,7 +242,11 @@ type Tables = {
     Insert: Partial<InventoryMovement>;
     Update: Partial<InventoryMovement>;
   };
-  transactions: { Row: Transaction; Insert: Partial<Transaction>; Update: Partial<Transaction> };
+  transactions: {
+    Row: Transaction;
+    Insert: Partial<Transaction>;
+    Update: Partial<Transaction>;
+  };
 };
 
 export type Database = {

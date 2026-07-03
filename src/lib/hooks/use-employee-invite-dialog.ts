@@ -4,25 +4,19 @@ import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
-import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useCreateEmployee } from "@/lib/hooks/use-employees";
-import { employeeSchema } from "@/lib/schemas/employee-schema";
-import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { employeeInviteSchema } from "@/lib/schemas/employee-schema";
 
-const employeeFormSchema = employeeSchema.omit({ clinicId: true, color: true });
+const employeeFormSchema = employeeInviteSchema;
 
 export type EmployeeFormValues = z.input<typeof employeeFormSchema>;
 
 const defaultValues: EmployeeFormValues = {
-  fullName: "",
   email: "",
-  role: "doctor",
-  specialty: "",
-  phone: "",
+  role: "employee",
 };
 
 export function useEmployeeInviteDialog(onSuccess: () => void) {
-  const clinicId = useClinicId();
   const { mutate, isPending } = useCreateEmployee();
 
   const {
@@ -37,23 +31,7 @@ export function useEmployeeInviteDialog(onSuccess: () => void) {
   });
 
   const onSubmit = handleSubmit((data) => {
-    if (!clinicId) {
-      toast.error(EMPLOYEE_INVITE_COPY.validation.clinicRequired);
-      return;
-    }
-
-    const parsed = employeeSchema.safeParse({
-      clinicId,
-      ...data,
-      color: null,
-    });
-
-    if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
-      return;
-    }
-
-    mutate(parsed.data, {
+    mutate(data, {
       onSuccess: () => {
         toast.success(EMPLOYEE_INVITE_COPY.success);
         reset(defaultValues);

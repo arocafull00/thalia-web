@@ -7,16 +7,15 @@ import {
 
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import type { EmployeeFormValues } from "@/lib/hooks/use-employee-invite-dialog";
-import type { EmployeeRole } from "@/types/database.types";
+import type { ClinicMembershipInvitationRole } from "@/types/database.types";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
-const roleOptions: EmployeeRole[] = [
+const roleOptions: ClinicMembershipInvitationRole[] = [
   "admin",
-  "reception",
-  "doctor",
-  "auxiliary",
+  "employee",
+  "external",
 ];
 
 type EmployeeInviteFormProps = {
@@ -32,18 +31,6 @@ export default function EmployeeInviteForm({
 }: EmployeeInviteFormProps) {
   return (
     <div className="mt-4 space-y-4">
-      <label className="block space-y-1.5">
-        <span className="text-sm text-ink-secondary">
-          {EMPLOYEE_INVITE_COPY.fields.fullName}{" "}
-          <span className="text-danger">
-            {EMPLOYEE_INVITE_COPY.fields.requiredMark}
-          </span>
-        </span>
-        <input {...register("fullName")} className={inputClassName} />
-        {errors.fullName ? (
-          <span className="text-sm text-danger">{errors.fullName.message}</span>
-        ) : null}
-      </label>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {EMPLOYEE_INVITE_COPY.fields.email}{" "}
@@ -70,7 +57,9 @@ export default function EmployeeInviteForm({
             <select
               value={field.value}
               onChange={(event) =>
-                field.onChange(event.target.value as EmployeeRole)
+                field.onChange(
+                  event.target.value as ClinicMembershipInvitationRole,
+                )
               }
               className={inputClassName}
             >
@@ -86,7 +75,7 @@ export default function EmployeeInviteForm({
           <span className="text-sm text-danger">{errors.role.message}</span>
         ) : null}
       </label>
-      <div className="grid gap-4 sm:grid-cols-2">
+      {/* <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-1.5">
           <span className="text-sm text-ink-secondary">
             {EMPLOYEE_INVITE_COPY.fields.specialty}
@@ -107,7 +96,7 @@ export default function EmployeeInviteForm({
             <span className="text-sm text-danger">{errors.phone.message}</span>
           ) : null}
         </label>
-      </div>
+      </div> */}
     </div>
   );
 }

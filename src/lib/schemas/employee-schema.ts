@@ -11,6 +11,11 @@ const employeeRoleSchema = z.enum(
   { message: "El rol no es válido." },
 );
 
+const clinicMembershipInvitationRoleSchema = z.enum(
+  ["admin", "employee", "external"],
+  { message: "El rol no es válido." },
+);
+
 const employeeFieldsSchema = z.object({
   fullName: z
     .string()
@@ -32,6 +37,18 @@ const employeeFieldsSchema = z.object({
 export const employeeSchema = employeeFieldsSchema.extend({
   clinicId: clinicIdSchema(),
 });
+
+export const employeeInviteSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, "El email es obligatorio.")
+    .email("El email no es válido.")
+    .max(255, "El email es demasiado largo."),
+  role: clinicMembershipInvitationRoleSchema,
+});
+
+export type EmployeeInviteSchemaInput = z.infer<typeof employeeInviteSchema>;
 
 export const employeeUpdateSchema = z
   .object({

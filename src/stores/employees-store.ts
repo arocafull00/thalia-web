@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import {
-  employeeSchema,
+  employeeInviteSchema,
   employeeUpdateSchema,
 } from "@/lib/schemas/employee-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
@@ -17,8 +17,8 @@ import {
 } from "@/stores/query-state";
 import type {
   Appointment,
+  ClinicMembershipInvitationRole,
   Employee,
-  EmployeeRole,
 } from "@/types/database.types";
 
 export type EmployeeAppointmentRow = Appointment & {
@@ -26,13 +26,8 @@ export type EmployeeAppointmentRow = Appointment & {
 };
 
 export type CreateEmployeeInput = {
-  clinicId: string;
   email: string;
-  fullName: string;
-  role: EmployeeRole;
-  specialty: string | null;
-  color: string | null;
-  phone: string | null;
+  role: ClinicMembershipInvitationRole;
 };
 
 export type EmployeeAppointmentStats = {
@@ -244,7 +239,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
     set({ creating: true, createError: null });
 
     try {
-      const parsed = employeeSchema.safeParse(input);
+      const parsed = employeeInviteSchema.safeParse(input);
 
       if (!parsed.success) {
         throw new Error(formatZodError(parsed.error));

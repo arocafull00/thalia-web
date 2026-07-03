@@ -10,10 +10,9 @@ export const EMPLOYEE_INVITE_COPY = {
     requiredMark: "*",
   },
   roles: {
-    admin: "Admin",
-    reception: "Recepción",
-    doctor: "Doctor",
-    auxiliary: "Auxiliar",
+    admin: "Administrador",
+    employee: "Empleado",
+    external: "Externo",
   },
   actions: {
     cancel: "Cancelar",

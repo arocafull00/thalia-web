@@ -1,0 +1,26 @@
+export const FINANCES_COPY = {
+  title: "Finanzas",
+  subtitle: "Resumen financiero y movimientos de la clínica.",
+  newMovement: "Nuevo movimiento",
+  errors: {
+    permissions: "Permisos insuficientes.",
+    summary: "No se pudo cargar el resumen.",
+    transactions: "No se pudieron cargar los movimientos.",
+  },
+  metrics: {
+    income: "Ingresos",
+    expenses: "Gastos",
+    net: "Balance neto",
+    difference: "Diferencia",
+  },
+  weekly: {
+    title: "Desglose semanal",
+  },
+  categories: {
+    title: "Desglose por categoría",
+    empty: "Sin movimientos categorizados.",
+  },
+  movements: {
+    title: "Movimientos recientes",
+  },
+} as const;

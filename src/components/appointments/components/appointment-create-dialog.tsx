@@ -17,6 +17,7 @@ type AppointmentCreateDialogProps = {
   onOpenChange: (open: boolean) => void;
   appointment?: AppointmentWithRelations | null;
   initialStartsAt?: Date | null;
+  initialPatientId?: string | null;
 };
 
 export default function AppointmentCreateDialog({
@@ -24,11 +25,13 @@ export default function AppointmentCreateDialog({
   onOpenChange,
   appointment = null,
   initialStartsAt = null,
+  initialPatientId = null,
 }: AppointmentCreateDialogProps) {
   const dialog = useAppointmentCreateDialog(
     () => onOpenChange(false),
     appointment,
     initialStartsAt,
+    initialPatientId,
   );
 
   const handleOpenChange = (nextOpen: boolean) => {

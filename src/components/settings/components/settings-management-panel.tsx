@@ -2,7 +2,7 @@
 
 import { Scissors, User, Users } from "lucide-react";
 
-import SettingsManagementTile from "@/components/settings/components/settings-management-tile";
+import SettingsManagementLink from "@/components/settings/components/settings-management-link";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 
 const MANAGEMENT_LINKS = [
@@ -28,13 +28,16 @@ const MANAGEMENT_LINKS = [
 
 export default function SettingsManagementPanel() {
   return (
-    <section>
-      <h2 className="border-b border-border pb-3 text-lg font-medium text-ink">
+    <section aria-labelledby="settings-management-heading">
+      <h2
+        id="settings-management-heading"
+        className="border-b border-border-subtle pb-4 text-lg font-medium text-ink text-wrap-balance"
+      >
         {SETTINGS_COPY.management.sectionTitle}
       </h2>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="divide-y divide-border-subtle">
         {MANAGEMENT_LINKS.map((link) => (
-          <SettingsManagementTile key={link.href} {...link} />
+          <SettingsManagementLink key={link.href} {...link} />
         ))}
       </div>
     </section>

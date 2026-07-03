@@ -1,7 +1,7 @@
 export const PATIENT_DETAIL_COPY = {
   back: "Volver a pacientes",
   sections: {
-    general: "Información general",
+    general: "Información personal",
     history: "Historial de citas",
   },
   fields: {
@@ -24,6 +24,9 @@ export const PATIENT_DETAIL_COPY = {
   },
   actions: {
     edit: "Editar paciente",
+    call: "Llamar",
+    email: "Enviar email",
+    createAppointment: "Crear cita",
   },
   errors: {
     load: "No se pudo cargar el paciente.",

@@ -1,16 +1,12 @@
 export const EMPLOYEE_DETAIL_COPY = {
   back: "Volver al personal",
   sections: {
-    general: "Información general",
-    stats: "Estadísticas",
+    summary: "Resumen del profesional",
     history: "Historial de citas",
   },
   fields: {
-    role: "Rol",
-    specialty: "Especialidad",
-    phone: "Teléfono",
     color: "Color asignado",
-    status: "Estado",
+    memberSince: "En la clínica desde",
   },
   status: {
     active: "Activo",
@@ -34,6 +30,7 @@ export const EMPLOYEE_DETAIL_COPY = {
   },
   actions: {
     edit: "Editar empleado",
+    call: "Llamar",
     deactivate: "Desactivar empleado",
     activate: "Activar empleado",
   },

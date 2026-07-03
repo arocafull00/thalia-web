@@ -36,6 +36,7 @@ function createDefaultStartsAt() {
 function createDefaultValues(
   appointment?: AppointmentWithRelations | null,
   initialStartsAt?: Date | null,
+  initialPatientId?: string | null,
 ): AppointmentFormValues {
   if (appointment) {
     return {
@@ -50,7 +51,7 @@ function createDefaultValues(
   }
 
   return {
-    patientId: "",
+    patientId: initialPatientId ?? "",
     employeeId: "",
     startsAt: initialStartsAt ?? createDefaultStartsAt(),
     treatmentTypeIds: [],
@@ -62,6 +63,7 @@ export function useAppointmentCreateDialog(
   onSuccess: () => void,
   appointment?: AppointmentWithRelations | null,
   initialStartsAt?: Date | null,
+  initialPatientId?: string | null,
 ) {
   const clinicId = useClinicId();
   const { mutate, isPending: isCreating } = useCreateAppointment();
@@ -83,12 +85,16 @@ export function useAppointmentCreateDialog(
     formState: { errors, isSubmitting },
   } = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentFormSchema),
-    defaultValues: createDefaultValues(appointment, initialStartsAt),
+    defaultValues: createDefaultValues(
+      appointment,
+      initialStartsAt,
+      initialPatientId,
+    ),
   });
 
   useEffect(() => {
-    reset(createDefaultValues(appointment, initialStartsAt));
-  }, [appointment, initialStartsAt, reset]);
+    reset(createDefaultValues(appointment, initialStartsAt, initialPatientId));
+  }, [appointment, initialPatientId, initialStartsAt, reset]);
 
   const patientId = useWatch({ control, name: "patientId" }) ?? "";
   const treatmentTypeIds =
@@ -124,8 +130,8 @@ export function useAppointmentCreateDialog(
   );
 
   const resetDialog = useCallback(() => {
-    reset(createDefaultValues(appointment, initialStartsAt));
-  }, [reset, appointment, initialStartsAt]);
+    reset(createDefaultValues(appointment, initialStartsAt, initialPatientId));
+  }, [reset, appointment, initialPatientId, initialStartsAt]);
 
   const toggleTreatmentType = useCallback(
     (treatmentTypeId: string) => {

@@ -14,9 +14,14 @@ export default function PwaInstallPanel() {
   }
 
   return (
-    <section className="space-y-4">
-      <h2 className="text-lg font-medium">{PWA_INSTALL_COPY.sectionTitle}</h2>
-      <div className="space-y-3 rounded-2xl border border-border p-4">
+    <section aria-labelledby="settings-pwa-heading" className="space-y-4">
+      <h2
+        id="settings-pwa-heading"
+        className="border-b border-border-subtle pb-4 text-lg font-medium text-ink text-wrap-balance"
+      >
+        {PWA_INSTALL_COPY.sectionTitle}
+      </h2>
+      <div className="space-y-4 pt-2">
         <div>
           <p className="font-medium text-ink">{PWA_INSTALL_COPY.title}</p>
           <p className="mt-1 text-sm text-ink-secondary">

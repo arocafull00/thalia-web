@@ -70,16 +70,13 @@ export function DataTable<TData, TValue>({
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+    <div className="w-full">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-border hover:bg-transparent"
-            >
+            <TableRow key={headerGroup.id} className="hover:bg-transparent">
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 py-2">
+                <TableHead key={header.id} className="px-4 pb-3 pt-1">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -98,8 +95,8 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 className={
                   onRowClick
-                    ? "cursor-pointer border-border-subtle hover:bg-canvas"
-                    : "border-border-subtle hover:bg-transparent"
+                    ? "cursor-pointer hover:bg-surface"
+                    : "hover:bg-transparent"
                 }
                 onClick={
                   onRowClick ? () => onRowClick(row.original) : undefined
@@ -125,7 +122,7 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
       {enablePagination ? (
-        <div className="flex items-center justify-between px-4 py-3 text-sm text-ink-secondary">
+        <div className="flex items-center justify-between px-4 pt-4 text-sm text-ink-secondary">
           <span>
             {totalRows === 0 ? 0 : pageStart}-{pageEnd} de {totalRows}
           </span>
@@ -134,7 +131,7 @@ export function DataTable<TData, TValue>({
               type="button"
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className="rounded-lg border border-border px-3 py-1 disabled:opacity-40"
+              className="rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40"
             >
               Anterior
             </button>
@@ -142,7 +139,7 @@ export function DataTable<TData, TValue>({
               type="button"
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className="rounded-lg border border-border px-3 py-1 disabled:opacity-40"
+              className="rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40"
             >
               Siguiente
             </button>

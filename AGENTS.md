@@ -177,3 +177,45 @@ Los colores viven en `app/globals.css` como variables CSS en `:root` y se expone
 **Si falta un token:** añádelo primero en `:root` y `@theme inline` de `globals.css`, luego úsalo en el componente. No introduzcas el color directamente en el JSX.
 
 **Excepción:** colores dinámicos persistidos (color de empleado, marca de clínica). Usa `style` solo con el valor de datos; el fallback cuando falte debe ser una clase del tema (`bg-border`), no un hex.
+
+## Estilo integrado (vistas de detalle)
+
+En pantallas de **detalle de entidad** (empleado, paciente, etc.) el contenido debe sentirse parte del layout de la app, no como bloques flotantes. Este es el patrón de referencia; no uses cards para estructurar estas vistas.
+
+**Referencia:** `src/components/employees/employee-detail-page-client.tsx`, `src/components/patients/patient-detail-page-client.tsx`, `src/components/ui/profile/profile-timeline.tsx` (`variant="integrated"`).
+
+### Qué evitar
+
+- Envolver secciones en cards: `rounded-2xl border border-border bg-surface` como contenedor de página.
+- Banners horizontales tipo `ProfileHeader` en vistas de detalle con sidebar (reservar `ProfileHeader` para otros contextos si aplica).
+- Empty states en caja punteada (`border-dashed`) dentro de vistas integradas.
+- Apilar perfil + historial verticalmente cuando caben dos columnas.
+
+### Layout de página
+
+- Contenedor: `flex min-h-0 flex-1 flex-col` para ocupar todo el alto del `main`.
+- Enlace “volver” arriba, fuera del grid (`shrink-0 px-8 pt-6 pb-4`).
+- Grid principal: `grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]`.
+- Columna izquierda (~20%): sidebar de perfil a altura completa.
+- Columna derecha (~80%): contenido secundario (p. ej. historial) con scroll propio: `flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8`.
+
+### Sidebar de perfil
+
+- Sin card: solo `flex h-full min-h-0 flex-col border-r border-border-subtle`.
+- Secciones separadas con `border-t border-border-subtle`, no con cajas independientes.
+- **Identidad** arriba: avatar, nombre y contacto centrados en vertical (`px-6 py-8 text-center`).
+- **Datos / stats** en zona central con scroll: `min-h-0 flex-1 overflow-y-auto`, filas con `divide-y divide-border-subtle` o grid compacto, padding `px-6 py-6`.
+- **Acciones rápidas** abajo fijas: `mt-auto shrink-0 border-t border-border-subtle`, botones apilados a ancho completo (`flex flex-col gap-2`, `[&>button]:w-full`), con icono Lucide en `ActionButton`.
+
+### Historial / listas secundarias
+
+- Usar `ProfileTimeline` con `variant="integrated"`.
+- Título de sección con `border-b border-border-subtle pb-4`, sin card alrededor del listado.
+- Items como filas o links directos sobre `bg-canvas`; hover sutil (`hover:bg-canvas`) en filas clicables.
+- Empty state: texto simple (`text-sm text-ink-secondary`), sin caja.
+
+### Cuándo sí usar `bg-surface` y bordes redondeados
+
+- Diálogos, sheets, dropdowns, inputs y controles puntuales.
+- Filas interactivas puntuales en listados del dashboard u otras vistas no integradas.
+- **No** como contenedor principal de una vista de detalle con sidebar.

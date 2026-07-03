@@ -5,9 +5,8 @@ import { useRef } from "react";
 import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
 import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
 import SettingsManagementPanel from "@/components/settings/components/settings-management-panel";
-import SettingsProfileCard from "@/components/settings/components/settings-profile-card";
+import SettingsProfileSidebar from "@/components/settings/components/settings-profile-sidebar";
 import { Notice } from "@/components/ui/primitives/notice";
-import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
@@ -20,6 +19,7 @@ export default function SettingsPageClient() {
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
   const displayUri = localAvatarUri ?? resolvedAvatarUrl;
   const {
+    activeEmployeesCount,
     canViewClinicRequests,
     handleAvatarPress,
     handleChangePassword,
@@ -41,27 +41,16 @@ export default function SettingsPageClient() {
     );
   }
 
-  const statItems = [
-    ...(canViewClinicRequests
-      ? [
-          {
-            label: SETTINGS_COPY.stats.pendingRequests,
-            tone:
-              pendingClinicRequests.length > 0
-                ? ("warning" as const)
-                : ("default" as const),
-            value: String(pendingClinicRequests.length),
-          },
-        ]
-      : []),
-  ];
-
   return (
-    <div className="space-y-8 p-8">
-      <PageHeader
-        subtitle={SETTINGS_COPY.page.subtitle}
-        title={SETTINGS_COPY.page.title}
-      />
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 px-8 pt-6 pb-4">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">
+          {SETTINGS_COPY.page.title}
+        </h1>
+        <p className="mt-1 text-sm text-ink-secondary">
+          {SETTINGS_COPY.page.subtitle}
+        </p>
+      </div>
 
       <input
         ref={fileInputRef}
@@ -77,31 +66,35 @@ export default function SettingsPageClient() {
         }}
       />
 
-      <SettingsProfileCard
-        canViewClinicRequests={canViewClinicRequests}
-        displayUri={displayUri}
-        isAdmin={isAdmin}
-        onPickAvatar={() => fileInputRef.current?.click()}
-        pendingRequestsCount={pendingClinicRequests.length}
-        profile={profile}
-        statItems={statItems}
-        uploadPending={uploadAvatar.isPending}
-        userEmail={user.email}
-      />
-
-      <div className="grid gap-8 lg:grid-cols-2">
-        <SettingsAccountPanel
-          onChangePassword={() => void handleChangePassword()}
-          onSignOut={() => void handleSignOut()}
-          passwordMessage={passwordMessage}
-          passwordSubmitting={passwordSubmitting}
-          signOutSubmitting={signOutSubmitting}
+      <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
+        <SettingsProfileSidebar
+          activeEmployeesCount={activeEmployeesCount}
+          canViewClinicRequests={canViewClinicRequests}
+          displayUri={displayUri}
+          isAdmin={isAdmin}
+          onPickAvatar={() => fileInputRef.current?.click()}
+          pendingRequestsCount={pendingClinicRequests.length}
+          profile={profile}
+          uploadPending={uploadAvatar.isPending}
+          userEmail={user.email}
         />
 
-        {isAdmin ? <SettingsManagementPanel /> : null}
-      </div>
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8">
+          <div className="flex flex-col [&>section:not(:last-child)]:mb-8 [&>section:not(:last-child)]:border-b [&>section:not(:last-child)]:border-border-subtle [&>section:not(:last-child)]:pb-8">
+            <SettingsAccountPanel
+              onChangePassword={() => void handleChangePassword()}
+              onSignOut={() => void handleSignOut()}
+              passwordMessage={passwordMessage}
+              passwordSubmitting={passwordSubmitting}
+              signOutSubmitting={signOutSubmitting}
+            />
 
-      <PwaInstallPanel />
+            {isAdmin ? <SettingsManagementPanel /> : null}
+
+            <PwaInstallPanel />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

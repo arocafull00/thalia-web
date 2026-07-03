@@ -48,7 +48,7 @@ export default function SettingsActionRow({
   );
 
   const className =
-    "group flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-canvas disabled:opacity-50";
+    "group flex w-full items-center gap-3 py-4 text-left transition-colors hover:bg-canvas disabled:opacity-50";
 
   if (href) {
     return (

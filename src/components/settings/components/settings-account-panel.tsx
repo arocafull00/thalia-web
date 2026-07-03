@@ -22,16 +22,19 @@ export default function SettingsAccountPanel({
   signOutSubmitting,
 }: SettingsAccountPanelProps) {
   return (
-    <section>
-      <h2 className="border-b border-border pb-3 text-lg font-medium text-ink">
+    <section aria-labelledby="settings-account-heading">
+      <h2
+        id="settings-account-heading"
+        className="border-b border-border-subtle pb-4 text-lg font-medium text-ink text-wrap-balance"
+      >
         {SETTINGS_COPY.account.sectionTitle}
       </h2>
-      <div className="mt-4 divide-y divide-border-subtle overflow-hidden rounded-2xl border border-border bg-surface">
-        {passwordMessage ? (
-          <div className="px-5 pt-4" role="status" aria-live="polite">
-            <Notice message={passwordMessage} />
-          </div>
-        ) : null}
+      {passwordMessage ? (
+        <div className="pt-4" role="status" aria-live="polite">
+          <Notice message={passwordMessage} />
+        </div>
+      ) : null}
+      <div className="divide-y divide-border-subtle pt-2">
         <SettingsActionRow
           description={SETTINGS_COPY.account.changePasswordHint}
           disabled={passwordSubmitting}

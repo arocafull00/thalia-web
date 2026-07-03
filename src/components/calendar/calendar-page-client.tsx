@@ -8,25 +8,29 @@ import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
 
 export default function CalendarPageClient() {
   const {
-    weekRangeLabel,
+    rangeLabel,
+    viewMode,
     dialogOpen,
     createStartsAt,
     openCreateDialog,
     closeDialog,
-    onPreviousWeek,
-    onNextWeek,
+    onPrevious,
+    onNext,
     onToday,
+    onChangeViewMode,
   } = useCalendarPage();
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
       <CalendarToolbar
-        weekRangeLabel={weekRangeLabel}
+        rangeLabel={rangeLabel}
+        viewMode={viewMode}
         filter={<CalendarEmployeeFilter />}
-        onPreviousWeek={onPreviousWeek}
-        onNextWeek={onNextWeek}
+        onPrevious={onPrevious}
+        onNext={onNext}
         onToday={onToday}
         onNewAppointment={() => openCreateDialog()}
+        onChangeViewMode={onChangeViewMode}
       />
       <div className="min-h-0 flex-1 bg-surface">
         <ScheduleXCalendar />

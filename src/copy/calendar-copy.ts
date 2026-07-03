@@ -4,6 +4,10 @@ export const CALENDAR_COPY = {
     newAppointment: "Nueva cita",
     previousWeek: "Semana anterior",
     nextWeek: "Semana siguiente",
+    previousPeriod: "Período anterior",
+    nextPeriod: "Período siguiente",
+    viewWeek: "Semana",
+    viewMonth: "Mes",
     loading: (date: string) => `Cargando citas de ${date}...`,
   },
   event: {

@@ -234,7 +234,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       const { data, error } = await supabase
         .from("appointments")
         .select(
-          "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role), appointment_treatments(*, treatment_types(id, name, color, price, duration_minutes))",
+          "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role, avatar_url), appointment_treatments(*, treatment_types(id, name, color, price, duration_minutes))",
         )
         .eq("id", appointmentId)
         .single();

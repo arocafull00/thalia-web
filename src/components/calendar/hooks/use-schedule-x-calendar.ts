@@ -1,10 +1,10 @@
 "use client";
 
-import { createViewWeek } from "@schedule-x/calendar";
+import { createViewMonthGrid, createViewWeek } from "@schedule-x/calendar";
 import { createCalendarControlsPlugin } from "@schedule-x/calendar-controls";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
 import { useNextCalendarApp } from "@schedule-x/react";
-import { endOfWeek, startOfWeek } from "date-fns";
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Temporal } from "temporal-polyfill";
@@ -55,9 +55,15 @@ function buildScheduleEvents(
 }
 
 function getInitialCalendarConfig() {
-  const { weekAnchor, employeeId } = useCalendarStore.getState();
-  const rangeStart = startOfWeek(weekAnchor, { weekStartsOn: 1 });
-  const rangeEnd = endOfWeek(weekAnchor, { weekStartsOn: 1 });
+  const { weekAnchor, employeeId, viewMode } = useCalendarStore.getState();
+  const rangeStart =
+    viewMode === "month"
+      ? startOfMonth(weekAnchor)
+      : startOfWeek(weekAnchor, { weekStartsOn: 1 });
+  const rangeEnd =
+    viewMode === "month"
+      ? endOfMonth(weekAnchor)
+      : endOfWeek(weekAnchor, { weekStartsOn: 1 });
   const key = appointmentsKey(
     rangeStart.toISOString(),
     rangeEnd.toISOString(),
@@ -69,17 +75,26 @@ function getInitialCalendarConfig() {
     selectedDate: toPlainDate(weekAnchor),
     events: buildScheduleEvents(entry?.data),
     weekAnchor: toPlainDate(weekAnchor).toString(),
+    viewMode,
   };
 }
 
 export function useScheduleXCalendar() {
   const router = useRouter();
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
+  const viewMode = useCalendarStore((state) => state.viewMode);
   const employeeId = useCalendarStore((state) => state.employeeId);
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
 
-  const rangeStart = startOfWeek(weekAnchor, { weekStartsOn: 1 });
-  const rangeEnd = endOfWeek(weekAnchor, { weekStartsOn: 1 });
+  const rangeStart =
+    viewMode === "month"
+      ? startOfMonth(weekAnchor)
+      : startOfWeek(weekAnchor, { weekStartsOn: 1 });
+  const rangeEnd =
+    viewMode === "month"
+      ? endOfMonth(weekAnchor)
+      : endOfWeek(weekAnchor, { weekStartsOn: 1 });
+
   const appointments = useAppointments(
     { start: rangeStart, end: rangeEnd },
     employeeId,
@@ -88,6 +103,7 @@ export function useScheduleXCalendar() {
   const eventsService = useState(() => createEventsServicePlugin())[0];
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
   const weekView = useState(() => createViewWeek())[0];
+  const monthView = useState(() => createViewMonthGrid())[0];
   const customComponents = useState(() => ({
     headerContent: CalendarEmptyHeader,
   }))[0];
@@ -109,8 +125,9 @@ export function useScheduleXCalendar() {
   });
 
   const calendarApp = useNextCalendarApp({
-    views: [weekView],
-    defaultView: weekView.name,
+    views: [weekView, monthView],
+    defaultView:
+      initialConfig.viewMode === "month" ? monthView.name : weekView.name,
     locale: "es-ES",
     firstDayOfWeek: 1,
     selectedDate: initialConfig.selectedDate,
@@ -127,6 +144,9 @@ export function useScheduleXCalendar() {
       },
       onClickDateTime: (dateTime) => {
         openCreateDialogRef.current(zonedDateTimeToDate(dateTime));
+      },
+      onClickDate: (dateString) => {
+        openCreateDialogRef.current(new Date(dateString));
       },
     },
   });
@@ -149,6 +169,12 @@ export function useScheduleXCalendar() {
     syncedWeekAnchorRef.current = nextDate;
     calendarControls.setDate(toPlainDate(weekAnchor));
   }, [calendarControls, weekAnchor]);
+
+  useEffect(() => {
+    calendarControls.setView(
+      viewMode === "month" ? monthView.name : weekView.name,
+    );
+  }, [calendarControls, viewMode]);
 
   return {
     calendarApp,

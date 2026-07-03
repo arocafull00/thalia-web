@@ -8,7 +8,6 @@ import DashboardAppointmentRow from "@/components/dashboard/dashboard-appointmen
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
-import { formatCurrency } from "@/lib/format";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDashboard } from "@/lib/hooks/use-dashboard";
 
@@ -29,7 +28,6 @@ export default function DashboardPageClient() {
   const [refreshing, setRefreshing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const appointments = data?.appointments ?? [];
-  const lowStock = data?.lowStock ?? [];
   const confirmedCount = appointments.filter(
     (appointment) => appointment.status === "confirmed",
   ).length;
@@ -47,14 +45,8 @@ export default function DashboardPageClient() {
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "de nuevo";
   const metrics = [
-    { label: "Neto semanal", value: formatCurrency(data?.weeklyNet ?? 0) },
     { label: "Citas hoy", value: String(appointments.length) },
     { label: "Confirmadas", value: String(confirmedCount) },
-    {
-      label: "Inventario critico",
-      value: String(lowStock.length),
-      highlight: true,
-    },
   ];
 
   return (
@@ -85,15 +77,13 @@ export default function DashboardPageClient() {
         </div>
       </div>
       <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4">
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            className={`rounded-3xl border p-5 ${metric.highlight ? "border-primary bg-primary text-on-primary" : "border-border bg-surface"}`}
+            className="rounded-3xl border border-border bg-surface p-5"
           >
-            <p
-              className={`text-xs uppercase tracking-wide ${metric.highlight ? "text-on-primary/70" : "text-ink-muted"}`}
-            >
+            <p className="text-xs uppercase tracking-wide text-ink-muted">
               {metric.label}
             </p>
             <p className="mt-4 text-3xl font-medium tabular-nums">
@@ -132,28 +122,6 @@ export default function DashboardPageClient() {
           ) : null}
         </section>
         <div className="space-y-6">
-          <section className="space-y-3">
-            <h2 className="text-lg font-medium">Inventario critico</h2>
-            <div className="divide-y divide-border-subtle border-t border-border">
-              {lowStock.slice(0, 4).map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/inventory/${item.id}`}
-                  className="block py-3 hover:opacity-80"
-                >
-                  <p className="font-medium text-ink">{item.name}</p>
-                  <p className="text-sm text-ink-secondary">
-                    {Number(item.stock ?? 0)} {item.unit ?? "un."} disponibles
-                  </p>
-                </Link>
-              ))}
-              {!isLoading && lowStock.length === 0 ? (
-                <p className="py-3 text-ink-secondary">
-                  Sin materiales criticos.
-                </p>
-              ) : null}
-            </div>
-          </section>
           <section className="space-y-3">
             <h2 className="text-lg font-medium">Actividad reciente</h2>
             <div className="divide-y divide-border-subtle border-t border-border">

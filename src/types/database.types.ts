@@ -176,7 +176,7 @@ export type AppointmentWithRelations = Appointment & {
   patients: Pick<Patient, "id" | "full_name" | "phone" | "avatar_url"> | null;
   employees: Pick<
     Employee,
-    "id" | "full_name" | "color" | "specialty" | "role"
+    "id" | "full_name" | "color" | "specialty" | "role" | "avatar_url"
   > | null;
   appointment_treatments: (AppointmentTreatment & {
     treatment_types: Pick<

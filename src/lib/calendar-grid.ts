@@ -20,7 +20,8 @@ export const HOUR_HEIGHT = SLOT_HEIGHT * 2;
 export const DAY_HEADER_HEIGHT = 56;
 export const TIME_COLUMN_WIDTH = 60;
 export const DAY_COLUMN_MIN_WIDTH = 120;
-export const TOTAL_SLOTS = ((CALENDAR_END_HOUR - CALENDAR_START_HOUR) * 60) / SLOT_MINUTES;
+export const TOTAL_SLOTS =
+  ((CALENDAR_END_HOUR - CALENDAR_START_HOUR) * 60) / SLOT_MINUTES;
 export const GRID_HEIGHT = TOTAL_SLOTS * SLOT_HEIGHT;
 
 export function getWeekDays(anchorDate: Date): Date[] {
@@ -34,6 +35,12 @@ export function getWeekRange(anchorDate: Date): { start: Date; end: Date } {
     start: startOfDay(days[0]),
     end: endOfDay(days[days.length - 1]),
   };
+}
+
+export function formatMonthLabel(anchorDate: Date): string {
+  return format(anchorDate, "MMMM yyyy", { locale: es }).replace(/^\w/, (c) =>
+    c.toUpperCase(),
+  );
 }
 
 export function formatWeekRange(anchorDate: Date): string {
@@ -91,7 +98,11 @@ type PressNativeEvent = {
 };
 
 export function getPressLocationY(nativeEvent: PressNativeEvent): number {
-  const candidates = [nativeEvent.locationY, nativeEvent.offsetY, nativeEvent.y];
+  const candidates = [
+    nativeEvent.locationY,
+    nativeEvent.offsetY,
+    nativeEvent.y,
+  ];
 
   for (const value of candidates) {
     if (typeof value === "number" && Number.isFinite(value)) {
@@ -104,7 +115,10 @@ export function getPressLocationY(nativeEvent: PressNativeEvent): number {
 
 export function slotFromY(y: number, day: Date): Date {
   const safeY = Number.isFinite(y) ? y : 0;
-  const slotIndex = Math.max(0, Math.min(TOTAL_SLOTS - 1, Math.floor(safeY / SLOT_HEIGHT)));
+  const slotIndex = Math.max(
+    0,
+    Math.min(TOTAL_SLOTS - 1, Math.floor(safeY / SLOT_HEIGHT)),
+  );
   const dayStart = getDayStart(day);
   return new Date(dayStart.getTime() + slotIndex * SLOT_MINUTES * 60 * 1000);
 }
@@ -147,7 +161,8 @@ export function layoutOverlappingAppointments<
   T extends { id: string; starts_at: string; ends_at: string },
 >(appointments: T[]): Map<string, AppointmentColumnLayout> {
   const sorted = [...appointments].sort(
-    (left, right) => new Date(left.starts_at).getTime() - new Date(right.starts_at).getTime(),
+    (left, right) =>
+      new Date(left.starts_at).getTime() - new Date(right.starts_at).getTime(),
   );
   const layout = new Map<string, AppointmentColumnLayout>();
 
@@ -167,7 +182,8 @@ export function layoutOverlappingAppointments<
     }
 
     active.push({ id: appointment.id, end, columnIndex });
-    const columnCount = Math.max(...active.map((entry) => entry.columnIndex), columnIndex) + 1;
+    const columnCount =
+      Math.max(...active.map((entry) => entry.columnIndex), columnIndex) + 1;
 
     for (const entry of active) {
       const current = layout.get(entry.id);

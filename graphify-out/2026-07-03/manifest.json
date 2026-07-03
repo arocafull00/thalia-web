@@ -585,8 +585,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/data-table.tsx": {
-    "mtime": 1783098702.194661,
-    "ast_hash": "2bb30b90687d8e739f2181e702c57455",
+    "mtime": 1783098766.7204554,
+    "ast_hash": "b04dc696608e184a12fd2d16b58d4c27",
     "semantic_hash": ""
   },
   "src/components/ui/input-group.tsx": {
@@ -650,8 +650,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/table.tsx": {
-    "mtime": 1783098700.7150378,
-    "ast_hash": "ecbbd3fa5b59df5465e48a3ff4ec7780",
+    "mtime": 1783098766.4204168,
+    "ast_hash": "3b9f1474c01cd96a9879c1d5bbaa90b1",
     "semantic_hash": ""
   },
   "src/components/ui/textarea.tsx": {

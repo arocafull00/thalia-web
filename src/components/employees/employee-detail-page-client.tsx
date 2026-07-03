@@ -104,7 +104,7 @@ export default function EmployeeDetailPageClient({
       <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
         <EmployeeProfileSidebar
           employee={employee}
-          stats={statsQuery.data}
+          stats={statsQuery.data ?? undefined}
           isLoading={statsQuery.isLoading}
           error={statsQuery.error}
           onEdit={() => setEditDialogOpen(true)}

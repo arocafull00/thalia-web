@@ -16,7 +16,10 @@ export async function createClient() {
           cookiesToSet.forEach(({ name, value, options }) => {
             cookieStore.set(name, value, options);
           });
-        } catch {}
+        } catch {
+          // setAll() falla en Server Components (cookieStore de solo lectura).
+          // Es comportamiento esperado; el refresco de token se gestiona en el middleware.
+        }
       },
     },
   });

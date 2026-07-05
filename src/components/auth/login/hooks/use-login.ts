@@ -33,7 +33,11 @@ export function useLogin() {
       await signIn(email.trim(), password);
       await navigateAfterAuth();
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "No se pudo iniciar sesión");
+      setError(
+        nextError instanceof Error
+          ? nextError.message
+          : "No se pudo iniciar sesión",
+      );
       setSubmitting(false);
     }
   };
@@ -56,11 +60,7 @@ export function useLogin() {
   };
 
   const handleRegisterPress = () => {
-    if (!intent) {
-      setIntent("owner");
-    }
-
-    router.push("/register-employee");
+    router.push("/register");
   };
 
   return {

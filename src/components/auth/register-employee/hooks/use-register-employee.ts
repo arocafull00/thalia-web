@@ -20,15 +20,20 @@ import {
   useOnboardingIntentStore,
   type OnboardingIntent,
 } from "@/stores/onboarding-intent-store";
+import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
 export function useRegisterEmployee() {
   const router = useRouter();
   const { signUp, user } = useAuth();
   const intent = useOnboardingIntentStore((state) => state.intent);
   const setIntent = useOnboardingIntentStore((state) => state.setIntent);
+  const pendingToken = usePendingInviteStore((state) => state.token);
+  const invitationEmail = usePendingInviteStore(
+    (state) => state.invitationEmail,
+  );
   const { href, ready } = usePostAuthRedirect(Boolean(user));
   const [fullNameOverride, setFullNameOverride] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(invitationEmail ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -40,9 +45,14 @@ export function useRegisterEmployee() {
   const fullName = fullNameOverride ?? metadataFullName;
   const resolvedIntent: OnboardingIntent = intent ?? "owner";
   const isOwner = resolvedIntent === "owner";
+  const employeeViaEmail =
+    resolvedIntent === "employee" && Boolean(invitationEmail);
   const stepTotal = isOwner
     ? OWNER_REGISTRATION_STEP_COUNT
-    : EMPLOYEE_REGISTRATION_STEP_COUNT;
+    : employeeViaEmail
+      ? 2
+      : EMPLOYEE_REGISTRATION_STEP_COUNT;
+  const currentStep = employeeViaEmail ? 2 : 1;
   const hasSession = Boolean(user);
   const copy = getRegisterCopy(resolvedIntent, hasSession);
   const authDisabled = submitting || !isSupabaseConfigured;
@@ -50,6 +60,9 @@ export function useRegisterEmployee() {
     user && ready && href && href !== "/register-employee",
   );
   const redirectHref = shouldRedirect ? href : null;
+  const isRedirecting =
+    shouldRedirect ||
+    Boolean(user && resolvedIntent === "employee" && pendingToken);
 
   const handleContinue = async () => {
     const trimmedName = fullName.trim();
@@ -60,7 +73,8 @@ export function useRegisterEmployee() {
     }
 
     if (!hasSession) {
-      const trimmedEmail = email.trim();
+      const resolvedEmail = invitationEmail ?? email;
+      const trimmedEmail = resolvedEmail.trim();
       const trimmedPassword = password.trim();
 
       if (!trimmedEmail || !trimmedPassword) {
@@ -76,7 +90,10 @@ export function useRegisterEmployee() {
       setIntent(resolvedIntent);
 
       if (!hasSession) {
-        await signUp(email.trim(), password.trim(), { full_name: trimmedName });
+        const resolvedEmail = invitationEmail ?? email;
+        await signUp(resolvedEmail.trim(), password.trim(), {
+          full_name: trimmedName,
+        });
         await waitForAuthSessionReady();
       }
 
@@ -104,6 +121,11 @@ export function useRegisterEmployee() {
         router.push("/create-clinic");
         return;
       }
+
+      if (resolvedIntent === "employee" && pendingToken) {
+        router.push(`/invite/${pendingToken}`);
+        return;
+      }
     } catch (nextError) {
       setError(
         nextError instanceof Error
@@ -118,10 +140,13 @@ export function useRegisterEmployee() {
   return {
     authDisabled,
     copy,
+    currentStep,
     email,
     error,
     fullName,
     hasSession,
+    invitationEmail,
+    isRedirecting,
     isSupabaseConfigured,
     onContinue: handleContinue,
     onEmailChange: setEmail,

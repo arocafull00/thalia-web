@@ -27,7 +27,7 @@ export default function SettingsProfileSidebar({
   userEmail,
 }: SettingsProfileSidebarProps) {
   return (
-    <aside className="flex h-full min-h-0 flex-col border-r border-border-subtle">
+    <aside className="order-2 flex h-full min-h-0 flex-col border-t border-border-subtle lg:order-1 lg:border-t-0 lg:border-r">
       <SettingsProfileHeader
         displayUri={displayUri}
         isAdmin={isAdmin}

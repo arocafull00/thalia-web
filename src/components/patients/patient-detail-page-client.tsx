@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
+import PatientDetailActionsMenu from "@/components/patients/components/patient-detail-actions-menu";
 import PatientEditDialog from "@/components/patients/components/patient-edit-dialog";
 import PatientProfileSidebar from "@/components/patients/components/patient-profile-sidebar";
 import PatientTimeline from "@/components/patients/components/patient-timeline";
@@ -62,7 +63,7 @@ export default function PatientDetailPageClient({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 px-8 pt-6 pb-4">
+      <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-4 lg:px-8">
         <Link
           href="/patients"
           className="inline-flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
@@ -70,15 +71,20 @@ export default function PatientDetailPageClient({
           <ArrowLeft className="size-4" aria-hidden="true" />
           {PATIENT_DETAIL_COPY.back}
         </Link>
+        <PatientDetailActionsMenu
+          patient={patient}
+          onEdit={() => setEditDialogOpen(true)}
+          onCreateAppointment={() => setAppointmentDialogOpen(true)}
+        />
       </div>
 
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[20%_1fr]">
         <PatientProfileSidebar
           patient={patient}
           onEdit={() => setEditDialogOpen(true)}
           onCreateAppointment={() => setAppointmentDialogOpen(true)}
         />
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8">
+        <div className="order-2 flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-6 lg:order-2 lg:px-6 lg:py-8">
           <PatientTimeline
             appointments={appointments}
             isLoading={appointmentsQuery.isLoading}

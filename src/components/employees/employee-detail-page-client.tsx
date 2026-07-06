@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
+import EmployeeDetailActionsMenu from "@/components/employees/components/employee-detail-actions-menu";
 import EmployeeEditDialog from "@/components/employees/components/employee-edit-dialog";
 import EmployeeProfileSidebar from "@/components/employees/components/employee-profile-sidebar";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/employee-status-confirm-dialog";
@@ -91,7 +92,7 @@ export default function EmployeeDetailPageClient({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 px-8 pt-6 pb-4">
+      <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-4 lg:px-8">
         <Link
           href="/employees"
           className="inline-flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
@@ -99,9 +100,14 @@ export default function EmployeeDetailPageClient({
           <ArrowLeft className="size-4" aria-hidden="true" />
           {EMPLOYEE_DETAIL_COPY.back}
         </Link>
+        <EmployeeDetailActionsMenu
+          employee={employee}
+          onEdit={() => setEditDialogOpen(true)}
+          onToggleStatus={() => setStatusDialogOpen(true)}
+        />
       </div>
 
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[20%_1fr]">
         <EmployeeProfileSidebar
           employee={employee}
           stats={statsQuery.data ?? undefined}
@@ -110,7 +116,7 @@ export default function EmployeeDetailPageClient({
           onEdit={() => setEditDialogOpen(true)}
           onToggleStatus={() => setStatusDialogOpen(true)}
         />
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8">
+        <div className="order-2 flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-6 lg:order-2 lg:px-6 lg:py-8">
           <EmployeeTimeline
             appointments={appointments}
             isLoading={appointmentsQuery.isLoading}

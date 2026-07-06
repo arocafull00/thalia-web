@@ -18,8 +18,9 @@
   - Integración completa con Supabase (auth, datos, realtime, storage).
   - Normalización de estado global con Zustand para flujos compartidos.
 - Out of scope:
-  - Paridad móvil (iOS/Android).
   - Migración de pantallas sin variante `.web.tsx` en esta fase inicial.
+
+> **Adaptación mobile/tablet:** la app se usa como PWA instalada en móvil y tablet, por lo que la paridad responsive es un requisito de producto, no un "nice to have". El esfuerzo cubre App Shell (sidebar/drawer/bottom nav), calendario, tablas y vistas de detalle, y se ejecuta por fases sobre el código existente sin reescribir la app.
 
 ## Inventario a migrar
 

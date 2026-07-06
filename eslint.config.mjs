@@ -60,7 +60,10 @@ const eslintConfig = defineConfig([
     files: [
       "src/components/ui/combobox.tsx",
       "src/components/ui/input-group.tsx",
+      "src/components/ui/sheet.tsx",
+      "src/components/ui/sidebar.tsx",
       "src/components/ui/table.tsx",
+      "src/components/ui/tooltip.tsx",
     ],
     rules: {
       "react/no-multi-comp": "off",

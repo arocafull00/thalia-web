@@ -1,9 +1,7 @@
 "use client";
 
-import { CalendarPlus, Mail, Pencil, Phone } from "lucide-react";
-
-import { ActionButton } from "@/components/ui/primitives/action-button";
-import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
+import { getPatientDetailActions } from "@/components/patients/patient-detail-actions";
+import ProfileQuickActionButton from "@/components/ui/profile/profile-quick-action-button";
 import type { Patient } from "@/types/database.types";
 
 type PatientQuickActionsProps = {
@@ -17,47 +15,29 @@ export default function PatientQuickActions({
   onEdit,
   onCreateAppointment,
 }: PatientQuickActionsProps) {
+  const actions = getPatientDetailActions(patient, {
+    onEdit,
+    onCreateAppointment,
+  });
+
   return (
     <div className="flex flex-col gap-2 px-6 py-6">
-      <div className="w-full [&>button]:w-full">
-        <ActionButton
-          title={PATIENT_DETAIL_COPY.actions.edit}
-          icon={Pencil}
-          onClick={onEdit}
+      {actions.map((action) => (
+        <ProfileQuickActionButton
+          key={action.label}
+          label={action.label}
+          icon={action.icon}
+          variant={action.buttonVariant ?? "solid"}
+          onClick={
+            action.onClick ??
+            (() => {
+              if (action.href) {
+                window.location.href = action.href;
+              }
+            })
+          }
         />
-      </div>
-      {patient.phone ? (
-        <div className="w-full [&>button]:w-full">
-          <ActionButton
-            title={PATIENT_DETAIL_COPY.actions.call}
-            icon={Phone}
-            variant="ghost"
-            onClick={() => {
-              window.location.href = `tel:${patient.phone}`;
-            }}
-          />
-        </div>
-      ) : null}
-      {patient.email ? (
-        <div className="w-full [&>button]:w-full">
-          <ActionButton
-            title={PATIENT_DETAIL_COPY.actions.email}
-            icon={Mail}
-            variant="ghost"
-            onClick={() => {
-              window.location.href = `mailto:${patient.email}`;
-            }}
-          />
-        </div>
-      ) : null}
-      <div className="w-full [&>button]:w-full">
-        <ActionButton
-          title={PATIENT_DETAIL_COPY.actions.createAppointment}
-          icon={CalendarPlus}
-          variant="ghost"
-          onClick={onCreateAppointment}
-        />
-      </div>
+      ))}
     </div>
   );
 }

@@ -34,6 +34,7 @@ export const EMPLOYEE_DETAIL_COPY = {
     deactivate: "Desactivar empleado",
     activate: "Activar empleado",
   },
+  moreActions: "Más acciones",
   errors: {
     load: "No se pudo cargar el empleado.",
     stats: "No se pudieron cargar las estadísticas.",

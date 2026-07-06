@@ -68,7 +68,7 @@ export default function SidebarClinicSwitcher({
         <ChevronDown size={12} className="shrink-0" />
       </button>
       {open ? (
-        <div className="absolute bottom-full left-0 z-30 mb-1 min-w-[200px] rounded-xl border border-border bg-surface py-1 shadow-sm">
+        <div className="absolute bottom-full left-0 z-30 mb-1 w-full max-w-xs rounded-xl border border-border bg-surface py-1 shadow-sm">
           {memberships.map((membership) => (
             <button
               key={membership.clinicId}

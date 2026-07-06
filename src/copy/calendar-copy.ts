@@ -8,6 +8,8 @@ export const CALENDAR_COPY = {
     nextPeriod: "Período siguiente",
     viewWeek: "Semana",
     viewMonth: "Mes",
+    moreOptions: "Más opciones",
+    filterEmployees: "Filtrar profesional",
     loading: (date: string) => `Cargando citas de ${date}...`,
   },
   event: {

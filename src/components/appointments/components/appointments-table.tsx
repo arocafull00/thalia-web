@@ -2,6 +2,7 @@
 
 import { appointmentsColumns } from "@/components/appointments/components/appointments-columns";
 import { DataTable } from "@/components/ui/data-table";
+import { appointmentsMobileColumns } from "@/lib/table-mobile-columns";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 type AppointmentsTableProps = {
@@ -18,6 +19,7 @@ export default function AppointmentsTable({
       columns={appointmentsColumns}
       data={appointments}
       enableSorting
+      mobileColumns={appointmentsMobileColumns}
       onRowClick={(appointment) => onRowClick(appointment.id)}
     />
   );

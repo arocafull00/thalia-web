@@ -11,6 +11,10 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
+import MobileCardView, {
+  type MobileCardAction,
+  type MobileCardColumn,
+} from "@/components/ui/mobile-card-view";
 import {
   Table,
   TableBody,
@@ -28,6 +32,9 @@ type DataTableProps<TData, TValue> = {
   enableSorting?: boolean;
   onRowClick?: (row: TData) => void;
   pageSize?: number;
+  mobileColumns?: MobileCardColumn<TData>[];
+  mobileActions?: MobileCardAction<TData>[];
+  getMobileRowKey?: (row: TData, index: number) => string;
 };
 
 export function DataTable<TData, TValue>({
@@ -38,6 +45,9 @@ export function DataTable<TData, TValue>({
   enableSorting = false,
   onRowClick,
   pageSize = 10,
+  mobileColumns,
+  mobileActions,
+  getMobileRowKey,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -68,70 +78,97 @@ export function DataTable<TData, TValue>({
     (pagination.pageIndex + 1) * pagination.pageSize,
     totalRows,
   );
+  const pageRows = table.getRowModel().rows.map((row) => row.original);
+  const resolveMobileRowKey =
+    getMobileRowKey ??
+    ((row: TData, index: number) => {
+      const candidate = (row as { id?: string }).id;
+      return candidate ?? String(index);
+    });
 
   return (
     <div className="w-full">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-transparent">
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 pb-3 pt-1">
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                className={
-                  onRowClick
-                    ? "cursor-pointer hover:bg-surface"
-                    : "hover:bg-transparent"
-                }
-                onClick={
-                  onRowClick ? () => onRowClick(row.original) : undefined
-                }
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="px-4 py-4">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+      {mobileColumns ? (
+        <div className="md:hidden">
+          <MobileCardView
+            data={pageRows}
+            columns={mobileColumns}
+            actions={mobileActions}
+            onRowClick={onRowClick}
+            emptyMessage={emptyMessage}
+            getRowKey={resolveMobileRowKey}
+          />
+        </div>
+      ) : null}
+      <div className={mobileColumns ? "hidden md:block" : undefined}>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="px-4 pb-3 pt-1">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow className="hover:bg-transparent">
-              <TableCell
-                colSpan={columns.length}
-                className="px-4 py-6 text-center text-ink-secondary"
-              >
-                {emptyMessage}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className={
+                    onRowClick
+                      ? "cursor-pointer hover:bg-surface"
+                      : "hover:bg-transparent"
+                  }
+                  onClick={
+                    onRowClick ? () => onRowClick(row.original) : undefined
+                  }
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="px-4 py-4">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="hover:bg-transparent">
+                <TableCell
+                  colSpan={columns.length}
+                  className="px-4 py-6 text-center text-ink-secondary"
+                >
+                  {emptyMessage}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
       {enablePagination ? (
         <div className="flex items-center justify-between px-4 pt-4 text-sm text-ink-secondary">
-          <span>
+          <span className="hidden md:inline">
             {totalRows === 0 ? 0 : pageStart}-{pageEnd} de {totalRows}
+          </span>
+          <span className="md:hidden">
+            Página {totalRows === 0 ? 0 : pagination.pageIndex + 1}
           </span>
           <div className="flex gap-2">
             <button
               type="button"
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className="rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40"
+              className="min-h-11 rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40 motion-reduce:transition-none"
             >
               Anterior
             </button>
@@ -139,7 +176,7 @@ export function DataTable<TData, TValue>({
               type="button"
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className="rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40"
+              className="min-h-11 rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40 motion-reduce:transition-none"
             >
               Siguiente
             </button>

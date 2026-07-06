@@ -18,8 +18,8 @@ export default function PatientProfileHeader({
   const initials = getProfileInitials(patient.full_name);
 
   return (
-    <div className="flex flex-col items-center gap-4 px-6 py-8 text-center">
-      <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2">
+    <div className="flex flex-col items-center gap-3 px-4 py-6 text-center lg:gap-4 lg:px-6 lg:py-8">
+      <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 lg:size-20">
         {resolvedAvatarUrl ? (
           <Image
             src={resolvedAvatarUrl}

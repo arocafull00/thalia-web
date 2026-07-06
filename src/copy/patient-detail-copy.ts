@@ -28,6 +28,7 @@ export const PATIENT_DETAIL_COPY = {
     email: "Enviar email",
     createAppointment: "Crear cita",
   },
+  moreActions: "Más acciones",
   errors: {
     load: "No se pudo cargar el paciente.",
     history: "No se pudo cargar el historial de citas.",

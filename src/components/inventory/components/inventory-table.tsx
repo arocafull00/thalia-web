@@ -2,6 +2,7 @@
 
 import { inventoryColumns } from "@/components/inventory/components/inventory-columns";
 import { DataTable } from "@/components/ui/data-table";
+import { inventoryMobileColumns } from "@/lib/table-mobile-columns";
 import type { InventoryItem } from "@/types/database.types";
 
 type InventoryTableProps = {
@@ -22,6 +23,7 @@ export default function InventoryTable({
       enablePagination
       enableSorting
       pageSize={10}
+      mobileColumns={inventoryMobileColumns}
       emptyMessage={emptyMessage ?? "No hay materiales con ese criterio."}
       onRowClick={(item) => onRowClick(item.id)}
     />

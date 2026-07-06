@@ -2,6 +2,7 @@
 
 import { transactionsColumns } from "@/components/finances/components/transactions-columns";
 import { DataTable } from "@/components/ui/data-table";
+import { transactionsMobileColumns } from "@/lib/table-mobile-columns";
 import type { Transaction } from "@/types/database.types";
 
 type TransactionsTableProps = {
@@ -16,6 +17,7 @@ export default function TransactionsTable({
       columns={transactionsColumns}
       data={transactions}
       enableSorting
+      mobileColumns={transactionsMobileColumns}
     />
   );
 }

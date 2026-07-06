@@ -1,9 +1,7 @@
 "use client";
 
-import { Pencil, Phone, UserCheck, UserX } from "lucide-react";
-
-import { ActionButton } from "@/components/ui/primitives/action-button";
-import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
+import { getEmployeeDetailActions } from "@/components/employees/employee-detail-actions";
+import ProfileQuickActionButton from "@/components/ui/profile/profile-quick-action-button";
 import type { Employee } from "@/types/database.types";
 
 type EmployeeQuickActionsProps = {
@@ -17,41 +15,29 @@ export default function EmployeeQuickActions({
   onEdit,
   onToggleStatus,
 }: EmployeeQuickActionsProps) {
-  const isInactive = employee.active === false;
+  const actions = getEmployeeDetailActions(employee, {
+    onEdit,
+    onToggleStatus,
+  });
 
   return (
     <div className="flex flex-col gap-2 px-6 py-6">
-      <div className="w-full [&>button]:w-full">
-        <ActionButton
-          title={EMPLOYEE_DETAIL_COPY.actions.edit}
-          icon={Pencil}
-          onClick={onEdit}
-        />
-      </div>
-      {employee.phone ? (
-        <div className="w-full [&>button]:w-full">
-          <ActionButton
-            title={EMPLOYEE_DETAIL_COPY.actions.call}
-            icon={Phone}
-            variant="ghost"
-            onClick={() => {
-              window.location.href = `tel:${employee.phone}`;
-            }}
-          />
-        </div>
-      ) : null}
-      <div className="w-full [&>button]:w-full">
-        <ActionButton
-          title={
-            isInactive
-              ? EMPLOYEE_DETAIL_COPY.actions.activate
-              : EMPLOYEE_DETAIL_COPY.actions.deactivate
+      {actions.map((action) => (
+        <ProfileQuickActionButton
+          key={action.label}
+          label={action.label}
+          icon={action.icon}
+          variant={action.buttonVariant ?? "solid"}
+          onClick={
+            action.onClick ??
+            (() => {
+              if (action.href) {
+                window.location.href = action.href;
+              }
+            })
           }
-          icon={isInactive ? UserCheck : UserX}
-          variant="ghost"
-          onClick={onToggleStatus}
         />
-      </div>
+      ))}
     </div>
   );
 }

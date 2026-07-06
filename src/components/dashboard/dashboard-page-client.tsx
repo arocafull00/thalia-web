@@ -50,10 +50,10 @@ export default function DashboardPageClient() {
   ];
 
   return (
-    <div className="space-y-6 p-8">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-medium tracking-tight text-ink">
+    <div className="space-y-6 p-4 lg:p-8">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-3xl font-medium tracking-tight text-ink lg:text-4xl">
             Bienvenida, {firstName}
           </h1>
           <p className="mt-2 text-ink-secondary">
@@ -64,7 +64,7 @@ export default function DashboardPageClient() {
             .
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <ActionButton
             title={refreshing ? "Actualizando..." : "Actualizar"}
             variant="ghost"

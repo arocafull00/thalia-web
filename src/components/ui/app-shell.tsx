@@ -2,7 +2,9 @@
 
 import type { ReactNode } from "react";
 
+import AppBottomNav from "@/components/ui/app-bottom-nav";
 import AppSidebar from "@/components/ui/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 type AppShellProps = {
   children: ReactNode;
@@ -10,11 +12,14 @@ type AppShellProps = {
 
 export default function AppShell({ children }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-canvas">
+    <SidebarProvider>
       <AppSidebar />
-      <div className="ml-[280px] flex min-h-screen flex-col">
-        <main className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</main>
-      </div>
-    </div>
+      <SidebarInset className="min-h-svh bg-canvas">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden pb-[calc(4rem+var(--safe-area-bottom))] lg:pb-0">
+          {children}
+        </div>
+      </SidebarInset>
+      <AppBottomNav />
+    </SidebarProvider>
   );
 }

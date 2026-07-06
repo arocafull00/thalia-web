@@ -15,7 +15,7 @@ export default function PatientProfileSidebar({
   onCreateAppointment,
 }: PatientProfileSidebarProps) {
   return (
-    <aside className="flex h-full min-h-0 flex-col border-r border-border-subtle">
+    <aside className="order-1 flex h-full min-h-0 flex-col border-b border-border-subtle lg:order-1 lg:border-r lg:border-b-0">
       <PatientProfileHeader patient={patient} />
 
       <div className="border-t border-border-subtle" />
@@ -24,7 +24,7 @@ export default function PatientProfileSidebar({
         <PatientInfoSection patient={patient} />
       </div>
 
-      <div className="mt-auto shrink-0 border-t border-border-subtle">
+      <div className="mt-auto hidden shrink-0 border-t border-border-subtle lg:block">
         <PatientQuickActions
           patient={patient}
           onEdit={onEdit}

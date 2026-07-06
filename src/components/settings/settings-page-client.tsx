@@ -43,7 +43,7 @@ export default function SettingsPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 px-8 pt-6 pb-4">
+      <div className="shrink-0 px-4 pt-6 pb-4 lg:px-8">
         <h1 className="text-2xl font-semibold tracking-tight text-ink">
           {SETTINGS_COPY.page.title}
         </h1>
@@ -66,7 +66,7 @@ export default function SettingsPageClient() {
         }}
       />
 
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[20%_1fr]">
         <SettingsProfileSidebar
           activeEmployeesCount={activeEmployeesCount}
           canViewClinicRequests={canViewClinicRequests}
@@ -79,7 +79,7 @@ export default function SettingsPageClient() {
           userEmail={user.email}
         />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8">
+        <div className="order-1 flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-6 lg:order-2 lg:px-6 lg:py-8">
           <div className="flex flex-col [&>section:not(:last-child)]:mb-8 [&>section:not(:last-child)]:border-b [&>section:not(:last-child)]:border-border-subtle [&>section:not(:last-child)]:pb-8">
             <SettingsAccountPanel
               onChangePassword={() => void handleChangePassword()}

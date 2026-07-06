@@ -2,7 +2,14 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { updateSession, withSessionCookies } from "@/lib/supabase/proxy";
 
-const publicRoutes = ["/login", "/register-employee", "/create-clinic", "/invite-team"];
+const publicRoutes = [
+  "/login",
+  "/register",
+  "/register-employee",
+  "/create-clinic",
+  "/invite-team",
+  "/invite",
+];
 
 const pwaRoutes = ["/manifest.webmanifest", "/sw.js"];
 
@@ -15,7 +22,9 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse;
   }
 
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+  const isPublicRoute = publicRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
 
   if (!userId && !isPublicRoute && pathname !== "/") {
     return withSessionCookies(
@@ -35,5 +44,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js).*)",
+  ],
 };

@@ -31,7 +31,7 @@ const REGISTER_COPY: Record<
     withoutSession: {
       title: "Crea tu cuenta",
       subtitle:
-        "Una cuenta para recibir solicitudes de las clínicas que te añadan.",
+        "Es necesario crear una cuenta para completar el proceso de activación de tu membresía.",
     },
   },
   owner: {
@@ -41,8 +41,7 @@ const REGISTER_COPY: Record<
     },
     withoutSession: {
       title: "Tu perfil",
-      subtitle:
-        "Crea tu cuenta de administrador. En el siguiente paso configurarás la clínica.",
+      subtitle: "Crea tu cuenta de administrador en Thalia.",
     },
   },
 };
@@ -51,6 +50,7 @@ export const REGISTER_EMPLOYEE_FORM_COPY = {
   fullNameLabel: "Nombre completo",
   emailLabel: "Email",
   passwordLabel: "Contraseña",
+  confirmPasswordLabel: "Confirmar contraseña",
   continueButton: "Continuar",
   savingButton: "Guardando...",
   loginPrompt: "¿Ya tienes cuenta?",
@@ -60,6 +60,7 @@ export const REGISTER_EMPLOYEE_FORM_COPY = {
   errors: {
     fullNameRequired: "Introduce tu nombre completo",
     credentialsRequired: "Introduce email y contraseña",
+    passwordMismatch: "Las contraseñas no coinciden",
     saveFailed: "No se pudo guardar tu perfil",
   },
 } as const;

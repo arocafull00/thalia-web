@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { toast } from "react-toastify";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
@@ -10,7 +11,9 @@ import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
+import { useAppointmentsStore } from "@/stores/appointments-store";
 import { useTopbarSearchStore } from "@/stores/topbar-search-store";
+import type { AppointmentStatus } from "@/types/database.types";
 
 export default function AppointmentsPageClient() {
   const router = useRouter();
@@ -18,6 +21,20 @@ export default function AppointmentsPageClient() {
   const topbarQuery = useTopbarSearchStore((state) => state.query);
   const { appointments, flatAppointments, showEmptyState } =
     useAppointmentsPage(topbarQuery);
+
+  const handleStatusChange = useCallback(
+    async (id: string, status: AppointmentStatus) => {
+      try {
+        await useAppointmentsStore
+          .getState()
+          .updateAppointmentStatus(id, status);
+        toast.success("Estado de la cita actualizado.");
+      } catch {
+        toast.error("No se pudo actualizar el estado de la cita.");
+      }
+    },
+    [],
+  );
 
   return (
     <div className="space-y-6 p-8">
@@ -38,6 +55,7 @@ export default function AppointmentsPageClient() {
         <AppointmentsTable
           appointments={flatAppointments}
           onRowClick={(id) => router.push(`/appointments/${id}`)}
+          onStatusChange={handleStatusChange}
         />
       ) : null}
       <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />

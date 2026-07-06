@@ -21,11 +21,27 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="offcanvas" className="border-border bg-canvas">
-      <SidebarHeader className="border-b border-border-subtle p-4">
-        <p className="text-3xl font-medium text-ink md:text-4xl">Thalia</p>
-        <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">
-          Aesthetic Excellence
-        </p>
+      <SidebarHeader className="border-b border-border-subtle px-4 py-5">
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="Thalia"
+            width={56}
+            height={56}
+            className="shrink-0 rounded-xl"
+          />
+          <div className="flex flex-col gap-0.5">
+            <p className="text-2xl font-semibold leading-none text-ink">
+              Thalia
+            </p>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-ink-muted">
+              Aesthetic
+              <br />
+              Excellence
+            </p>
+          </div>
+        </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu className="gap-1">

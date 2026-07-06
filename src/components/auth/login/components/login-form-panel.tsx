@@ -44,15 +44,17 @@ export default function LoginFormPanel({
 
   return (
     <section className="flex min-h-screen flex-1 flex-col bg-surface">
-      <header className="p-6 lg:p-8">
-        <span className="text-xl font-semibold tracking-tight text-ink">
-          {LOGIN_COPY.brand}
-        </span>
-      </header>
-
       <div className="flex flex-1 items-center justify-center px-6 pb-6 lg:px-8">
         <div className="w-full max-w-[440px] space-y-6">
           <div className="space-y-2 text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="Thalia"
+              width={56}
+              height={56}
+              className="mx-auto mb-4 rounded-xl"
+            />
             <h1 className="text-2xl font-medium text-ink">
               {LOGIN_COPY.title}
             </h1>

@@ -20,6 +20,14 @@ export default function RegisterEmployeeSidebar({
 
   return (
     <section className="hidden flex-1 flex-col justify-center gap-6 border-r border-border bg-surface p-10 lg:flex">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.png"
+        alt="Thalia"
+        width={64}
+        height={64}
+        className="rounded-xl"
+      />
       <h1 className="text-5xl font-medium tracking-tight text-ink">
         {REGISTER_EMPLOYEE_SIDEBAR_COPY.brand}
       </h1>

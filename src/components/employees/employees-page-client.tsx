@@ -11,27 +11,35 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
+import FilterPills from "@/components/ui/filter-pills";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
+import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useEmployeeInviteDialog } from "@/lib/hooks/use-employee-invite-dialog";
 import { useEmployees } from "@/lib/hooks/use-employees";
-import { useEmployeesUiStore } from "@/stores/employees-ui-store";
-import { useTopbarSearchStore } from "@/stores/topbar-search-store";
+import { useSearch } from "@/lib/hooks/use-search";
+import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import type { EmployeeRole } from "@/types/database.types";
 
-const SEARCH_DEBOUNCE_MS = 300;
-const roles: Array<{ value: EmployeeRole | ""; label: string }> = [
-  { value: "", label: "Todos" },
-  { value: "admin", label: "Admin" },
-  { value: "reception", label: "Recepción" },
-  { value: "doctor", label: "Doctor" },
-  { value: "auxiliary", label: "Auxiliar" },
+const EMPLOYEE_FILTER_DEFAULTS = { role: "", status: "" };
+
+const roleOptions: Array<{ value: EmployeeRole | ""; label: string }> = [
+  { value: "", label: EMPLOYEES_COPY.roles.all },
+  { value: "admin", label: EMPLOYEES_COPY.roles.admin },
+  { value: "reception", label: EMPLOYEES_COPY.roles.reception },
+  { value: "doctor", label: EMPLOYEES_COPY.roles.doctor },
+  { value: "auxiliary", label: EMPLOYEES_COPY.roles.auxiliary },
+];
+
+const statusOptions = [
+  { label: EMPLOYEES_COPY.filters.all, value: "" },
+  { label: EMPLOYEES_COPY.filters.active, value: "active" },
+  { label: EMPLOYEES_COPY.filters.inactive, value: "inactive" },
 ];
 
 export default function EmployeesPageClient() {
@@ -40,10 +48,8 @@ export default function EmployeesPageClient() {
   const { profile } = useAuth();
   const { platformRole } = useActiveClinic();
   const employees = useEmployees();
-  const topbarQuery = useTopbarSearchStore((state) => state.query);
-  const role = useEmployeesUiStore((state) => state.roleFilter);
-  const setRoleFilter = useEmployeesUiStore((state) => state.setRoleFilter);
-  const debouncedSearch = useDebouncedValue(topbarQuery, SEARCH_DEBOUNCE_MS);
+  const debouncedSearch = useSearch();
+  const { filters, setFilter } = useUrlFilters(EMPLOYEE_FILTER_DEFAULTS);
   const dialog = useEmployeeInviteDialog(() => setDialogOpen(false));
   const canManage =
     platformRole === "owner" ||
@@ -55,7 +61,15 @@ export default function EmployeesPageClient() {
     const normalizedSearch = debouncedSearch.trim().toLowerCase();
 
     return employeeData.filter((employee) => {
-      if (role && employee.role !== role) {
+      if (filters.role && employee.role !== filters.role) {
+        return false;
+      }
+
+      if (filters.status === "active" && employee.active === false) {
+        return false;
+      }
+
+      if (filters.status === "inactive" && employee.active !== false) {
         return false;
       }
 
@@ -69,10 +83,12 @@ export default function EmployeesPageClient() {
         specialty.includes(normalizedSearch)
       );
     });
-  }, [debouncedSearch, employeeData, role]);
+  }, [debouncedSearch, employeeData, filters.role, filters.status]);
 
   const hasEmployees = employeeData.length > 0;
-  const hasActiveFilters = Boolean(debouncedSearch.trim() || role);
+  const hasActiveFilters = Boolean(
+    debouncedSearch.trim() || filters.role || filters.status,
+  );
   const showEmptyState =
     !employees.isLoading &&
     !employees.error &&
@@ -90,50 +106,56 @@ export default function EmployeesPageClient() {
   if (!canManage) {
     return (
       <div className="p-8">
-        <Notice tone="danger" message="Permisos insuficientes." />
+        <Notice tone="danger" message={EMPLOYEES_COPY.page.permissions} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-8">
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
-          subtitle={`${employeeData.length} profesionales registrados`}
-          title="Personal"
-        />
-        <ActionButton
-          title="Invitar personal"
-          onClick={() => setDialogOpen(true)}
-        />
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {roles.map((entry) => (
-          <button
-            key={entry.value || "all"}
-            type="button"
-            onClick={() => setRoleFilter(entry.value)}
-            className={`rounded-full px-4 py-2 text-sm ${role === entry.value ? "bg-primary text-on-primary" : "bg-surface text-ink-secondary ring-1 ring-border"}`}
-          >
-            {entry.label}
-          </button>
-        ))}
-      </div>
-      {employees.isLoading ? <SkeletonList /> : null}
-      {employees.error ? (
-        <Notice tone="danger" message="No se pudo cargar el personal." />
-      ) : null}
-      {showEmptyState ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
-          Todavía no hay personal registrado.
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <div className="flex items-center justify-between gap-4">
+          <PageHeader
+            subtitle={EMPLOYEES_COPY.page.subtitle(employeeData.length)}
+            title={EMPLOYEES_COPY.page.title}
+          />
+          <ActionButton
+            title="Invitar personal"
+            onClick={() => setDialogOpen(true)}
+          />
         </div>
-      ) : null}
-      {!showEmptyState && !employees.isLoading ? (
-        <EmployeesTable
-          employees={filteredEmployees}
-          onRowClick={(id) => router.push(`/employees/${id}`)}
-        />
-      ) : null}
+        <div className="mt-3 space-y-2">
+          <FilterPills
+            options={roleOptions}
+            active={filters.role}
+            onChange={(value) => setFilter("role", value)}
+            ariaLabel={EMPLOYEES_COPY.filters.role}
+          />
+          <FilterPills
+            options={statusOptions}
+            active={filters.status}
+            onChange={(value) => setFilter("status", value)}
+            ariaLabel={EMPLOYEES_COPY.filters.status}
+          />
+        </div>
+      </div>
+      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4 lg:px-8 lg:py-6">
+        {employees.isLoading ? <SkeletonList /> : null}
+        {employees.error ? (
+          <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
+        ) : null}
+        {showEmptyState ? (
+          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
+            {EMPLOYEES_COPY.page.empty}
+          </div>
+        ) : null}
+        {!showEmptyState && !employees.isLoading ? (
+          <EmployeesTable
+            employees={filteredEmployees}
+            onRowClick={(id) => router.push(`/employees/${id}`)}
+          />
+        ) : null}
+      </div>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>

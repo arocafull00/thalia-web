@@ -1,35 +1,55 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
+import { useFilterPills } from "@/lib/hooks/use-filter-pills";
 import { useInventoryItems } from "@/lib/hooks/use-inventory";
-import { inventoryStockSummaryCounts } from "@/lib/inventory-stock";
+import {
+  getInventoryStockLevel,
+  inventoryStockSummaryCounts,
+  type InventoryStockLevel,
+} from "@/lib/inventory-stock";
 
-export function useInventoryPage(externalSearch?: string) {
-  const [localSearch, setLocalSearch] = useState("");
-  const search = externalSearch !== undefined ? externalSearch : localSearch;
-  const [category, setCategory] = useState("");
+type InventoryPageFilters = {
+  category: string;
+  search: string;
+  stock: string;
+};
+
+function resolveStockLevel(stockParam: string): InventoryStockLevel | "" {
+  if (stockParam === "critical" || stockParam === "low") {
+    return stockParam;
+  }
+
+  if (stockParam === "ok" || stockParam === "optimal") {
+    return "optimal";
+  }
+
+  return "";
+}
+
+export function useInventoryPage(filters: InventoryPageFilters) {
   const inventory = useInventoryItems();
-
   const items = useMemo(() => inventory.data ?? [], [inventory.data]);
   const summary = useMemo(() => inventoryStockSummaryCounts(items), [items]);
-
-  const categories = useMemo(() => {
-    const uniqueCategories = [
-      ...new Set(items.map((item) => item.category).filter(Boolean)),
-    ] as string[];
-    return [
-      "Todos",
-      ...uniqueCategories.sort((left, right) =>
-        left.localeCompare(right, "es"),
-      ),
-    ];
-  }, [items]);
+  const categories = useFilterPills(items);
+  const stockLevel = resolveStockLevel(filters.stock);
 
   const filteredItems = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = filters.search.trim().toLowerCase();
 
     return items.filter((item) => {
-      if (category && item.category !== category) {
+      if (filters.category && item.category !== filters.category) {
         return false;
+      }
+
+      if (stockLevel) {
+        const level = getInventoryStockLevel(
+          Number(item.stock ?? 0),
+          Number(item.min_stock ?? 0),
+        );
+
+        if (level !== stockLevel) {
+          return false;
+        }
       }
 
       if (!normalizedSearch) {
@@ -38,27 +58,17 @@ export function useInventoryPage(externalSearch?: string) {
 
       return item.name.toLowerCase().includes(normalizedSearch);
     });
-  }, [category, items, search]);
+  }, [filters.category, filters.search, items, stockLevel]);
 
   const listData = inventory.isLoading ? [] : filteredItems;
 
-  const handleCategoryChange = (nextCategory: string) => {
-    setCategory(nextCategory);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setLocalSearch(value);
-  };
-
   return {
     categories,
-    category,
+    category: filters.category,
     filteredItems,
-    handleCategoryChange,
-    handleSearchChange,
     inventory,
     listData,
-    search,
+    stockLevel: filters.stock,
     summary,
   };
 }

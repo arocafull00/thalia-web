@@ -1,32 +1,23 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
+import { useFilterPills } from "@/lib/hooks/use-filter-pills";
 import { useTreatments } from "@/lib/hooks/use-treatment";
 
-export function useTreatmentCatalog(externalSearch?: string) {
-  const [localSearch, setLocalSearch] = useState("");
-  const search = externalSearch !== undefined ? externalSearch : localSearch;
-  const [category, setCategory] = useState("");
+type TreatmentCatalogFilters = {
+  category: string;
+  search: string;
+};
+
+export function useTreatmentCatalog(filters: TreatmentCatalogFilters) {
   const treatments = useTreatments();
-
   const items = useMemo(() => treatments.data ?? [], [treatments.data]);
-
-  const categories = useMemo(() => {
-    const uniqueCategories = [
-      ...new Set(items.map((item) => item.category).filter(Boolean)),
-    ] as string[];
-    return [
-      "Todos",
-      ...uniqueCategories.sort((left, right) =>
-        left.localeCompare(right, "es"),
-      ),
-    ];
-  }, [items]);
+  const categories = useFilterPills(items);
 
   const filteredTreatments = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = filters.search.trim().toLowerCase();
 
     return items.filter((item) => {
-      if (category && item.category !== category) {
+      if (filters.category && item.category !== filters.category) {
         return false;
       }
 
@@ -36,23 +27,12 @@ export function useTreatmentCatalog(externalSearch?: string) {
 
       return item.name.toLowerCase().includes(normalizedSearch);
     });
-  }, [category, items, search]);
-
-  const handleCategoryChange = (nextCategory: string) => {
-    setCategory(nextCategory);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setLocalSearch(value);
-  };
+  }, [filters.category, filters.search, items]);
 
   return {
     categories,
-    category,
+    category: filters.category,
     filteredTreatments,
-    handleCategoryChange,
-    handleSearchChange,
-    search,
     treatments,
   };
 }

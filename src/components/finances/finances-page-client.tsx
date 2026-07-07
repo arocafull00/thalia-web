@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
 import FinancesMovementsSection from "@/components/finances/components/finances-movements-section";
@@ -15,28 +15,60 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
+import FilterPills from "@/components/ui/filter-pills";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
+import { PageHeader } from "@/components/ui/primitives/page-header";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
+import { useSearch } from "@/lib/hooks/use-search";
 import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
+import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { useFinancesUiStore } from "@/stores/finances-ui-store";
+
+const FINANCES_FILTER_DEFAULTS = { category: "" };
 
 export default function FinancesPageClient() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const setTab = useFinancesUiStore((state) => state.setTab);
+  const debouncedSearch = useSearch();
+  const { filters, setFilter } = useUrlFilters(FINANCES_FILTER_DEFAULTS);
+
+  const pageFilters = useMemo(
+    () => ({
+      category: filters.category,
+      search: debouncedSearch,
+    }),
+    [debouncedSearch, filters.category],
+  );
+
   const {
     categoryBreakdown,
+    categoryOptions,
     fabType,
+    hasMore,
     isAdmin,
+    loadMore,
     summary,
     tab,
     transactions,
     visibleTransactions,
-  } = useFinancesPage();
+  } = useFinancesPage(pageFilters);
+
   const dialog = useTransactionCreateDialog(fabType, () =>
     setDialogOpen(false),
+  );
+
+  const categoryFilterOptions = useMemo(
+    () => [
+      { label: FINANCES_COPY.filters.all, value: "" },
+      ...categoryOptions.map((category) => ({
+        label: category,
+        value: category,
+      })),
+    ],
+    [categoryOptions],
   );
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
@@ -62,24 +94,34 @@ export default function FinancesPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 items-center justify-between gap-4 px-8 pt-6 pb-4">
-        <div>
-          <h1 className="text-2xl font-medium text-ink">
-            {FINANCES_COPY.title}
-          </h1>
-          <p className="text-sm text-ink-secondary">{FINANCES_COPY.subtitle}</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <FinancesMonthSelector />
-          <ActionButton
-            title={FINANCES_COPY.newMovement}
-            icon={Plus}
-            onClick={handleOpenCreateDialog}
+      <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <div className="flex items-center justify-between gap-4">
+          <PageHeader
+            title={FINANCES_COPY.title}
+            subtitle={FINANCES_COPY.subtitle}
           />
+          <div className="flex items-center gap-4">
+            <FinancesMonthSelector />
+            <ActionButton
+              title={FINANCES_COPY.newMovement}
+              icon={Plus}
+              onClick={handleOpenCreateDialog}
+            />
+          </div>
         </div>
+        {categoryFilterOptions.length > 1 ? (
+          <div className="mt-3">
+            <FilterPills
+              options={categoryFilterOptions}
+              active={filters.category}
+              onChange={(value) => setFilter("category", value)}
+              ariaLabel={FINANCES_COPY.filters.category}
+            />
+          </div>
+        ) : null}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-8">
+      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4 lg:px-8 lg:py-6">
         {summary.error ? (
           <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
         ) : null}
@@ -100,6 +142,8 @@ export default function FinancesPageClient() {
           transactions={visibleTransactions}
           isLoading={transactions.isLoading}
           error={transactions.error}
+          hasMore={hasMore}
+          onLoadMore={loadMore}
         />
       </div>
 

@@ -66,19 +66,7 @@ export default function SettingsPageClient() {
         }}
       />
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[20%_1fr]">
-        <SettingsProfileSidebar
-          activeEmployeesCount={activeEmployeesCount}
-          canViewClinicRequests={canViewClinicRequests}
-          displayUri={displayUri}
-          isAdmin={isAdmin}
-          onPickAvatar={() => fileInputRef.current?.click()}
-          pendingRequestsCount={pendingClinicRequests.length}
-          profile={profile}
-          uploadPending={uploadAvatar.isPending}
-          userEmail={user.email}
-        />
-
+      <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[20%_1fr]">
         <div className="order-1 flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-6 lg:order-2 lg:px-6 lg:py-8">
           <div className="flex flex-col [&>section:not(:last-child)]:mb-8 [&>section:not(:last-child)]:border-b [&>section:not(:last-child)]:border-border-subtle [&>section:not(:last-child)]:pb-8">
             <SettingsAccountPanel
@@ -94,6 +82,18 @@ export default function SettingsPageClient() {
             <PwaInstallPanel />
           </div>
         </div>
+
+        <SettingsProfileSidebar
+          activeEmployeesCount={activeEmployeesCount}
+          canViewClinicRequests={canViewClinicRequests}
+          displayUri={displayUri}
+          isAdmin={isAdmin}
+          onPickAvatar={() => fileInputRef.current?.click()}
+          pendingRequestsCount={pendingClinicRequests.length}
+          profile={profile}
+          uploadPending={uploadAvatar.isPending}
+          userEmail={user.email}
+        />
       </div>
     </div>
   );

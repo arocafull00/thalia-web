@@ -13,6 +13,8 @@ type FinancesMovementsSectionProps = {
   transactions: Transaction[];
   isLoading: boolean;
   error: Error | null | undefined;
+  hasMore: boolean;
+  onLoadMore: () => void;
 };
 
 export default function FinancesMovementsSection({
@@ -21,6 +23,8 @@ export default function FinancesMovementsSection({
   transactions,
   isLoading,
   error,
+  hasMore,
+  onLoadMore,
 }: FinancesMovementsSectionProps) {
   return (
     <div className="border-t border-border-subtle pt-6">
@@ -36,6 +40,17 @@ export default function FinancesMovementsSection({
           <Notice tone="danger" message={FINANCES_COPY.errors.transactions} />
         ) : null}
         {!isLoading ? <TransactionsTable transactions={transactions} /> : null}
+        {hasMore ? (
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={onLoadMore}
+              className="rounded-full border border-border px-4 py-2 text-sm text-ink-secondary transition-colors hover:bg-canvas motion-reduce:transition-none"
+            >
+              {FINANCES_COPY.movements.loadMore}
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

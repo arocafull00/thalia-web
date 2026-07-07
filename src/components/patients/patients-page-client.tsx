@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import PatientCreateForm from "@/components/patients/components/patient-create-form";
 import PatientsTable from "@/components/patients/components/patients-table";
@@ -11,32 +11,51 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
+import FilterPills from "@/components/ui/filter-pills";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
-import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
 import { usePatients } from "@/lib/hooks/use-patients";
-import { useTopbarSearchStore } from "@/stores/topbar-search-store";
+import { useSearch } from "@/lib/hooks/use-search";
+import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 
-const SEARCH_DEBOUNCE_MS = 300;
+const PATIENT_FILTER_DEFAULTS = { status: "" };
+
+const statusOptions = [
+  { label: PATIENTS_COPY.filters.all, value: "" },
+  { label: PATIENTS_COPY.filters.active, value: "active" },
+  { label: PATIENTS_COPY.filters.inactive, value: "inactive" },
+];
 
 export default function PatientsPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const topbarQuery = useTopbarSearchStore((state) => state.query);
-  const debouncedSearch = useDebouncedValue(topbarQuery, SEARCH_DEBOUNCE_MS);
+  const debouncedSearch = useSearch();
+  const { filters, setFilter } = useUrlFilters(PATIENT_FILTER_DEFAULTS);
   const patients = usePatients(debouncedSearch);
   const dialog = usePatientCreateDialog(() => setDialogOpen(false));
-  const patientData = patients.data ?? [];
+  const patientData = useMemo(() => patients.data ?? [], [patients.data]);
+
+  const filteredPatients = useMemo(() => {
+    if (!filters.status) {
+      return patientData;
+    }
+
+    if (filters.status === "inactive") {
+      return [];
+    }
+
+    return patientData;
+  }, [filters.status, patientData]);
+
   const hasPatients = patientData.length > 0;
+  const hasActiveFilters = Boolean(debouncedSearch.trim() || filters.status);
   const showEmptyState =
-    !patients.isLoading &&
-    !patients.error &&
-    !debouncedSearch.trim() &&
-    !hasPatients;
+    !patients.isLoading && !patients.error && !hasActiveFilters && !hasPatients;
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
@@ -47,32 +66,44 @@ export default function PatientsPageClient() {
   };
 
   return (
-    <div className="space-y-6 p-8">
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
-          subtitle={`${patientData.length} pacientes registrados`}
-          title="Pacientes"
-        />
-        <ActionButton
-          title="Nuevo paciente"
-          onClick={() => setDialogOpen(true)}
-        />
-      </div>
-      {patients.isLoading ? <SkeletonList /> : null}
-      {patients.error ? (
-        <Notice tone="danger" message="No se pudieron cargar los pacientes." />
-      ) : null}
-      {showEmptyState ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
-          Todavía no hay pacientes registrados.
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <div className="flex items-center justify-between gap-4">
+          <PageHeader
+            subtitle={PATIENTS_COPY.page.subtitle(patientData.length)}
+            title={PATIENTS_COPY.page.title}
+          />
+          <ActionButton
+            title="Nuevo paciente"
+            onClick={() => setDialogOpen(true)}
+          />
         </div>
-      ) : null}
-      {!showEmptyState && !patients.isLoading ? (
-        <PatientsTable
-          patients={patientData}
-          onRowClick={(id) => router.push(`/patients/${id}`)}
-        />
-      ) : null}
+        <div className="mt-3">
+          <FilterPills
+            options={statusOptions}
+            active={filters.status}
+            onChange={(value) => setFilter("status", value)}
+            ariaLabel={PATIENTS_COPY.filters.status}
+          />
+        </div>
+      </div>
+      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4 lg:px-8 lg:py-6">
+        {patients.isLoading ? <SkeletonList /> : null}
+        {patients.error ? (
+          <Notice tone="danger" message={PATIENTS_COPY.page.loadError} />
+        ) : null}
+        {showEmptyState ? (
+          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
+            {PATIENTS_COPY.page.empty}
+          </div>
+        ) : null}
+        {!showEmptyState && !patients.isLoading ? (
+          <PatientsTable
+            patients={filteredPatients}
+            onRowClick={(id) => router.push(`/patients/${id}`)}
+          />
+        ) : null}
+      </div>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>

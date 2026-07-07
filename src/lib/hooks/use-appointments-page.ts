@@ -1,43 +1,70 @@
-import { addDays, endOfDay, format, startOfToday } from "date-fns";
-import { useMemo, useState } from "react";
+import { endOfDay, format, startOfDay } from "date-fns";
+import { useMemo } from "react";
 
+import {
+  formatAppointmentDateParam,
+  getDefaultAppointmentDateRange,
+  parseAppointmentDateParam,
+} from "@/components/appointments/components/appointment-date-range";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 
-export function useAppointmentsPage(externalSearch?: string) {
-  const [localSearch, setSearch] = useState("");
-  const search = externalSearch !== undefined ? externalSearch : localSearch;
+type AppointmentPageFilters = {
+  employeeId: string;
+  from: string;
+  search: string;
+  status: string;
+  to: string;
+};
 
-  const { rangeEnd, rangeStart } = useMemo(() => {
-    const today = startOfToday();
-    return { rangeEnd: endOfDay(addDays(today, 13)), rangeStart: today };
-  }, []);
+export function useAppointmentsPage(filters: AppointmentPageFilters) {
+  const defaults = useMemo(() => getDefaultAppointmentDateRange(), []);
 
+  const rangeStart = useMemo(
+    () => startOfDay(parseAppointmentDateParam(filters.from, defaults.from)),
+    [defaults.from, filters.from],
+  );
+
+  const rangeEnd = useMemo(
+    () => endOfDay(parseAppointmentDateParam(filters.to, defaults.to)),
+    [defaults.to, filters.to],
+  );
+
+  const employeeId = filters.employeeId || null;
   const appointments = useAppointments(
     { end: rangeEnd, start: rangeStart },
-    null,
+    employeeId,
   );
 
   const groupedAppointments = useMemo(() => {
     const items = appointments.data ?? [];
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = filters.search.trim().toLowerCase();
 
-    const filtered = normalizedSearch
-      ? items.filter((appt) => {
-          const patientName = appt.patients?.full_name?.toLowerCase() ?? "";
-          const treatment =
-            appt.appointment_treatments[0]?.treatment?.name?.toLowerCase() ??
-            "";
-          return (
-            patientName.includes(normalizedSearch) ||
-            treatment.includes(normalizedSearch)
-          );
-        })
-      : items;
+    const filtered = items.filter((appt) => {
+      if (filters.status && appt.status !== filters.status) {
+        return false;
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const patientName = appt.patients?.full_name?.toLowerCase() ?? "";
+      const treatment =
+        appt.appointment_treatments[0]?.treatment?.name?.toLowerCase() ?? "";
+
+      return (
+        patientName.includes(normalizedSearch) ||
+        treatment.includes(normalizedSearch)
+      );
+    });
 
     const byDay = new Map<string, typeof filtered>();
     for (const appt of filtered) {
       const day = format(new Date(appt.starts_at), "yyyy-MM-dd");
-      if (!byDay.has(day)) byDay.set(day, []);
+      if (!byDay.has(day)) {
+        byDay.set(day, []);
+      }
+
       byDay.get(day)!.push(appt);
     }
 
@@ -45,7 +72,7 @@ export function useAppointmentsPage(externalSearch?: string) {
       appointments: dayAppointments,
       date: new Date(`${day}T00:00:00`),
     }));
-  }, [appointments.data, search]);
+  }, [appointments.data, filters.search, filters.status]);
 
   const flatAppointments = useMemo(
     () => groupedAppointments.flatMap((group) => group.appointments),
@@ -58,14 +85,19 @@ export function useAppointmentsPage(externalSearch?: string) {
   const listData =
     showEmptyState || appointments.isLoading ? [] : groupedAppointments;
 
+  const dateRangeLabel = `${formatAppointmentDateParam(rangeStart)} – ${formatAppointmentDateParam(rangeEnd)}`;
+
   return {
     appointments,
+    dateRangeLabel,
     flatAppointments,
     groupedAppointments,
     hasResults,
     listData,
-    search,
-    setSearch,
+    rangeEnd,
+    rangeStart,
     showEmptyState,
   };
 }
+
+export type { AppointmentPageFilters };

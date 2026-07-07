@@ -2,12 +2,16 @@
 
 import { Bell } from "lucide-react";
 
+import AppSearchBar from "@/components/ui/app-search-bar";
+
 export default function AppTopbar() {
   const notificationCount = 0;
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border-subtle bg-surface px-6">
-      <div />
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between gap-4 border-b border-border-subtle bg-surface px-6">
+      <div className="min-w-0 flex-1">
+        <AppSearchBar />
+      </div>
       <div className="flex items-center gap-2">
         <button
           type="button"

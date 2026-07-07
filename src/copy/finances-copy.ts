@@ -7,6 +7,10 @@ export const FINANCES_COPY = {
     summary: "No se pudo cargar el resumen.",
     transactions: "No se pudieron cargar los movimientos.",
   },
+  filters: {
+    category: "Categoría",
+    all: "Todos",
+  },
   metrics: {
     income: "Ingresos",
     expenses: "Gastos",
@@ -22,5 +26,6 @@ export const FINANCES_COPY = {
   },
   movements: {
     title: "Movimientos recientes",
+    loadMore: "Cargar más",
   },
 } as const;

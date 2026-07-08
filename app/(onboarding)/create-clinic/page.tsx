@@ -1,5 +1,11 @@
+import LoginHeroPanel from "@/components/auth/login/components/login-hero-panel";
 import CreateClinicPageClient from "@/components/onboarding/create-clinic-page-client";
 
 export default function CreateClinicPage() {
-  return <CreateClinicPageClient />;
+  return (
+    <div className="flex min-h-screen bg-surface">
+      <CreateClinicPageClient />
+      <LoginHeroPanel />
+    </div>
+  );
 }

@@ -4,21 +4,16 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import RegisterEmployeeForm from "@/components/auth/register-employee/components/register-employee-form";
-import RegisterEmployeeSidebar from "@/components/auth/register-employee/components/register-employee-sidebar";
 import { useRegisterEmployee } from "@/components/auth/register-employee/hooks/use-register-employee";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
 export default function RegisterEmployeePageClient() {
   const router = useRouter();
   const { signOut } = useAuth();
-  const intent = useOnboardingIntentStore((state) => state.intent);
-  const resolvedIntent = intent ?? "owner";
   const {
     authDisabled,
     copy,
-    currentStep,
     email,
     error,
     fullName,
@@ -31,7 +26,6 @@ export default function RegisterEmployeePageClient() {
     onPasswordChange,
     password,
     redirectHref,
-    stepTotal,
     submitting,
     isRedirecting,
   } = useRegisterEmployee();
@@ -57,37 +51,34 @@ export default function RegisterEmployeePageClient() {
   }
 
   return (
-    <div className="flex min-h-screen bg-canvas">
-      <RegisterEmployeeSidebar
-        intent={resolvedIntent}
-        stepTotal={stepTotal}
-        currentStep={currentStep}
-      />
-      <RegisterEmployeeForm
-        authDisabled={authDisabled}
-        copy={copy}
-        email={email}
-        error={error}
-        fullName={fullName}
-        hasSession={hasSession}
-        invitationEmail={invitationEmail}
-        isSupabaseConfigured={isSupabaseConfigured}
-        onContinue={onContinue}
-        onEmailChange={onEmailChange}
-        onFullNameChange={onFullNameChange}
-        onLoginPress={() => router.replace("/login")}
-        onPasswordChange={onPasswordChange}
-        onSignOut={() => {
-          usePendingInviteStore.getState().clearToken();
-          if (hasSession) {
-            void signOut();
-          } else {
-            router.replace("/login");
-          }
-        }}
-        password={password}
-        submitting={submitting}
-      />
-    </div>
+    <section className="flex min-h-screen flex-1 flex-col items-center justify-center bg-surface px-6 py-10">
+      <div className="w-full max-w-[440px]">
+        <RegisterEmployeeForm
+          authDisabled={authDisabled}
+          copy={copy}
+          email={email}
+          error={error}
+          fullName={fullName}
+          hasSession={hasSession}
+          invitationEmail={invitationEmail}
+          isSupabaseConfigured={isSupabaseConfigured}
+          onContinue={onContinue}
+          onEmailChange={onEmailChange}
+          onFullNameChange={onFullNameChange}
+          onLoginPress={() => router.replace("/login")}
+          onPasswordChange={onPasswordChange}
+          onSignOut={() => {
+            usePendingInviteStore.getState().clearToken();
+            if (hasSession) {
+              void signOut();
+            } else {
+              router.replace("/login");
+            }
+          }}
+          password={password}
+          submitting={submitting}
+        />
+      </div>
+    </section>
   );
 }

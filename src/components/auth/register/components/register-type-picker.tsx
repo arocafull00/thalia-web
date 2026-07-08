@@ -17,6 +17,14 @@ export default function RegisterTypePicker({
     <div className="flex flex-1 items-center justify-center p-8">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-1 text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo.png"
+            alt="Thalia"
+            width={56}
+            height={56}
+            className="mx-auto mb-4 rounded-xl"
+          />
           <h1 className="text-2xl font-medium text-ink">
             {REGISTER_COPY.title}
           </h1>

@@ -123,8 +123,8 @@ export default function CreateClinicPageClient() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-canvas p-8">
-      <div className="w-full max-w-xl space-y-6 rounded-3xl border border-border bg-surface p-10 shadow-sm">
+    <section className="flex min-h-screen flex-1 flex-col items-center justify-center bg-surface px-6 py-10">
+      <div className="w-full max-w-[440px] space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-medium text-ink">Tu clínica</h1>
@@ -192,6 +192,6 @@ export default function CreateClinicPageClient() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { supabase } from "@/lib/supabase";
+import { getMemberships } from "@/dal/clinics.dal";
 import { createWebPersistStorage } from "@/lib/web-storage";
 import type {
   ClinicMembershipRole,
@@ -41,36 +41,24 @@ export const useClinicStore = create<ClinicStore>()(
         set({ loading: true });
 
         try {
-          const { data, error } = await supabase
-            .from("clinic_memberships")
-            .select("id, clinic_id, role, status, clinics(id, name, logo_url)")
-            .eq("user_id", userId)
-            .eq("status", "active");
+          const rows = await getMemberships(userId);
 
-          if (error) {
-            throw new Error(error.message);
-          }
+          const memberships: ClinicMembershipView[] = rows.map((row) => {
+            const clinicRaw = row.clinics as
+              | { id: string; name: string; logo_url: string | null }
+              | { id: string; name: string; logo_url: string | null }[]
+              | null;
+            const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;
 
-          const memberships: ClinicMembershipView[] = (data ?? []).map(
-            (row) => {
-              const clinicRaw = row.clinics as
-                | { id: string; name: string; logo_url: string | null }
-                | { id: string; name: string; logo_url: string | null }[]
-                | null;
-              const clinic = Array.isArray(clinicRaw)
-                ? clinicRaw[0]
-                : clinicRaw;
-
-              return {
-                id: row.id,
-                clinicId: row.clinic_id,
-                clinicName: clinic?.name ?? "Clínica",
-                clinicLogoUrl: clinic?.logo_url ?? null,
-                role: row.role as ClinicMembershipRole,
-                status: row.status as ClinicMembershipStatus,
-              };
-            },
-          );
+            return {
+              id: row.id,
+              clinicId: row.clinic_id,
+              clinicName: clinic?.name ?? "Clínica",
+              clinicLogoUrl: clinic?.logo_url ?? null,
+              role: row.role as ClinicMembershipRole,
+              status: row.status as ClinicMembershipStatus,
+            };
+          });
 
           const { activeClinicId } = get();
           const validActive =

@@ -2,18 +2,29 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { addMinutes } from "date-fns";
 import { create } from "zustand";
 
-import { getActiveClinicId } from "@/lib/active-clinic-id";
 import {
-  fetchDefaultMaterialsForTreatments,
+  deleteAppointmentTreatments,
+  getAppointment,
+  getAppointmentInventoryItems,
+  getAppointments,
+  getDefaultMaterials,
+  insertAppointment,
+  insertAppointmentTreatments,
+  replaceAppointmentInventoryItems,
+  rescheduleAppointment as dalRescheduleAppointment,
+  updateAppointment,
+  updateAppointmentStatus,
+  type AppointmentInventoryLinkInput,
   type EffectiveAppointmentMaterial,
-} from "@/lib/appointment-inventory";
+} from "@/dal/appointments.dal";
+import { getTreatmentsByIds } from "@/dal/treatments.dal";
+import { getActiveClinicId } from "@/lib/active-clinic-id";
 import {
   appointmentSchema,
   appointmentUpdateSchema,
 } from "@/lib/schemas/appointment-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { supabase } from "@/lib/supabase";
-import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useInventoryStore } from "@/stores/inventory-store";
 import {
@@ -30,10 +41,7 @@ import type {
   Treatment,
 } from "@/types/database.types";
 
-export type AppointmentInventoryLinkInput = {
-  inventory_item_id: string;
-  quantity: number;
-};
+export type { AppointmentInventoryLinkInput };
 
 export type AppointmentFormInput = {
   clinicId: string;
@@ -58,18 +66,6 @@ function appointmentsKey(
 
 let appointmentsRealtimeChannel: RealtimeChannel | null = null;
 let appointmentsRealtimeSubscribers = 0;
-
-async function getTreatments(treatmentIds: string[]) {
-  if (treatmentIds.length === 0) {
-    return [];
-  }
-
-  const { data, error } = await supabase
-    .from("treatment")
-    .select("*")
-    .in("id", treatmentIds);
-  return unwrapSupabaseList(data, error) as Treatment[];
-}
 
 function calculateEndDate(startsAt: Date, treatments: Treatment[]) {
   const duration = treatments.reduce(
@@ -140,42 +136,8 @@ function unsubscribeAppointmentsRealtime() {
   appointmentsRealtimeChannel = null;
 }
 
-const appointmentInventorySelect = "*, inventory_items(id, name, unit)";
-
 function defaultMaterialsKey(treatmentIds: string[]) {
   return [...treatmentIds].sort().join(",");
-}
-
-async function replaceAppointmentInventoryLinks(
-  appointmentId: string,
-  items: AppointmentInventoryLinkInput[],
-) {
-  const { error: deleteError } = await supabase
-    .from("appointment_inventory_items")
-    .delete()
-    .eq("appointment_id", appointmentId);
-
-  if (deleteError) {
-    throw deleteError;
-  }
-
-  if (items.length === 0) {
-    return;
-  }
-
-  const rows = items.map((item) => ({
-    appointment_id: appointmentId,
-    inventory_item_id: item.inventory_item_id,
-    quantity: item.quantity,
-  }));
-
-  const { error: insertError } = await supabase
-    .from("appointment_inventory_items")
-    .insert(rows);
-
-  if (insertError) {
-    throw insertError;
-  }
 }
 
 type AppointmentsStore = {
@@ -253,30 +215,13 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     set({ byRange: { ...get().byRange, [key]: loadingQueryEntry(previous) } });
 
     try {
-      let query = supabase
-        .from("appointments")
-        .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-        )
-        .gte("starts_at", startIso)
-        .lte("starts_at", endIso)
-        .order("starts_at");
-
-      if (employeeId) {
-        query = query.eq("employee_id", employeeId);
-      }
-
       const clinicId = getActiveClinicId();
-
-      if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
-      }
-
-      const { data, error } = await query;
-      const appointments = unwrapSupabaseList(
-        data,
-        error,
-      ) as AppointmentWithRelations[];
+      const appointments = await getAppointments({
+        startIso,
+        endIso,
+        clinicId,
+        employeeId,
+      });
       set({
         byRange: { ...get().byRange, [key]: successQueryEntry(appointments) },
       });
@@ -300,18 +245,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("appointments")
-        .select(
-          "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role, avatar_url), appointment_treatments(*, treatment(id, name, color, price, duration_minutes))",
-        )
-        .eq("id", appointmentId)
-        .single();
-
-      const appointment = unwrapSupabase(
-        data,
-        error,
-      ) as AppointmentWithRelations;
+      const appointment = await getAppointment(appointmentId);
       set({
         byId: {
           ...get().byId,
@@ -341,15 +275,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("appointment_inventory_items")
-        .select(appointmentInventorySelect)
-        .eq("appointment_id", appointmentId);
-
-      const items = unwrapSupabaseList(
-        data,
-        error,
-      ) as AppointmentInventoryItemWithInventory[];
+      const items = await getAppointmentInventoryItems(appointmentId);
       set({
         appointmentInventoryById: {
           ...get().appointmentInventoryById,
@@ -380,7 +306,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     });
 
     try {
-      const materials = await fetchDefaultMaterialsForTreatments(treatmentIds);
+      const materials = await getDefaultMaterials(treatmentIds);
       set({
         defaultMaterialsByKey: {
           ...get().defaultMaterialsByKey,
@@ -404,7 +330,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     set({ replacingInventory: true, replaceInventoryError: null });
 
     try {
-      await replaceAppointmentInventoryLinks(appointmentId, items);
+      await replaceAppointmentInventoryItems(appointmentId, items);
       await get().fetchAppointmentInventoryItems(appointmentId);
       set({ replacingInventory: false });
     } catch (cause) {
@@ -425,26 +351,18 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       }
 
       const validated = parsed.data;
-      const treatments = await getTreatments(validated.treatmentIds);
+      const treatments = await getTreatmentsByIds(validated.treatmentIds);
       const endsAt = calculateEndDate(validated.startsAt, treatments);
-      const { data: appointment, error } = await supabase
-        .from("appointments")
-        .insert({
-          clinic_id: validated.clinicId,
-          patient_id: validated.patientId,
-          employee_id: validated.employeeId,
-          starts_at: validated.startsAt.toISOString(),
-          ends_at: endsAt.toISOString(),
-          notes: validated.notes,
-          status: "scheduled",
-        })
-        .select("*")
-        .single();
 
-      const createdAppointment = unwrapSupabase(
-        appointment,
-        error,
-      ) as Appointment;
+      const createdAppointment = await insertAppointment({
+        clinic_id: validated.clinicId,
+        patient_id: validated.patientId,
+        employee_id: validated.employeeId,
+        starts_at: validated.startsAt.toISOString(),
+        ends_at: endsAt.toISOString(),
+        notes: validated.notes,
+        status: "scheduled",
+      });
 
       const rows = treatments.map((treatment) => ({
         appointment_id: createdAppointment.id,
@@ -452,13 +370,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         price_at_booking: treatment.price ?? 0,
       }));
 
-      const { error: treatmentsError } = await supabase
-        .from("appointment_treatments")
-        .insert(rows);
-
-      if (treatmentsError) {
-        throw treatmentsError;
-      }
+      await insertAppointmentTreatments(rows);
 
       await refreshAllAppointmentEntries();
       await useDashboardStore.getState().fetchDashboard();
@@ -482,31 +394,18 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       }
 
       const validated = parsed.data;
-      const treatments = await getTreatments(validated.treatmentIds);
+      const treatments = await getTreatmentsByIds(validated.treatmentIds);
       const endsAt = calculateEndDate(validated.startsAt, treatments);
-      const { data, error } = await supabase
-        .from("appointments")
-        .update({
-          patient_id: validated.patientId,
-          employee_id: validated.employeeId,
-          starts_at: validated.startsAt.toISOString(),
-          ends_at: endsAt.toISOString(),
-          notes: validated.notes,
-        })
-        .eq("id", validated.id)
-        .select("*")
-        .single();
 
-      const appointment = unwrapSupabase(data, error) as Appointment;
+      const appointment = await updateAppointment(validated.id, {
+        patient_id: validated.patientId,
+        employee_id: validated.employeeId,
+        starts_at: validated.startsAt.toISOString(),
+        ends_at: endsAt.toISOString(),
+        notes: validated.notes,
+      });
 
-      const { error: deleteError } = await supabase
-        .from("appointment_treatments")
-        .delete()
-        .eq("appointment_id", validated.id);
-
-      if (deleteError) {
-        throw deleteError;
-      }
+      await deleteAppointmentTreatments(validated.id);
 
       if (treatments.length > 0) {
         const rows = treatments.map((treatment) => ({
@@ -515,13 +414,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
           price_at_booking: treatment.price ?? 0,
         }));
 
-        const { error: treatmentsError } = await supabase
-          .from("appointment_treatments")
-          .insert(rows);
-
-        if (treatmentsError) {
-          throw treatmentsError;
-        }
+        await insertAppointmentTreatments(rows);
       }
 
       await refreshAllAppointmentEntries();
@@ -540,13 +433,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     set({ updatingStatus: true, updateStatusError: null });
 
     try {
-      const { data, error } = await supabase
-        .from("appointments")
-        .update({ status })
-        .eq("id", id)
-        .select("*")
-        .single();
-      const appointment = unwrapSupabase(data, error) as Appointment;
+      const appointment = await updateAppointmentStatus(id, status);
       await refreshAllAppointmentEntries();
       await get().fetchAppointment(id);
       await useDashboardStore.getState().fetchDashboard();
@@ -568,17 +455,12 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     set({ rescheduling: true, rescheduleError: null });
 
     try {
-      const { data, error } = await supabase
-        .from("appointments")
-        .update({
-          starts_at: startsAt.toISOString(),
-          ends_at: endsAt.toISOString(),
-        })
-        .eq("id", id)
-        .select("*")
-        .single();
+      const appointment = await dalRescheduleAppointment(
+        id,
+        startsAt.toISOString(),
+        endsAt.toISOString(),
+      );
 
-      const appointment = unwrapSupabase(data, error) as Appointment;
       await refreshAllAppointmentEntries();
       await get().fetchAppointment(id);
       await useDashboardStore.getState().fetchDashboard();

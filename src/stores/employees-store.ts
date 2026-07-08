@@ -1,13 +1,21 @@
 import { create } from "zustand";
 
+import {
+  getEmployee,
+  getEmployeeAppointments,
+  getEmployeeAppointmentStats,
+  getEmployees,
+  inviteEmployee,
+  updateEmployee,
+  type EmployeeAppointmentRow,
+  type EmployeeAppointmentStats,
+} from "@/dal/employees.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import {
   employeeInviteSchema,
   employeeUpdateSchema,
 } from "@/lib/schemas/employee-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
-import { supabase } from "@/lib/supabase";
-import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -16,25 +24,15 @@ import {
   type QueryEntry,
 } from "@/stores/query-state";
 import type {
-  Appointment,
   ClinicMembershipInvitationRole,
   Employee,
 } from "@/types/database.types";
 
-export type EmployeeAppointmentRow = Appointment & {
-  patients: { id: string; full_name: string } | null;
-};
+export type { EmployeeAppointmentRow, EmployeeAppointmentStats };
 
 export type CreateEmployeeInput = {
   email: string;
   role: ClinicMembershipInvitationRole;
-};
-
-export type EmployeeAppointmentStats = {
-  total: number;
-  completed: number;
-  upcoming: number;
-  cancelled: number;
 };
 
 type EmployeesStore = {
@@ -72,14 +70,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
 
     try {
       const clinicId = getActiveClinicId();
-      let query = supabase.from("employees").select("*").order("full_name");
-
-      if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
-      }
-
-      const { data, error } = await query;
-      const employees = unwrapSupabaseList(data, error) as Employee[];
+      const employees = await getEmployees(clinicId);
       set({ list: successQueryEntry(employees) });
     } catch (cause) {
       set({
@@ -96,12 +87,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
     set({ byId: { ...get().byId, [employeeId]: loadingQueryEntry(previous) } });
 
     try {
-      const { data, error } = await supabase
-        .from("employees")
-        .select("*")
-        .eq("id", employeeId)
-        .single();
-      const employee = unwrapSupabase(data, error) as Employee;
+      const employee = await getEmployee(employeeId);
       set({
         byId: { ...get().byId, [employeeId]: successQueryEntry(employee) },
       });
@@ -128,17 +114,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("appointments")
-        .select("*, patients(id, full_name)")
-        .eq("employee_id", employeeId)
-        .order("starts_at", { ascending: false })
-        .limit(50);
-
-      const appointments = unwrapSupabaseList(
-        data,
-        error,
-      ) as EmployeeAppointmentRow[];
+      const appointments = await getEmployeeAppointments(employeeId);
       set({
         appointmentsByEmployeeId: {
           ...get().appointmentsByEmployeeId,
@@ -168,54 +144,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
     });
 
     try {
-      const now = new Date().toISOString();
-      const [totalResult, completedResult, upcomingResult, cancelledResult] =
-        await Promise.all([
-          supabase
-            .from("appointments")
-            .select("*", { count: "exact", head: true })
-            .eq("employee_id", employeeId),
-          supabase
-            .from("appointments")
-            .select("*", { count: "exact", head: true })
-            .eq("employee_id", employeeId)
-            .eq("status", "completed"),
-          supabase
-            .from("appointments")
-            .select("*", { count: "exact", head: true })
-            .eq("employee_id", employeeId)
-            .gte("starts_at", now)
-            .in("status", ["scheduled", "confirmed", "in_progress"]),
-          supabase
-            .from("appointments")
-            .select("*", { count: "exact", head: true })
-            .eq("employee_id", employeeId)
-            .in("status", ["cancelled", "no_show"]),
-        ]);
-
-      if (totalResult.error) {
-        throw totalResult.error;
-      }
-
-      if (completedResult.error) {
-        throw completedResult.error;
-      }
-
-      if (upcomingResult.error) {
-        throw upcomingResult.error;
-      }
-
-      if (cancelledResult.error) {
-        throw cancelledResult.error;
-      }
-
-      const stats: EmployeeAppointmentStats = {
-        total: totalResult.count ?? 0,
-        completed: completedResult.count ?? 0,
-        upcoming: upcomingResult.count ?? 0,
-        cancelled: cancelledResult.count ?? 0,
-      };
-
+      const stats = await getEmployeeAppointmentStats(employeeId);
       set({
         statsByEmployeeId: {
           ...get().statsByEmployeeId,
@@ -245,13 +174,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         throw new Error(formatZodError(parsed.error));
       }
 
-      const { data, error } = await supabase.functions.invoke<Employee>(
-        "invite-employee",
-        {
-          body: parsed.data,
-        },
-      );
-      const employee = unwrapSupabase(data, error);
+      const employee = await inviteEmployee(parsed.data);
       await get().fetchEmployees();
       set({ creating: false });
       return employee;
@@ -272,13 +195,7 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         throw new Error(formatZodError(parsed.error));
       }
 
-      const { data, error } = await supabase
-        .from("employees")
-        .update(parsed.data)
-        .eq("id", id)
-        .select("*")
-        .single();
-      const employee = unwrapSupabase(data, error) as Employee;
+      const employee = await updateEmployee(id, parsed.data);
       await get().fetchEmployees();
       await get().fetchEmployee(id);
       set({ updating: false });

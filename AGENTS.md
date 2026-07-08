@@ -101,25 +101,41 @@ Para **todos** los mensajes de error o éxito mostrados al usuario, usa **siempr
 
 ## Capa de acceso a datos (DAL)
 
-Todas las queries a la base de datos viven en `data/`, nunca directamente en componentes, layouts, pages ni route handlers.
+Todas las queries a Supabase viven en `src/dal/`, nunca directamente en stores, componentes ni hooks.
 
-- Las funciones de **lectura** usan `cache()` de React para deduplicar queries en el mismo render pass.
-- Las funciones de **escritura** no usan `cache()`.
-- Cada función envuelve su query en `try/catch` y relanza con un mensaje descriptivo. `null` significa "registro no encontrado"; un error lanzado significa fallo de DB o red.
-- Los **Server Components** dejan que los errores del DAL suban hasta el `error.tsx` más cercano (patrón RSC estándar).
-- Los **Route Handlers** capturan errores del DAL y devuelven `500`.
-- `getCurrentUser()` es la función canónica para obtener el usuario autenticado en Server Components y Route Handlers. Internamente llama a `auth()` de Clerk.
-- Nunca importes `@/db` fuera de `data/`. Los componentes, layouts y route handlers importan exclusivamente desde `@/data/*`.
+El flujo de datos es siempre: **UI → Store → DAL → Supabase**.
+
+### Estructura
+
+```
+src/dal/
+├── appointments.dal.ts   — appointments, appointment_treatments, appointment_inventory_items, treatment_inventory_items
+├── auth.dal.ts           — employees (perfil del usuario autenticado)
+├── clinics.dal.ts        — clinic_memberships (+ join clinics)
+├── dashboard.dal.ts      — appointments (citas de hoy)
+├── employees.dal.ts      — employees, appointments (stats y lista por empleado)
+├── finances.dal.ts       — transactions
+├── inventory.dal.ts      — inventory_items, inventory_movements
+├── patients.dal.ts       — patients, appointments (historial por paciente)
+└── treatments.dal.ts     — treatment, treatment_inventory_items
+```
+
+### Reglas
+
+- Las funciones DAL son funciones `async` puras: no acceden a Zustand ni a React.
+- Reciben parámetros explícitos (p. ej. `clinicId: string | null`); no llaman a `getActiveClinicId()`.
+- Usan `unwrapSupabase` / `unwrapSupabaseList` de `@/lib/supabase-query` para el manejo de errores.
+- Los stores llaman a `getActiveClinicId()` y pasan el resultado como argumento al DAL.
+- Nunca importes `supabase` fuera de `src/dal/`. Los stores importan exclusivamente desde `@/dal/*`.
 
 ## Estructura prevista
 
 - `app/` — rutas Next.js App Router
 - `components/` — UI por dominio (`ui/`, `auth/`, `dashboard/`, …)
-- `data/` — capa DAL: queries y mutaciones de base de datos
-- `db/` — schema y cliente Drizzle ORM
-- `lib/` — utilidades, helpers, cliente Clerk
-- `stores/` — stores Zustand
-- `scripts/` — scripts de mantenimiento
+- `dal/` — capa DAL: queries y mutaciones de Supabase, una función por operación, organizadas por dominio
+- `lib/` — utilidades, helpers, cliente Supabase, schemas Zod
+- `stores/` — stores Zustand (estado global, sin acceso directo a Supabase)
+- `types/` — tipos generados de la base de datos (`database.types.ts`)
 
 ## Nunca setState en useEffect con dependencia circular
 

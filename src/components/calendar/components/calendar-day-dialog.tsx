@@ -28,7 +28,7 @@ export default function CalendarDayDialog({
           <AppDialogTitle>{day ? formatFullDayLabel(day) : ""}</AppDialogTitle>
         </AppDialogHeader>
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <DayAgendaList appointments={appointments} />
+          {day ? <DayAgendaList day={day} appointments={appointments} /> : null}
         </div>
       </AppSheetContent>
     </AppDialog>

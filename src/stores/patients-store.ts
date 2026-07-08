@@ -1,5 +1,13 @@
 import { create } from "zustand";
 
+import {
+  getPatient,
+  getPatientAppointments,
+  getPatients,
+  getUpcomingPatientAppointments,
+  insertPatient,
+  updatePatient,
+} from "@/dal/patients.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import {
   patientSchema,
@@ -7,8 +15,6 @@ import {
 } from "@/lib/schemas/patient-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { uploadFile } from "@/lib/storage";
-import { supabase } from "@/lib/supabase";
-import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -84,21 +90,8 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     });
 
     try {
-      let query = supabase.from("patients").select("*").order("full_name");
       const clinicId = getActiveClinicId();
-
-      if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
-      }
-
-      if (search.trim()) {
-        query = query.or(
-          `full_name.ilike.%${search.trim()}%,phone.ilike.%${search.trim()}%`,
-        );
-      }
-
-      const { data, error } = await query;
-      const patients = unwrapSupabaseList(data, error) as Patient[];
+      const patients = await getPatients(clinicId, search);
       set({
         listBySearch: {
           ...get().listBySearch,
@@ -123,12 +116,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     set({ byId: { ...get().byId, [patientId]: loadingQueryEntry(previous) } });
 
     try {
-      const { data, error } = await supabase
-        .from("patients")
-        .select("*")
-        .eq("id", patientId)
-        .single();
-      const patient = unwrapSupabase(data, error) as Patient;
+      const patient = await getPatient(patientId);
       set({ byId: { ...get().byId, [patientId]: successQueryEntry(patient) } });
     } catch (cause) {
       set({
@@ -153,18 +141,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("appointments")
-        .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-        )
-        .eq("patient_id", patientId)
-        .order("starts_at", { ascending: false });
-
-      const appointments = unwrapSupabaseList(
-        data,
-        error,
-      ) as AppointmentWithRelations[];
+      const appointments = await getPatientAppointments(patientId);
       set({
         appointmentsByPatientId: {
           ...get().appointmentsByPatientId,
@@ -194,19 +171,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("appointments")
-        .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-        )
-        .eq("patient_id", patientId)
-        .gt("starts_at", new Date().toISOString())
-        .order("starts_at");
-
-      const appointments = unwrapSupabaseList(
-        data,
-        error,
-      ) as AppointmentWithRelations[];
+      const appointments = await getUpcomingPatientAppointments(patientId);
       set({
         upcomingByPatientId: {
           ...get().upcomingByPatientId,
@@ -236,12 +201,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         throw new Error(formatZodError(parsed.error));
       }
 
-      const { data, error } = await supabase
-        .from("patients")
-        .insert(parsed.data)
-        .select("*")
-        .single();
-      const patient = unwrapSupabase(data, error) as Patient;
+      const patient = await insertPatient(parsed.data);
 
       const keys = Object.keys(get().listBySearch);
       await Promise.all(
@@ -266,13 +226,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         throw new Error(formatZodError(parsed.error));
       }
 
-      const { data, error } = await supabase
-        .from("patients")
-        .update(parsed.data)
-        .eq("id", id)
-        .select("*")
-        .single();
-      const patient = unwrapSupabase(data, error) as Patient;
+      const patient = await updatePatient(id, parsed.data);
 
       const keys = Object.keys(get().listBySearch);
       await Promise.all(
@@ -297,13 +251,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         imageUri,
         "image/jpeg",
       );
-      const { data, error } = await supabase
-        .from("patients")
-        .update({ avatar_url: key })
-        .eq("id", patientId)
-        .select("*")
-        .single();
-      const patient = unwrapSupabase(data, error) as Patient;
+      const patient = await updatePatient(patientId, { avatar_url: key });
 
       const keys = Object.keys(get().listBySearch);
       await Promise.all(

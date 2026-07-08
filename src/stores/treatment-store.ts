@@ -1,7 +1,13 @@
 import { create } from "zustand";
 
-import { supabase } from "@/lib/supabase";
-import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
+import {
+  deleteTreatment,
+  getTreatment,
+  getTreatments,
+  insertTreatment,
+  replaceTreatmentInventoryLinks,
+  updateTreatment,
+} from "@/dal/treatments.dal";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -9,7 +15,7 @@ import {
   successQueryEntry,
   type QueryEntry,
 } from "@/stores/query-state";
-import type { Treatment, TreatmentWithInventory } from "@/types/database.types";
+import type { TreatmentWithInventory } from "@/types/database.types";
 
 export type TreatmentInventoryLinkInput = {
   inventory_item_id: string;
@@ -27,41 +33,6 @@ export type TreatmentInput = {
 };
 
 export type TreatmentUpdateInput = Omit<TreatmentInput, "clinic_id">;
-
-const treatmentDetailSelect =
-  "*, treatment_inventory_items(*, inventory_items(id, name, unit))";
-
-async function replaceTreatmentInventoryLinks(
-  treatmentId: string,
-  links: TreatmentInventoryLinkInput[],
-) {
-  const { error: deleteError } = await supabase
-    .from("treatment_inventory_items")
-    .delete()
-    .eq("treatment_id", treatmentId);
-
-  if (deleteError) {
-    throw deleteError;
-  }
-
-  if (links.length === 0) {
-    return;
-  }
-
-  const rows = links.map((link) => ({
-    treatment_id: treatmentId,
-    inventory_item_id: link.inventory_item_id,
-    quantity: link.quantity,
-  }));
-
-  const { error: insertError } = await supabase
-    .from("treatment_inventory_items")
-    .insert(rows);
-
-  if (insertError) {
-    throw insertError;
-  }
-}
 
 type TreatmentStore = {
   list: QueryEntry<TreatmentWithInventory[]>;
@@ -96,14 +67,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     set({ list: loadingQueryEntry(get().list) });
 
     try {
-      const { data, error } = await supabase
-        .from("treatment")
-        .select("*, treatment_inventory_items(id)")
-        .order("name");
-      const treatments = unwrapSupabaseList(
-        data,
-        error,
-      ) as TreatmentWithInventory[];
+      const treatments = await getTreatments();
       set({ list: successQueryEntry(treatments) });
     } catch (cause) {
       set({
@@ -122,12 +86,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("treatment")
-        .select(treatmentDetailSelect)
-        .eq("id", treatmentId)
-        .single();
-      const treatment = unwrapSupabase(data, error) as TreatmentWithInventory;
+      const treatment = await getTreatment(treatmentId);
       set({
         byId: { ...get().byId, [treatmentId]: successQueryEntry(treatment) },
       });
@@ -151,32 +110,19 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     let createdTreatmentId: string | null = null;
 
     try {
-      const { data, error } = await supabase
-        .from("treatment")
-        .insert(treatmentInput)
-        .select("*")
-        .single();
-      const treatment = unwrapSupabase(data, error) as Treatment;
+      const treatment = await insertTreatment(treatmentInput);
       createdTreatmentId = treatment.id;
 
       await replaceTreatmentInventoryLinks(treatment.id, inventoryLinks);
 
-      const { data: detailData, error: detailError } = await supabase
-        .from("treatment")
-        .select(treatmentDetailSelect)
-        .eq("id", treatment.id)
-        .single();
-      const treatmentWithInventory = unwrapSupabase(
-        detailData,
-        detailError,
-      ) as TreatmentWithInventory;
+      const treatmentWithInventory = await getTreatment(treatment.id);
 
       await get().fetchTreatments();
       set({ creating: false });
       return treatmentWithInventory;
     } catch (cause) {
       if (createdTreatmentId) {
-        await supabase.from("treatment").delete().eq("id", createdTreatmentId);
+        await deleteTreatment(createdTreatmentId).catch(() => {});
       }
 
       const error = cause instanceof Error ? cause : new Error(String(cause));
@@ -191,25 +137,10 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     const { inventoryLinks, ...treatmentInput } = input;
 
     try {
-      const { data, error } = await supabase
-        .from("treatment")
-        .update(treatmentInput)
-        .eq("id", treatmentId)
-        .select("*")
-        .single();
-      unwrapSupabase(data, error);
-
+      await updateTreatment(treatmentId, treatmentInput);
       await replaceTreatmentInventoryLinks(treatmentId, inventoryLinks);
 
-      const { data: detailData, error: detailError } = await supabase
-        .from("treatment")
-        .select(treatmentDetailSelect)
-        .eq("id", treatmentId)
-        .single();
-      const treatmentWithInventory = unwrapSupabase(
-        detailData,
-        detailError,
-      ) as TreatmentWithInventory;
+      const treatmentWithInventory = await getTreatment(treatmentId);
 
       await get().fetchTreatments();
       set({
@@ -231,18 +162,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     set({ deleting: true, deleteError: null });
 
     try {
-      const { error } = await supabase
-        .from("treatment")
-        .delete()
-        .eq("id", treatmentId);
-
-      if (error) {
-        const message =
-          error.code === "23503"
-            ? "No se puede eliminar: el tratamiento tiene citas asociadas."
-            : error.message;
-        throw new Error(message);
-      }
+      await deleteTreatment(treatmentId);
 
       const nextById = { ...get().byId };
       delete nextById[treatmentId];

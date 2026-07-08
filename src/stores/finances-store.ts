@@ -1,8 +1,7 @@
 import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { create } from "zustand";
 
-import { supabase } from "@/lib/supabase";
-import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
+import { getTransactions, insertTransaction } from "@/dal/finances.dal";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -73,19 +72,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
     try {
       const from = format(startOfMonth(month), "yyyy-MM-dd");
       const to = format(endOfMonth(month), "yyyy-MM-dd");
-      let query = supabase
-        .from("transactions")
-        .select("*")
-        .gte("date", from)
-        .lte("date", to)
-        .order("date", { ascending: false });
-
-      if (type !== "all") {
-        query = query.eq("type", type);
-      }
-
-      const { data, error } = await query;
-      const transactions = unwrapSupabaseList(data, error) as Transaction[];
+      const transactions = await getTransactions(from, to, type);
       set({
         transactionsByKey: {
           ...get().transactionsByKey,
@@ -122,27 +109,10 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       const previousFrom = format(startOfMonth(previousMonth), "yyyy-MM-dd");
       const previousTo = format(endOfMonth(previousMonth), "yyyy-MM-dd");
 
-      const [currentResponse, previousResponse] = await Promise.all([
-        supabase
-          .from("transactions")
-          .select("*")
-          .gte("date", currentFrom)
-          .lte("date", currentTo),
-        supabase
-          .from("transactions")
-          .select("*")
-          .gte("date", previousFrom)
-          .lte("date", previousTo),
+      const [current, previousTransactions] = await Promise.all([
+        getTransactions(currentFrom, currentTo, "all"),
+        getTransactions(previousFrom, previousTo, "all"),
       ]);
-
-      const current = unwrapSupabaseList(
-        currentResponse.data,
-        currentResponse.error,
-      ) as Transaction[];
-      const previousTransactions = unwrapSupabaseList(
-        previousResponse.data,
-        previousResponse.error,
-      ) as Transaction[];
       const income = current
         .filter((transaction) => transaction.type === "income")
         .reduce((total, transaction) => total + transaction.amount, 0);
@@ -206,12 +176,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
     set({ creating: true, createError: null });
 
     try {
-      const { data, error } = await supabase
-        .from("transactions")
-        .insert(input)
-        .select("*")
-        .single();
-      const transaction = unwrapSupabase(data, error) as Transaction;
+      const transaction = await insertTransaction(input);
 
       const transactionKeys = Object.keys(get().transactionsByKey);
       await Promise.all(

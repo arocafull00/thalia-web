@@ -1,10 +1,15 @@
 import { create } from "zustand";
 
+import {
+  getInventoryItem,
+  getInventoryItems,
+  getInventoryMovements,
+  insertInventoryItem,
+  insertInventoryMovement,
+} from "@/dal/inventory.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { inventorySchema } from "@/lib/schemas/inventory-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
-import { supabase } from "@/lib/supabase";
-import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -66,14 +71,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
 
     try {
       const clinicId = getActiveClinicId();
-      let query = supabase.from("inventory_items").select("*").order("name");
-
-      if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
-      }
-
-      const { data, error } = await query;
-      const items = unwrapSupabaseList(data, error) as InventoryItem[];
+      const items = await getInventoryItems(clinicId);
       set({ list: successQueryEntry(items) });
     } catch (cause) {
       set({
@@ -90,12 +88,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     set({ byId: { ...get().byId, [itemId]: loadingQueryEntry(previous) } });
 
     try {
-      const { data, error } = await supabase
-        .from("inventory_items")
-        .select("*")
-        .eq("id", itemId)
-        .single();
-      const item = unwrapSupabase(data, error) as InventoryItem;
+      const item = await getInventoryItem(itemId);
       set({ byId: { ...get().byId, [itemId]: successQueryEntry(item) } });
     } catch (cause) {
       set({
@@ -120,16 +113,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     });
 
     try {
-      const { data, error } = await supabase
-        .from("inventory_movements")
-        .select("*, employees(id, full_name)")
-        .eq("item_id", itemId)
-        .order("created_at", { ascending: false });
-
-      const movements = unwrapSupabaseList(
-        data,
-        error,
-      ) as InventoryMovementWithEmployee[];
+      const movements = await getInventoryMovements(itemId);
       set({
         movementsByItemId: {
           ...get().movementsByItemId,
@@ -159,12 +143,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         throw new Error(formatZodError(parsed.error));
       }
 
-      const { data, error } = await supabase
-        .from("inventory_items")
-        .insert(parsed.data)
-        .select("*")
-        .single();
-      const item = unwrapSupabase(data, error) as InventoryItem;
+      const item = await insertInventoryItem(parsed.data);
       await get().fetchInventoryItems();
       set({ creating: false });
       return item;
@@ -179,14 +158,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     set({ recording: true, recordError: null });
 
     try {
-      const { error } = await supabase
-        .from("inventory_movements")
-        .insert(input)
-        .select("*")
-        .single();
-      if (error) {
-        throw error;
-      }
+      await insertInventoryMovement(input);
 
       await get().fetchInventoryItems();
       await get().fetchInventoryItem(input.item_id);

@@ -10,6 +10,7 @@ export function useCalendarDayAgenda() {
   const appointments = useAppointments(day, employeeId);
 
   return {
+    day,
     agenda: toAgendaAppointments(appointments.data),
     isLoading: appointments.isLoading,
   };

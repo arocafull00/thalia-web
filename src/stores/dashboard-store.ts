@@ -1,9 +1,8 @@
 import { endOfDay, startOfDay } from "date-fns";
 import { create } from "zustand";
 
+import { getTodayAppointments } from "@/dal/dashboard.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
-import { supabase } from "@/lib/supabase";
-import { unwrapSupabaseList } from "@/lib/supabase-query";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -33,25 +32,11 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       const todayEnd = endOfDay(new Date()).toISOString();
 
       const clinicId = getActiveClinicId();
-      let appointmentsQuery = supabase
-        .from("appointments")
-        .select(
-          "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-        )
-        .gte("starts_at", todayStart)
-        .lte("starts_at", todayEnd)
-        .order("starts_at");
-
-      if (clinicId) {
-        appointmentsQuery = appointmentsQuery.eq("clinic_id", clinicId);
-      }
-
-      const appointmentsResponse = await appointmentsQuery;
-
-      const appointments = unwrapSupabaseList(
-        appointmentsResponse.data,
-        appointmentsResponse.error,
-      ) as AppointmentWithRelations[];
+      const appointments = await getTodayAppointments(
+        todayStart,
+        todayEnd,
+        clinicId,
+      );
 
       set({
         data: successQueryEntry({

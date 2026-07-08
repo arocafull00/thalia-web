@@ -41,6 +41,7 @@ type AppSearchableComboboxProps = {
   variant?: "input" | "pill";
   triggerLeading?: ReactNode;
   className?: string;
+  showSearch?: boolean;
 };
 
 const inputTriggerClassName =
@@ -66,6 +67,7 @@ export default function AppSearchableCombobox({
   variant = "input",
   triggerLeading,
   className,
+  showSearch = true,
 }: AppSearchableComboboxProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [portalContainer, setPortalContainer] = useState<
@@ -188,12 +190,14 @@ export default function AppSearchableCombobox({
           sideOffset={8}
           className={cn(popupClassName, "max-h-none")}
         >
-          <ComboboxInput
-            showTrigger={false}
-            placeholder={searchPlaceholder}
-            className="mb-3 w-full rounded-xl border border-border bg-surface shadow-none ring-primary focus-within:ring-2"
-          />
-          <div className="max-h-48 overflow-y-auto">
+          {showSearch ? (
+            <ComboboxInput
+              showTrigger={false}
+              placeholder={searchPlaceholder}
+              className="mb-3 w-full rounded-xl border border-border bg-surface shadow-none ring-primary focus-within:ring-2"
+            />
+          ) : null}
+          <div className={showSearch ? "max-h-48 overflow-y-auto" : undefined}>
             {allowClear && clearLabel ? (
               <button
                 type="button"

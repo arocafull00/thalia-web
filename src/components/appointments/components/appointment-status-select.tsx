@@ -1,5 +1,6 @@
 "use client";
 
+import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { appointmentStatusLabel } from "@/lib/format";
 import type { AppointmentStatus } from "@/types/database.types";
 
@@ -27,27 +28,40 @@ const statusColors: Record<AppointmentStatus, string> = {
   no_show: "#64748b",
 };
 
+const statusOptions = allStatuses.map((s) => ({
+  value: s,
+  label: appointmentStatusLabel(s),
+  leading: (
+    <span
+      className="h-2 w-2 shrink-0 rounded-full"
+      style={{ backgroundColor: statusColors[s] }}
+    />
+  ),
+}));
+
 export default function AppointmentStatusSelect({
   status,
   onChange,
   disabled,
 }: AppointmentStatusSelectProps) {
   const resolvedStatus = status ?? "scheduled";
-  const color = statusColors[resolvedStatus];
 
   return (
-    <select
+    <AppSearchableCombobox
       value={resolvedStatus}
+      onValueChange={(value) => {
+        if (value) onChange(value as AppointmentStatus);
+      }}
+      options={statusOptions}
+      variant="pill"
+      showSearch={false}
       disabled={disabled}
-      onChange={(e) => onChange(e.target.value as AppointmentStatus)}
-      className="cursor-pointer rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-white outline-none transition-colors focus:ring-2 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-      style={{ backgroundColor: color, borderColor: color }}
-    >
-      {allStatuses.map((s) => (
-        <option key={s} value={s}>
-          {appointmentStatusLabel(s)}
-        </option>
-      ))}
-    </select>
+      triggerLeading={
+        <span
+          className="h-2 w-2 shrink-0 rounded-full"
+          style={{ backgroundColor: statusColors[resolvedStatus] }}
+        />
+      }
+    />
   );
 }

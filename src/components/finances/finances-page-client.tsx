@@ -19,6 +19,7 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
@@ -105,17 +106,16 @@ export default function FinancesPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <div className="flex items-center justify-end gap-4">
-          <div className="flex items-center gap-4">
-            <FinancesMonthSelector />
-            <ActionButton
-              title={FINANCES_COPY.newMovement}
-              icon={Plus}
-              onClick={handleOpenCreateDialog}
-            />
-          </div>
-        </div>
+      <div className="shrink-0 hidden lg:flex items-center justify-end gap-4 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <FinancesMonthSelector />
+        <ActionButton
+          title={FINANCES_COPY.newMovement}
+          icon={Plus}
+          onClick={handleOpenCreateDialog}
+        />
+      </div>
+      <div className="flex shrink-0 items-center justify-center border-b border-border-subtle bg-canvas px-4 py-3 lg:hidden">
+        <FinancesMonthSelector />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
@@ -198,6 +198,11 @@ export default function FinancesPageClient() {
         onApply={(updates) => setFilters(updates)}
         onClear={() => setFilters(FINANCES_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
+      />
+      <MobileFab
+        label={FINANCES_COPY.newMovement}
+        icon={Plus}
+        onClick={handleOpenCreateDialog}
       />
     </div>
   );

@@ -1,13 +1,12 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
 import InventoryItemAdjustStockDialog from "@/components/inventory/components/inventory-item-adjust-stock-dialog";
 import InventoryItemSidebar from "@/components/inventory/components/inventory-item-sidebar";
 import InventoryMovementsList from "@/components/inventory/components/inventory-movements-list";
+import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
@@ -69,13 +68,10 @@ export default function InventoryDetailPageClient({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-4 lg:px-8">
-        <Link
-          href="/inventory"
-          className="inline-flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          {INVENTORY_ITEM_DETAIL_COPY.back}
-        </Link>
+        <BackButton
+          fallbackHref="/inventory"
+          label={INVENTORY_ITEM_DETAIL_COPY.back}
+        />
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[20%_1fr]">

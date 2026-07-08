@@ -1,4 +1,4 @@
-import { Phone, User } from "lucide-react";
+import { Phone } from "lucide-react";
 import Link from "next/link";
 
 import AppointmentDetailCard from "@/components/appointments/components/appointment-detail-card";
@@ -17,7 +17,7 @@ export default function AppointmentPatientCard({
   const phone = patient?.phone ?? null;
 
   return (
-    <AppointmentDetailCard icon={User} title={APPOINTMENT_DETAIL_COPY.patient}>
+    <AppointmentDetailCard title={APPOINTMENT_DETAIL_COPY.patient}>
       <div className="flex items-start gap-4">
         <AppointmentPersonAvatar
           name={name}

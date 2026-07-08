@@ -39,7 +39,6 @@ export const APPOINTMENT_DETAIL_COPY = {
   materialsError: "No se pudieron guardar los materiales.",
   materialsLoadError: "No se pudieron cargar los materiales.",
   resetToDefault: "Usar materiales del tratamiento",
-  callPatient: "Llamar al paciente",
   markCompleted: "Marcar como completada",
   cancel: "Cancelar cita",
   confirmCancelTitle: "Cancelar cita",

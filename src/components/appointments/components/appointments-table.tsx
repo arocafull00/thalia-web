@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 
 import { buildAppointmentsColumns } from "@/components/appointments/components/appointments-columns";
+import AppointmentsMobileList from "@/components/appointments/components/appointments-mobile-list";
 import { DataTable } from "@/components/ui/data-table";
-import { appointmentsMobileColumns } from "@/lib/table-mobile-columns";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -27,12 +27,18 @@ export default function AppointmentsTable({
   );
 
   return (
-    <DataTable
-      columns={columns}
-      data={appointments}
-      enableSorting
-      mobileColumns={appointmentsMobileColumns}
-      onRowClick={(appointment) => onRowClick(appointment.id)}
-    />
+    <>
+      <div className="md:hidden">
+        <AppointmentsMobileList appointments={appointments} />
+      </div>
+      <div className="hidden md:block">
+        <DataTable
+          columns={columns}
+          data={appointments}
+          enableSorting
+          onRowClick={(appointment) => onRowClick(appointment.id)}
+        />
+      </div>
+    </>
   );
 }

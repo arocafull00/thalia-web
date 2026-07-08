@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 import {
   Sidebar,
@@ -11,6 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import SidebarProfileFooter from "@/components/ui/sidebar-profile-footer";
 import { useAppNavItems } from "@/lib/hooks/use-app-nav-items";
@@ -18,6 +20,23 @@ import { useAppNavItems } from "@/lib/hooks/use-app-nav-items";
 export default function AppSidebar() {
   const pathname = usePathname();
   const { items } = useAppNavItems();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+
+    setOpenMobile(false);
+  }, [pathname, isMobile, setOpenMobile]);
+
+  const closeMobileSidebar = () => {
+    if (!isMobile) {
+      return;
+    }
+
+    setOpenMobile(false);
+  };
 
   return (
     <Sidebar collapsible="offcanvas" className="border-border bg-canvas">
@@ -61,7 +80,7 @@ export default function AppSidebar() {
                       : "rounded-xl text-ink-secondary hover:bg-primary-subtle/40 hover:text-ink-secondary"
                   }
                 >
-                  <Link href={item.href}>
+                  <Link href={item.href} onClick={closeMobileSidebar}>
                     {item.icon}
                     <span>{item.label}</span>
                   </Link>

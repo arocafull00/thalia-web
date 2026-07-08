@@ -4,7 +4,14 @@ import { createViewMonthGrid, createViewWeek } from "@schedule-x/calendar";
 import { createCalendarControlsPlugin } from "@schedule-x/calendar-controls";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
 import { useNextCalendarApp } from "@schedule-x/react";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Temporal } from "temporal-polyfill";
@@ -18,7 +25,10 @@ import {
   appointmentsKey,
   useAppointmentsStore,
 } from "@/stores/appointments-store";
-import { useCalendarStore } from "@/stores/calendar-store";
+import {
+  useCalendarStore,
+  type CalendarViewMode,
+} from "@/stores/calendar-store";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 function toPlainDate(date: Date) {
@@ -44,6 +54,19 @@ function toDateOnlyIso(value: unknown) {
   return raw.split("T")[0].split("[")[0];
 }
 
+function getRangeForViewMode(viewMode: CalendarViewMode, anchor: Date) {
+  if (viewMode === "month") {
+    return { start: startOfMonth(anchor), end: endOfMonth(anchor) };
+  }
+  if (viewMode === "day") {
+    return { start: startOfDay(anchor), end: endOfDay(anchor) };
+  }
+  return {
+    start: startOfWeek(anchor, { weekStartsOn: 1 }),
+    end: endOfWeek(anchor, { weekStartsOn: 1 }),
+  };
+}
+
 function buildScheduleEvents(
   data: AppointmentWithRelations[] | null | undefined,
 ) {
@@ -61,14 +84,10 @@ function buildScheduleEvents(
 
 function getInitialCalendarConfig() {
   const { weekAnchor, employeeId, viewMode } = useCalendarStore.getState();
-  const rangeStart =
-    viewMode === "month"
-      ? startOfMonth(weekAnchor)
-      : startOfWeek(weekAnchor, { weekStartsOn: 1 });
-  const rangeEnd =
-    viewMode === "month"
-      ? endOfMonth(weekAnchor)
-      : endOfWeek(weekAnchor, { weekStartsOn: 1 });
+  const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
+    viewMode,
+    weekAnchor,
+  );
   const key = appointmentsKey(
     rangeStart.toISOString(),
     rangeEnd.toISOString(),
@@ -84,7 +103,7 @@ function getInitialCalendarConfig() {
   };
 }
 
-export function useScheduleXCalendar() {
+export function useScheduleXCalendar(gridHeight: number) {
   const router = useRouter();
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
   const viewMode = useCalendarStore((state) => state.viewMode);
@@ -92,14 +111,10 @@ export function useScheduleXCalendar() {
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
   const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
 
-  const rangeStart =
-    viewMode === "month"
-      ? startOfMonth(weekAnchor)
-      : startOfWeek(weekAnchor, { weekStartsOn: 1 });
-  const rangeEnd =
-    viewMode === "month"
-      ? endOfMonth(weekAnchor)
-      : endOfWeek(weekAnchor, { weekStartsOn: 1 });
+  const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
+    viewMode,
+    weekAnchor,
+  );
 
   const appointments = useAppointments(
     { start: rangeStart, end: rangeEnd },
@@ -142,15 +157,24 @@ export function useScheduleXCalendar() {
     }
   }
 
+  function viewNameFor(mode: CalendarViewMode) {
+    if (mode === "month") return monthView.name;
+    return weekView.name;
+  }
+
+  function nDaysFor(mode: CalendarViewMode) {
+    return mode === "day" ? 1 : 7;
+  }
+
   const calendarApp = useNextCalendarApp({
     views: [weekView, monthView],
-    defaultView:
-      initialConfig.viewMode === "month" ? monthView.name : weekView.name,
+    defaultView: viewNameFor(initialConfig.viewMode),
     locale: "es-ES",
     firstDayOfWeek: 1,
     isResponsive: false,
     weekOptions: {
-      nDays: 7,
+      nDays: nDaysFor(initialConfig.viewMode),
+      gridHeight,
     },
     selectedDate: initialConfig.selectedDate,
     dayBoundaries: {
@@ -186,11 +210,14 @@ export function useScheduleXCalendar() {
   }, [eventsService, scheduleEvents]);
 
   useEffect(() => {
+    if (!calendarApp) return;
     pushVisibleRange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [calendarApp]);
 
   useEffect(() => {
+    if (!calendarApp) return;
+
     const nextDate = toPlainDate(weekAnchor).toString();
     if (nextDate === syncedWeekAnchorRef.current) {
       return;
@@ -200,15 +227,32 @@ export function useScheduleXCalendar() {
     calendarControls.setDate(toPlainDate(weekAnchor));
     pushVisibleRange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarControls, weekAnchor]);
+  }, [calendarApp, calendarControls, weekAnchor]);
 
   useEffect(() => {
-    calendarControls.setView(
-      viewMode === "month" ? monthView.name : weekView.name,
-    );
+    if (!calendarApp) return;
+
+    if (viewMode === "month") {
+      calendarControls.setView(monthView.name);
+      pushVisibleRange();
+      return;
+    }
+
+    calendarControls.setView(weekView.name);
+    calendarControls.setWeekOptions({
+      nDays: nDaysFor(viewMode),
+      gridHeight,
+    });
     pushVisibleRange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendarControls, monthView.name, viewMode, weekView.name]);
+  }, [
+    calendarApp,
+    calendarControls,
+    gridHeight,
+    monthView.name,
+    viewMode,
+    weekView.name,
+  ]);
 
   return {
     calendarApp,

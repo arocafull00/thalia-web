@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 
+import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import type { MobileCardColumn } from "@/components/ui/mobile-card-view";
 import {
   appointmentStatusLabel,
@@ -21,6 +22,7 @@ import type {
   InventoryItem,
   Patient,
   Transaction,
+  TreatmentWithInventory,
 } from "@/types/database.types";
 
 function getTreatmentName(appointment: AppointmentWithRelations) {
@@ -168,6 +170,66 @@ export const inventoryMobileColumns: MobileCardColumn<InventoryItem>[] = [
     },
   },
 ];
+
+export const treatmentsMobileColumns: MobileCardColumn<TreatmentWithInventory>[] =
+  [
+    {
+      key: "name",
+      label: "Tratamiento",
+      priority: "primary",
+      render: (treatment) => (
+        <span className="flex items-center gap-2">
+          <span
+            className={`inline-block size-3 shrink-0 rounded-full border border-border ${treatment.color ? "" : "bg-border"}`}
+            style={
+              treatment.color ? { backgroundColor: treatment.color } : undefined
+            }
+            aria-hidden="true"
+          />
+          <span className="font-medium text-ink">{treatment.name}</span>
+        </span>
+      ),
+    },
+    {
+      key: "price",
+      label: "Precio",
+      priority: "primary",
+      render: (treatment) =>
+        treatment.price != null ? (
+          <span className="font-medium tabular-nums text-ink">
+            {formatCurrency(treatment.price)}
+          </span>
+        ) : (
+          <span className="text-ink-secondary">-</span>
+        ),
+    },
+    {
+      key: "category",
+      label: "Categoría",
+      priority: "secondary",
+      render: (treatment) => treatment.category ?? "-",
+    },
+    {
+      key: "duration_minutes",
+      label: "Duración",
+      priority: "secondary",
+      render: (treatment) =>
+        `${treatment.duration_minutes ?? 30} ${TREATMENTS_COPY.row.duration}`,
+    },
+    {
+      key: "materials",
+      label: "Materiales",
+      priority: "secondary",
+      render: (treatment) => {
+        const materialCount = treatment.treatment_inventory_items.length;
+        if (materialCount > 0) {
+          return `${materialCount} ${TREATMENTS_COPY.row.materials}`;
+        }
+
+        return TREATMENTS_COPY.row.noMaterials;
+      },
+    },
+  ];
 
 export const transactionsMobileColumns: MobileCardColumn<Transaction>[] = [
   {

@@ -60,15 +60,11 @@ export default function TreatmentsPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <div className="flex items-center justify-end gap-4">
-          <div className="hidden lg:block">
-            <ActionButton
-              title={TREATMENTS_COPY.page.add}
-              onClick={page.openCreateDialog}
-            />
-          </div>
-        </div>
+      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <ActionButton
+          title={TREATMENTS_COPY.page.add}
+          onClick={page.openCreateDialog}
+        />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>

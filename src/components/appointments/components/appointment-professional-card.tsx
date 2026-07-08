@@ -1,4 +1,3 @@
-import { Stethoscope } from "lucide-react";
 import Link from "next/link";
 
 import AppointmentDetailCard from "@/components/appointments/components/appointment-detail-card";
@@ -16,10 +15,7 @@ export default function AppointmentProfessionalCard({
   const name = employee?.full_name ?? "-";
 
   return (
-    <AppointmentDetailCard
-      icon={Stethoscope}
-      title={APPOINTMENT_DETAIL_COPY.employee}
-    >
+    <AppointmentDetailCard title={APPOINTMENT_DETAIL_COPY.employee}>
       <div className="flex items-start gap-4">
         <AppointmentPersonAvatar
           name={name}

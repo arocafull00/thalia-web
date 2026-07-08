@@ -3,11 +3,15 @@
 import { Users } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import CalendarViewModeToggle from "@/components/calendar/components/calendar-view-mode-toggle";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import type { CalendarViewMode } from "@/stores/calendar-store";
+
+const MOBILE_VIEW_MODES: CalendarViewMode[] = ["day", "month"];
 
 export type CalendarFilters = {
   employeeId: string | null;
@@ -31,8 +35,10 @@ export default function CalendarFiltersSheet({
   onDismiss,
   onToday,
 }: CalendarFiltersSheetProps) {
+  const isMobile = useIsMobile();
   const employees = useEmployees();
   const [pending, setPending] = useState<CalendarFilters>(filters);
+  const viewModes = isMobile ? MOBILE_VIEW_MODES : undefined;
 
   const activeEmployees = useMemo(
     () =>
@@ -83,34 +89,12 @@ export default function CalendarFiltersSheet({
         <p className="text-sm font-medium text-ink">
           {CALENDAR_COPY.filters.view}
         </p>
-        <div className="flex rounded-full border border-border bg-canvas p-0.5">
-          <button
-            type="button"
-            onClick={() =>
-              setPending((prev) => ({ ...prev, viewMode: "week" }))
-            }
-            className={`min-h-11 flex-1 rounded-full px-3 text-xs font-medium transition motion-reduce:transition-none ${
-              pending.viewMode === "week"
-                ? "bg-primary text-on-primary"
-                : "text-ink-secondary hover:text-ink"
-            }`}
-          >
-            {CALENDAR_COPY.toolbar.viewWeek}
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              setPending((prev) => ({ ...prev, viewMode: "month" }))
-            }
-            className={`min-h-11 flex-1 rounded-full px-3 text-xs font-medium transition motion-reduce:transition-none ${
-              pending.viewMode === "month"
-                ? "bg-primary text-on-primary"
-                : "text-ink-secondary hover:text-ink"
-            }`}
-          >
-            {CALENDAR_COPY.toolbar.viewMonth}
-          </button>
-        </div>
+        <CalendarViewModeToggle
+          viewMode={pending.viewMode}
+          modes={viewModes}
+          fullWidth
+          onChange={(viewMode) => setPending((prev) => ({ ...prev, viewMode }))}
+        />
       </div>
 
       <button

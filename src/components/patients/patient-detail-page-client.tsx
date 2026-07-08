@@ -1,7 +1,5 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
@@ -10,6 +8,7 @@ import PatientDetailActionsMenu from "@/components/patients/components/patient-d
 import PatientEditDialog from "@/components/patients/components/patient-edit-dialog";
 import PatientProfileSidebar from "@/components/patients/components/patient-profile-sidebar";
 import PatientTimeline from "@/components/patients/components/patient-timeline";
+import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
@@ -64,13 +63,7 @@ export default function PatientDetailPageClient({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-4 lg:px-8">
-        <Link
-          href="/patients"
-          className="inline-flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          {PATIENT_DETAIL_COPY.back}
-        </Link>
+        <BackButton fallbackHref="/patients" label={PATIENT_DETAIL_COPY.back} />
         <PatientDetailActionsMenu
           patient={patient}
           onEdit={() => setEditDialogOpen(true)}

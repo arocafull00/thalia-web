@@ -1,16 +1,20 @@
 "use client";
 
-import { ScheduleXCalendar as ScheduleXCalendarView } from "@schedule-x/react";
 import "@schedule-x/theme-default/dist/index.css";
 
-import { useScheduleXCalendar } from "@/components/calendar/hooks/use-schedule-x-calendar";
+import { ScheduleXCalendarInner } from "@/components/calendar/components/schedule-x-calendar-inner";
+import { DAY_HEADER_HEIGHT } from "@/lib/calendar-grid";
+import { useElementHeight } from "@/lib/hooks/use-element-height";
 
 export default function ScheduleXCalendar() {
-  const { calendarApp, customComponents } = useScheduleXCalendar();
+  const { ref, height } = useElementHeight<HTMLDivElement>();
+  const gridHeight = height ? Math.max(height - DAY_HEADER_HEIGHT, 300) : null;
 
   return (
-    <div className="sx-react-calendar-wrapper h-full w-full">
-      <ScheduleXCalendarView calendarApp={calendarApp} customComponents={customComponents} />
+    <div ref={ref} className="sx-react-calendar-wrapper h-full w-full">
+      {gridHeight ? (
+        <ScheduleXCalendarInner key={gridHeight} gridHeight={gridHeight} />
+      ) : null}
     </div>
   );
 }

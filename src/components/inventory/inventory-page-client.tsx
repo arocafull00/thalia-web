@@ -18,6 +18,7 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import { Stat } from "@/components/ui/primitives/stat";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -76,15 +77,11 @@ export default function InventoryPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <div className="flex items-center justify-end gap-4">
-          <div className="hidden lg:block">
-            <ActionButton
-              title="Anadir material"
-              onClick={() => setDialogOpen(true)}
-            />
-          </div>
-        </div>
+      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <ActionButton
+          title="Anadir material"
+          onClick={() => setDialogOpen(true)}
+        />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
@@ -100,36 +97,22 @@ export default function InventoryPageClient() {
           />
         </PageStickyFiltersSection>
         <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              {
-                label: INVENTORY_COPY.summary.critical,
-                value: summary.critical,
-                tone: "text-danger",
-              },
-              {
-                label: INVENTORY_COPY.summary.low,
-                value: summary.low,
-                tone: "text-warning",
-              },
-              {
-                label: INVENTORY_COPY.summary.optimal,
-                value: summary.optimal,
-                tone: "text-success",
-              },
-            ].map((entry) => (
-              <div
-                key={entry.label}
-                className="rounded-2xl border border-border bg-surface p-5"
-              >
-                <p className="text-xs uppercase tracking-wide text-ink-muted">
-                  {entry.label}
-                </p>
-                <p className={`mt-2 text-3xl font-medium ${entry.tone}`}>
-                  {entry.value}
-                </p>
-              </div>
-            ))}
+          <div className="grid w-full px-3 grid-cols-3 divide-x divide-border-subtle">
+            <Stat
+              label={INVENTORY_COPY.summary.critical}
+              value={summary.critical}
+              tone="danger"
+            />
+            <Stat
+              label={INVENTORY_COPY.summary.low}
+              value={summary.low}
+              tone="warning"
+            />
+            <Stat
+              label={INVENTORY_COPY.summary.optimal}
+              value={summary.optimal}
+              tone="success"
+            />
           </div>
           {inventory.isLoading ? <SkeletonList /> : null}
           {inventory.error ? (

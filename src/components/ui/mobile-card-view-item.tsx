@@ -88,7 +88,7 @@ export default function MobileCardViewItem<T>({
                     event.stopPropagation();
                     action.onClick(row);
                   }}
-                  className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-border text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+                  className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
                 >
                   {action.icon}
                 </button>

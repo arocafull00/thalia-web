@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type CalendarViewMode = "week" | "month";
+export type CalendarViewMode = "day" | "week" | "month";
 
 type CalendarStore = {
   weekAnchor: Date;

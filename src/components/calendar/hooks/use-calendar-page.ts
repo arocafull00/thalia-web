@@ -1,6 +1,6 @@
 "use client";
 
-import { addMonths, addWeeks, format } from "date-fns";
+import { addDays, addMonths, addWeeks, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useEffect } from "react";
 
@@ -11,6 +11,11 @@ import { useCalendarStore } from "@/stores/calendar-store";
 function formatVisibleRangeLabel(startIso: string, endIso: string) {
   const start = new Date(`${startIso}T00:00:00`);
   const end = new Date(`${endIso}T00:00:00`);
+
+  if (startIso === endIso) {
+    return format(start, "EEEE, d 'de' MMMM", { locale: es });
+  }
+
   const sameMonth =
     start.getMonth() === end.getMonth() &&
     start.getFullYear() === end.getFullYear();
@@ -58,12 +63,20 @@ export function useCalendarPage() {
       setWeekAnchor(addMonths(weekAnchor, -1));
       return;
     }
+    if (viewMode === "day") {
+      setWeekAnchor(addDays(weekAnchor, -1));
+      return;
+    }
     setWeekAnchor(addWeeks(weekAnchor, -1));
   };
 
   const onNext = () => {
     if (viewMode === "month") {
       setWeekAnchor(addMonths(weekAnchor, 1));
+      return;
+    }
+    if (viewMode === "day") {
+      setWeekAnchor(addDays(weekAnchor, 1));
       return;
     }
     setWeekAnchor(addWeeks(weekAnchor, 1));

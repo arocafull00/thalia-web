@@ -68,7 +68,7 @@ export default function SettingsPageClient() {
       />
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:grid lg:grid-cols-[20%_1fr] lg:overflow-visible">
-        <div className="order-1 px-4 py-6 lg:order-2 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
+        <div className="order-2 px-4 py-6 lg:order-2 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
           <div className="flex flex-col [&>section:not(:last-child)]:mb-8 [&>section:not(:last-child)]:border-b [&>section:not(:last-child)]:border-border-subtle [&>section:not(:last-child)]:pb-8">
             <SettingsAccountPanel
               onChangePassword={() => void handleChangePassword()}

@@ -1,19 +1,23 @@
 import {
   addDays,
   differenceInMinutes,
+  eachDayOfInterval,
   endOfDay,
+  endOfMonth,
+  endOfWeek,
   format,
   isSameDay,
   isToday,
   setHours,
   setMinutes,
   startOfDay,
+  startOfMonth,
   startOfWeek,
 } from "date-fns";
 import { es } from "date-fns/locale";
 
 export const CALENDAR_START_HOUR = 8;
-export const CALENDAR_END_HOUR = 20;
+export const CALENDAR_END_HOUR = 22;
 export const SLOT_MINUTES = 30;
 export const SLOT_HEIGHT = 28;
 export const HOUR_HEIGHT = SLOT_HEIGHT * 2;
@@ -40,6 +44,26 @@ export function getWeekRange(anchorDate: Date): { start: Date; end: Date } {
 export function formatMonthLabel(anchorDate: Date): string {
   return format(anchorDate, "MMMM yyyy", { locale: es }).replace(/^\w/, (c) =>
     c.toUpperCase(),
+  );
+}
+
+export function formatFullDayLabel(day: Date): string {
+  const label = format(day, "EEEE, d 'de' MMMM", { locale: es });
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+export function getMonthGridDays(anchorDate: Date): Date[] {
+  const monthStart = startOfMonth(anchorDate);
+  const monthEnd = endOfMonth(anchorDate);
+  const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  return eachDayOfInterval({ start: gridStart, end: gridEnd });
+}
+
+export function getAgendaHours(): number[] {
+  return Array.from(
+    { length: CALENDAR_END_HOUR - CALENDAR_START_HOUR },
+    (_, index) => CALENDAR_START_HOUR + index,
   );
 }
 

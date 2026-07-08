@@ -1,7 +1,5 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
@@ -10,6 +8,7 @@ import EmployeeEditDialog from "@/components/employees/components/employee-edit-
 import EmployeeProfileSidebar from "@/components/employees/components/employee-profile-sidebar";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/employee-status-confirm-dialog";
 import EmployeeTimeline from "@/components/employees/components/employee-timeline";
+import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
@@ -93,13 +92,10 @@ export default function EmployeeDetailPageClient({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-4 lg:px-8">
-        <Link
-          href="/employees"
-          className="inline-flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          {EMPLOYEE_DETAIL_COPY.back}
-        </Link>
+        <BackButton
+          fallbackHref="/employees"
+          label={EMPLOYEE_DETAIL_COPY.back}
+        />
         <EmployeeDetailActionsMenu
           employee={employee}
           onEdit={() => setEditDialogOpen(true)}

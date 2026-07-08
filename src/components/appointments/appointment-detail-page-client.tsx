@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Pencil } from "lucide-react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentDetailSidebar from "@/components/appointments/components/appointment-detail-sidebar";
@@ -11,6 +10,8 @@ import AppointmentPatientCard from "@/components/appointments/components/appoint
 import AppointmentProfessionalCard from "@/components/appointments/components/appointment-professional-card";
 import AppointmentTreatmentsSection from "@/components/appointments/components/appointment-treatments-section";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
+import { BackButton } from "@/components/ui/primitives/back-button";
+import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
@@ -65,7 +66,10 @@ export default function AppointmentDetailPageClient({
 
   if (isLoading) {
     return (
-      <div className="space-y-6 p-8">
+      <div
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto p-8"
+        aria-busy="true"
+      >
         <SkeletonList count={4} />
       </div>
     );
@@ -73,14 +77,11 @@ export default function AppointmentDetailPageClient({
 
   if (error || !appointment) {
     return (
-      <div className="space-y-6 p-8">
-        <Link
-          href="/appointments"
-          className="inline-flex items-center gap-2 text-sm text-ink-secondary hover:text-ink"
-        >
-          <ArrowLeft size={16} />
-          {APPOINTMENT_DETAIL_COPY.back}
-        </Link>
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto space-y-6 p-8">
+        <BackButton
+          fallbackHref="/appointments"
+          label={APPOINTMENT_DETAIL_COPY.back}
+        />
         <Notice
           tone="danger"
           message={
@@ -101,32 +102,48 @@ export default function AppointmentDetailPageClient({
   );
 
   return (
-    <div className="flex flex-col gap-6 p-8">
-      <AppointmentHeader
-        appointment={appointment}
-        canChangeStatus={canChangeStatus}
-        updatingStatus={updatingStatus}
-        onEdit={openEditDialog}
-        onMarkCompleted={() => {
-          void handleStatusChange("completed");
-        }}
-        onCancel={openCancelConfirm}
-      />
-
-      <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
-        <div className="flex flex-col gap-6">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <AppointmentPatientCard patient={appointment.patients} />
-            <AppointmentProfessionalCard employee={appointment.employees} />
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
+        <div className="grid gap-8 xl:grid-cols-[1fr_320px]">
+          <div className="flex flex-col divide-y divide-border-subtle">
+            <div className="pb-6">
+              <AppointmentHeader
+                appointment={appointment}
+                canChangeStatus={canChangeStatus}
+                updatingStatus={updatingStatus}
+                onEdit={openEditDialog}
+                onMarkCompleted={() => {
+                  void handleStatusChange("completed");
+                }}
+                onCancel={openCancelConfirm}
+              />
+            </div>
+            <div className="grid gap-8 py-6 sm:grid-cols-2">
+              <AppointmentPatientCard patient={appointment.patients} />
+              <AppointmentProfessionalCard employee={appointment.employees} />
+            </div>
+            <div className="py-6">
+              <AppointmentTreatmentsSection
+                treatments={treatments}
+                totalDurationMinutes={totalDurationMinutes}
+              />
+            </div>
+            <div className="pt-6">
+              <AppointmentMaterialsSection appointment={appointment} />
+            </div>
           </div>
-          <AppointmentTreatmentsSection
-            treatments={treatments}
-            totalDurationMinutes={totalDurationMinutes}
-          />
-          <AppointmentMaterialsSection appointment={appointment} />
+
+          <div className="hidden xl:flex xl:flex-col xl:gap-6">
+            <AppointmentDetailSidebar appointment={appointment} />
+          </div>
         </div>
-        <AppointmentDetailSidebar appointment={appointment} />
       </div>
+
+      <MobileFab
+        label={APPOINTMENT_DETAIL_COPY.edit}
+        icon={Pencil}
+        onClick={openEditDialog}
+      />
 
       <AppointmentCreateDialog
         open={dialogOpen}

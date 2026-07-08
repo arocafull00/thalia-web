@@ -12,6 +12,7 @@ export const CALENDAR_COPY = {
     nextWeek: "Semana siguiente",
     previousPeriod: "Período anterior",
     nextPeriod: "Período siguiente",
+    viewDay: "Día",
     viewWeek: "Semana",
     viewMonth: "Mes",
     filters: "Filtros",
@@ -21,5 +22,16 @@ export const CALENDAR_COPY = {
   event: {
     defaultPatient: "Paciente",
     defaultTreatment: "Cita",
+  },
+  month: {
+    weekdays: ["L", "M", "X", "J", "V", "S", "D"],
+  },
+  agenda: {
+    empty: "No hay citas este día",
+  },
+  mobileMonth: {
+    appointmentsTitle: (day: string) => `Citas del ${day}`,
+    viewDay: "Ver día",
+    empty: "No hay citas aún",
   },
 } as const;

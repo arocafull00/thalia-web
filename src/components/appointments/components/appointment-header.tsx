@@ -1,20 +1,13 @@
 "use client";
 
 import * as Popover from "@radix-ui/react-popover";
-import {
-  ArrowLeft,
-  Calendar,
-  CheckCircle,
-  Clock,
-  MoreVertical,
-  Phone,
-} from "lucide-react";
-import Link from "next/link";
+import { Calendar, CheckCircle, Clock, MoreVertical } from "lucide-react";
 import { useState } from "react";
 
 import AppointmentPersonAvatar from "@/components/appointments/components/appointment-person-avatar";
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import { BackButton } from "@/components/ui/primitives/back-button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import {
   formatAppointmentDetailDay,
@@ -42,23 +35,18 @@ export default function AppointmentHeader({
 }: AppointmentHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const patientName = appointment.patients?.full_name ?? "Paciente";
-  const patientPhone = appointment.patients?.phone ?? null;
-  const hasMenuActions = Boolean(patientPhone) || canChangeStatus;
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div className="space-y-4">
-        <Link
-          href="/appointments"
-          className="inline-flex items-center gap-2 text-sm text-ink-secondary hover:text-ink"
-        >
-          <ArrowLeft size={16} aria-hidden="true" />
-          {APPOINTMENT_DETAIL_COPY.back}
-        </Link>
+        <BackButton
+          fallbackHref="/appointments"
+          label={APPOINTMENT_DETAIL_COPY.back}
+        />
         <div className="flex flex-wrap items-start gap-4">
           <AppointmentPersonAvatar
             name={patientName}
@@ -66,7 +54,7 @@ export default function AppointmentHeader({
           />
           <div>
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-medium tracking-tight text-ink">
+              <h1 className="text-2xl font-medium tracking-tight text-ink lg:text-3xl">
                 {patientName}
               </h1>
               <AppointmentStatusBadge status={appointment.status} />
@@ -89,9 +77,9 @@ export default function AppointmentHeader({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="hidden shrink-0 items-center gap-2 lg:flex">
         <ActionButton title={APPOINTMENT_DETAIL_COPY.edit} onClick={onEdit} />
-        {hasMenuActions ? (
+        {canChangeStatus ? (
           <Popover.Root open={menuOpen} onOpenChange={setMenuOpen}>
             <Popover.Trigger asChild>
               <button
@@ -108,49 +96,32 @@ export default function AppointmentHeader({
                 sideOffset={8}
                 className="z-100 min-w-52 rounded-2xl border border-border bg-surface p-2 shadow-lg"
               >
-                {patientPhone ? (
-                  <a
-                    href={`tel:${patientPhone}`}
-                    onClick={closeMenu}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-ink hover:bg-canvas"
-                  >
-                    <Phone
-                      className="size-4 text-ink-muted"
-                      aria-hidden="true"
-                    />
-                    {APPOINTMENT_DETAIL_COPY.callPatient}
-                  </a>
-                ) : null}
-                {canChangeStatus ? (
-                  <>
-                    <button
-                      type="button"
-                      disabled={updatingStatus}
-                      onClick={() => {
-                        closeMenu();
-                        onMarkCompleted();
-                      }}
-                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-ink hover:bg-canvas disabled:opacity-50"
-                    >
-                      <CheckCircle
-                        className="size-4 text-ink-muted"
-                        aria-hidden="true"
-                      />
-                      {APPOINTMENT_DETAIL_COPY.markCompleted}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={updatingStatus}
-                      onClick={() => {
-                        closeMenu();
-                        onCancel();
-                      }}
-                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-danger hover:bg-danger-subtle disabled:opacity-50"
-                    >
-                      {APPOINTMENT_DETAIL_COPY.cancel}
-                    </button>
-                  </>
-                ) : null}
+                <button
+                  type="button"
+                  disabled={updatingStatus}
+                  onClick={() => {
+                    closeMenu();
+                    onMarkCompleted();
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-ink hover:bg-canvas disabled:opacity-50"
+                >
+                  <CheckCircle
+                    className="size-4 text-ink-muted"
+                    aria-hidden="true"
+                  />
+                  {APPOINTMENT_DETAIL_COPY.markCompleted}
+                </button>
+                <button
+                  type="button"
+                  disabled={updatingStatus}
+                  onClick={() => {
+                    closeMenu();
+                    onCancel();
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-danger hover:bg-danger-subtle disabled:opacity-50"
+                >
+                  {APPOINTMENT_DETAIL_COPY.cancel}
+                </button>
               </Popover.Content>
             </Popover.Portal>
           </Popover.Root>

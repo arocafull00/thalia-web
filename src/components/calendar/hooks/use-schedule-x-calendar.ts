@@ -39,6 +39,11 @@ function zonedDateTimeToDate(dateTime: Temporal.ZonedDateTime) {
   return new Date(dateTime.epochMilliseconds);
 }
 
+function toDateOnlyIso(value: unknown) {
+  const raw = String(value);
+  return raw.split("T")[0].split("[")[0];
+}
+
 function buildScheduleEvents(
   data: AppointmentWithRelations[] | null | undefined,
 ) {
@@ -85,6 +90,7 @@ export function useScheduleXCalendar() {
   const viewMode = useCalendarStore((state) => state.viewMode);
   const employeeId = useCalendarStore((state) => state.employeeId);
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
+  const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
 
   const rangeStart =
     viewMode === "month"
@@ -116,13 +122,25 @@ export function useScheduleXCalendar() {
 
   const routerRef = useRef(router);
   const openCreateDialogRef = useRef(openCreateDialog);
+  const setVisibleRangeRef = useRef(setVisibleRange);
   const hasSyncedEventsRef = useRef(false);
   const syncedWeekAnchorRef = useRef(initialConfig.weekAnchor);
 
   useEffect(() => {
     routerRef.current = router;
     openCreateDialogRef.current = openCreateDialog;
+    setVisibleRangeRef.current = setVisibleRange;
   });
+
+  function pushVisibleRange() {
+    const range = calendarControls.getRange();
+    if (range) {
+      setVisibleRangeRef.current(
+        toDateOnlyIso(range.start),
+        toDateOnlyIso(range.end),
+      );
+    }
+  }
 
   const calendarApp = useNextCalendarApp({
     views: [weekView, monthView],
@@ -130,6 +148,10 @@ export function useScheduleXCalendar() {
       initialConfig.viewMode === "month" ? monthView.name : weekView.name,
     locale: "es-ES",
     firstDayOfWeek: 1,
+    isResponsive: false,
+    weekOptions: {
+      nDays: 7,
+    },
     selectedDate: initialConfig.selectedDate,
     dayBoundaries: {
       start: `${String(CALENDAR_START_HOUR).padStart(2, "0")}:00`,
@@ -148,6 +170,9 @@ export function useScheduleXCalendar() {
       onClickDate: (dateString) => {
         openCreateDialogRef.current(new Date(dateString));
       },
+      onRangeUpdate: ({ start, end }) => {
+        setVisibleRangeRef.current(toDateOnlyIso(start), toDateOnlyIso(end));
+      },
     },
   });
 
@@ -161,6 +186,11 @@ export function useScheduleXCalendar() {
   }, [eventsService, scheduleEvents]);
 
   useEffect(() => {
+    pushVisibleRange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const nextDate = toPlainDate(weekAnchor).toString();
     if (nextDate === syncedWeekAnchorRef.current) {
       return;
@@ -168,12 +198,16 @@ export function useScheduleXCalendar() {
 
     syncedWeekAnchorRef.current = nextDate;
     calendarControls.setDate(toPlainDate(weekAnchor));
+    pushVisibleRange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calendarControls, weekAnchor]);
 
   useEffect(() => {
     calendarControls.setView(
       viewMode === "month" ? monthView.name : weekView.name,
     );
+    pushVisibleRange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calendarControls, monthView.name, viewMode, weekView.name]);
 
   return {

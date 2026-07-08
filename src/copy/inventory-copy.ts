@@ -1,7 +1,6 @@
 export const INVENTORY_COPY = {
   page: {
     title: "Inventario de Materiales",
-    subtitle: "Gestión centralizada de insumos estéticos y quirúrgicos.",
     loadError: "No se pudo cargar el inventario.",
   },
   filters: {

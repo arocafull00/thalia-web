@@ -8,6 +8,7 @@ type SettingsProfileSidebarProps = {
   canViewClinicRequests: boolean;
   displayUri: string | null;
   isAdmin: boolean;
+  onEdit: () => void;
   onPickAvatar: () => void;
   pendingRequestsCount: number;
   profile: Employee;
@@ -20,6 +21,7 @@ export default function SettingsProfileSidebar({
   canViewClinicRequests,
   displayUri,
   isAdmin,
+  onEdit,
   onPickAvatar,
   pendingRequestsCount,
   profile,
@@ -27,7 +29,7 @@ export default function SettingsProfileSidebar({
   userEmail,
 }: SettingsProfileSidebarProps) {
   return (
-    <aside className="order-2 flex h-full min-h-0 flex-col border-t border-border-subtle lg:order-1 lg:border-t-0 lg:border-r">
+    <aside className="order-2 flex flex-col border-t border-border-subtle lg:order-1 lg:h-full lg:min-h-0 lg:border-t-0 lg:border-r">
       <SettingsProfileHeader
         displayUri={displayUri}
         isAdmin={isAdmin}
@@ -39,7 +41,7 @@ export default function SettingsProfileSidebar({
 
       <div className="border-t border-border-subtle" />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
         <SettingsProfileSummary
           activeEmployeesCount={activeEmployeesCount}
           canViewClinicRequests={canViewClinicRequests}
@@ -48,8 +50,8 @@ export default function SettingsProfileSidebar({
         />
       </div>
 
-      <div className="mt-auto shrink-0 border-t border-border-subtle">
-        <SettingsProfileQuickActions />
+      <div className="hidden border-t border-border-subtle lg:mt-auto lg:block lg:shrink-0">
+        <SettingsProfileQuickActions onEdit={onEdit} />
       </div>
     </aside>
   );

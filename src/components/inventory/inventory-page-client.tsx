@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import InventoryFilters from "@/components/inventory/components/inventory-filters";
+import InventoryFiltersSheet from "@/components/inventory/components/inventory-filters-sheet";
 import InventoryItemCreateForm from "@/components/inventory/components/inventory-item-create-form";
 import InventoryTable from "@/components/inventory/components/inventory-table";
 import AppDialog from "@/components/ui/app-dialog";
@@ -11,41 +13,41 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
-import FilterPills from "@/components/ui/filter-pills";
+import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
+import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useInventoryItemCreateDialog } from "@/lib/hooks/use-inventory-item-create-dialog";
 import { useInventoryPage } from "@/lib/hooks/use-inventory-page";
-import { useSearch } from "@/lib/hooks/use-search";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 
-const INVENTORY_FILTER_DEFAULTS = { category: "", stock: "" };
-
-const stockOptions = [
-  { label: INVENTORY_COPY.filters.all, value: "" },
-  { label: INVENTORY_COPY.filters.critical, value: "critical" },
-  { label: INVENTORY_COPY.filters.low, value: "low" },
-  { label: INVENTORY_COPY.filters.optimal, value: "ok" },
-];
+const INVENTORY_FILTER_DEFAULTS = { category: "", q: "", stock: "" };
 
 export default function InventoryPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const debouncedSearch = useSearch();
-  const { filters, setFilter } = useUrlFilters(INVENTORY_FILTER_DEFAULTS);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetKey, setSheetKey] = useState(0);
+  const { filters, setFilter, setFilters } = useUrlFilters(
+    INVENTORY_FILTER_DEFAULTS,
+  );
+  const { searchQuery, handleSearchChange } = useFilterSearch(
+    filters.q,
+    setFilter,
+  );
   const dialog = useInventoryItemCreateDialog(() => setDialogOpen(false));
 
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
-      search: debouncedSearch,
+      search: searchQuery,
       stock: filters.stock,
     }),
-    [debouncedSearch, filters.category, filters.stock],
+    [filters.category, filters.stock, searchQuery],
   );
 
   const { categories, filteredItems, inventory, summary } =
@@ -53,10 +55,9 @@ export default function InventoryPageClient() {
 
   const categoryOptions = useMemo(
     () =>
-      categories.map((entry) => ({
-        label: entry,
-        value: entry === INVENTORY_COPY.filters.all ? "" : entry,
-      })),
+      categories
+        .filter((entry) => entry !== INVENTORY_COPY.filters.all)
+        .map((entry) => ({ label: entry, value: entry })),
     [categories],
   );
 
@@ -68,78 +69,79 @@ export default function InventoryPageClient() {
     setDialogOpen(nextOpen);
   };
 
+  const handleOpenFiltersSheet = () => {
+    setSheetKey((key) => key + 1);
+    setSheetOpen(true);
+  };
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <div className="flex items-center justify-between gap-4">
-          <PageHeader
-            subtitle={INVENTORY_COPY.page.subtitle}
-            title={INVENTORY_COPY.page.title}
-          />
-          <ActionButton
-            title="Anadir material"
-            onClick={() => setDialogOpen(true)}
-          />
-        </div>
-        <div className="mt-3 space-y-2">
-          {categoryOptions.length > 1 ? (
-            <FilterPills
-              options={categoryOptions}
-              active={filters.category}
-              onChange={(value) => setFilter("category", value)}
-              ariaLabel={INVENTORY_COPY.filters.category}
+        <div className="flex items-center justify-end gap-4">
+          <div className="hidden lg:block">
+            <ActionButton
+              title="Anadir material"
+              onClick={() => setDialogOpen(true)}
             />
-          ) : null}
-          <FilterPills
-            options={stockOptions}
-            active={filters.stock}
-            onChange={(value) => setFilter("stock", value)}
-            ariaLabel={INVENTORY_COPY.filters.stock}
-          />
+          </div>
         </div>
       </div>
-      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4 lg:px-8 lg:py-6">
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            {
-              label: INVENTORY_COPY.summary.critical,
-              value: summary.critical,
-              tone: "text-danger",
-            },
-            {
-              label: INVENTORY_COPY.summary.low,
-              value: summary.low,
-              tone: "text-warning",
-            },
-            {
-              label: INVENTORY_COPY.summary.optimal,
-              value: summary.optimal,
-              tone: "text-success",
-            },
-          ].map((entry) => (
-            <div
-              key={entry.label}
-              className="rounded-2xl border border-border bg-surface p-5"
-            >
-              <p className="text-xs uppercase tracking-wide text-ink-muted">
-                {entry.label}
-              </p>
-              <p className={`mt-2 text-3xl font-medium ${entry.tone}`}>
-                {entry.value}
-              </p>
-            </div>
-          ))}
-        </div>
-        {inventory.isLoading ? <SkeletonList /> : null}
-        {inventory.error ? (
-          <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
-        ) : null}
-        {!inventory.isLoading ? (
-          <InventoryTable
-            items={filteredItems}
-            onRowClick={(id) => router.push(`/inventory/${id}`)}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <PageStickyFiltersSection>
+          <InventoryFilters
+            category={filters.category}
+            categoryOptions={categoryOptions}
+            search={filters.q}
+            stock={filters.stock}
+            onCategoryChange={(value) => setFilter("category", value)}
+            onSearchChange={handleSearchChange}
+            onStockChange={(value) => setFilter("stock", value)}
+            onOpenSheet={handleOpenFiltersSheet}
           />
-        ) : null}
+        </PageStickyFiltersSection>
+        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              {
+                label: INVENTORY_COPY.summary.critical,
+                value: summary.critical,
+                tone: "text-danger",
+              },
+              {
+                label: INVENTORY_COPY.summary.low,
+                value: summary.low,
+                tone: "text-warning",
+              },
+              {
+                label: INVENTORY_COPY.summary.optimal,
+                value: summary.optimal,
+                tone: "text-success",
+              },
+            ].map((entry) => (
+              <div
+                key={entry.label}
+                className="rounded-2xl border border-border bg-surface p-5"
+              >
+                <p className="text-xs uppercase tracking-wide text-ink-muted">
+                  {entry.label}
+                </p>
+                <p className={`mt-2 text-3xl font-medium ${entry.tone}`}>
+                  {entry.value}
+                </p>
+              </div>
+            ))}
+          </div>
+          {inventory.isLoading ? <SkeletonList /> : null}
+          {inventory.error ? (
+            <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
+          ) : null}
+          {!inventory.isLoading ? (
+            <InventoryTable
+              items={filteredItems}
+              onRowClick={(id) => router.push(`/inventory/${id}`)}
+            />
+          ) : null}
+        </div>
       </div>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
@@ -175,6 +177,16 @@ export default function InventoryPageClient() {
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      <InventoryFiltersSheet
+        key={sheetKey}
+        open={sheetOpen}
+        filters={filters}
+        categoryOptions={categoryOptions}
+        onApply={(updates) => setFilters(updates)}
+        onClear={() => setFilters(INVENTORY_FILTER_DEFAULTS)}
+        onDismiss={() => setSheetOpen(false)}
+      />
+      <MobileFab label="Anadir material" onClick={() => setDialogOpen(true)} />
     </div>
   );
 }

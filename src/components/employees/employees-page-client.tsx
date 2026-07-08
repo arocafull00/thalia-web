@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import EmployeeInviteForm from "@/components/employees/components/employee-invite-form";
+import EmployeesFilters from "@/components/employees/components/employees-filters";
+import EmployeesFiltersSheet from "@/components/employees/components/employees-filters-sheet";
 import EmployeesTable from "@/components/employees/components/employees-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
@@ -11,10 +13,10 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
-import FilterPills from "@/components/ui/filter-pills";
+import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { PageHeader } from "@/components/ui/primitives/page-header";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
@@ -22,34 +24,26 @@ import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useEmployeeInviteDialog } from "@/lib/hooks/use-employee-invite-dialog";
 import { useEmployees } from "@/lib/hooks/use-employees";
-import { useSearch } from "@/lib/hooks/use-search";
+import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import type { EmployeeRole } from "@/types/database.types";
 
-const EMPLOYEE_FILTER_DEFAULTS = { role: "", status: "" };
-
-const roleOptions: Array<{ value: EmployeeRole | ""; label: string }> = [
-  { value: "", label: EMPLOYEES_COPY.roles.all },
-  { value: "admin", label: EMPLOYEES_COPY.roles.admin },
-  { value: "reception", label: EMPLOYEES_COPY.roles.reception },
-  { value: "doctor", label: EMPLOYEES_COPY.roles.doctor },
-  { value: "auxiliary", label: EMPLOYEES_COPY.roles.auxiliary },
-];
-
-const statusOptions = [
-  { label: EMPLOYEES_COPY.filters.all, value: "" },
-  { label: EMPLOYEES_COPY.filters.active, value: "active" },
-  { label: EMPLOYEES_COPY.filters.inactive, value: "inactive" },
-];
+const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "" };
 
 export default function EmployeesPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetKey, setSheetKey] = useState(0);
   const { profile } = useAuth();
   const { platformRole } = useActiveClinic();
   const employees = useEmployees();
-  const debouncedSearch = useSearch();
-  const { filters, setFilter } = useUrlFilters(EMPLOYEE_FILTER_DEFAULTS);
+  const { filters, setFilter, setFilters } = useUrlFilters(
+    EMPLOYEE_FILTER_DEFAULTS,
+  );
+  const { searchQuery, handleSearchChange } = useFilterSearch(
+    filters.q,
+    setFilter,
+  );
   const dialog = useEmployeeInviteDialog(() => setDialogOpen(false));
   const canManage =
     platformRole === "owner" ||
@@ -58,7 +52,7 @@ export default function EmployeesPageClient() {
   const employeeData = useMemo(() => employees.data ?? [], [employees.data]);
 
   const filteredEmployees = useMemo(() => {
-    const normalizedSearch = debouncedSearch.trim().toLowerCase();
+    const normalizedSearch = searchQuery.trim().toLowerCase();
 
     return employeeData.filter((employee) => {
       if (filters.role && employee.role !== filters.role) {
@@ -83,11 +77,11 @@ export default function EmployeesPageClient() {
         specialty.includes(normalizedSearch)
       );
     });
-  }, [debouncedSearch, employeeData, filters.role, filters.status]);
+  }, [employeeData, filters.role, filters.status, searchQuery]);
 
   const hasEmployees = employeeData.length > 0;
   const hasActiveFilters = Boolean(
-    debouncedSearch.trim() || filters.role || filters.status,
+    searchQuery.trim() || filters.role || filters.status,
   );
   const showEmptyState =
     !employees.isLoading &&
@@ -103,6 +97,11 @@ export default function EmployeesPageClient() {
     setDialogOpen(nextOpen);
   };
 
+  const handleOpenFiltersSheet = () => {
+    setSheetKey((key) => key + 1);
+    setSheetOpen(true);
+  };
+
   if (!canManage) {
     return (
       <div className="p-8">
@@ -114,47 +113,44 @@ export default function EmployeesPageClient() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <div className="flex items-center justify-between gap-4">
-          <PageHeader
-            subtitle={EMPLOYEES_COPY.page.subtitle(employeeData.length)}
-            title={EMPLOYEES_COPY.page.title}
-          />
-          <ActionButton
-            title="Invitar personal"
-            onClick={() => setDialogOpen(true)}
-          />
-        </div>
-        <div className="mt-3 space-y-2">
-          <FilterPills
-            options={roleOptions}
-            active={filters.role}
-            onChange={(value) => setFilter("role", value)}
-            ariaLabel={EMPLOYEES_COPY.filters.role}
-          />
-          <FilterPills
-            options={statusOptions}
-            active={filters.status}
-            onChange={(value) => setFilter("status", value)}
-            ariaLabel={EMPLOYEES_COPY.filters.status}
-          />
+        <div className="flex items-center justify-end gap-4">
+          <div className="hidden lg:block">
+            <ActionButton
+              title="Invitar personal"
+              onClick={() => setDialogOpen(true)}
+            />
+          </div>
         </div>
       </div>
-      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4 lg:px-8 lg:py-6">
-        {employees.isLoading ? <SkeletonList /> : null}
-        {employees.error ? (
-          <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
-        ) : null}
-        {showEmptyState ? (
-          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
-            {EMPLOYEES_COPY.page.empty}
-          </div>
-        ) : null}
-        {!showEmptyState && !employees.isLoading ? (
-          <EmployeesTable
-            employees={filteredEmployees}
-            onRowClick={(id) => router.push(`/employees/${id}`)}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <PageStickyFiltersSection>
+          <EmployeesFilters
+            role={filters.role}
+            search={filters.q}
+            status={filters.status}
+            onRoleChange={(value) => setFilter("role", value)}
+            onSearchChange={handleSearchChange}
+            onStatusChange={(value) => setFilter("status", value)}
+            onOpenSheet={handleOpenFiltersSheet}
           />
-        ) : null}
+        </PageStickyFiltersSection>
+        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
+          {employees.isLoading ? <SkeletonList /> : null}
+          {employees.error ? (
+            <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
+          ) : null}
+          {showEmptyState ? (
+            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
+              {EMPLOYEES_COPY.page.empty}
+            </div>
+          ) : null}
+          {!showEmptyState && !employees.isLoading ? (
+            <EmployeesTable
+              employees={filteredEmployees}
+              onRowClick={(id) => router.push(`/employees/${id}`)}
+            />
+          ) : null}
+        </div>
       </div>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
@@ -191,6 +187,15 @@ export default function EmployeesPageClient() {
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      <EmployeesFiltersSheet
+        key={sheetKey}
+        open={sheetOpen}
+        filters={filters}
+        onApply={(updates) => setFilters(updates)}
+        onClear={() => setFilters(EMPLOYEE_FILTER_DEFAULTS)}
+        onDismiss={() => setSheetOpen(false)}
+      />
+      <MobileFab label="Invitar personal" onClick={() => setDialogOpen(true)} />
     </div>
   );
 }

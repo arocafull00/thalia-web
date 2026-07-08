@@ -1,11 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { Pencil } from "lucide-react";
+import { useRef, useState } from "react";
 
 import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
+import ProfileEditDialog from "@/components/settings/components/profile-edit-dialog";
 import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
 import SettingsManagementPanel from "@/components/settings/components/settings-management-panel";
 import SettingsProfileSidebar from "@/components/settings/components/settings-profile-sidebar";
+import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -32,6 +35,7 @@ export default function SettingsPageClient() {
     uploadAvatar,
   } = useSettingsPageActions();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   if (!profile || !user) {
     return (
@@ -47,9 +51,6 @@ export default function SettingsPageClient() {
         <h1 className="text-2xl font-semibold tracking-tight text-ink">
           {SETTINGS_COPY.page.title}
         </h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          {SETTINGS_COPY.page.subtitle}
-        </p>
       </div>
 
       <input
@@ -66,8 +67,8 @@ export default function SettingsPageClient() {
         }}
       />
 
-      <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[20%_1fr]">
-        <div className="order-1 flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-6 lg:order-2 lg:px-6 lg:py-8">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:grid lg:grid-cols-[20%_1fr] lg:overflow-visible">
+        <div className="order-1 px-4 py-6 lg:order-2 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
           <div className="flex flex-col [&>section:not(:last-child)]:mb-8 [&>section:not(:last-child)]:border-b [&>section:not(:last-child)]:border-border-subtle [&>section:not(:last-child)]:pb-8">
             <SettingsAccountPanel
               onChangePassword={() => void handleChangePassword()}
@@ -88,6 +89,7 @@ export default function SettingsPageClient() {
           canViewClinicRequests={canViewClinicRequests}
           displayUri={displayUri}
           isAdmin={isAdmin}
+          onEdit={() => setEditDialogOpen(true)}
           onPickAvatar={() => fileInputRef.current?.click()}
           pendingRequestsCount={pendingClinicRequests.length}
           profile={profile}
@@ -95,6 +97,19 @@ export default function SettingsPageClient() {
           userEmail={user.email}
         />
       </div>
+
+      <ProfileEditDialog
+        profile={profile}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onSuccess={() => {}}
+      />
+
+      <MobileFab
+        label={SETTINGS_COPY.profile.editProfile}
+        icon={Pencil}
+        onClick={() => setEditDialogOpen(true)}
+      />
     </div>
   );
 }

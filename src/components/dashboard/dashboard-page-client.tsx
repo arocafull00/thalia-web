@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import DashboardAppointmentRow from "@/components/dashboard/dashboard-appointment-row";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -24,24 +25,13 @@ function formatTodayTitle(date: Date) {
 
 export default function DashboardPageClient() {
   const { profile } = useAuth();
-  const { data, isLoading, error, refresh } = useDashboard();
-  const [refreshing, setRefreshing] = useState(false);
+  const { data, isLoading, error } = useDashboard();
   const [dialogOpen, setDialogOpen] = useState(false);
   const appointments = data?.appointments ?? [];
   const confirmedCount = appointments.filter(
     (appointment) => appointment.status === "confirmed",
   ).length;
   const today = new Date();
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-
-    try {
-      await refresh();
-    } finally {
-      setRefreshing(false);
-    }
-  }, [refresh]);
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "de nuevo";
   const metrics = [
@@ -50,92 +40,93 @@ export default function DashboardPageClient() {
   ];
 
   return (
-    <div className="space-y-6 p-4 lg:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-3xl font-medium tracking-tight text-ink lg:text-4xl">
-            Bienvenida, {firstName}
-          </h1>
-          <p className="mt-2 text-ink-secondary">
-            {formatTodayTitle(today)}. Tienes {appointments.length}{" "}
-            {appointments.length === 1
-              ? "cita programada"
-              : "citas programadas"}
-            .
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <ActionButton
-            title={refreshing ? "Actualizando..." : "Actualizar"}
-            variant="ghost"
-            onClick={() => void onRefresh()}
-          />
-          <ActionButton
-            title="Nueva cita"
-            onClick={() => setDialogOpen(true)}
-          />
-        </div>
-      </div>
-      <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-      <div className="grid grid-cols-2 gap-4">
-        {metrics.map((metric) => (
-          <div
-            key={metric.label}
-            className="rounded-3xl border border-border bg-surface p-5"
-          >
-            <p className="text-xs uppercase tracking-wide text-ink-muted">
-              {metric.label}
-            </p>
-            <p className="mt-4 text-3xl font-medium tabular-nums">
-              {metric.value}
+    <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="space-y-6 p-4 lg:p-8">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-3xl font-medium tracking-tight text-ink lg:text-4xl">
+              Bienvenida, {firstName}
+            </h1>
+            <p className="mt-2 text-ink-secondary">
+              {formatTodayTitle(today)}. Tienes {appointments.length}{" "}
+              {appointments.length === 1
+                ? "cita programada"
+                : "citas programadas"}
+              .
             </p>
           </div>
-        ))}
-      </div>
-      <div className="grid gap-6 xl:grid-cols-[1.8fr_1fr]">
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-3">
-            <h2 className="text-lg font-medium">Próximas citas</h2>
-            <Link
-              href="/calendar"
-              className="text-xs uppercase tracking-wide text-ink-secondary"
+          <div className="hidden lg:block">
+            <ActionButton
+              title="Nueva cita"
+              onClick={() => setDialogOpen(true)}
+            />
+          </div>
+        </div>
+        <AppointmentCreateDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+        <MobileFab label="Nueva cita" onClick={() => setDialogOpen(true)} />
+        <div className="grid grid-cols-2 gap-4">
+          {metrics.map((metric) => (
+            <div
+              key={metric.label}
+              className="rounded-3xl border border-border bg-surface p-5"
             >
-              Ver calendario
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {appointments.map((appointment) => (
-              <DashboardAppointmentRow
-                key={appointment.id}
-                appointment={appointment}
-              />
-            ))}
-          </div>
-          {!isLoading && appointments.length === 0 ? (
-            <p className="py-4 text-ink-secondary">
-              No hay citas programadas para hoy.
-            </p>
-          ) : null}
-          {isLoading ? <SkeletonList count={3} /> : null}
-          {error ? (
-            <Notice tone="danger" message="No se pudo cargar el dashboard." />
-          ) : null}
-        </section>
-        <div className="space-y-6">
-          <section className="space-y-3">
-            <h2 className="text-lg font-medium">Actividad reciente</h2>
-            <div className="divide-y divide-border-subtle border-t border-border">
-              {appointments.slice(0, 3).map((appointment) => (
-                <div key={appointment.id} className="py-3">
-                  <p className="font-medium text-ink">
-                    Cita {appointment.status ?? "programada"} -{" "}
-                    {appointment.patients?.full_name ?? "Paciente"}
-                  </p>
-                  <p className="text-sm text-ink-secondary">Hoy</p>
-                </div>
+              <p className="text-xs uppercase tracking-wide text-ink-muted">
+                {metric.label}
+              </p>
+              <p className="mt-4 text-3xl font-medium tabular-nums">
+                {metric.value}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 xl:grid-cols-[1.8fr_1fr]">
+          <section className="space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h2 className="text-lg font-medium">Próximas citas</h2>
+              <Link
+                href="/calendar"
+                className="text-xs uppercase tracking-wide text-ink-secondary"
+              >
+                Ver calendario
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {appointments.map((appointment) => (
+                <DashboardAppointmentRow
+                  key={appointment.id}
+                  appointment={appointment}
+                />
               ))}
             </div>
+            {!isLoading && appointments.length === 0 ? (
+              <p className="py-4 text-ink-secondary">
+                No hay citas programadas para hoy.
+              </p>
+            ) : null}
+            {isLoading ? <SkeletonList count={3} /> : null}
+            {error ? (
+              <Notice tone="danger" message="No se pudo cargar el dashboard." />
+            ) : null}
           </section>
+          <div className="space-y-6">
+            <section className="space-y-3">
+              <h2 className="text-lg font-medium">Actividad reciente</h2>
+              <div className="divide-y divide-border-subtle border-t border-border">
+                {appointments.slice(0, 3).map((appointment) => (
+                  <div key={appointment.id} className="py-3">
+                    <p className="font-medium text-ink">
+                      Cita {appointment.status ?? "programada"} -{" "}
+                      {appointment.patients?.full_name ?? "Paciente"}
+                    </p>
+                    <p className="text-sm text-ink-secondary">Hoy</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>

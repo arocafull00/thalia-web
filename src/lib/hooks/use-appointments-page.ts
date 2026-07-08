@@ -49,11 +49,13 @@ export function useAppointmentsPage(filters: AppointmentPageFilters) {
       }
 
       const patientName = appt.patients?.full_name?.toLowerCase() ?? "";
+      const patientPhone = appt.patients?.phone?.toLowerCase() ?? "";
       const treatment =
         appt.appointment_treatments[0]?.treatment?.name?.toLowerCase() ?? "";
 
       return (
         patientName.includes(normalizedSearch) ||
+        patientPhone.includes(normalizedSearch) ||
         treatment.includes(normalizedSearch)
       );
     });

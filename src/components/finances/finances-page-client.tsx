@@ -4,6 +4,8 @@ import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
+import FinancesFilters from "@/components/finances/components/finances-filters";
+import FinancesFiltersSheet from "@/components/finances/components/finances-filters-sheet";
 import FinancesMovementsSection from "@/components/finances/components/finances-movements-section";
 import FinancesSummaryMetrics from "@/components/finances/components/finances-summary-metrics";
 import FinancesWeeklyBreakdown from "@/components/finances/components/finances-weekly-breakdown";
@@ -15,32 +17,38 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
-import FilterPills from "@/components/ui/filter-pills";
+import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
-import { PageHeader } from "@/components/ui/primitives/page-header";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
+import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
-import { useSearch } from "@/lib/hooks/use-search";
 import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { useFinancesUiStore } from "@/stores/finances-ui-store";
 
-const FINANCES_FILTER_DEFAULTS = { category: "" };
+const FINANCES_FILTER_DEFAULTS = { category: "", q: "" };
 
 export default function FinancesPageClient() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetKey, setSheetKey] = useState(0);
   const setTab = useFinancesUiStore((state) => state.setTab);
-  const debouncedSearch = useSearch();
-  const { filters, setFilter } = useUrlFilters(FINANCES_FILTER_DEFAULTS);
+  const { filters, setFilter, setFilters } = useUrlFilters(
+    FINANCES_FILTER_DEFAULTS,
+  );
+  const { searchQuery, handleSearchChange } = useFilterSearch(
+    filters.q,
+    setFilter,
+  );
 
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
-      search: debouncedSearch,
+      search: searchQuery,
     }),
-    [debouncedSearch, filters.category],
+    [filters.category, searchQuery],
   );
 
   const {
@@ -60,14 +68,12 @@ export default function FinancesPageClient() {
     setDialogOpen(false),
   );
 
-  const categoryFilterOptions = useMemo(
-    () => [
-      { label: FINANCES_COPY.filters.all, value: "" },
-      ...categoryOptions.map((category) => ({
+  const comboboxCategoryOptions = useMemo(
+    () =>
+      categoryOptions.map((category) => ({
         label: category,
         value: category,
       })),
-    ],
     [categoryOptions],
   );
 
@@ -84,6 +90,11 @@ export default function FinancesPageClient() {
     setDialogOpen(true);
   };
 
+  const handleOpenFiltersSheet = () => {
+    setSheetKey((key) => key + 1);
+    setSheetOpen(true);
+  };
+
   if (!isAdmin) {
     return (
       <div className="p-8">
@@ -95,11 +106,7 @@ export default function FinancesPageClient() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <div className="flex items-center justify-between gap-4">
-          <PageHeader
-            title={FINANCES_COPY.title}
-            subtitle={FINANCES_COPY.subtitle}
-          />
+        <div className="flex items-center justify-end gap-4">
           <div className="flex items-center gap-4">
             <FinancesMonthSelector />
             <ActionButton
@@ -109,42 +116,43 @@ export default function FinancesPageClient() {
             />
           </div>
         </div>
-        {categoryFilterOptions.length > 1 ? (
-          <div className="mt-3">
-            <FilterPills
-              options={categoryFilterOptions}
-              active={filters.category}
-              onChange={(value) => setFilter("category", value)}
-              ariaLabel={FINANCES_COPY.filters.category}
-            />
-          </div>
-        ) : null}
       </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <PageStickyFiltersSection>
+          <FinancesFilters
+            category={filters.category}
+            categoryOptions={comboboxCategoryOptions}
+            search={filters.q}
+            onCategoryChange={(value) => setFilter("category", value)}
+            onSearchChange={handleSearchChange}
+            onOpenSheet={handleOpenFiltersSheet}
+          />
+        </PageStickyFiltersSection>
+        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
+          {summary.error ? (
+            <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
+          ) : null}
 
-      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 py-4 lg:px-8 lg:py-6">
-        {summary.error ? (
-          <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
-        ) : null}
+          {summary.data ? (
+            <>
+              <FinancesSummaryMetrics summary={summary.data} />
+              <div className="grid gap-8 py-8 xl:grid-cols-[1.8fr_1fr]">
+                <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
+                <FinancesCategoryBreakdown items={categoryBreakdown} />
+              </div>
+            </>
+          ) : null}
 
-        {summary.data ? (
-          <>
-            <FinancesSummaryMetrics summary={summary.data} />
-            <div className="grid gap-8 py-8 xl:grid-cols-[1.8fr_1fr]">
-              <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
-              <FinancesCategoryBreakdown items={categoryBreakdown} />
-            </div>
-          </>
-        ) : null}
-
-        <FinancesMovementsSection
-          tab={tab}
-          onTabChange={setTab}
-          transactions={visibleTransactions}
-          isLoading={transactions.isLoading}
-          error={transactions.error}
-          hasMore={hasMore}
-          onLoadMore={loadMore}
-        />
+          <FinancesMovementsSection
+            tab={tab}
+            onTabChange={setTab}
+            transactions={visibleTransactions}
+            isLoading={transactions.isLoading}
+            error={transactions.error}
+            hasMore={hasMore}
+            onLoadMore={loadMore}
+          />
+        </div>
       </div>
 
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -182,6 +190,15 @@ export default function FinancesPageClient() {
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      <FinancesFiltersSheet
+        key={sheetKey}
+        open={sheetOpen}
+        filters={filters}
+        categoryOptions={comboboxCategoryOptions}
+        onApply={(updates) => setFilters(updates)}
+        onClear={() => setFilters(FINANCES_FILTER_DEFAULTS)}
+        onDismiss={() => setSheetOpen(false)}
+      />
     </div>
   );
 }

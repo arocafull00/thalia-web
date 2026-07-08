@@ -64,6 +64,9 @@ const eslintConfig = defineConfig([
       "src/components/ui/sidebar.tsx",
       "src/components/ui/table.tsx",
       "src/components/ui/tooltip.tsx",
+      "src/components/ui/popover.tsx",
+      "src/components/ui/select.tsx",
+      "src/components/ui/calendar.tsx",
     ],
     rules: {
       "react/no-multi-comp": "off",

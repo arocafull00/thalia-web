@@ -1,7 +1,6 @@
 export const APPOINTMENTS_COPY = {
   page: {
     title: "Citas",
-    subtitle: "Gestión de citas programadas",
     empty: "No hay citas programadas.",
     loadError: "No se pudieron cargar las citas.",
   },
@@ -11,6 +10,9 @@ export const APPOINTMENTS_COPY = {
     dateFrom: "Desde",
     dateTo: "Hasta",
     all: "Todos",
+    allStatuses: "Todos los estados",
+    search: "Buscar paciente, tratamiento o teléfono",
+    searchClear: "Limpiar búsqueda",
     searchEmployee: "Buscar profesional",
     scheduled: "Programada",
     confirmed: "Confirmada",

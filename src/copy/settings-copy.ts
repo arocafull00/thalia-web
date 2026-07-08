@@ -1,7 +1,6 @@
 export const SETTINGS_COPY = {
   page: {
     title: "Ajustes",
-    subtitle: "Gestiona tu cuenta y la configuración de la plataforma.",
     profileError: "No se pudo cargar el perfil.",
   },
   sections: {

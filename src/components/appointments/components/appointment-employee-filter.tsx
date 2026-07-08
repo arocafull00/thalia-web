@@ -42,7 +42,7 @@ export default function AppointmentEmployeeFilter({
   );
 
   return (
-    <div className="min-w-0 md:min-w-[14rem]">
+    <div className="min-w-0">
       <AppSearchableCombobox
         value={employeeId || null}
         onValueChange={(value) => onEmployeeIdChange(value ?? "")}

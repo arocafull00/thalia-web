@@ -25,6 +25,24 @@ export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
     return result;
   }, [defaultKeys, defaults, searchParams]);
 
+  const replaceIfChanged = useCallback(
+    (params: URLSearchParams) => {
+      const query = params.toString();
+      const nextUrl = query ? `${pathname}?${query}` : pathname;
+      const currentQuery = searchParams.toString();
+      const currentUrl = currentQuery
+        ? `${pathname}?${currentQuery}`
+        : pathname;
+
+      if (nextUrl === currentUrl) {
+        return;
+      }
+
+      router.replace(nextUrl);
+    },
+    [pathname, router, searchParams],
+  );
+
   const setFilter = useCallback(
     (key: keyof T, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -35,10 +53,9 @@ export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
         params.set(String(key), value);
       }
 
-      const query = params.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname);
+      replaceIfChanged(params);
     },
-    [defaults, pathname, router, searchParams],
+    [defaults, replaceIfChanged, searchParams],
   );
 
   const setFilters = useCallback(
@@ -54,10 +71,9 @@ export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
         params.set(key, value);
       }
 
-      const query = params.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname);
+      replaceIfChanged(params);
     },
-    [defaults, pathname, router, searchParams],
+    [defaults, replaceIfChanged, searchParams],
   );
 
   return { filters, setFilter, setFilters };

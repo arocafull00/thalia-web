@@ -1,4 +1,4 @@
 export const BOTTOM_NAV_COPY = {
   ariaLabel: "Navegación principal",
-  more: "Más",
+  menu: "Abrir menú",
 } as const;

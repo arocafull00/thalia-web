@@ -1,11 +1,26 @@
 "use client";
 
-import { addMonths, addWeeks } from "date-fns";
+import { addMonths, addWeeks, format } from "date-fns";
+import { es } from "date-fns/locale";
 import { useEffect } from "react";
 
-import { formatMonthLabel, formatWeekRange } from "@/lib/calendar-grid";
+import { formatMonthLabel } from "@/lib/calendar-grid";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
+
+function formatVisibleRangeLabel(startIso: string, endIso: string) {
+  const start = new Date(`${startIso}T00:00:00`);
+  const end = new Date(`${endIso}T00:00:00`);
+  const sameMonth =
+    start.getMonth() === end.getMonth() &&
+    start.getFullYear() === end.getFullYear();
+
+  if (sameMonth) {
+    return `${format(start, "d", { locale: es })} – ${format(end, "d 'de' MMMM", { locale: es })}`;
+  }
+
+  return `${format(start, "d MMM", { locale: es })} – ${format(end, "d MMM", { locale: es })}`;
+}
 
 export function useCalendarPage() {
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
@@ -17,6 +32,10 @@ export function useCalendarPage() {
   const createStartsAt = useCalendarStore((state) => state.createStartsAt);
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
   const closeDialog = useCalendarStore((state) => state.closeDialog);
+  const visibleRangeStart = useCalendarStore(
+    (state) => state.visibleRangeStart,
+  );
+  const visibleRangeEnd = useCalendarStore((state) => state.visibleRangeEnd);
 
   useEffect(() => {
     const employeeIdParam = new URLSearchParams(window.location.search).get(
@@ -30,7 +49,9 @@ export function useCalendarPage() {
   const rangeLabel =
     viewMode === "month"
       ? formatMonthLabel(weekAnchor)
-      : formatWeekRange(weekAnchor);
+      : visibleRangeStart && visibleRangeEnd
+        ? formatVisibleRangeLabel(visibleRangeStart, visibleRangeEnd)
+        : "";
 
   const onPrevious = () => {
     if (viewMode === "month") {

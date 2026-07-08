@@ -1,6 +1,5 @@
 export const FINANCES_COPY = {
   title: "Finanzas",
-  subtitle: "Resumen financiero y movimientos de la clínica.",
   newMovement: "Nuevo movimiento",
   errors: {
     permissions: "Permisos insuficientes.",

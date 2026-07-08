@@ -128,6 +128,8 @@
   --animate-overlay-out: overlayOut 0.2s ease-in;
   --animate-sheet-in: sheetIn 0.3s ease-out;
   --animate-sheet-out: sheetOut 0.2s ease-in;
+  --animate-sheet-in-left: sheetInLeft 0.3s ease-out;
+  --animate-sheet-out-left: sheetOutLeft 0.2s ease-in;
 }
 
 @keyframes overlayIn {
@@ -160,6 +162,22 @@
   }
   to {
     transform: translateX(100%);
+  }
+}
+@keyframes sheetInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes sheetOutLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
   }
 }
 

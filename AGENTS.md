@@ -36,6 +36,8 @@ No asumas APIs de versiones anteriores ni de la documentación sin versionar.
 
 **Server Actions:** Usa Server Actions para mutaciones. Valida la entrada con Zod en el servidor.
 
+**Detección de móvil (lógica):** Para decidir comportamiento en JavaScript (render condicional, qué componente montar, handlers distintos, etc.), usa `useIsMobile()` de `@/hooks/use-mobile`. No uses `window.matchMedia`, `window.innerWidth` ni breakpoints de Tailwind (`md:`, `lg:`, `hidden lg:block`, etc.) para lógica de programación. Tailwind sigue siendo válido para estilos responsivos (layout, espaciado, tipografía); la regla aplica solo cuando el código necesita saber si es móvil en runtime.
+
 ## Formularios
 
 Todo formulario con 2 o más campos usa **react-hook-form** (`useForm`) con **zodResolver** sobre un schema de `src/lib/schemas/`. Nunca uses `useState` individual por campo ni un `reset` manual que limpie cada setter.

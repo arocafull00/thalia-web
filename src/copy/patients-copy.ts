@@ -1,7 +1,6 @@
 export const PATIENTS_COPY = {
   page: {
     title: "Pacientes",
-    subtitle: (count: number) => `${count} pacientes registrados`,
     empty: "Todavía no hay pacientes registrados.",
     loadError: "No se pudieron cargar los pacientes.",
   },

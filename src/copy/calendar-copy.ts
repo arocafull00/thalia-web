@@ -1,4 +1,10 @@
 export const CALENDAR_COPY = {
+  filters: {
+    all: "Todos",
+    employee: "Profesional",
+    searchEmployee: "Buscar profesional",
+    view: "Vista",
+  },
   toolbar: {
     today: "Hoy",
     newAppointment: "Nueva cita",
@@ -8,7 +14,7 @@ export const CALENDAR_COPY = {
     nextPeriod: "Período siguiente",
     viewWeek: "Semana",
     viewMonth: "Mes",
-    moreOptions: "Más opciones",
+    filters: "Filtros",
     filterEmployees: "Filtrar profesional",
     loading: (date: string) => `Cargando citas de ${date}...`,
   },

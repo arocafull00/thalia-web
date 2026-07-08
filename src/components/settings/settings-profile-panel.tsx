@@ -10,11 +10,13 @@ import { useSettingsUiStore } from "@/stores/settings-ui-store";
 
 type SettingsProfilePanelProps = {
   uploadingAvatar: boolean;
+  onEdit: () => void;
   onPickAvatar: () => void;
 };
 
 export default function SettingsProfilePanel({
   uploadingAvatar,
+  onEdit,
   onPickAvatar,
 }: SettingsProfilePanelProps) {
   const { profile } = useAuth();
@@ -64,11 +66,7 @@ export default function SettingsProfilePanel({
           Suscripción Pro
         </span>
       </div>
-      <ActionButton
-        title="Editar perfil"
-        variant="ghost"
-        onClick={() => globalThis.location.assign("/settings/edit")}
-      />
+      <ActionButton title="Editar perfil" variant="ghost" onClick={onEdit} />
     </div>
   );
 }

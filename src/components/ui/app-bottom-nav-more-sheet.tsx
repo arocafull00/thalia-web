@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import AppDialog from "@/components/ui/app-dialog";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import SidebarProfileFooter from "@/components/ui/sidebar-profile-footer";
-import { BOTTOM_NAV_COPY } from "@/copy/bottom-nav-copy";
 import { useAppNavItems } from "@/lib/hooks/use-app-nav-items";
 
 type AppBottomNavMoreSheetProps = {
@@ -19,7 +18,7 @@ export default function AppBottomNavMoreSheet({
   onOpenChange,
 }: AppBottomNavMoreSheetProps) {
   const pathname = usePathname();
-  const { secondaryMobileItems } = useAppNavItems();
+  const { items } = useAppNavItems();
 
   const close = () => onOpenChange(false);
 
@@ -27,16 +26,33 @@ export default function AppBottomNavMoreSheet({
     <AppDialog open={open} onOpenChange={onOpenChange}>
       <AppSheetContent
         showClose
-        className="fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-border bg-surface p-0 shadow-lg outline-none data-[state=open]:animate-sheet-in data-[state=closed]:animate-sheet-out motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none"
+        className="fixed inset-y-0 left-0 z-50 flex h-full w-full max-w-sm flex-col border-r border-border bg-surface p-0 shadow-lg outline-none data-[state=open]:animate-sheet-in-left data-[state=closed]:animate-sheet-out-left motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none"
       >
-        <div className="border-b border-border-subtle px-6 py-4">
-          <h2 className="text-lg font-medium text-ink">
-            {BOTTOM_NAV_COPY.more}
-          </h2>
+        <div className="border-b border-border-subtle px-4 py-5">
+          <div className="flex items-center gap-3 pr-8">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="Thalia"
+              width={56}
+              height={56}
+              className="shrink-0 rounded-xl"
+            />
+            <div className="flex flex-col gap-0.5">
+              <p className="text-2xl font-semibold leading-none text-ink">
+                Thalia
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-ink-muted">
+                Aesthetic
+                <br />
+                Excellence
+              </p>
+            </div>
+          </div>
         </div>
         <nav className="flex-1 overflow-y-auto px-4 py-4">
           <ul className="flex flex-col gap-1">
-            {secondaryMobileItems.map((item) => {
+            {items.map((item) => {
               const active =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
 

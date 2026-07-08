@@ -5,7 +5,6 @@ import {
   Clock,
   Euro,
   LayoutGrid,
-  MoreHorizontal,
   Package,
   Scissors,
   Settings,
@@ -72,7 +71,12 @@ const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
   },
 ];
 
-const PRIMARY_MOBILE_HREFS = new Set(["/calendar", "/patients", "/employees"]);
+const PRIMARY_MOBILE_HREFS = new Set([
+  "/dashboard",
+  "/calendar",
+  "/patients",
+  "/finances",
+]);
 
 export function useAppNavItems() {
   const showEmployees = useShellStore((state) => state.showEmployees);
@@ -111,6 +115,5 @@ export function useAppNavItems() {
     items: visibleItems,
     primaryMobileItems,
     secondaryMobileItems,
-    moreIcon: <MoreHorizontal size={20} />,
   };
 }

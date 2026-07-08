@@ -153,10 +153,7 @@ export default function AppSearchableCombobox({
     variant === "pill" ? pillTriggerClassName : inputTriggerClassName;
 
   return (
-    <div
-      ref={rootRef}
-      className={variant === "pill" ? "inline-block" : "w-full"}
-    >
+    <div ref={rootRef} className="w-full min-w-0">
       <Combobox
         items={filteredOptions}
         filter={null}

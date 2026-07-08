@@ -1,8 +1,6 @@
 export const TREATMENTS_COPY = {
   page: {
     title: "Tratamientos",
-    subtitle:
-      "Define el catálogo de tratamientos y los materiales estándar de cada uno.",
     add: "Nuevo tratamiento",
     empty: "No hay tratamientos configurados.",
     loadError: "No se pudo cargar el catálogo de tratamientos.",

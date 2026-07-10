@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   patientsListKey,
   usePatientsStore,
@@ -13,10 +14,11 @@ export function usePatients(search: string) {
   const key = patientsListKey(search);
   const entry = usePatientsStore((state) => state.listBySearch[key]);
   const fetchPatients = usePatientsStore((state) => state.fetchPatients);
+  const clinicId = useClinicId();
 
   useEffect(() => {
     void fetchPatients(search);
-  }, [fetchPatients, search]);
+  }, [clinicId, fetchPatients, search]);
 
   return {
     data: entry?.data ?? undefined,

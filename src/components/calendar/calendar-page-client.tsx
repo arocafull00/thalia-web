@@ -79,7 +79,8 @@ export default function CalendarPageClient() {
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+      <div className="shrink-0 hidden lg:flex items-center justify-between border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <h1 className="text-2xl font-medium text-ink">Calendario</h1>
         <ActionButton
           title={CALENDAR_COPY.toolbar.newAppointment}
           onClick={() => openCreateDialog()}

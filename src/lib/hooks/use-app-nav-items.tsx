@@ -26,7 +26,7 @@ export type AppNavItem = {
 const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
   {
     href: "/dashboard",
-    label: "Inicio",
+    label: "Dashboard",
     icon: <LayoutGrid size={18} />,
   },
   {

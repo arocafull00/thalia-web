@@ -77,7 +77,10 @@ export default function InventoryPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+      <div className="shrink-0 hidden lg:flex items-center justify-between  order-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <h1 className="text-2xl font-medium text-ink">
+          {INVENTORY_COPY.page.title}
+        </h1>
         <ActionButton
           title="Anadir material"
           onClick={() => setDialogOpen(true)}
@@ -144,7 +147,7 @@ export default function InventoryPageClient() {
             <button
               type="button"
               onClick={() => handleDialogOpenChange(false)}
-              className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+              className="rounded-full border order px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
             >
               {INVENTORY_ITEM_CREATE_COPY.actions.cancel}
             </button>

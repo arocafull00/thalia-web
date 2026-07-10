@@ -75,7 +75,10 @@ export default function PatientsPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+      <div className="shrink-0 hidden lg:flex items-center justify-between border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <h1 className="text-2xl font-medium text-ink">
+          {PATIENTS_COPY.page.title}
+        </h1>
         <ActionButton
           title="Nuevo paciente"
           onClick={() => setDialogOpen(true)}

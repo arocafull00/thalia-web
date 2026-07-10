@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --canvas: oklch(99.2% 0.002 200);
+  --canvas: oklch(100% 0 0);
   --surface: oklch(100% 0 0);
   --primary: oklch(68.5% 0.12 175);
   --primary-hover: oklch(62% 0.08 175);
@@ -45,7 +45,8 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.75rem;
-  --sidebar: var(--canvas);
+  --sidebar: var(--surface);
+  --topbar: var(--surface);
   --sidebar-foreground: var(--ink);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--on-primary);
@@ -89,6 +90,7 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-topbar: var(--topbar);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);

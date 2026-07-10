@@ -1,6 +1,7 @@
 import { endOfDay, startOfDay } from "date-fns";
 import { useCallback, useEffect } from "react";
 
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   appointmentsKey,
   useAppointmentsStore,
@@ -44,13 +45,15 @@ export function useAppointments(
     return () => unsubscribeRealtime();
   }, [subscribeRealtime, unsubscribeRealtime]);
 
+  const clinicId = useClinicId();
+
   useEffect(() => {
     void fetchAppointments({
       start: new Date(start),
       end: new Date(end),
       employeeId,
     });
-  }, [employeeId, end, fetchAppointments, start]);
+  }, [clinicId, employeeId, end, fetchAppointments, start]);
 
   return {
     data: entry?.data,

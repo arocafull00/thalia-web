@@ -106,15 +106,18 @@ export default function FinancesPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end gap-4 border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <FinancesMonthSelector />
-        <ActionButton
-          title={FINANCES_COPY.newMovement}
-          icon={Plus}
-          onClick={handleOpenCreateDialog}
-        />
+      <div className="shrink-0 hidden lg:flex items-center justify-between gap-4  order-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <h1 className="text-2xl font-medium text-ink">{FINANCES_COPY.title}</h1>
+        <div className="flex items-center gap-4">
+          <FinancesMonthSelector />
+          <ActionButton
+            title={FINANCES_COPY.newMovement}
+            icon={Plus}
+            onClick={handleOpenCreateDialog}
+          />
+        </div>
       </div>
-      <div className="flex shrink-0 items-center justify-center border-b border-border-subtle bg-canvas px-4 py-3 lg:hidden">
+      <div className="flex shrink-0 items-center justify-center  order-subtle bg-canvas px-4 py-3 lg:hidden">
         <FinancesMonthSelector />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
@@ -174,7 +177,7 @@ export default function FinancesPageClient() {
             <button
               type="button"
               onClick={() => handleDialogOpenChange(false)}
-              className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+              className="rounded-full border order px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
             >
               {TRANSACTION_CREATE_COPY.actions.cancel}
             </button>

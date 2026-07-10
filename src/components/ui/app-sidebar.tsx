@@ -40,7 +40,7 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="offcanvas" className="border-border bg-canvas">
-      <SidebarHeader className="border-b border-border-subtle px-4 py-5">
+      <SidebarHeader className="px-2 py-3">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

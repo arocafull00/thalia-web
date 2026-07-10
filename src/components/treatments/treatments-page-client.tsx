@@ -60,7 +60,10 @@ export default function TreatmentsPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+      <div className="shrink-0 hidden lg:flex items-center justify-between  order-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
+        <h1 className="text-2xl font-medium text-ink">
+          {TREATMENTS_COPY.page.title}
+        </h1>
         <ActionButton
           title={TREATMENTS_COPY.page.add}
           onClick={page.openCreateDialog}

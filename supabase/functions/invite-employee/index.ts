@@ -36,10 +36,20 @@ Deno.serve(async (req) => {
     );
   }
 
+  const { email, role, clinicId } = await req.json();
+
+  if (!clinicId || typeof clinicId !== "string") {
+    return Response.json(
+      { error: "clinicId is required" },
+      { status: 400, headers: corsHeaders },
+    );
+  }
+
   const { data: requesterMembership, error: requesterError } = await adminClient
     .from("clinic_memberships")
     .select("clinic_id, role")
     .eq("user_id", authData.user.id)
+    .eq("clinic_id", clinicId)
     .eq("status", "active")
     .in("role", ["owner", "admin"])
     .maybeSingle();
@@ -50,9 +60,6 @@ Deno.serve(async (req) => {
       { status: 403, headers: corsHeaders },
     );
   }
-
-  const { email, role } = await req.json();
-  const clinicId = requesterMembership.clinic_id;
 
   if (!email || typeof email !== "string" || !email.trim()) {
     return Response.json(

@@ -174,7 +174,9 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         throw new Error(formatZodError(parsed.error));
       }
 
-      const employee = await inviteEmployee(parsed.data);
+      const clinicId = getActiveClinicId();
+      if (!clinicId) throw new Error("No hay clínica activa");
+      const employee = await inviteEmployee({ ...parsed.data, clinicId });
       await get().fetchEmployees();
       set({ creating: false });
       return employee;

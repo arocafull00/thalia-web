@@ -31,7 +31,7 @@ export default function AppTopbar() {
   );
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center gap-2 border-b border-border-subtle bg-topbar px-6">
+    <header className="sticky z-40 flex h-18 items-center gap-2 border-b border-border-subtle bg-topbar px-6">
       <SidebarTrigger
         variant="ghost"
         size="icon"

@@ -104,7 +104,7 @@ export default function AppointmentsPageClient() {
             <Notice tone="danger" message={APPOINTMENTS_COPY.page.loadError} />
           ) : null}
           {showEmptyState ? (
-            <div className="rounded-2xl border border-dashed  p-10 text-center text-ink-secondary">
+            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
               {APPOINTMENTS_COPY.page.empty}
             </div>
           ) : null}

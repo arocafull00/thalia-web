@@ -1,5 +1,11 @@
 export const INVENTORY_ITEM_DETAIL_COPY = {
   back: "Volver a inventario",
+  breadcrumbRoot: "Inventario",
+  tabs: {
+    summary: "Resumen",
+    movements: "Movimientos",
+  },
+  moreActions: "Más acciones",
   sections: {
     stats: "Stock y precio",
     movements: "Historial de movimientos",

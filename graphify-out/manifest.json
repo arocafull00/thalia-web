@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
-    "mtime": 1783879453.259222,
-    "ast_hash": "d948fc4d1fc5f5a0983cd8a5262f102f",
+    "mtime": 1783879613.1522443,
+    "ast_hash": "1201a3b95bc699154017d634f3b25142",
     "semantic_hash": ""
   },
   "src/components/employees/employees-page-client.tsx": {
@@ -1725,13 +1725,13 @@
     "semantic_hash": ""
   },
   "src/components/inventory/inventory-detail-page-client.tsx": {
-    "mtime": 1783534152.806512,
-    "ast_hash": "fafb853b6e7c355fc3fc33bb7815dfb9",
+    "mtime": 1783879720.7443907,
+    "ast_hash": "62389d8f4e3104054f330d8fa5129be7",
     "semantic_hash": ""
   },
   "src/copy/inventory-item-detail-copy.ts": {
-    "mtime": 1783444785.110173,
-    "ast_hash": "e7aea7a5b2cee3312b0a00fb6955385d",
+    "mtime": 1783879717.0751863,
+    "ast_hash": "8b2167e48a4d5caa8b34c0016d5f0c63",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-inventory-adjust-stock-dialog.ts": {
@@ -2455,33 +2455,73 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-avatar-display.tsx": {
-    "mtime": 1783879443.6677482,
-    "ast_hash": "7143faf53efc2d3c5ec134a716ecf0a6",
+    "mtime": 1783879613.057994,
+    "ast_hash": "30838bf97ef7e6e35e2b73d75c54c071",
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-detail-header.tsx": {
-    "mtime": 1783879444.3965845,
-    "ast_hash": "6b28bc8bd6c1643b371bb16a202a23e5",
+    "mtime": 1783879613.0739994,
+    "ast_hash": "cdc646e71abbc17327e5ce5f4a493635",
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-detail-tab-bar.tsx": {
-    "mtime": 1783879445.9845123,
-    "ast_hash": "713fb1beafc19b6a4a61128c36ca02a3",
+    "mtime": 1783879613.0880842,
+    "ast_hash": "1e5c0908df6c5b40d2cd2208601c907f",
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-detail-tab-button.tsx": {
-    "mtime": 1783879445.0996208,
-    "ast_hash": "95b6f1057c8bb01efeb742156ee85b4d",
+    "mtime": 1783879613.09856,
+    "ast_hash": "4dfd867e07d6357620f3f61f24b31a69",
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-detail-tab-content.tsx": {
-    "mtime": 1783879446.8308191,
-    "ast_hash": "9931ad2c15a611716777017306cd5532",
+    "mtime": 1783879613.108208,
+    "ast_hash": "c28d4f04ad4432833f3f52d657c865db",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-employee-detail-tabs.ts": {
-    "mtime": 1783879443.2770095,
-    "ast_hash": "f881f3e4ada451e972dda87f2a566013",
+    "mtime": 1783879613.176745,
+    "ast_hash": "4d627f4fa5b828837b00ff83732e6d42",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/inventory-detail-header.tsx": {
+    "mtime": 1783879711.8369832,
+    "ast_hash": "8687c8dafba546cf146f5795c8aa7ce3",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/inventory-detail-tab-bar.tsx": {
+    "mtime": 1783879713.716124,
+    "ast_hash": "17216edef668440ab395a0a9791204e6",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/inventory-detail-tab-button.tsx": {
+    "mtime": 1783879712.602368,
+    "ast_hash": "8f5e82740f28dbd9fcb977d1c2ee279f",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/inventory-detail-tab-content.tsx": {
+    "mtime": 1783879715.9006257,
+    "ast_hash": "478bc1f31438ab952780e9fd2afbb248",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/inventory-item-icon-display.tsx": {
+    "mtime": 1783879710.8744192,
+    "ast_hash": "2607dd5779b128c82473dc3a8d33416c",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/inventory-item-summary.tsx": {
+    "mtime": 1783879715.482339,
+    "ast_hash": "b055164f5782a812c25b6aa3317e18aa",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/inventory-detail-actions.ts": {
+    "mtime": 1783879716.7302456,
+    "ast_hash": "dc0759eb1574398beb29a9c61376fd34",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-inventory-detail-tabs.ts": {
+    "mtime": 1783879710.8734188,
+    "ast_hash": "b838655d11780f88b23f00880aeb4bf9",
     "semantic_hash": ""
   }
 }

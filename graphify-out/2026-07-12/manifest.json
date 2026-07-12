@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
-    "mtime": 1783845068.623047,
-    "ast_hash": "18d88153428b34ba2cc4fb500f623735",
+    "mtime": 1783879613.1522443,
+    "ast_hash": "1201a3b95bc699154017d634f3b25142",
     "semantic_hash": ""
   },
   "src/components/employees/employees-page-client.tsx": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "src/copy/employee-detail-copy.ts": {
-    "mtime": 1783845068.9372227,
-    "ast_hash": "b3f1d5a2d39fbd9deebaa9379b1eaf40",
+    "mtime": 1783879446.74442,
+    "ast_hash": "06bd3d303cf36bab0af55943aecd8fb5",
     "semantic_hash": ""
   },
   "src/copy/employee-edit-copy.ts": {
@@ -1325,8 +1325,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-profile-summary.tsx": {
-    "mtime": 1783098818.089206,
-    "ast_hash": "10b95df86225123c72eac4bbaf098bf9",
+    "mtime": 1783879450.4256287,
+    "ast_hash": "6115b3797bf9a0a65e4158cc4f2b2da3",
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-profile-sidebar.tsx": {
@@ -2452,6 +2452,36 @@
   "src/components/appointments/components/appointment-header-person.tsx": {
     "mtime": 1783879366.5961585,
     "ast_hash": "07b152685ff3f19a23fe9586bc386bce",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-avatar-display.tsx": {
+    "mtime": 1783879613.057994,
+    "ast_hash": "30838bf97ef7e6e35e2b73d75c54c071",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-header.tsx": {
+    "mtime": 1783879613.0739994,
+    "ast_hash": "cdc646e71abbc17327e5ce5f4a493635",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-tab-bar.tsx": {
+    "mtime": 1783879613.0880842,
+    "ast_hash": "1e5c0908df6c5b40d2cd2208601c907f",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-tab-button.tsx": {
+    "mtime": 1783879613.09856,
+    "ast_hash": "4dfd867e07d6357620f3f61f24b31a69",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-tab-content.tsx": {
+    "mtime": 1783879613.108208,
+    "ast_hash": "c28d4f04ad4432833f3f52d657c865db",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-employee-detail-tabs.ts": {
+    "mtime": 1783879613.176745,
+    "ast_hash": "4d627f4fa5b828837b00ff83732e6d42",
     "semantic_hash": ""
   }
 }

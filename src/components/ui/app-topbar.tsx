@@ -52,31 +52,36 @@ export default function AppTopbar() {
       <SidebarTrigger
         variant="ghost"
         size="icon"
-        className="rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
+        className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
       />
-      <TopbarClinicSelector />
-      {breadcrumb ? (
-        <Breadcrumb aria-label={breadcrumb.rootLabel} className="min-w-0">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={breadcrumb.rootHref}>{breadcrumb.rootLabel}</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="truncate">
-                {breadcrumb.currentLabel}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      ) : title ? (
-        <h1 className="truncate text-sm font-medium text-ink-secondary">
-          {title}
-        </h1>
-      ) : null}
-      <div className="ml-auto flex items-center gap-2">
+      <div className="flex min-w-0 flex-1 items-center">
+        {breadcrumb ? (
+          <Breadcrumb
+            aria-label={breadcrumb.rootLabel}
+            className="min-w-0 flex-1"
+          >
+            <BreadcrumbList className="min-w-0 flex-nowrap">
+              <BreadcrumbItem className="shrink-0">
+                <BreadcrumbLink asChild>
+                  <Link href={breadcrumb.rootHref}>{breadcrumb.rootLabel}</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="shrink-0" />
+              <BreadcrumbItem className="min-w-0">
+                <BreadcrumbPage className="truncate">
+                  {breadcrumb.currentLabel}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        ) : title ? (
+          <h1 className="truncate text-sm font-medium text-ink-secondary">
+            {title}
+          </h1>
+        ) : null}
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <TopbarClinicSelector />
         {actions.length > 0 ? (
           <div className="hidden items-center gap-2 lg:flex">
             {actions.map((topbarAction) => (

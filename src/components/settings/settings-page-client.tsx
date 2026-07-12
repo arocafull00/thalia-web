@@ -1,19 +1,19 @@
 "use client";
 
-import { Pencil } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
-import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
 import ProfileEditDialog from "@/components/settings/components/profile-edit-dialog";
-import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
-import SettingsManagementPanel from "@/components/settings/components/settings-management-panel";
-import SettingsProfileSidebar from "@/components/settings/components/settings-profile-sidebar";
-import { MobileFab } from "@/components/ui/primitives/mobile-fab";
+import SettingsDetailHeader from "@/components/settings/components/settings-detail-header";
+import SettingsDetailTabBar from "@/components/settings/components/settings-detail-tab-bar";
+import SettingsDetailTabContent from "@/components/settings/components/settings-detail-tab-content";
+import { getSettingsDetailActions } from "@/components/settings/settings-detail-actions";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useSettingsPageActions } from "@/lib/hooks/use-settings-page";
+import { useSettingsTabs } from "@/lib/hooks/use-settings-tabs";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 
 export default function SettingsPageClient() {
@@ -34,8 +34,22 @@ export default function SettingsPageClient() {
     signOutSubmitting,
     uploadAvatar,
   } = useSettingsPageActions();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { activeTab, setActiveTab } = useSettingsTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+  useTopbarActions(
+    profile
+      ? {
+          buttons: [],
+          menu: {
+            actions: getSettingsDetailActions(profile, user?.email, {
+              onEdit: () => setEditDialogOpen(true),
+            }),
+            ariaLabel: SETTINGS_COPY.moreActions,
+          },
+        }
+      : null,
+  );
 
   if (!profile || !user) {
     return (
@@ -46,56 +60,36 @@ export default function SettingsPageClient() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 px-4 pt-6 pb-4 lg:px-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          {SETTINGS_COPY.page.title}
-        </h1>
-      </div>
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        tabIndex={-1}
-        aria-hidden="true"
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (!file) return;
-          handleAvatarPress(file);
-        }}
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <SettingsDetailHeader
+        profile={profile}
+        userEmail={user.email}
+        avatarDisplayUri={displayUri}
+        avatarUploadPending={uploadAvatar.isPending}
+        onAvatarFileSelected={(file) => void handleAvatarPress(file)}
+        onEdit={() => setEditDialogOpen(true)}
       />
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:grid lg:grid-cols-[20%_1fr] lg:overflow-visible">
-        <div className="order-2 px-4 py-6 lg:order-2 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
-          <div className="flex flex-col [&>section:not(:last-child)]:mb-8 [&>section:not(:last-child)]:border-b [&>section:not(:last-child)]:border-border-subtle [&>section:not(:last-child)]:pb-8">
-            <SettingsAccountPanel
-              onChangePassword={() => void handleChangePassword()}
-              onSignOut={() => void handleSignOut()}
-              passwordMessage={passwordMessage}
-              passwordSubmitting={passwordSubmitting}
-              signOutSubmitting={signOutSubmitting}
-            />
-
-            {isAdmin ? <SettingsManagementPanel /> : null}
-
-            <PwaInstallPanel />
-          </div>
-        </div>
-
-        <SettingsProfileSidebar
-          activeEmployeesCount={activeEmployeesCount}
-          canViewClinicRequests={canViewClinicRequests}
-          displayUri={displayUri}
+      <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
+        <SettingsDetailTabBar
+          activeTab={activeTab}
           isAdmin={isAdmin}
-          onEdit={() => setEditDialogOpen(true)}
-          onPickAvatar={() => fileInputRef.current?.click()}
-          pendingRequestsCount={pendingClinicRequests.length}
-          profile={profile}
-          uploadPending={uploadAvatar.isPending}
-          userEmail={user.email}
+          onTabChange={setActiveTab}
         />
+        <div role="tabpanel">
+          <SettingsDetailTabContent
+            activeTab={activeTab}
+            activeEmployeesCount={activeEmployeesCount}
+            canViewClinicRequests={canViewClinicRequests}
+            isAdmin={isAdmin}
+            onChangePassword={() => void handleChangePassword()}
+            onSignOut={() => void handleSignOut()}
+            passwordMessage={passwordMessage}
+            passwordSubmitting={passwordSubmitting}
+            pendingRequestsCount={pendingClinicRequests.length}
+            signOutSubmitting={signOutSubmitting}
+          />
+        </div>
       </div>
 
       <ProfileEditDialog
@@ -103,12 +97,6 @@ export default function SettingsPageClient() {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSuccess={() => {}}
-      />
-
-      <MobileFab
-        label={SETTINGS_COPY.profile.editProfile}
-        icon={Pencil}
-        onClick={() => setEditDialogOpen(true)}
       />
     </div>
   );

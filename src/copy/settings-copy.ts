@@ -3,8 +3,20 @@ export const SETTINGS_COPY = {
     title: "Ajustes",
     profileError: "No se pudo cargar el perfil.",
   },
+  tabs: {
+    summary: "Resumen",
+    account: "Cuenta",
+    management: "Gestión",
+    app: "Aplicación",
+  },
+  actions: {
+    call: "Llamar",
+    email: "Enviar email",
+  },
+  moreActions: "Más acciones",
   sections: {
     stats: "Resumen",
+    statsEmpty: "No hay estadísticas disponibles.",
   },
   profile: {
     editProfile: "Editar perfil",

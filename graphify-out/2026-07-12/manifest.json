@@ -1685,8 +1685,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1783871936.3521595,
-    "ast_hash": "84e2a9b8de2d643e7928a7d3961962b9",
+    "mtime": 1783878792.5524535,
+    "ast_hash": "c89e1d4dcb0049cf54a6efd254afca1b",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -2417,6 +2417,11 @@
   "src/lib/hooks/use-patient-avatar.ts": {
     "mtime": 1783878313.424771,
     "ast_hash": "14ed8266e0a285430dee8e77432e7316",
+    "semantic_hash": ""
+  },
+  "src/components/ui/topbar-clinic-selector.tsx": {
+    "mtime": 1783878785.8313355,
+    "ast_hash": "3c2a90d6af3f0df2356732ef2f7649d2",
     "semantic_hash": ""
   }
 }

@@ -48,7 +48,7 @@ export default function TopbarClinicSelector() {
           </span>
         ) : null
       }
-      className="w-80 min-w-0"
+      className="w-64 min-w-0 shrink-0"
     />
   );
 }

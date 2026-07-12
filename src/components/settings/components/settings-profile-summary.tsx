@@ -39,22 +39,42 @@ export default function SettingsProfileSummary({
   ];
 
   if (statItems.length === 0) {
-    return null;
+    return (
+      <section aria-labelledby="settings-summary-heading">
+        <h2
+          id="settings-summary-heading"
+          className="border-b border-border-subtle pb-4 text-lg font-medium text-ink text-wrap-balance"
+        >
+          {SETTINGS_COPY.sections.stats}
+        </h2>
+        <p className="pt-4 text-sm text-ink-secondary">
+          {SETTINGS_COPY.sections.statsEmpty}
+        </p>
+      </section>
+    );
   }
 
   return (
-    <div
-      aria-label={SETTINGS_COPY.sections.stats}
-      className="divide-y divide-border-subtle px-6 py-2"
-    >
-      {statItems.map((item) => (
-        <SettingsStatItem
-          key={item.label}
-          label={item.label}
-          tone={item.tone}
-          value={item.value}
-        />
-      ))}
-    </div>
+    <section aria-labelledby="settings-summary-heading">
+      <h2
+        id="settings-summary-heading"
+        className="border-b border-border-subtle pb-4 text-lg font-medium text-ink text-wrap-balance"
+      >
+        {SETTINGS_COPY.sections.stats}
+      </h2>
+      <div
+        aria-label={SETTINGS_COPY.sections.stats}
+        className="divide-y divide-border-subtle pt-2"
+      >
+        {statItems.map((item) => (
+          <SettingsStatItem
+            key={item.label}
+            label={item.label}
+            tone={item.tone}
+            value={item.value}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

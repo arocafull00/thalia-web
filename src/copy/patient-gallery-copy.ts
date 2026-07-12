@@ -84,6 +84,10 @@ export const PATIENT_GALLERY_COPY = {
     before: "Antes",
     after: "Después",
     close: "Cerrar comparativa",
+    swap: "Intercambiar lados",
+    orientationLabel: "Orientación de la comparativa",
+    orientationHorizontal: "Comparación horizontal",
+    orientationVertical: "Comparación vertical",
     sliderLabel: "Comparar imágenes",
   },
   delete: {

@@ -163,9 +163,23 @@ export default function PatientGalleryDialog({
     setSelectedImageIds([]);
   };
 
+  const handleComparisonOpenChange = (nextOpen: boolean) => {
+    setComparisonOpen(nextOpen);
+  };
+
+  const handleGalleryOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      handleCloseSelectionMode();
+      setComparisonOpen(false);
+      setUploaderOpen(false);
+    }
+
+    onOpenChange(nextOpen);
+  };
+
   return (
     <>
-      <AppDialog open={open} onOpenChange={onOpenChange}>
+      <AppDialog open={open} onOpenChange={handleGalleryOpenChange}>
         <AppSheetContent className={SHEET_CLASS_NAME}>
           <AppDialogHeader>
             <div className="flex items-start justify-between gap-4">
@@ -195,7 +209,7 @@ export default function PatientGalleryDialog({
                   title={PATIENT_GALLERY_COPY.actions.compare}
                   icon={Columns2}
                   disabled={selectedImageIds.length !== 2}
-                  onClick={() => setComparisonOpen(true)}
+                  onClick={() => handleComparisonOpenChange(true)}
                 />
                 <ActionButton
                   title={PATIENT_GALLERY_COPY.actions.cancelSelection}
@@ -303,7 +317,7 @@ export default function PatientGalleryDialog({
           beforeImage={selectedImages[0]!}
           afterImage={selectedImages[1]!}
           open={comparisonOpen}
-          onOpenChange={setComparisonOpen}
+          onOpenChange={handleComparisonOpenChange}
         />
       ) : null}
     </>

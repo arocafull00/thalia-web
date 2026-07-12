@@ -45,13 +45,13 @@ type AppSearchableComboboxProps = {
 };
 
 const inputTriggerClassName =
-  "flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus-visible:ring-2 disabled:opacity-50 [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
+  "flex w-full items-center justify-between gap-2 rounded-input border border-border/60 bg-surface px-3 py-2 text-sm outline-none focus-visible:border-primary disabled:opacity-[var(--disabled-opacity)] [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
 
 const pillTriggerClassName =
-  "inline-flex w-full items-center justify-between gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary disabled:opacity-50 [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
+  "inline-flex w-full items-center justify-between gap-2 rounded-full border border-border/60 bg-surface px-3 py-1.5 text-sm text-ink-secondary disabled:opacity-[var(--disabled-opacity)] [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
 
 const popupClassName =
-  "pointer-events-auto z-100 min-w-72 rounded-2xl border border-border bg-surface p-3 shadow-lg ring-0";
+  "pointer-events-auto z-100 min-w-64 rounded-[14px] border border-border/60 bg-surface p-2 shadow-float ring-0";
 
 export default function AppSearchableCombobox({
   value,
@@ -194,7 +194,7 @@ export default function AppSearchableCombobox({
             <ComboboxInput
               showTrigger={false}
               placeholder={searchPlaceholder}
-              className="mb-3 w-full rounded-xl border border-border bg-surface shadow-none ring-primary focus-within:ring-2"
+              className="mb-2 w-full rounded-input border border-border/60 bg-surface shadow-none focus-within:border-primary"
             />
           ) : null}
           <div className={showSearch ? "max-h-48 overflow-y-auto" : undefined}>
@@ -202,7 +202,7 @@ export default function AppSearchableCombobox({
               <button
                 type="button"
                 onClick={() => handleSelect(null)}
-                className="mb-2 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm hover:bg-canvas"
+                className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-[var(--hover-overlay)]"
               >
                 {triggerLeading}
                 {clearLabel}

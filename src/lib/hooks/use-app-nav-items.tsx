@@ -27,47 +27,47 @@ const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
   {
     href: "/dashboard",
     label: "Inicio",
-    icon: <LayoutGrid size={18} />,
+    icon: <LayoutGrid size={18} strokeWidth={1.5} />,
   },
   {
     href: "/calendar",
     label: "Agenda",
-    icon: <Calendar size={18} />,
+    icon: <Calendar size={18} strokeWidth={1.5} />,
   },
   {
     href: "/appointments",
     label: "Citas",
-    icon: <Clock size={18} />,
+    icon: <Clock size={18} strokeWidth={1.5} />,
   },
   {
     href: "/patients",
     label: "Pacientes",
-    icon: <Users size={18} />,
+    icon: <Users size={18} strokeWidth={1.5} />,
   },
   {
     href: "/treatments",
     label: "Tratamientos",
-    icon: <Scissors size={18} />,
+    icon: <Scissors size={18} strokeWidth={1.5} />,
   },
   {
     href: "/inventory",
     label: "Inventario",
-    icon: <Package size={18} />,
+    icon: <Package size={18} strokeWidth={1.5} />,
   },
   {
     href: "/finances",
     label: "Finanzas",
-    icon: <Euro size={18} />,
+    icon: <Euro size={18} strokeWidth={1.5} />,
   },
   {
     href: "/employees",
     label: "Personal",
-    icon: <UserPlus size={18} />,
+    icon: <UserPlus size={18} strokeWidth={1.5} />,
   },
   {
     href: "/settings",
     label: "Ajustes",
-    icon: <Settings size={18} />,
+    icon: <Settings size={18} strokeWidth={1.5} />,
   },
 ];
 

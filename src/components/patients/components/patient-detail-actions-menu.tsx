@@ -9,23 +9,31 @@ type PatientDetailActionsMenuProps = {
   patient: Patient;
   onEdit: () => void;
   onCreateAppointment: () => void;
+  onOpenGallery: () => void;
+  secondaryOnly?: boolean;
+  className?: string;
 };
 
 export default function PatientDetailActionsMenu({
   patient,
   onEdit,
   onCreateAppointment,
+  onOpenGallery,
+  secondaryOnly = false,
+  className,
 }: PatientDetailActionsMenuProps) {
-  const actions = getPatientDetailActions(patient, {
+  const allActions = getPatientDetailActions(patient, {
     onEdit,
     onCreateAppointment,
+    onOpenGallery,
   });
+  const actions = secondaryOnly ? allActions.slice(2) : allActions;
 
   return (
     <ProfileActionsMenu
       actions={actions}
       ariaLabel={PATIENT_DETAIL_COPY.moreActions}
-      className="lg:hidden"
+      className={className}
     />
   );
 }

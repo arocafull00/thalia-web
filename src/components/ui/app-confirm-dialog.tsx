@@ -6,6 +6,7 @@ import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 
 type AppConfirmDialogProps = {
@@ -41,23 +42,25 @@ export default function AppConfirmDialog({
           <AppDialogDescription>{description}</AppDialogDescription>
         </AppDialogHeader>
         <AppDialogFooter>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
-            className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas disabled:opacity-50"
           >
             {cancelLabel}
-          </button>
+          </Button>
           {confirmTone === "danger" ? (
-            <button
+            <Button
               type="button"
+              variant="destructive"
+              size="sm"
               disabled={isPending}
               onClick={onConfirm}
-              className="rounded-full bg-danger px-4 py-2 text-xs font-medium uppercase tracking-wide text-on-primary hover:opacity-90 disabled:opacity-50"
             >
               {isPending ? pendingLabel : confirmLabel}
-            </button>
+            </Button>
           ) : (
             <ActionButton
               title={isPending ? pendingLabel : confirmLabel}

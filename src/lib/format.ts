@@ -42,6 +42,16 @@ export function formatBirthDateWithAge(birthDate: string | null) {
   return `${formatInputDate(birthDate)} (${age} años)`;
 }
 
+export function formatAge(birthDate: string | null) {
+  if (!birthDate) {
+    return null;
+  }
+
+  const age = differenceInYears(new Date(), toLocalDate(birthDate));
+
+  return `${age} años`;
+}
+
 export function formatPatientReferenceId(id: string, createdAt: string | null) {
   const year = createdAt
     ? new Date(createdAt).getFullYear()
@@ -229,6 +239,12 @@ export function invitationTokenRoleLabel(role: InvitationTokenRole | string) {
   }
 
   return role;
+}
+
+export function getTreatmentName(appointment: AppointmentWithRelations) {
+  return (
+    appointment.appointment_treatments[0]?.treatment?.name ?? "Sin tratamiento"
+  );
 }
 
 export function inventoryMovementTypeLabel(type: InventoryMovementType) {

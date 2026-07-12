@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 
+import { Badge } from "@/components/ui/badge";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
@@ -30,12 +31,12 @@ export default function SettingsProfilePanel({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <button
         type="button"
         disabled={uploadingAvatar}
         onClick={onPickAvatar}
-        className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-border bg-primary-subtle/40 disabled:opacity-60"
+        className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-border/60 bg-primary-subtle/40 disabled:opacity-60"
       >
         {displayUri ? (
           <Image
@@ -52,19 +53,15 @@ export default function SettingsProfilePanel({
       </button>
       <div>
         <p className="text-lg font-medium text-ink">{profile.full_name}</p>
-        <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-ink-muted">
+        <p className="mt-1 text-xs text-ink-muted">
           {buildProfileSubtitle(profile.specialty, profile.role)}
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
         {isAdmin ? (
-          <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">
-            Administrador de Clínica
-          </span>
+          <Badge variant="default">Administrador de Clínica</Badge>
         ) : null}
-        <span className="rounded-full bg-primary-subtle/40 px-3 py-1 text-xs text-ink-secondary">
-          Suscripción Pro
-        </span>
+        <Badge variant="muted">Suscripción Pro</Badge>
       </div>
       <ActionButton title="Editar perfil" variant="ghost" onClick={onEdit} />
     </div>

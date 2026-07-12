@@ -4,6 +4,7 @@ import { Phone } from "lucide-react";
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { employeeRoleLabel } from "@/lib/format";
@@ -66,25 +67,15 @@ export default function EmployeeProfileHeader({
         </h1>
 
         <div className="flex flex-wrap justify-center gap-2">
-          <span className="rounded-full bg-border px-2.5 py-1 text-xs font-medium text-ink-secondary">
-            {employeeRoleLabel(employee.role)}
-          </span>
+          <Badge variant="muted">{employeeRoleLabel(employee.role)}</Badge>
           {employee.specialty ? (
-            <span className="rounded-full bg-primary-subtle px-2.5 py-1 text-xs font-medium text-ink-secondary">
-              {employee.specialty}
-            </span>
+            <Badge variant="default">{employee.specialty}</Badge>
           ) : null}
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium uppercase tracking-wide ${
-              isInactive
-                ? "bg-danger-subtle text-danger"
-                : "bg-success-subtle text-success"
-            }`}
-          >
+          <Badge variant={isInactive ? "danger" : "success"}>
             {isInactive
               ? EMPLOYEE_DETAIL_COPY.status.inactive
               : EMPLOYEE_DETAIL_COPY.status.active}
-          </span>
+          </Badge>
         </div>
 
         {employee.phone ? (

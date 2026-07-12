@@ -1,5 +1,8 @@
-import CalendarViewModeOption from "@/components/calendar/components/calendar-view-mode-option";
+"use client";
+
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
+import { cn } from "@/lib/utils";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 
 const VIEW_MODE_OPTIONS: { value: CalendarViewMode; label: string }[] = [
@@ -28,16 +31,25 @@ export default function CalendarViewModeToggle({
   );
 
   return (
-    <div className="flex rounded-full border border-border bg-canvas p-0.5">
+    <ToggleGroup
+      type="single"
+      value={viewMode}
+      onValueChange={(value) => {
+        if (!value) return;
+        onChange(value as CalendarViewMode);
+      }}
+      className={cn(fullWidth && "w-full")}
+    >
       {options.map((option) => (
-        <CalendarViewModeOption
+        <ToggleGroupItem
           key={option.value}
-          label={option.label}
-          active={viewMode === option.value}
-          fullWidth={fullWidth}
-          onClick={() => onChange(option.value)}
-        />
+          value={option.value}
+          aria-label={option.label}
+          className={cn(fullWidth && "flex-1")}
+        >
+          {option.label}
+        </ToggleGroupItem>
       ))}
-    </div>
+    </ToggleGroup>
   );
 }

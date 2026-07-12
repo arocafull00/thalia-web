@@ -1,16 +1,16 @@
 # Graph Report - thalia-web  (2026-07-08)
 
 ## Corpus Check
-- 410 files · ~99,151 words
+- 418 files · ~100,221 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1529 nodes · 3335 edges · 105 communities (83 shown, 22 thin omitted)
+- 1590 nodes · 4066 edges · 92 communities (74 shown, 18 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8390632b`
+- Built from commit: `426ae052`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -47,6 +47,7 @@
 - [[_COMMUNITY_patients-page-client.tsx|patients-page-client.tsx]]
 - [[_COMMUNITY_action-button.tsx|action-button.tsx]]
 - [[_COMMUNITY_inventory-page-client.tsx|inventory-page-client.tsx]]
+- [[_COMMUNITY_app-bottom-nav-more-sheet.tsx|app-bottom-nav-more-sheet.tsx]]
 - [[_COMMUNITY_transactions-columns.tsx|transactions-columns.tsx]]
 - [[_COMMUNITY_use-inventory-item-create-dialog.ts|use-inventory-item-create-dialog.ts]]
 - [[_COMMUNITY_patient-edit-dialog.tsx|patient-edit-dialog.tsx]]
@@ -72,7 +73,6 @@
 - [[_COMMUNITY_use-settings-page.ts|use-settings-page.ts]]
 - [[_COMMUNITY_use-appointment-materials-override-dialog.ts|use-appointment-materials-override-dialog.ts]]
 - [[_COMMUNITY_employees-table.tsx|employees-table.tsx]]
-- [[_COMMUNITY_finances-category-breakdown.tsx|finances-category-breakdown.tsx]]
 - [[_COMMUNITY_calendar-grid.ts|calendar-grid.ts]]
 - [[_COMMUNITY_use-schedule-x-calendar.ts|use-schedule-x-calendar.ts]]
 - [[_COMMUNITY_invite-page-client.tsx|invite-page-client.tsx]]
@@ -87,20 +87,11 @@
 - [[_COMMUNITY_environment.ts|environment.ts]]
 - [[_COMMUNITY_use-login.ts|use-login.ts]]
 - [[_COMMUNITY_appointment-materials-override-dialog.tsx|appointment-materials-override-dialog.tsx]]
-- [[_COMMUNITY_page-filters-bar.tsx|page-filters-bar.tsx]]
-- [[_COMMUNITY_search-copy.ts|search-copy.ts]]
 - [[_COMMUNITY_components.json|components.json]]
-- [[_COMMUNITY_app-sheet-content.tsx|app-sheet-content.tsx]]
-- [[_COMMUNITY_page-filters-bar.tsx|page-filters-bar.tsx]]
-- [[_COMMUNITY_table-mobile-columns.tsx|table-mobile-columns.tsx]]
 - [[_COMMUNITY_use-patient-edit-dialog.ts|use-patient-edit-dialog.ts]]
 - [[_COMMUNITY_action-button.tsx|action-button.tsx]]
-- [[_COMMUNITY_use-appointment-materials-override-dialog.ts|use-appointment-materials-override-dialog.ts]]
 - [[_COMMUNITY_compilerOptions|compilerOptions]]
 - [[_COMMUNITY_schedule-x-calendar.tsx|schedule-x-calendar.tsx]]
-- [[_COMMUNITY_mobile-card-view.tsx|mobile-card-view.tsx]]
-- [[_COMMUNITY_profile-timeline.tsx|profile-timeline.tsx]]
-- [[_COMMUNITY_page.tsx|page.tsx]]
 - [[_COMMUNITY_appointments-table.tsx|appointments-table.tsx]]
 - [[_COMMUNITY_devDependencies|devDependencies]]
 - [[_COMMUNITY_eslint.config.mjs|eslint.config.mjs]]
@@ -108,85 +99,89 @@
 - [[_COMMUNITY_postcss.config.mjs|postcss.config.mjs]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 66 edges
-2. `useAuth()` - 30 edges
+1. `cn()` - 92 edges
+2. `useAuth()` - 38 edges
 3. `isInitialLoading()` - 29 edges
-4. `supabase` - 24 edges
-5. `useAuthStore` - 19 edges
-6. `Employee` - 19 edges
-7. `ActionButton()` - 18 edges
-8. `Notice()` - 16 edges
-9. `useOnboardingIntentStore` - 16 edges
-10. `compilerOptions` - 16 edges
+4. `ActionButton()` - 28 edges
+5. `Notice()` - 28 edges
+6. `unwrapSupabase()` - 27 edges
+7. `supabase` - 25 edges
+8. `AppointmentWithRelations` - 25 edges
+9. `Employee` - 23 edges
+10. `unwrapSupabaseList()` - 22 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `proxy()` --calls--> `updateSession()`  [EXTRACTED]
   proxy.ts → src/lib/supabase/proxy.ts
 - `proxy()` --calls--> `withSessionCookies()`  [EXTRACTED]
   proxy.ts → src/lib/supabase/proxy.ts
-- `RegisterPageClient()` --calls--> `useRegisterType()`  [EXTRACTED]
-  src/components/auth/register/page.client.tsx → src/lib/hooks/use-register-type.ts
-- `FinancesSummaryMetrics()` --calls--> `formatCurrency()`  [EXTRACTED]
-  src/components/finances/components/finances-summary-metrics.tsx → src/lib/format.ts
-- `CalendarDayButton()` --calls--> `cn()`  [EXTRACTED]
-  src/components/ui/calendar.tsx → src/lib/utils.ts
+- `InventoryItemAdjustStockDialog()` --calls--> `useInventoryAdjustStockDialog()`  [EXTRACTED]
+  src/components/inventory/components/inventory-item-adjust-stock-dialog.tsx → src/lib/hooks/use-inventory-adjust-stock-dialog.ts
+- `AppSearchableComboboxItem()` --calls--> `cn()`  [EXTRACTED]
+  src/components/ui/app-searchable-combobox-item.tsx → src/lib/utils.ts
+- `AppSearchableCombobox()` --calls--> `cn()`  [EXTRACTED]
+  src/components/ui/app-searchable-combobox.tsx → src/lib/utils.ts
 
 ## Import Cycles
 - 3-file cycle: `src/lib/active-clinic-id.ts -> src/stores/auth-store.ts -> src/stores/employees-store.ts -> src/lib/active-clinic-id.ts`
 
-## Communities (105 total, 22 thin omitted)
+## Communities (92 total, 18 thin omitted)
 
 ### Community 0 - "useAuth"
-Cohesion: 0.14
-Nodes (21): EmployeeEditDialogProps, InventoryItemAdjustStockDialog(), InventoryItemAdjustStockDialogProps, TreatmentDialog(), TreatmentDialogProps, TreatmentForm(), AppConfirmDialogProps, AppDialog() (+13 more)
+Cohesion: 0.15
+Nodes (18): CalendarDayDialogProps, InventoryItemAdjustStockDialog(), InventoryItemAdjustStockDialogProps, TreatmentDialog(), TreatmentDialogProps, TreatmentForm(), AppConfirmDialogProps, AppDialog() (+10 more)
 
 ### Community 1 - "appointments-store.ts"
-Cohesion: 0.06
-Nodes (31): AppLayoutClient(), AppLayoutClientProps, AppBottomNav(), AppBottomNavItem(), AppBottomNavItemProps, AppShell(), AppShellProps, AppSidebar() (+23 more)
+Cohesion: 0.11
+Nodes (34): Separator(), SheetDescription(), SheetHeader(), SheetTitle(), Sidebar(), SidebarContent(), SidebarContext, SidebarContextProps (+26 more)
 
 ### Community 2 - "use-schedule-x-calendar.ts"
-Cohesion: 0.19
-Nodes (10): PatientCreateFormProps, NewPatientDateField(), NewPatientDateFieldProps, PATIENT_CREATE_COPY, defaultValues, patientFormSchema, PatientFormValues, usePatientCreateDialog() (+2 more)
+Cohesion: 0.15
+Nodes (14): PatientCreateFormProps, PatientEditDialog(), PatientEditDialogProps, NewPatientDateField(), NewPatientDateFieldProps, PATIENT_CREATE_COPY, PATIENT_EDIT_COPY, defaultValues (+6 more)
 
 ### Community 3 - "format.ts"
-Cohesion: 0.20
-Nodes (13): AppointmentMaterialsOverrideForm(), TreatmentInventoryLinksField(), defaultValues, InventoryAdjustStockFormValues, inventoryAdjustStockSchema, useCreateInventoryItem(), useInventoryItem(), useInventoryItems() (+5 more)
+Cohesion: 0.16
+Nodes (16): AppointmentMaterialsOverrideForm(), InventoryDetailPageClient(), InventoryDetailPageClientProps, TreatmentInventoryLinksField(), INVENTORY_ITEM_DETAIL_COPY, defaultValues, InventoryAdjustStockFormValues, inventoryAdjustStockSchema (+8 more)
 
 ### Community 4 - "cn"
 Cohesion: 0.20
-Nodes (9): InventoryItemCreateFormProps, INVENTORY_ITEM_CREATE_COPY, defaultValues, inventoryFormSchema, InventoryFormValues, inventoryFieldsSchema, inventorySchema, InventorySchemaInput (+1 more)
+Nodes (10): InventoryItemCreateForm(), InventoryItemCreateFormProps, INVENTORY_ITEM_CREATE_COPY, defaultValues, inventoryFormSchema, InventoryFormValues, inventoryFieldsSchema, inventorySchema (+2 more)
 
 ### Community 5 - "login-form-panel.tsx"
-Cohesion: 0.22
-Nodes (5): APPOINTMENT_FILTER_DEFAULTS, AppointmentsMobileList(), AppointmentsMobileListProps, AppointmentsTable(), AppointmentsTableProps
+Cohesion: 0.21
+Nodes (9): allStatuses, AppointmentStatusSelect(), AppointmentStatusSelectProps, statusColors, statusOptions, buildAppointmentsColumns(), AppointmentsTable(), AppointmentsTableProps (+1 more)
 
 ### Community 7 - "patients-page-client.tsx"
-Cohesion: 0.05
-Nodes (51): AppointmentDetailSidebar(), AppointmentDetailSidebarProps, reminderLabel(), AppointmentStatusBadge(), AppointmentStatusBadgeProps, statusStyles, allStatuses, AppointmentStatusSelectProps (+43 more)
+Cohesion: 0.16
+Nodes (21): EmployeeAppointmentRow(), EmployeeAppointmentRowProps, EmployeeTimeline(), EmployeeTimelineProps, mapAppointmentsToTimelineItems(), PatientAppointmentRow(), PatientAppointmentRowProps, mapAppointmentsToTimelineItems() (+13 more)
 
 ### Community 8 - "employee-detail-page-client.tsx"
-Cohesion: 0.17
-Nodes (11): AppDateField(), AppDateFieldProps, pad(), AppDatePopoverFieldProps, Popover(), PopoverContent(), PopoverDescription(), PopoverHeader() (+3 more)
+Cohesion: 0.16
+Nodes (12): AppDateField(), AppDateFieldProps, pad(), AppDatePopoverFieldProps, Popover(), PopoverContent(), PopoverDescription(), PopoverHeader() (+4 more)
 
 ### Community 9 - "employee-edit-dialog.tsx"
-Cohesion: 0.33
-Nodes (9): externalMemberships(), needsClinicSelector(), PostAuthRouteInput, PostAuthRouteResult, resolvePostAuthRoute(), buildOwnerProfileMetadata(), hasPendingTeamInvites(), hasRegistrationProfile() (+1 more)
+Cohesion: 0.29
+Nodes (10): externalMemberships(), needsClinicSelector(), PostAuthRouteInput, PostAuthRouteResult, resolvePostAuthRoute(), resolveUnauthenticatedRoute(), buildOwnerProfileMetadata(), hasPendingTeamInvites() (+2 more)
 
 ### Community 10 - "appointments-page-client.tsx"
-Cohesion: 0.16
-Nodes (19): AppSearchableCombobox(), AppSearchableComboboxOption, AppSearchableComboboxProps, AppSearchableComboboxItem(), AppSearchableComboboxItemProps, ComboboxChip(), ComboboxChips(), ComboboxChipsInput() (+11 more)
+Cohesion: 0.11
+Nodes (18): AppSearchableCombobox(), AppSearchableComboboxOption, AppSearchableComboboxProps, AppSearchableComboboxItem(), AppSearchableComboboxItemProps, ComboboxChip(), ComboboxChips(), ComboboxChipsInput() (+10 more)
 
 ### Community 11 - "employees-page-client.tsx"
-Cohesion: 0.18
-Nodes (8): LoginAuthTabs(), LoginAuthTabsProps, LoginFormFieldsProps, LoginFormPanelProps, LoginHeroIllustration(), loginIllustrationSvg, HERO_INDICATORS, LOGIN_COPY
+Cohesion: 0.14
+Nodes (9): LoginAuthTabs(), LoginAuthTabsProps, LoginFormFieldsProps, LoginFormPanelProps, LoginHeroIllustration(), loginIllustrationSvg, HERO_INDICATORS, LoginPageClient() (+1 more)
 
 ### Community 12 - "layout.tsx"
 Cohesion: 0.11
 Nodes (18): geistMono, geistSans, metadata, viewport, AuthProvider(), PwaInstallProvider(), PwaInstallProviderProps, ServiceWorkerProvider() (+10 more)
 
+### Community 13 - "appointment-header.tsx"
+Cohesion: 0.12
+Nodes (20): AppointmentInsert, AppointmentInventoryLinkInput, AppointmentRangeParams, AppointmentTreatmentInsert, AppointmentUpdate, deleteAppointmentTreatments(), getAppointment(), getAppointmentInventoryItems() (+12 more)
+
 ### Community 14 - "transactions-columns.tsx"
-Cohesion: 0.16
-Nodes (9): FiltersSheet(), FiltersSheetProps, Sheet(), SheetContent(), SheetDescription(), SheetFooter(), SheetHeader(), SheetOverlay() (+1 more)
+Cohesion: 0.18
+Nodes (10): Button(), buttonVariants, Calendar(), CalendarDayButton(), FiltersSheet(), FiltersSheetProps, Sheet(), SheetContent() (+2 more)
 
 ### Community 15 - "owner-clinic-form.ts"
 Cohesion: 0.21
@@ -197,240 +192,216 @@ Cohesion: 0.27
 Nodes (7): config, proxy(), publicRoutes, pwaRoutes, SessionUpdateResult, updateSession(), withSessionCookies()
 
 ### Community 28 - "database.types.ts"
-Cohesion: 0.05
-Nodes (38): InventoryItemSidebar(), InventoryItemSidebarProps, inventoryStockLevelToneClass(), PatientDetailActionsMenu(), PatientDetailActionsMenuProps, PatientInfoSection(), PatientInfoSectionProps, PatientProfileSidebarProps (+30 more)
+Cohesion: 0.09
+Nodes (28): PatientDetailActionsMenu(), PatientDetailActionsMenuProps, PatientInfoSection(), PatientInfoSectionProps, PatientProfileSidebar(), PatientProfileSidebarProps, PatientQuickActions(), PatientQuickActionsProps (+20 more)
 
 ### Community 36 - "patients-page-client.tsx"
 Cohesion: 0.24
 Nodes (11): ProfileColorFieldProps, ProfileEditDialog(), ProfileEditDialogProps, ProfileEditForm(), ProfileEditFormProps, PROFILE_COLOR_PRESETS, PROFILE_EDIT_COPY, profileEditFormSchema (+3 more)
 
 ### Community 37 - "action-button.tsx"
-Cohesion: 0.12
-Nodes (24): getActiveClinicId(), EffectiveAppointmentMaterial, fetchDefaultMaterialsForTreatments(), useDashboard(), unwrapSupabase(), unwrapSupabaseList(), AppointmentFormInput, AppointmentInventoryLinkInput (+16 more)
+Cohesion: 0.14
+Nodes (20): getTodayAppointments(), deleteTreatment(), getTreatment(), getTreatments(), insertTreatment(), replaceTreatmentInventoryLinks(), TreatmentInsert, TreatmentInventoryLinkInsert (+12 more)
 
 ### Community 38 - "inventory-page-client.tsx"
-Cohesion: 0.31
-Nodes (4): useLogin(), LoginPageClient(), signInWithGoogleFlow(), navigateAfterAuth()
+Cohesion: 0.19
+Nodes (12): getEmployeeProfile(), ProfileUpdate, updateEmployeeAvatar(), updateEmployeeProfile(), signInWithGoogleFlow(), InvitationState, useUpdateProfile(), assertSupabaseConfigured() (+4 more)
+
+### Community 39 - "app-bottom-nav-more-sheet.tsx"
+Cohesion: 0.16
+Nodes (15): inventoryColumns, InventoryItemSidebar(), InventoryItemSidebarProps, inventoryStockLevelToneClass(), InventoryTable(), InventoryTableProps, InventoryPageFilters, resolveStockLevel() (+7 more)
 
 ### Community 40 - "transactions-columns.tsx"
-Cohesion: 0.20
-Nodes (3): Separator(), Skeleton(), TooltipContent()
+Cohesion: 0.14
+Nodes (13): AppBottomNav(), AppBottomNavItem(), AppBottomNavItemProps, AppShell(), AppShellProps, AppSidebar(), SidebarInset(), SidebarProvider() (+5 more)
 
 ### Community 41 - "use-inventory-item-create-dialog.ts"
-Cohesion: 0.38
-Nodes (3): SettingsProfileSidebar(), SettingsProfileSidebarProps, SettingsPageClient()
+Cohesion: 0.18
+Nodes (10): groupMovementsByMonth(), InventoryMovementsList(), InventoryMovementsListProps, formatAppointmentDay(), formatAppointmentMonth(), formatAppointmentMonthGroup(), formatPatientLastVisitLabel(), toLocalDate() (+2 more)
 
 ### Community 42 - "patient-edit-dialog.tsx"
-Cohesion: 0.48
-Nodes (5): AppointmentDetailTreatmentItem(), AppointmentDetailTreatmentItemProps, AppointmentTreatmentsSection(), AppointmentTreatmentsSectionProps, formatCurrency()
+Cohesion: 0.23
+Nodes (12): getPatient(), getPatientAppointments(), getPatients(), getUpcomingPatientAppointments(), insertPatient(), PatientInsert, PatientUpdate, updatePatient() (+4 more)
 
 ### Community 43 - "patient-detail-page-client.tsx"
-Cohesion: 0.10
-Nodes (21): AppointmentCreateDialogProps, AppointmentCreateFormProps, NewAppointmentDatetimeField(), NewAppointmentDatetimeFieldProps, APPOINTMENT_CREATE_COPY, appointmentFormSchema, AppointmentFormValues, createDefaultStartsAt() (+13 more)
+Cohesion: 0.22
+Nodes (9): AppointmentCreateDialogProps, AppointmentCreateFormProps, NewAppointmentDatetimeField(), NewAppointmentDatetimeFieldProps, APPOINTMENT_CREATE_COPY, appointmentFormSchema, AppointmentFormValues, createDefaultStartsAt() (+1 more)
 
 ### Community 44 - "inventory-columns.tsx"
-Cohesion: 0.19
-Nodes (12): RegisterEmployeeSidebar(), RegisterEmployeeSidebarProps, getRegisterCopy(), getSidebarCopy(), REGISTER_COPY, REGISTER_EMPLOYEE_FORM_COPY, REGISTER_EMPLOYEE_SIDEBAR_COPY, RegisterCopy (+4 more)
+Cohesion: 0.17
+Nodes (12): RegisterEmployeeFormCopy, RegisterEmployeeFormProps, RegisterEmployeeSidebar(), RegisterEmployeeSidebarProps, getSidebarCopy(), REGISTER_COPY, REGISTER_EMPLOYEE_FORM_COPY, REGISTER_EMPLOYEE_SIDEBAR_COPY (+4 more)
 
 ### Community 45 - "use-inventory.ts"
-Cohesion: 0.20
-Nodes (12): SidebarClinicSwitcherProps, SidebarProfileFooter(), SIDEBAR_COPY, clinicMembershipRoleLabel(), useActiveClinic(), useUpdateProfile(), useUploadProfileAvatar(), usePendingClinicRequests() (+4 more)
+Cohesion: 0.13
+Nodes (13): AppLayoutClient(), AppLayoutClientProps, SidebarClinicSwitcherProps, SidebarProfileFooter(), SIDEBAR_COPY, ClinicMembershipRow, getMemberships(), clinicMembershipRoleLabel() (+5 more)
 
 ### Community 47 - "calendar-empty-header.tsx"
 Cohesion: 0.22
 Nodes (9): scripts, build, dev, dev:https, lint, lint:staged, prepare, start (+1 more)
 
 ### Community 48 - "appointments-columns.tsx"
-Cohesion: 0.33
-Nodes (5): FinancesMetricItem(), FinancesMetricItemProps, FinancesSummaryMetrics(), FinancesSummaryMetricsProps, MetricConfig
+Cohesion: 0.23
+Nodes (12): EmployeeAppointmentRow, EmployeeInviteInput, EmployeeUpdate, getEmployee(), getEmployeeAppointments(), getEmployeeAppointmentStats(), getEmployees(), inviteEmployee() (+4 more)
 
 ### Community 49 - "app-dialog-header.tsx"
-Cohesion: 0.06
-Nodes (46): AppointmentPersonAvatar(), AppointmentPersonAvatarProps, getInitials(), EmployeeDetailActionsMenu(), EmployeeDetailActionsMenuProps, EmployeeProfileHeader(), EmployeeProfileHeaderProps, getAvatarStyle() (+38 more)
+Cohesion: 0.05
+Nodes (50): EmployeeProfileHeader(), EmployeeProfileHeaderProps, getAvatarStyle(), PatientProfileHeader(), PatientProfileHeaderProps, SettingsAccountPanel(), SettingsAccountPanelProps, SettingsActionRow() (+42 more)
 
 ### Community 50 - "use-accept-invitation.ts"
-Cohesion: 0.25
-Nodes (11): formatMovementQuantity(), inventoryMovementDotClass(), InventoryMovementRow(), InventoryMovementRowProps, inventoryMovementToneClass(), inventoryMovementTypeLabel(), groupMovementsByMonth(), InventoryMovementsList() (+3 more)
+Cohesion: 0.43
+Nodes (7): formatMovementQuantity(), inventoryMovementDotClass(), InventoryMovementRow(), InventoryMovementRowProps, inventoryMovementToneClass(), inventoryMovementTypeLabel(), formatDateTime()
 
 ### Community 51 - "format.ts"
 Cohesion: 0.33
 Nodes (5): lint-staged, *.{ts,tsx}, name, private, version
 
 ### Community 52 - "use-calendar-page.ts"
-Cohesion: 0.33
-Nodes (4): FinancesWeeklyBreakdownProps, FinancesWeeklyRow(), FinancesWeeklyRowProps, FinancialSummary
+Cohesion: 0.27
+Nodes (10): getInventoryItem(), getInventoryItems(), getInventoryMovements(), insertInventoryItem(), insertInventoryMovement(), InventoryItemInsert, InventoryMovementInsert, InventoryStore (+2 more)
 
 ### Community 53 - "create-clinic-page-client.tsx"
-Cohesion: 0.06
-Nodes (43): TreatmentColorFieldProps, TreatmentDeleteConfirmDialog(), TreatmentDeleteConfirmDialogProps, TreatmentFormProps, InventoryOption, TreatmentInventoryLinkRowProps, TreatmentInventoryLinksFieldProps, TreatmentRowActions() (+35 more)
+Cohesion: 0.05
+Nodes (53): TreatmentColorFieldProps, TreatmentDeleteConfirmDialog(), TreatmentDeleteConfirmDialogProps, TreatmentFormProps, InventoryOption, TreatmentInventoryLinkRowProps, TreatmentInventoryLinksFieldProps, TreatmentRowActions() (+45 more)
 
 ### Community 54 - "schema-helpers.ts"
-Cohesion: 0.05
-Nodes (61): AppointmentCreateDialog(), AppointmentDateRange(), AppointmentDateRangeProps, formatAppointmentDateParam(), getDefaultAppointmentDateRange(), parseAppointmentDateParam(), AppointmentEmployeeFilter(), AppointmentEmployeeFilterProps (+53 more)
+Cohesion: 0.12
+Nodes (22): AppointmentDateRange(), AppointmentDateRangeProps, formatAppointmentDateParam(), getDefaultAppointmentDateRange(), parseAppointmentDateParam(), AppointmentEmployeeFilter(), AppointmentEmployeeFilterProps, AppointmentFilters() (+14 more)
 
 ### Community 55 - "use-post-auth-redirect.ts"
-Cohesion: 0.22
-Nodes (6): PatientsFiltersProps, PatientFilters, PatientsFiltersSheetProps, statusOptions, statusOptions, PATIENTS_COPY
+Cohesion: 0.11
+Nodes (20): APPOINTMENT_FILTER_DEFAULTS, AppointmentsPageClient(), PatientFilters, PatientsFiltersSheet(), PatientsFiltersSheetProps, statusOptions, PATIENT_FILTER_DEFAULTS, PatientsPageClient() (+12 more)
 
 ### Community 56 - "appointment-patient-card.tsx"
-Cohesion: 0.15
-Nodes (11): AppointmentDetailPageClient(), AppointmentDetailPageClientProps, resolveTotalDurationMinutes(), AppointmentDetailCard(), AppointmentDetailCardProps, AppointmentMaterialsSection(), AppointmentMaterialsSectionProps, toDialogInitialItems() (+3 more)
+Cohesion: 0.05
+Nodes (57): AppointmentDetailPageClient(), AppointmentDetailPageClientProps, resolveTotalDurationMinutes(), AppointmentCreateDialog(), AppointmentDetailCard(), AppointmentDetailCardProps, AppointmentDetailSidebar(), AppointmentDetailSidebarProps (+49 more)
 
 ### Community 57 - "dependencies"
 Cohesion: 0.06
 Nodes (33): dependencies, @base-ui/react, class-variance-authority, clsx, date-fns, @hookform/resolvers, lucide-react, match-sorter (+25 more)
 
 ### Community 58 - "use-register-type.ts"
-Cohesion: 0.24
-Nodes (6): Props, RegisterEmployeeEmail(), Props, RegisterTypePicker(), RegisterPageClient(), REGISTER_COPY
+Cohesion: 0.23
+Nodes (7): RegisterEmployeeEmail(), Props, RegisterTypePicker(), RegisterPageClient(), REGISTER_COPY, RegisterStep, useRegisterType()
 
 ### Community 59 - "use-settings-page.ts"
-Cohesion: 0.19
-Nodes (17): FinancesMonthSelector(), FinancesPageFilters, transactionTypeForTab(), useFinancesPage(), useCreateTransaction(), useFinancialSummary(), useTransactions(), FinancesStore (+9 more)
+Cohesion: 0.06
+Nodes (42): CategoryBreakdownItem, FinancesCategoryBreakdownProps, FinancesCategoryRow(), FinancesCategoryRowProps, FinancesFilters, FinancesFiltersSheet(), FinancesFiltersSheetProps, FinancesMetricItem() (+34 more)
 
 ### Community 60 - "Employee"
 Cohesion: 0.33
 Nodes (4): MonthMiniCalendarDayProps, MonthMiniCalendar(), MonthMiniCalendarProps, getMonthGridDays()
 
 ### Community 61 - "use-employee-invite-dialog.ts"
-Cohesion: 0.22
-Nodes (5): INVENTORY_FILTER_DEFAULTS, Stat(), StatProps, StatTone, toneClasses
+Cohesion: 0.15
+Nodes (12): InventoryFilters, InventoryFiltersSheet(), InventoryFiltersSheetProps, stockOptions, INVENTORY_FILTER_DEFAULTS, InventoryPageClient(), Stat(), StatProps (+4 more)
 
 ### Community 62 - "use-settings-page.ts"
 Cohesion: 0.53
 Nodes (5): AuthProviderProps, getClientHydratedSnapshot(), getServerHydratedSnapshot(), subscribeToClientHydration(), useAuthHydrated()
 
 ### Community 63 - "use-appointment-materials-override-dialog.ts"
-Cohesion: 0.06
-Nodes (28): employeesColumns, EmployeesTableProps, FinancesMovementsSectionProps, transactionsColumns, TransactionsTable(), TransactionsTableProps, FinancesTabBar(), FinancesTabBarProps (+20 more)
-
-### Community 64 - "employees-table.tsx"
-Cohesion: 0.22
-Nodes (6): InventoryFiltersProps, InventoryFilters, InventoryFiltersSheetProps, stockOptions, stockOptions, INVENTORY_COPY
-
-### Community 65 - "finances-category-breakdown.tsx"
-Cohesion: 0.60
-Nodes (4): Button(), buttonVariants, Calendar(), CalendarDayButton()
+Cohesion: 0.09
+Nodes (28): employeesColumns, EmployeesTable(), EmployeesTableProps, transactionsColumns, TransactionsTableProps, patientsColumns, PatientsTable(), PatientsTableProps (+20 more)
 
 ### Community 66 - "calendar-grid.ts"
-Cohesion: 0.21
-Nodes (12): AppointmentColumnLayout, appointmentLayout(), formatWeekRange(), getDayEnd(), getDayStart(), getNowIndicatorOffset(), getWeekDays(), getWeekRange() (+4 more)
-
-### Community 67 - "use-schedule-x-calendar.ts"
 Cohesion: 0.18
-Nodes (13): CalendarDayDialog(), CalendarDayDialogProps, CalendarMobileDayView(), DayAgendaAppointmentCard(), DayAgendaAppointmentCardProps, DayAgendaHourRowProps, DayAgendaList(), DayAgendaListProps (+5 more)
+Nodes (16): DayAgendaList(), DayAgendaListProps, AppointmentColumnLayout, appointmentLayout(), formatWeekRange(), getAgendaHours(), getDayEnd(), getDayStart() (+8 more)
 
 ### Community 68 - "invite-page-client.tsx"
-Cohesion: 0.29
-Nodes (8): AppSearchBarInput(), AppSearchBarInputProps, PageSearchFilter(), PageSearchFilterProps, useDebouncedValue(), useSearch(), TopbarSearchState, useTopbarSearchStore
+Cohesion: 0.07
+Nodes (28): EmployeesFilters(), EmployeesFiltersProps, roleOptions, statusOptions, FinancesFilters(), FinancesFiltersProps, InventoryFilters(), InventoryFiltersProps (+20 more)
 
 ### Community 69 - "calendar-agenda.ts"
-Cohesion: 0.32
-Nodes (4): AppDialogClose(), AppDialogCloseProps, AppDialogContentProps, APP_DIALOG_COPY
+Cohesion: 0.24
+Nodes (6): AppDialogClose(), AppDialogCloseProps, AppDialogContentProps, AppSheetContent(), AppSheetContentProps, APP_DIALOG_COPY
 
 ### Community 70 - "app-dialog-close.tsx"
-Cohesion: 0.17
-Nodes (7): AppointmentHeaderProps, EmployeeDetailPageClient(), EmployeeDetailPageClientProps, PatientDetailPageClient(), PatientDetailPageClientProps, BackButton(), BackButtonProps
+Cohesion: 0.08
+Nodes (37): EmployeeDetailActionsMenu(), EmployeeDetailActionsMenuProps, EmployeeEditDialog(), EmployeeEditDialogProps, EmployeeEditFormProps, roleOptions, EmployeeProfileSidebar(), EmployeeProfileSidebarProps (+29 more)
 
 ### Community 71 - "calendar-grid.ts"
-Cohesion: 0.12
-Nodes (22): CalendarEmployeeFilter(), CALENDAR_FILTER_DEFAULTS, CalendarPageClient(), CalendarFilters, CalendarFiltersSheet(), CalendarFiltersSheetProps, MOBILE_VIEW_MODES, CalendarToolbar() (+14 more)
+Cohesion: 0.14
+Nodes (23): CalendarEmployeeFilter(), CALENDAR_FILTER_DEFAULTS, CalendarPageClient(), CalendarFilters, CalendarFiltersSheet(), CalendarFiltersSheetProps, MOBILE_VIEW_MODES, CalendarToolbar() (+15 more)
 
 ### Community 72 - "patients-store.ts"
-Cohesion: 0.06
-Nodes (31): Props, EmployeeEditDialog(), EmployeeEditFormProps, roleOptions, EmployeeStatusConfirmDialog(), EmployeeStatusConfirmDialogProps, EMPLOYEE_ROLE_OPTIONS, InvitePageClient() (+23 more)
+Cohesion: 0.09
+Nodes (19): Props, EMPLOYEE_ROLE_OPTIONS, InvitePageClient(), MEMBERSHIP_ROLE_LABELS, Props, employeeColors, employeeRoles, mapOperationalRoleToEmployeeRole() (+11 more)
 
 ### Community 73 - "employees-filters-sheet.tsx"
-Cohesion: 0.18
-Nodes (8): EmployeesFiltersProps, roleOptions, EmployeeFilters, EmployeesFiltersSheetProps, roleOptions, statusOptions, statusOptions, EMPLOYEES_COPY
+Cohesion: 0.22
+Nodes (7): EmployeeFilters, EmployeesFiltersSheet(), EmployeesFiltersSheetProps, roleOptions, statusOptions, PAGE_TITLES_BY_ROUTE, EMPLOYEES_COPY
 
 ### Community 74 - "use-transaction-create-dialog.ts"
 Cohesion: 0.23
-Nodes (9): TransactionCreateFormProps, TRANSACTION_CREATE_COPY, useClinicId(), useInventoryItemCreateDialog(), createDefaultValues(), transactionFormSchema, TransactionFormValues, useTransactionCreateDialog() (+1 more)
+Nodes (8): TransactionCreateFormProps, FINANCES_FILTER_DEFAULTS, FinancesPageClient(), TRANSACTION_CREATE_COPY, createDefaultValues(), transactionFormSchema, TransactionFormValues, useTransactionCreateDialog()
 
 ### Community 75 - "app-dialog-close.tsx"
-Cohesion: 0.20
-Nodes (7): captureEvent(), waitForAuthSessionReady(), normalizeInviteEmails(), validateInviteEmails(), assertSupabaseConfigured(), supabase, AuthStore
+Cohesion: 0.23
+Nodes (6): CreateClinicPageClient(), captureEvent(), waitForAuthSessionReady(), normalizeInviteEmails(), validateInviteEmails(), useClinicStore
 
 ### Community 76 - "login-hero-panel.tsx"
-Cohesion: 0.23
-Nodes (13): useRegisterEmployee(), RegisterEmployeePageClient(), CreateClinicPageClient(), InviteTeamPageClient(), InvitationState, useAcceptInvitation(), useAuth(), usePostAuthRedirect() (+5 more)
+Cohesion: 0.27
+Nodes (10): useLogin(), useRegisterEmployee(), RegisterEmployeePageClient(), InviteTeamPageClient(), getRegisterCopy(), useAcceptInvitation(), useAuth(), usePostAuthRedirect() (+2 more)
 
 ### Community 77 - "environment.ts"
 Cohesion: 0.28
 Nodes (5): AppSearchableMultiSelectOption, AppSearchableMultiSelectProps, AppSearchableMultiSelectOption(), AppSearchableMultiSelectOptionProps, COMBOBOX_COPY
 
+### Community 78 - "use-login.ts"
+Cohesion: 0.21
+Nodes (9): EmployeeInviteFormProps, roleOptions, EMPLOYEE_FILTER_DEFAULTS, EmployeesPageClient(), EMPLOYEE_INVITE_COPY, defaultValues, EmployeeFormValues, useEmployeeInviteDialog() (+1 more)
+
 ### Community 79 - "appointment-materials-override-dialog.tsx"
 Cohesion: 0.24
-Nodes (8): resolveUnauthenticatedRoute(), createWebPersistStorage(), webStorage, ClinicStore, OnboardingStore, useOnboardingHydrated(), useOnboardingStore, PendingInviteStore
-
-### Community 81 - "search-copy.ts"
-Cohesion: 0.60
-Nodes (3): AppSearchBar(), getSearchPlaceholder(), SEARCHABLE_ROUTES
+Nodes (8): navigateAfterAuth(), createWebPersistStorage(), webStorage, OnboardingIntentStore, OnboardingStore, useOnboardingHydrated(), useOnboardingStore, PendingInviteStore
 
 ### Community 82 - "components.json"
 Cohesion: 0.09
 Nodes (21): aliases, components, hooks, lib, ui, utils, iconLibrary, menuAccent (+13 more)
 
-### Community 83 - "app-sheet-content.tsx"
-Cohesion: 0.19
-Nodes (7): CategoryBreakdownItem, FinancesCategoryBreakdownProps, FinancesCategoryRow(), FinancesCategoryRowProps, FinancesFilters, FinancesFiltersSheetProps, FINANCES_COPY
-
-### Community 84 - "page-filters-bar.tsx"
-Cohesion: 0.22
-Nodes (4): FinancesFiltersProps, TreatmentsFiltersProps, PageFiltersBarProps, SEARCH_COPY
-
-### Community 85 - "table-mobile-columns.tsx"
-Cohesion: 0.60
-Nodes (3): normalizeEmail(), PendingClinicRequest, UsePendingClinicRequestsResult
-
 ### Community 86 - "use-patient-edit-dialog.ts"
 Cohesion: 0.10
-Nodes (25): appointmentFieldsSchema, appointmentSchema, AppointmentSchemaInput, appointmentUpdateSchema, AppointmentUpdateSchemaInput, clinicMembershipInvitationRoleSchema, employeeFieldsSchema, EmployeeInviteSchemaInput (+17 more)
+Nodes (26): appointmentFieldsSchema, appointmentSchema, AppointmentSchemaInput, appointmentUpdateSchema, AppointmentUpdateSchemaInput, clinicMembershipInvitationRoleSchema, employeeFieldsSchema, employeeInviteSchema (+18 more)
 
 ### Community 87 - "action-button.tsx"
-Cohesion: 0.21
-Nodes (9): RegisterEmployeeFormCopy, RegisterEmployeeFormProps, PatientEditDialog(), PatientEditDialogProps, ActionButton(), PATIENT_EDIT_COPY, patientFormSchema, toFormValues() (+1 more)
-
-### Community 88 - "use-appointment-materials-override-dialog.ts"
-Cohesion: 0.26
-Nodes (9): AppointmentMaterialsOverrideDialog(), AppointmentMaterialsOverrideDialogProps, AppointmentMaterialsOverrideFormProps, appointmentInventoryLinkSchema, appointmentMaterialsFormSchema, AppointmentMaterialsFormValues, toFormValues(), useAppointmentMaterialsOverrideDialog() (+1 more)
+Cohesion: 0.19
+Nodes (9): Props, CalendarDayDialog(), DashboardPageClient(), ActionButton(), Notice(), NoticeProps, ProfileQuickActionButtonProps, formatFullDayLabel() (+1 more)
 
 ### Community 89 - "compilerOptions"
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
 ### Community 90 - "schedule-x-calendar.tsx"
-Cohesion: 0.21
-Nodes (9): @schedule-x/calendar, ScheduleXCalendarInner(), buildScheduleEvents(), getInitialCalendarConfig(), getRangeForViewMode(), toPlainDate(), useScheduleXCalendar(), ScheduleXCalendar() (+1 more)
+Cohesion: 0.18
+Nodes (11): @schedule-x/calendar, CalendarEmptyHeader(), ScheduleXCalendarInner(), buildScheduleEvents(), getInitialCalendarConfig(), getRangeForViewMode(), toPlainDate(), useScheduleXCalendar() (+3 more)
 
 ### Community 102 - "appointments-table.tsx"
-Cohesion: 0.20
-Nodes (9): AppointmentRow(), AppointmentRowProps, CalendarMobileMonthAppointments(), CalendarMobileMonthAppointmentsProps, CalendarMobileMonthView(), useCalendarMobileMonth(), DashboardPageClient(), buildHasAppointmentsOnDay() (+1 more)
+Cohesion: 0.17
+Nodes (14): AppointmentRow(), AppointmentRowProps, AppointmentsMobileList(), AppointmentsMobileListProps, CalendarMobileMonthAppointments(), CalendarMobileMonthAppointmentsProps, CalendarMobileMonthView(), DayAgendaAppointmentCard() (+6 more)
 
 ### Community 130 - "devDependencies"
 Cohesion: 0.17
 Nodes (12): devDependencies, eslint, eslint-config-next, husky, lint-staged, prettier, tailwindcss, @tailwindcss/postcss (+4 more)
 
 ## Knowledge Gaps
-- **423 isolated node(s):** `AppointmentDetailPageClientProps`, `APPOINTMENT_FILTER_DEFAULTS`, `AppointmentDetailCardProps`, `AppointmentHeaderProps`, `AppointmentPatientCardProps` (+418 more)
+- **439 isolated node(s):** `Props`, `geistSans`, `geistMono`, `metadata`, `viewport` (+434 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `cn()` connect `appointments-store.ts` to `patients-page-client.tsx`, `appointments-table.tsx`, `employee-detail-page-client.tsx`, `transactions-columns.tsx`, `appointments-page-client.tsx`, `transactions-columns.tsx`, `owner-clinic-form.ts`, `create-clinic-page-client.tsx`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `schedule-x-calendar.tsx`, `format.ts`?**
-  _High betweenness centrality (0.079) - this node is a cross-community bridge._
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
 - **Why does `@schedule-x/calendar` connect `schedule-x-calendar.tsx` to `dependencies`?**
-  _High betweenness centrality (0.078) - this node is a cross-community bridge._
-- **Why does `CALENDAR_COPY` connect `calendar-grid.ts` to `schedule-x-calendar.tsx`, `use-schedule-x-calendar.ts`, `Employee`, `appointments-table.tsx`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
-- **What connects `AppointmentDetailPageClientProps`, `APPOINTMENT_FILTER_DEFAULTS`, `AppointmentDetailCardProps` to the rest of the system?**
-  _423 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **What connects `Props`, `geistSans`, `geistMono` to the rest of the system?**
+  _439 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `useAuth` be split into smaller, more focused modules?**
-  _Cohesion score 0.13709677419354838 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.14814814814814814 - nodes in this community are weakly interconnected._
 - **Should `appointments-store.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05584415584415584 - nodes in this community are weakly interconnected._
-- **Should `patients-page-client.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.054385964912280704 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11153846153846154 - nodes in this community are weakly interconnected._
+- **Should `appointments-page-client.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.11231884057971014 - nodes in this community are weakly interconnected._

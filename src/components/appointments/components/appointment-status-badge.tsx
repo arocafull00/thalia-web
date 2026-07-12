@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { appointmentStatusLabel } from "@/lib/format";
 import type { AppointmentStatus } from "@/types/database.types";
 
@@ -5,47 +6,26 @@ type AppointmentStatusBadgeProps = {
   status: AppointmentStatus | null;
 };
 
-const statusStyles: Record<
+const statusVariants: Record<
   AppointmentStatus,
-  { container: string; text: string }
+  "default" | "success" | "warning" | "danger" | "muted"
 > = {
-  scheduled: {
-    container: "bg-primary-subtle",
-    text: "text-primary",
-  },
-  confirmed: {
-    container: "bg-success-subtle",
-    text: "text-success",
-  },
-  in_progress: {
-    container: "bg-warning-subtle",
-    text: "text-warning",
-  },
-  completed: {
-    container: "bg-success-subtle",
-    text: "text-success",
-  },
-  cancelled: {
-    container: "bg-danger-subtle",
-    text: "text-danger",
-  },
-  no_show: {
-    container: "bg-border",
-    text: "text-ink-muted",
-  },
+  scheduled: "default",
+  confirmed: "success",
+  in_progress: "warning",
+  completed: "success",
+  cancelled: "danger",
+  no_show: "muted",
 };
 
 export default function AppointmentStatusBadge({
   status,
 }: AppointmentStatusBadgeProps) {
   const resolvedStatus = status ?? "scheduled";
-  const styles = statusStyles[resolvedStatus];
 
   return (
-    <span
-      className={`rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-wide ${styles.container} ${styles.text}`}
-    >
+    <Badge variant={statusVariants[resolvedStatus]}>
       {appointmentStatusLabel(status)}
-    </span>
+    </Badge>
   );
 }

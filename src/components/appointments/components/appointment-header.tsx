@@ -94,7 +94,7 @@ export default function AppointmentHeader({
               <Popover.Content
                 align="end"
                 sideOffset={8}
-                className="z-100 min-w-52 rounded-2xl border border-border bg-surface p-2 shadow-lg"
+                className="z-100 min-w-52 rounded-[14px] border border-border/60 bg-surface p-1.5 shadow-float"
               >
                 <button
                   type="button"

@@ -20,7 +20,7 @@ export default function AppDialogContent({
       <Dialog.Content
         className={
           className ??
-          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-surface p-6 shadow-lg focus:outline-none"
+          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-dialog border border-border/60 bg-surface p-6 shadow-dialog focus:outline-none"
         }
         {...props}
       >

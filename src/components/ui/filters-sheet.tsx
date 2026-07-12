@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
@@ -35,20 +36,20 @@ export default function FiltersSheet({
         side="bottom"
         showCloseButton={false}
         className={cn(
-          "max-h-[85dvh] gap-0 overflow-hidden rounded-t-2xl border-border bg-surface px-0 pb-0 pt-0",
+          "max-h-[85dvh] gap-0 overflow-hidden rounded-t-[18px] border-border/60 bg-surface px-0 pb-0 pt-0 shadow-float",
           contentClassName,
         )}
       >
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="shrink-0 px-4 pt-2">
             <div className="mb-6 flex items-center justify-between">
-              <span className="text-base font-semibold text-ink">Filtros</span>
+              <span className="text-base font-medium text-ink">Filtros</span>
               <button
                 type="button"
                 onClick={onDismiss}
-                className="rounded-full p-1.5 text-ink-muted hover:bg-canvas"
+                className="rounded-button p-1.5 text-ink-muted hover:bg-[var(--hover-overlay)]"
               >
-                <X size={18} />
+                <X size={18} strokeWidth={1.5} />
               </button>
             </div>
           </div>
@@ -57,20 +58,17 @@ export default function FiltersSheet({
           </div>
           <div className="mt-auto shrink-0 border-t border-border-subtle px-4 py-4 pb-8">
             <div className="flex gap-3">
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                className="flex-1"
                 onClick={onClear}
-                className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-ink-secondary hover:bg-canvas"
               >
                 Limpiar filtros
-              </button>
-              <button
-                type="button"
-                onClick={onApply}
-                className="flex-1 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-on-primary hover:bg-primary-hover"
-              >
+              </Button>
+              <Button type="button" className="flex-1" onClick={onApply}>
                 Aplicar filtros
-              </button>
+              </Button>
             </div>
           </div>
         </div>

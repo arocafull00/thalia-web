@@ -22,7 +22,7 @@ export default function TreatmentRowActions({
           event.stopPropagation();
           onEdit(treatment);
         }}
-        className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+        className="inline-flex items-center gap-2 rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
       >
         <Pencil className="size-3.5" aria-hidden="true" />
         {TREATMENTS_COPY.row.edit}

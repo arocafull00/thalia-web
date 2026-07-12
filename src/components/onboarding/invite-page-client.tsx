@@ -85,7 +85,7 @@ export default function InvitePageClient({ token }: Props) {
             type="button"
             onClick={() => void handleReject()}
             disabled={submitting}
-            className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas disabled:opacity-50"
+            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)] disabled:opacity-50"
           >
             Rechazar
           </button>

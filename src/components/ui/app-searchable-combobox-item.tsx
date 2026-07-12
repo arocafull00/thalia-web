@@ -9,7 +9,7 @@ type AppSearchableComboboxItemProps = {
 };
 
 const itemClassName =
-  "rounded-xl px-3 py-2 text-ink data-highlighted:bg-canvas data-selected:bg-primary-subtle data-selected:text-ink [&_[data-slot=combobox-item-indicator]]:hidden";
+  "h-8 rounded-md px-2 text-ink data-highlighted:bg-[var(--hover-overlay)] data-selected:bg-primary-subtle data-selected:text-ink [&_[data-slot=combobox-item-indicator]]:hidden";
 
 export default function AppSearchableComboboxItem({
   option,

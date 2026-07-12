@@ -14,12 +14,14 @@ export function ProfileStatCard({
   value,
 }: ProfileStatCardProps) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-4">
-      <Icon className={`size-5 ${iconClassName}`} aria-hidden="true" />
-      <p className="mt-3 text-3xl font-bold text-ink">{value}</p>
-      <p className="mt-1 text-xs uppercase tracking-wide text-ink-muted">
-        {label}
-      </p>
+    <div className="rounded-card border border-border/60 bg-surface p-4">
+      <Icon
+        className={`size-4 ${iconClassName}`}
+        strokeWidth={1.5}
+        aria-hidden="true"
+      />
+      <p className="mt-3 text-2xl font-medium text-ink">{value}</p>
+      <p className="mt-1 text-xs text-ink-muted">{label}</p>
     </div>
   );
 }

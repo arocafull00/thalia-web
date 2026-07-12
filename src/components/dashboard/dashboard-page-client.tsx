@@ -6,7 +6,6 @@ import { useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentRow from "@/components/appointments/components/appointment-row";
-import { ActionButton } from "@/components/ui/primitives/action-button";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -15,6 +14,7 @@ import { toAgendaAppointments } from "@/lib/calendar-agenda";
 import { formatFullDayLabel } from "@/lib/calendar-grid";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDashboard } from "@/lib/hooks/use-dashboard";
+import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 
 export default function DashboardPageClient() {
   const { profile } = useAuth();
@@ -29,23 +29,26 @@ export default function DashboardPageClient() {
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "de nuevo";
 
+  useTopbarAction({
+    title: "Nueva cita",
+    onClick: () => setDialogOpen(true),
+  });
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <ActionButton title="Nueva cita" onClick={() => setDialogOpen(true)} />
-      </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="space-y-6 p-4 lg:p-8">
-          <header className="space-y-5 lg:space-y-0">
+        <div className="space-y-8 p-4 lg:p-8">
+          <header className="space-y-6 lg:space-y-0">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex min-w-0 flex-1 flex-col gap-4 lg:flex-row lg:items-end lg:gap-8">
+              <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-row lg:items-end lg:gap-8">
                 <div className="min-w-0">
-                  <h1 className="text-3xl font-semibold tracking-tight text-ink lg:text-4xl">
+                  <h1 className="text-2xl font-medium tracking-tight text-ink lg:text-3xl">
                     Bienvenida, {firstName}
                   </h1>
                   <p className="mt-2 flex items-center gap-2 text-sm text-ink-secondary">
                     <Calendar
                       className="size-4 shrink-0 text-primary"
+                      strokeWidth={1.5}
                       aria-hidden="true"
                     />
                     {formatFullDayLabel(today)}
@@ -63,13 +66,13 @@ export default function DashboardPageClient() {
               <Stat value={String(confirmedCount)} label="Confirmadas" />
             </div>
           </header>
-          <div className="grid gap-6 xl:grid-cols-[1.8fr_1fr]">
-            <section className="space-y-4">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <h2 className="text-lg font-medium">Próximas citas</h2>
+          <div className="grid gap-8 xl:grid-cols-[1.8fr_1fr]">
+            <section className="space-y-6">
+              <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+                <h2>Próximas citas</h2>
                 <Link
                   href="/calendar"
-                  className="text-xs uppercase tracking-wide text-ink-secondary"
+                  className="text-xs text-ink-muted hover:text-ink-secondary"
                 >
                   Ver calendario
                 </Link>
@@ -83,7 +86,7 @@ export default function DashboardPageClient() {
                 ))}
               </div>
               {!isLoading && appointments.length === 0 ? (
-                <p className="py-4 text-ink-secondary">
+                <p className="py-4 text-sm text-ink-secondary">
                   No hay citas programadas para hoy.
                 </p>
               ) : null}
@@ -95,17 +98,17 @@ export default function DashboardPageClient() {
                 />
               ) : null}
             </section>
-            <div className="space-y-6">
-              <section className="space-y-3">
-                <h2 className="text-lg font-medium">Actividad reciente</h2>
-                <div className="divide-y divide-border-subtle border-t border-border">
+            <div className="space-y-8">
+              <section className="space-y-4">
+                <h2>Actividad reciente</h2>
+                <div className="divide-y divide-border-subtle">
                   {appointments.slice(0, 3).map((appointment) => (
-                    <div key={appointment.id} className="py-3">
-                      <p className="font-medium text-ink">
+                    <div key={appointment.id} className="py-4">
+                      <p className="text-sm font-medium text-ink">
                         Cita {appointment.status ?? "programada"} -{" "}
                         {appointment.patients?.full_name ?? "Paciente"}
                       </p>
-                      <p className="text-sm text-ink-secondary">Hoy</p>
+                      <p className="mt-1 text-xs text-ink-muted">Hoy</p>
                     </div>
                   ))}
                 </div>

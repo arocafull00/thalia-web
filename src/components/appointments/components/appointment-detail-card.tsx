@@ -20,9 +20,7 @@ export default function AppointmentDetailCard({
         {Icon ? (
           <Icon className="size-4 text-ink-muted" aria-hidden="true" />
         ) : null}
-        <h2 className="text-xs font-medium uppercase tracking-wide text-ink-muted">
-          {title}
-        </h2>
+        <h2 className="text-xs text-ink-muted">{title}</h2>
       </div>
       <div className="mt-4">{children}</div>
     </section>

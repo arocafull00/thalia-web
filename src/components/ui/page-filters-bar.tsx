@@ -39,7 +39,7 @@ export default function PageFiltersBar({
           type="button"
           onClick={onOpenSheet}
           aria-label="Filtros"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-ink-secondary hover:bg-canvas motion-reduce:transition-none sm:hidden"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-button border border-border/60 bg-surface text-ink-secondary hover:bg-[var(--hover-overlay)] motion-reduce:transition-none sm:hidden"
         >
           <SlidersHorizontal size={16} />
         </button>

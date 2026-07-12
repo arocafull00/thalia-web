@@ -25,7 +25,7 @@ export default function CalendarMobileMonthAppointments({
 
   return (
     <section className="border-t border-border-subtle">
-      <div className="flex items-center justify-between bg-canvas px-4 py-3">
+      <div className="flex items-center justify-between bg-surface px-4 py-3">
         <h2 className="text-sm font-semibold text-ink">
           {CALENDAR_COPY.mobileMonth.appointmentsTitle(dayLabel)}
         </h2>

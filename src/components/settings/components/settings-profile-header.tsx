@@ -3,6 +3,7 @@
 import { Mail, Pencil, Phone } from "lucide-react";
 import Image from "next/image";
 
+import { Badge } from "@/components/ui/badge";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
@@ -60,15 +61,11 @@ export default function SettingsProfileHeader({
           {profile.full_name}
         </h1>
 
-        <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-secondary">
-          {profileSubtitle}
-        </p>
+        <p className="text-xs text-ink-muted">{profileSubtitle}</p>
 
         {isAdmin ? (
           <div className="flex flex-wrap justify-center gap-2">
-            <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-medium uppercase tracking-wide text-on-primary">
-              {SETTINGS_COPY.profile.adminBadge}
-            </span>
+            <Badge variant="default">{SETTINGS_COPY.profile.adminBadge}</Badge>
           </div>
         ) : null}
 

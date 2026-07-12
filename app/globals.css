@@ -5,24 +5,44 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --canvas: oklch(99.2% 0.002 200);
-  --surface: oklch(100% 0 0);
-  --primary: oklch(68.5% 0.12 175);
-  --primary-hover: oklch(62% 0.08 175);
-  --primary-light: oklch(80% 0.1 175);
-  --primary-subtle: oklch(88.5% 0.06 175);
-  --ink: oklch(19.5% 0.012 260);
-  --ink-secondary: oklch(47% 0.012 250);
-  --ink-muted: oklch(68% 0.012 220);
-  --border: oklch(88.5% 0.008 220);
-  --border-subtle: oklch(93.5% 0.006 220);
-  --on-primary: oklch(100% 0 0);
-  --danger: oklch(57% 0.22 27);
-  --danger-subtle: oklch(94% 0.04 27);
-  --warning: oklch(66% 0.16 55);
-  --warning-subtle: oklch(94% 0.05 55);
-  --success: oklch(55% 0.14 160);
-  --success-subtle: oklch(92% 0.05 160);
+  --primary: #3D8FA0;
+  --primary-hover: #2E7A8C;
+  --primary-light: #E0F0F4;
+  --primary-subtle: #F2F8FA;
+  --canvas: #F7F9FA;
+  --surface: #FFFFFF;
+  --surface-secondary: #F4F7F8;
+  --ink: #1F2933;
+  --ink-secondary: #687682;
+  --ink-muted: #9BAAB4;
+  --border: #EAEEF1;
+  --border-strong: #D8DEE3;
+  --border-subtle: #F0F3F5;
+  --on-primary: #FFFFFF;
+  --success: #E8F5EF;
+  --success-text: #3A9970;
+  --success-subtle: var(--success);
+  --warning: #FAF3E4;
+  --warning-text: #A07520;
+  --warning-subtle: var(--warning);
+  --danger: #FAECEC;
+  --danger-text: #B54848;
+  --danger-subtle: var(--danger);
+  --hover-overlay: rgba(0, 0, 0, 0.03);
+  --disabled-opacity: 0.45;
+  --shadow-float: 0 4px 16px -4px rgba(0, 0, 0, 0.08),
+    0 1px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-dialog: 0 8px 32px -8px rgba(0, 0, 0, 0.12),
+    0 2px 8px -2px rgba(0, 0, 0, 0.06);
+  --radius-button: 10px;
+  --radius-input: 10px;
+  --radius-card: 16px;
+  --radius-dialog: 18px;
+  --radius-badge: 999px;
+  --badge-primary: var(--primary-subtle);
+  --badge-primary-text: var(--primary-hover);
+  --badge-purple: oklch(0.94 0.04 295);
+  --badge-purple-text: oklch(0.53 0.16 295);
   --background: var(--canvas);
   --foreground: var(--ink);
   --card: var(--surface);
@@ -30,13 +50,13 @@
   --popover: var(--surface);
   --popover-foreground: var(--ink);
   --primary-foreground: var(--on-primary);
-  --secondary: var(--border-subtle);
+  --secondary: var(--surface-secondary);
   --secondary-foreground: var(--ink);
-  --muted: var(--border-subtle);
+  --muted: var(--surface-secondary);
   --muted-foreground: var(--ink-muted);
   --accent: var(--primary-subtle);
   --accent-foreground: var(--ink);
-  --destructive: var(--danger);
+  --destructive: var(--danger-text);
   --input: var(--border);
   --ring: var(--primary);
   --chart-1: oklch(0.87 0 0);
@@ -62,6 +82,7 @@
 @theme inline {
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
@@ -70,14 +91,22 @@
   --color-ink-secondary: var(--ink-secondary);
   --color-ink-muted: var(--ink-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-border-subtle: var(--border-subtle);
   --color-on-primary: var(--on-primary);
-  --color-danger: var(--danger);
-  --color-danger-subtle: var(--danger-subtle);
-  --color-warning: var(--warning);
-  --color-warning-subtle: var(--warning-subtle);
-  --color-success: var(--success);
-  --color-success-subtle: var(--success-subtle);
+  --color-danger: var(--danger-text);
+  --color-danger-text: var(--danger-text);
+  --color-danger-subtle: var(--danger);
+  --color-warning: var(--warning-text);
+  --color-warning-text: var(--warning-text);
+  --color-warning-subtle: var(--warning);
+  --color-success: var(--success-text);
+  --color-success-text: var(--success-text);
+  --color-success-subtle: var(--success);
+  --color-badge-primary: var(--badge-primary);
+  --color-badge-primary-text: var(--badge-primary-text);
+  --color-badge-purple: var(--badge-purple);
+  --color-badge-purple-text: var(--badge-purple-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);
@@ -96,13 +125,13 @@
   --color-chart-1: var(--chart-1);
   --color-ring: var(--primary);
   --color-input: var(--border);
-  --color-destructive: var(--danger);
+  --color-destructive: var(--danger-text);
   --color-accent-foreground: var(--ink);
   --color-accent: var(--primary-subtle);
   --color-muted-foreground: var(--ink-muted);
-  --color-muted: var(--border-subtle);
+  --color-muted: var(--surface-secondary);
   --color-secondary-foreground: var(--ink);
-  --color-secondary: var(--border-subtle);
+  --color-secondary: var(--surface-secondary);
   --color-primary-foreground: var(--on-primary);
   --color-popover-foreground: var(--ink);
   --color-popover: var(--surface);
@@ -117,6 +146,15 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-button: 10px;
+  --radius-input: 10px;
+  --radius-card: 16px;
+  --radius-dialog: 18px;
+  --radius-badge: 999px;
+  --shadow-float: 0 4px 16px -4px rgba(0, 0, 0, 0.08),
+    0 1px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-dialog: 0 8px 32px -8px rgba(0, 0, 0, 0.12),
+    0 2px 8px -2px rgba(0, 0, 0, 0.06);
   --spacing-safe-top: var(--safe-area-top);
   --spacing-safe-bottom: var(--safe-area-bottom);
   --spacing-safe-left: var(--safe-area-left);
@@ -187,6 +225,7 @@
   }
   button:disabled {
     cursor: default;
+    opacity: var(--disabled-opacity);
   }
   * {
     @apply border-border outline-ring/50;
@@ -197,10 +236,19 @@
   html {
     @apply font-sans;
   }
+  h1 {
+    @apply text-xl font-semibold tracking-tight text-ink;
+  }
+  h2 {
+    @apply text-base font-medium text-ink;
+  }
+  h3 {
+    @apply text-sm font-medium text-ink-secondary;
+  }
 }
 
 body {
-  @apply bg-canvas text-ink font-sans;
+  @apply bg-surface text-ink font-sans;
 }
 
 .sx-react-calendar-wrapper {

@@ -13,7 +13,7 @@ export default function AppBottomNav() {
   return (
     <nav
       aria-label={BOTTOM_NAV_COPY.ariaLabel}
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-border-subtle bg-surface pb-safe-bottom lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-border-subtle bg-canvas pb-safe-bottom lg:hidden"
     >
       <ul className="flex items-stretch justify-around">
         {primaryMobileItems.map((item) => {

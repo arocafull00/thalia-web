@@ -23,6 +23,7 @@ import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
 import { usePatients } from "@/lib/hooks/use-patients";
+import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 
 const PATIENT_FILTER_DEFAULTS = { q: "", status: "" };
@@ -73,14 +74,13 @@ export default function PatientsPageClient() {
     setSheetOpen(true);
   };
 
+  useTopbarAction({
+    title: "Nuevo paciente",
+    onClick: () => setDialogOpen(true),
+  });
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <ActionButton
-          title="Nuevo paciente"
-          onClick={() => setDialogOpen(true)}
-        />
-      </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <PatientsFilters
@@ -128,7 +128,7 @@ export default function PatientsPageClient() {
             <button
               type="button"
               onClick={() => handleDialogOpenChange(false)}
-              className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+              className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
             >
               {PATIENT_CREATE_COPY.actions.cancel}
             </button>

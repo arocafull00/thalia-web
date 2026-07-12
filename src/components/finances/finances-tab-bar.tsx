@@ -5,7 +5,10 @@ type FinancesTabBarProps = {
   onTabChange: (tab: FinancesTabValue) => void;
 };
 
-export default function FinancesTabBar({ selectedTab, onTabChange }: FinancesTabBarProps) {
+export default function FinancesTabBar({
+  selectedTab,
+  onTabChange,
+}: FinancesTabBarProps) {
   const tabs: FinancesTabValue[] = ["income", "expense", "summary"];
 
   return (
@@ -15,11 +18,17 @@ export default function FinancesTabBar({ selectedTab, onTabChange }: FinancesTab
           key={tab}
           type="button"
           onClick={() => onTabChange(tab)}
-          className={`rounded-full px-4 py-2 text-xs uppercase tracking-wide ${
-            selectedTab === tab ? "bg-primary text-on-primary" : "bg-primary-subtle/40 text-ink-secondary"
+          className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
+            selectedTab === tab
+              ? "bg-primary-subtle text-primary"
+              : "text-ink-muted hover:bg-[var(--hover-overlay)] hover:text-ink-secondary"
           }`}
         >
-          {tab === "income" ? "Ingresos" : tab === "expense" ? "Gastos" : "Resumen"}
+          {tab === "income"
+            ? "Ingresos"
+            : tab === "expense"
+              ? "Gastos"
+              : "Resumen"}
         </button>
       ))}
     </div>

@@ -17,14 +17,14 @@ export default function DayAgendaAppointmentCard({
     <Link
       href={`/appointments/${appointment.id}`}
       className={cn(
-        "flex min-h-0 overflow-hidden rounded-xl bg-primary-subtle shadow-sm",
+        "flex shrink-0 overflow-hidden rounded-card border border-border/60 bg-surface",
         className,
       )}
     >
       <span
         className={cn(
-          "w-1.5 shrink-0",
-          appointment.employeeColor ? "" : "bg-primary",
+          "w-1 shrink-0",
+          appointment.employeeColor ? "" : "bg-primary/40",
         )}
         style={
           appointment.employeeColor
@@ -33,12 +33,12 @@ export default function DayAgendaAppointmentCard({
         }
         aria-hidden
       />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5 p-3">
+      <div className="flex min-w-0 flex-1 flex-col gap-1 p-3">
         <div className="flex items-start justify-between gap-2">
-          <span className="truncate text-sm font-semibold text-ink">
+          <span className="truncate text-sm font-medium text-ink">
             {appointment.patientName}
           </span>
-          <span className="shrink-0 text-xs font-medium tabular-nums text-primary">
+          <span className="shrink-0 text-xs tabular-nums text-ink-muted">
             {formatTime(appointment.startsAt)} –{" "}
             {formatTime(appointment.endsAt)}
           </span>

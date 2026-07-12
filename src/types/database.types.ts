@@ -87,6 +87,42 @@ export type Patient = {
   updated_at: string | null;
 };
 
+export type PatientImagePhase = "antes" | "durante" | "despues";
+
+export type PatientImage = {
+  id: string;
+  patient_id: string;
+  clinic_id: string;
+  storage_key: string;
+  original_filename: string | null;
+  mime_type: string | null;
+  file_size_bytes: number | null;
+  width: number | null;
+  height: number | null;
+  category: string | null;
+  phase: PatientImagePhase | null;
+  treatment_id: string | null;
+  notes: string | null;
+  captured_at: string | null;
+  created_at: string | null;
+};
+
+export type PatientImageInsert = {
+  patient_id: string;
+  clinic_id: string;
+  storage_key: string;
+  original_filename: string | null;
+  mime_type: string;
+  file_size_bytes: number;
+  width: number;
+  height: number;
+  category: string | null;
+  phase: PatientImagePhase | null;
+  treatment_id: string | null;
+  notes: string | null;
+  captured_at: string;
+};
+
 export type Treatment = {
   id: string;
   clinic_id: string;

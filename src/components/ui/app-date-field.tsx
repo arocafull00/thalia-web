@@ -78,7 +78,7 @@ export default function AppDateField({
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="z-100 w-auto rounded-2xl border border-border bg-surface p-0 shadow-lg"
+        className="z-100 w-auto rounded-[14px] border border-border/60 bg-surface p-0 shadow-float"
         align="start"
       >
         <Calendar

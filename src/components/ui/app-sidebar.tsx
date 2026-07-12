@@ -1,17 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+import AppSidebarNavItem from "@/components/ui/app-sidebar-nav-item";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import SidebarProfileFooter from "@/components/ui/sidebar-profile-footer";
@@ -40,52 +38,35 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="offcanvas" className="border-border bg-canvas">
-      <SidebarHeader className="border-b border-border-subtle px-4 py-5">
+      <SidebarHeader className="border-b border-border-subtle px-4 py-4">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.png"
             alt="Thalia"
-            width={56}
-            height={56}
-            className="shrink-0 rounded-xl"
+            width={40}
+            height={40}
+            className="shrink-0 rounded-lg"
           />
           <div className="flex flex-col gap-0.5">
-            <p className="text-2xl font-semibold leading-none text-ink">
-              Thalia
-            </p>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-ink-muted">
-              Aesthetic
-              <br />
-              Excellence
-            </p>
+            <p className="text-lg font-medium leading-none text-ink">Thalia</p>
+            <p className="text-[10px] text-ink-muted">Aesthetic Excellence</p>
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="p-2">
+      <SidebarContent className="px-3 py-4">
         <SidebarMenu className="gap-1">
           {items.map((item) => {
             const active =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={active}
-                  size="lg"
-                  className={
-                    active
-                      ? "rounded-xl bg-primary text-on-primary hover:bg-primary hover:text-on-primary data-active:bg-primary data-active:text-on-primary"
-                      : "rounded-xl text-ink-secondary hover:bg-primary-subtle/40 hover:text-ink-secondary"
-                  }
-                >
-                  <Link href={item.href} onClick={closeMobileSidebar}>
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <AppSidebarNavItem
+                key={item.href}
+                item={item}
+                active={active}
+                onNavigate={closeMobileSidebar}
+              />
             );
           })}
         </SidebarMenu>

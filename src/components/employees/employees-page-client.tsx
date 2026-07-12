@@ -25,6 +25,7 @@ import { useAuth } from "@/lib/hooks/use-auth";
 import { useEmployeeInviteDialog } from "@/lib/hooks/use-employee-invite-dialog";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
+import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 
 const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "" };
@@ -102,6 +103,15 @@ export default function EmployeesPageClient() {
     setSheetOpen(true);
   };
 
+  useTopbarAction(
+    canManage
+      ? {
+          title: "Invitar personal",
+          onClick: () => setDialogOpen(true),
+        }
+      : null,
+  );
+
   if (!canManage) {
     return (
       <div className="p-8">
@@ -112,12 +122,6 @@ export default function EmployeesPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <ActionButton
-          title="Invitar personal"
-          onClick={() => setDialogOpen(true)}
-        />
-      </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <EmployeesFilters
@@ -167,7 +171,7 @@ export default function EmployeesPageClient() {
             <button
               type="button"
               onClick={() => handleDialogOpenChange(false)}
-              className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+              className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
             >
               {EMPLOYEE_INVITE_COPY.actions.cancel}
             </button>

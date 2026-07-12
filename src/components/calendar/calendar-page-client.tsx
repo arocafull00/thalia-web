@@ -11,10 +11,10 @@ import CalendarToolbar from "@/components/calendar/components/calendar-toolbar";
 import { useCalendarPage } from "@/components/calendar/hooks/use-calendar-page";
 import { useSwipeNavigation } from "@/components/calendar/hooks/use-swipe-navigation";
 import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
-import { ActionButton } from "@/components/ui/primitives/action-button";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
 
@@ -77,14 +77,13 @@ export default function CalendarPageClient() {
     onChangeViewMode(isMobile ? "month" : CALENDAR_FILTER_DEFAULTS.viewMode);
   }, [isMobile, onChangeViewMode, setEmployeeId]);
 
+  useTopbarAction({
+    title: CALENDAR_COPY.toolbar.newAppointment,
+    onClick: () => openCreateDialog(),
+  });
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <ActionButton
-          title={CALENDAR_COPY.toolbar.newAppointment}
-          onClick={() => openCreateDialog()}
-        />
-      </div>
       <CalendarToolbar
         rangeLabel={rangeLabel}
         viewMode={viewMode}

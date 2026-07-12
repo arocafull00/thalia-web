@@ -50,7 +50,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 
   if (loading || (user && !clinicId && clinicLoading)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-canvas text-ink-secondary">
+      <div className="flex min-h-screen items-center justify-center bg-surface text-ink-secondary">
         Cargando...
       </div>
     );
@@ -58,7 +58,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 
   if (!user || !clinicId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-canvas p-6">
+      <div className="flex min-h-screen items-center justify-center bg-surface p-6">
         <Notice message="Redirigiendo..." />
       </div>
     );

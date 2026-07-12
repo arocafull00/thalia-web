@@ -9,17 +9,12 @@ import {
   appointmentStatusLabel,
   formatDateTime,
   formatTime,
+  getTreatmentName,
 } from "@/lib/format";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
 } from "@/types/database.types";
-
-function getTreatmentName(appointment: AppointmentWithRelations) {
-  return (
-    appointment.appointment_treatments[0]?.treatment?.name ?? "Sin tratamiento"
-  );
-}
 
 export function buildAppointmentsColumns(
   onStatusChange: (id: string, status: AppointmentStatus) => void,

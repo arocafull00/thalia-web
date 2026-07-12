@@ -74,7 +74,7 @@ export default function AppointmentCreateDialog({
           <button
             type="button"
             onClick={() => handleOpenChange(false)}
-            className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
           >
             {APPOINTMENT_CREATE_COPY.actions.cancel}
           </button>

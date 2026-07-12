@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import MobileCardView, {
   type MobileCardAction,
   type MobileCardColumn,
@@ -125,7 +126,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   className={
                     onRowClick
-                      ? "cursor-pointer hover:bg-surface"
+                      ? "cursor-pointer hover:bg-[var(--hover-overlay)]"
                       : "hover:bg-transparent"
                   }
                   onClick={
@@ -164,22 +165,24 @@ export function DataTable<TData, TValue>({
             Página {totalRows === 0 ? 0 : pagination.pageIndex + 1}
           </span>
           <div className="flex gap-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className="min-h-11 rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40 motion-reduce:transition-none"
             >
               Anterior
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className="min-h-11 rounded-full bg-surface px-3 py-1 transition hover:bg-primary-subtle disabled:opacity-40 motion-reduce:transition-none"
             >
               Siguiente
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}

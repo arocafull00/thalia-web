@@ -31,10 +31,10 @@ export default function FilterPills({
             type="button"
             aria-pressed={isActive}
             onClick={() => onChange(option.value)}
-            className={`rounded-full px-4 py-2 text-sm transition-colors motion-reduce:transition-none ${
+            className={`rounded-full px-3 py-1.5 text-sm transition-colors motion-reduce:transition-none ${
               isActive
-                ? "bg-primary text-on-primary"
-                : "bg-surface text-ink-secondary ring-1 ring-border"
+                ? "bg-primary-subtle text-primary"
+                : "bg-surface text-ink-secondary ring-1 ring-border/60 hover:bg-[var(--hover-overlay)]"
             }`}
           >
             {option.label}

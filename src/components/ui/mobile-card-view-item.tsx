@@ -39,7 +39,7 @@ export default function MobileCardViewItem<T>({
 
   return (
     <div
-      className={`px-4 py-3 ${clickable ? "cursor-pointer hover:bg-canvas" : ""}`}
+      className={`px-4 py-4 ${clickable ? "cursor-pointer hover:bg-[var(--hover-overlay)]" : ""}`}
       onClick={onRowClick ? () => onRowClick(row) : undefined}
       onKeyDown={
         onRowClick
@@ -88,7 +88,7 @@ export default function MobileCardViewItem<T>({
                     event.stopPropagation();
                     action.onClick(row);
                   }}
-                  className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+                  className="flex min-h-9 min-w-9 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] motion-reduce:transition-none"
                 >
                   {action.icon}
                 </button>

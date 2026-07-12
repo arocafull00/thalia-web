@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import type { ReactNode } from "react";
 
 import CalendarViewModeToggle from "@/components/calendar/components/calendar-view-mode-toggle";
+import { Button } from "@/components/ui/button";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 
@@ -27,20 +28,22 @@ export default function CalendarToolbar({
   onOpenFiltersSheet,
 }: CalendarToolbarProps) {
   return (
-    <div className="flex shrink-0 items-center border-b border-border bg-surface px-4 py-3">
+    <div className="flex shrink-0 items-center border-b border-border-subtle bg-surface px-4 py-3">
       <div className="flex min-w-0 flex-1 items-center justify-start gap-2">
         <div className="hidden items-center gap-2 md:flex">
           <CalendarViewModeToggle
             viewMode={viewMode}
             onChange={onChangeViewMode}
           />
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={onToday}
-            className="min-h-11 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+            className="h-10 rounded-xl px-4"
           >
             {CALENDAR_COPY.toolbar.today}
-          </button>
+          </Button>
         </div>
       </div>
       <div className="flex shrink-0 items-center justify-center gap-2">
@@ -48,20 +51,20 @@ export default function CalendarToolbar({
           type="button"
           aria-label={CALENDAR_COPY.toolbar.previousPeriod}
           onClick={onPrevious}
-          className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+          className="flex size-8 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] motion-reduce:transition-none"
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={16} strokeWidth={1.5} />
         </button>
-        <span className="w-36 truncate text-center text-sm font-medium text-ink sm:w-52">
+        <span className="w-36 truncate text-center text-sm text-ink-secondary sm:w-52">
           {rangeLabel}
         </span>
         <button
           type="button"
           aria-label={CALENDAR_COPY.toolbar.nextPeriod}
           onClick={onNext}
-          className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+          className="flex size-8 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] motion-reduce:transition-none"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={16} strokeWidth={1.5} />
         </button>
       </div>
       <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
@@ -70,9 +73,9 @@ export default function CalendarToolbar({
           type="button"
           onClick={onOpenFiltersSheet}
           aria-label={CALENDAR_COPY.toolbar.filters}
-          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas md:hidden motion-reduce:transition-none"
+          className="inline-flex size-8 shrink-0 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] md:hidden motion-reduce:transition-none"
         >
-          <SlidersHorizontal size={16} />
+          <SlidersHorizontal size={16} strokeWidth={1.5} />
         </button>
       </div>
     </div>

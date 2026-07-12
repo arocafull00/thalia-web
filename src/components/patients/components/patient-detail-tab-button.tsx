@@ -1,0 +1,30 @@
+import { cn } from "@/lib/utils";
+
+type PatientDetailTabButtonProps = {
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+};
+
+export default function PatientDetailTabButton({
+  label,
+  isActive,
+  onClick,
+}: PatientDetailTabButtonProps) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={isActive}
+      onClick={onClick}
+      className={cn(
+        "relative shrink-0 px-4 py-3 text-[0.8rem] font-medium whitespace-nowrap transition-colors",
+        isActive
+          ? "text-primary after:absolute after:inset-x-0 after:bottom-0 after:h-[1.5px] after:bg-primary"
+          : "text-ink-muted hover:text-ink-secondary",
+      )}
+    >
+      {label}
+    </button>
+  );
+}

@@ -20,7 +20,7 @@ export default function AppSheetContent({
       <Dialog.Content
         className={
           className ??
-          "fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border bg-surface p-6 shadow-lg outline-none data-[state=open]:animate-sheet-in data-[state=closed]:animate-sheet-out"
+          "fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-lg flex-col border-l border-border/60 bg-surface p-6 shadow-float outline-none data-[state=open]:animate-sheet-in data-[state=closed]:animate-sheet-out"
         }
         {...props}
       >

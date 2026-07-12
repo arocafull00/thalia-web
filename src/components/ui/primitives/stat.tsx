@@ -15,13 +15,13 @@ const toneClasses: Record<StatTone, string> = {
 
 export function Stat({ label, value, tone = "primary" }: StatProps) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col lg:flex-row lg:items-baseline lg:gap-1.5 w-full items-center gap-1 px-4 first:pl-0 last:pr-0 lg:w-auto lg:px-4 lg:first:pl-0">
+    <div className="flex w-full min-w-0 flex-1 flex-col items-center gap-1 px-4 first:pl-0 last:pr-0 lg:w-auto lg:flex-row lg:items-baseline lg:gap-2 lg:px-4 lg:first:pl-0">
       <p
-        className={`text-2xl font-semibold tabular-nums lg:text-xl ${toneClasses[tone]}`}
+        className={`text-xl font-medium tabular-nums lg:text-lg ${toneClasses[tone]}`}
       >
         {value}
       </p>
-      <p className="text-sm text-ink-secondary">{label}</p>
+      <p className="text-xs text-ink-muted">{label}</p>
     </div>
   );
 }

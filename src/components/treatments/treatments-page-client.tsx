@@ -11,11 +11,11 @@ import { useTreatmentCatalog } from "@/components/treatments/hooks/use-treatment
 import { useTreatmentsPage } from "@/components/treatments/hooks/use-treatments-page";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
-import { ActionButton } from "@/components/ui/primitives/action-button";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
+import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 
 const TREATMENT_FILTER_DEFAULTS = { category: "", q: "" };
@@ -58,14 +58,13 @@ export default function TreatmentsPageClient() {
     setSheetOpen(true);
   };
 
+  useTopbarAction({
+    title: TREATMENTS_COPY.page.add,
+    onClick: page.openCreateDialog,
+  });
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 hidden lg:flex items-center justify-end border-b border-border-subtle bg-canvas px-4 py-3 lg:px-8 lg:py-4">
-        <ActionButton
-          title={TREATMENTS_COPY.page.add}
-          onClick={page.openCreateDialog}
-        />
-      </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <TreatmentsFilters

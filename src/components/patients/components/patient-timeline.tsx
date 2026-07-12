@@ -18,6 +18,8 @@ type PatientTimelineProps = {
   appointments: AppointmentWithRelations[];
   isLoading: boolean;
   error: Error | null | undefined;
+  heading?: string;
+  headingId?: string;
 };
 
 function mapAppointmentsToTimelineItems(
@@ -44,16 +46,18 @@ export default function PatientTimeline({
   appointments,
   isLoading,
   error,
+  heading = PATIENT_DETAIL_COPY.sections.history,
+  headingId = "patient-history-heading",
 }: PatientTimelineProps) {
   if (isLoading) {
     return (
       <section
-        aria-labelledby="patient-history-heading"
+        aria-labelledby={headingId}
         aria-busy="true"
         className="flex min-h-0 flex-1 flex-col"
       >
-        <h2 id="patient-history-heading" className={headingClassName}>
-          {PATIENT_DETAIL_COPY.sections.history}
+        <h2 id={headingId} className={headingClassName}>
+          {heading}
         </h2>
         <div className="pt-6">
           <SkeletonList />
@@ -65,11 +69,11 @@ export default function PatientTimeline({
   if (error) {
     return (
       <section
-        aria-labelledby="patient-history-heading"
+        aria-labelledby={headingId}
         className="flex min-h-0 flex-1 flex-col"
       >
-        <h2 id="patient-history-heading" className={headingClassName}>
-          {PATIENT_DETAIL_COPY.sections.history}
+        <h2 id={headingId} className={headingClassName}>
+          {heading}
         </h2>
         <div className="pt-6">
           <Notice tone="danger" message={PATIENT_DETAIL_COPY.errors.history} />
@@ -81,8 +85,8 @@ export default function PatientTimeline({
   return (
     <ProfileTimeline
       variant="integrated"
-      headingId="patient-history-heading"
-      heading={PATIENT_DETAIL_COPY.sections.history}
+      headingId={headingId}
+      heading={heading}
       items={mapAppointmentsToTimelineItems(appointments)}
       emptyMessage={PATIENT_DETAIL_COPY.history.empty}
     />

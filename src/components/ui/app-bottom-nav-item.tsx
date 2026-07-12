@@ -24,11 +24,11 @@ export default function AppBottomNavItem({
       aria-label={label}
       aria-current={active ? "page" : undefined}
       onClick={onClick}
-      className={`flex min-h-14 flex-col items-center justify-center gap-0.5 px-2 text-xs transition motion-reduce:transition-none ${
-        active ? "text-primary" : "text-ink-secondary hover:text-ink"
+      className={`flex min-h-12 flex-col items-center justify-center gap-0.5 px-2 text-[11px] transition motion-reduce:transition-none ${
+        active ? "text-primary" : "text-ink-muted hover:text-ink-secondary"
       }`}
     >
-      <span className="flex min-h-11 min-w-11 items-center justify-center">
+      <span className="flex min-h-9 min-w-9 items-center justify-center">
         {icon}
       </span>
       <span>{label}</span>

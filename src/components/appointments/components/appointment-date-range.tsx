@@ -72,7 +72,7 @@ export default function AppointmentDateRange({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="pointer-events-auto z-100 w-72 rounded-2xl border border-border bg-surface p-4 shadow-lg"
+          className="pointer-events-auto z-100 w-72 rounded-[14px] border border-border/60 bg-surface p-3 shadow-float"
           sideOffset={8}
           align="start"
         >

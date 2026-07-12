@@ -1,7 +1,12 @@
 import { format } from "date-fns";
 
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
+import { HOUR_HEIGHT } from "@/lib/calendar-grid";
 import type { AppointmentWithRelations } from "@/types/database.types";
+
+export const AGENDA_CARD_MIN_HEIGHT = 72;
+export const AGENDA_CARD_STACK_GAP = 8;
+export const AGENDA_HOUR_PADDING = 8;
 
 export type AgendaAppointment = {
   id: string;
@@ -45,6 +50,18 @@ export function groupAppointmentsByHour(
   }
 
   return grouped;
+}
+
+export function getAgendaHourRowHeight(appointmentCount: number): number {
+  if (appointmentCount === 0) {
+    return HOUR_HEIGHT;
+  }
+
+  const cardsHeight =
+    appointmentCount * AGENDA_CARD_MIN_HEIGHT +
+    (appointmentCount - 1) * AGENDA_CARD_STACK_GAP;
+
+  return Math.max(HOUR_HEIGHT, cardsHeight + AGENDA_HOUR_PADDING);
 }
 
 export function buildHasAppointmentsOnDay(

@@ -12,7 +12,7 @@ export default function AppointmentRow({ appointment }: AppointmentRowProps) {
   return (
     <Link
       href={`/appointments/${appointment.id}`}
-      className="flex items-center gap-3 px-4 py-3 hover:bg-canvas"
+      className="flex items-center gap-3 px-4 py-4 hover:bg-[var(--hover-overlay)]"
     >
       <span
         className={`w-1 shrink-0 self-stretch rounded-full ${appointment.employeeColor ? "" : "bg-border"}`}
@@ -23,11 +23,11 @@ export default function AppointmentRow({ appointment }: AppointmentRowProps) {
         }
         aria-hidden
       />
-      <span className="w-12 shrink-0 text-sm font-semibold tabular-nums text-ink">
+      <span className="w-12 shrink-0 text-sm font-medium tabular-nums text-ink-muted">
         {formatTime(appointment.startsAt)}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-ink">
+        <p className="truncate text-sm font-medium text-ink">
           {appointment.patientName}
         </p>
         <p className="truncate text-sm text-ink-secondary">

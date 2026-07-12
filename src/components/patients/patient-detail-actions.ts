@@ -1,4 +1,4 @@
-import { CalendarPlus, Mail, Pencil, Phone } from "lucide-react";
+import { CalendarPlus, Images, Mail, Pencil, Phone } from "lucide-react";
 
 import type { ProfileAction } from "@/components/ui/profile/profile-action";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
@@ -7,6 +7,7 @@ import type { Patient } from "@/types/database.types";
 type PatientDetailActionHandlers = {
   onEdit: () => void;
   onCreateAppointment: () => void;
+  onOpenGallery: () => void;
 };
 
 export function getPatientDetailActions(
@@ -19,6 +20,12 @@ export function getPatientDetailActions(
       icon: Pencil,
       onClick: handlers.onEdit,
       buttonVariant: "solid",
+    },
+    {
+      label: PATIENT_DETAIL_COPY.actions.openGallery,
+      icon: Images,
+      onClick: handlers.onOpenGallery,
+      buttonVariant: "ghost",
     },
   ];
 

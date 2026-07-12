@@ -1,8 +1,10 @@
 export const PATIENT_DETAIL_COPY = {
   back: "Volver a pacientes",
+  breadcrumbRoot: "Pacientes",
   sections: {
     general: "Información personal",
     history: "Historial de citas",
+    timeline: "Línea de tiempo",
   },
   fields: {
     dni: "DNI",
@@ -11,6 +13,40 @@ export const PATIENT_DETAIL_COPY = {
     email: "Email",
     address: "Dirección",
     notes: "Notas",
+  },
+  badges: {
+    active: "Paciente activa",
+    noAllergies: "Sin alergias conocidas",
+    vip: "VIP",
+  },
+  stats: {
+    lastAppointment: "Última cita",
+    currentTreatment: "Tratamiento actual",
+    nextAppointment: "Próxima cita",
+    totalAppointments: "Total citas",
+    empty: "—",
+  },
+  tabs: {
+    summary: "Resumen",
+    clinicalHistory: "Historial clínico",
+    treatments: "Tratamientos",
+    appointments: "Citas",
+    finances: "Finanzas",
+    documents: "Documentos",
+    notes: "Notas",
+  },
+  clinicalNotes: {
+    title: "Notas clínicas",
+    empty: "No hay notas clínicas registradas todavía.",
+  },
+  treatmentsTab: {
+    treatment: "Tratamiento",
+    timesUsed: "Veces usado",
+    empty: "Este paciente no tiene tratamientos registrados.",
+  },
+  comingSoon: {
+    finances: "Las finanzas del paciente estarán disponibles próximamente.",
+    documents: "Los documentos del paciente estarán disponibles próximamente.",
   },
   history: {
     caption: "Citas de este paciente",
@@ -27,10 +63,12 @@ export const PATIENT_DETAIL_COPY = {
     call: "Llamar",
     email: "Enviar email",
     createAppointment: "Crear cita",
+    openGallery: "Ver galería",
   },
   moreActions: "Más acciones",
   errors: {
     load: "No se pudo cargar el paciente.",
+    notFound: "Paciente no encontrado.",
     history: "No se pudo cargar el historial de citas.",
   },
 } as const;

@@ -15,9 +15,15 @@ export default function AppSearchableComboboxItem({
   option,
 }: AppSearchableComboboxItemProps) {
   return (
-    <ComboboxItem value={option} className={cn(itemClassName)}>
-      {option.leading}
-      {option.label}
+    <ComboboxItem
+      value={option}
+      className={cn(itemClassName, "flex items-center justify-between gap-2")}
+    >
+      <span className="flex min-w-0 items-center gap-2 truncate">
+        {option.leading}
+        <span className="truncate">{option.label}</span>
+      </span>
+      {option.trailing ?? null}
     </ComboboxItem>
   );
 }

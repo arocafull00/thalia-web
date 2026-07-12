@@ -3,25 +3,17 @@
 import { LogOut, Users } from "lucide-react";
 import Image from "next/image";
 
-import SidebarClinicSwitcher from "@/components/ui/sidebar-clinic-switcher";
 import { SIDEBAR_COPY } from "@/copy/sidebar-copy";
-import { clinicMembershipRoleLabel } from "@/lib/format";
-import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
+import { employeeRoleLabel } from "@/lib/format";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 
 export default function SidebarProfileFooter() {
   const { profile, signOut } = useAuth();
   const avatarUrl = useFileUrl(profile?.avatar_url ?? null);
-  const { clinicName, platformRole, memberships, membership, setActiveClinic } =
-    useActiveClinic();
-
-  const membershipRoleLabel = platformRole
-    ? clinicMembershipRoleLabel(platformRole)
-    : null;
 
   return (
-    <div className="flex items-start gap-3 px-6 py-5">
+    <div className="flex items-center gap-3 px-6 py-5">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-subtle/40">
         {avatarUrl ? (
           <Image
@@ -43,18 +35,10 @@ export default function SidebarProfileFooter() {
         >
           {profile?.full_name ?? SIDEBAR_COPY.profileFallback}
         </p>
-        {membershipRoleLabel ? (
-          <p className="truncate text-xs text-ink-secondary">
-            {membershipRoleLabel}
+        {profile?.role ? (
+          <p className="truncate text-xs text-ink-muted">
+            {employeeRoleLabel(profile.role)}
           </p>
-        ) : null}
-        {clinicName ? (
-          <SidebarClinicSwitcher
-            clinicName={clinicName}
-            memberships={memberships}
-            activeClinicId={membership?.clinicId ?? null}
-            onSelectClinic={setActiveClinic}
-          />
         ) : null}
       </div>
       <button

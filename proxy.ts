@@ -9,6 +9,9 @@ const publicRoutes = [
   "/create-clinic",
   "/invite-team",
   "/invite",
+  "/forgot-password",
+  "/reset-password",
+  "/no-membership",
 ];
 
 const pwaRoutes = ["/manifest.webmanifest", "/sw.js"];

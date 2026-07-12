@@ -20,6 +20,7 @@ export type EmployeeAppointmentStats = {
 export type EmployeeInviteInput = {
   email: string;
   role: ClinicMembershipInvitationRole;
+  clinicId: string;
 };
 
 export type EmployeeUpdate = Partial<

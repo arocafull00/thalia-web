@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   summaryKey,
   transactionsKey,
@@ -19,10 +20,11 @@ export function useTransactions(month: Date, type: TransactionType | "all") {
   const fetchTransactions = useFinancesStore(
     (state) => state.fetchTransactions,
   );
+  const clinicId = useClinicId();
 
   useEffect(() => {
     void fetchTransactions(month, type);
-  }, [fetchTransactions, key, month, type]);
+  }, [clinicId, fetchTransactions, key, month, type]);
 
   return {
     data: entry?.data ?? undefined,
@@ -37,10 +39,11 @@ export function useFinancialSummary(month: Date) {
   const fetchFinancialSummary = useFinancesStore(
     (state) => state.fetchFinancialSummary,
   );
+  const clinicId = useClinicId();
 
   useEffect(() => {
     void fetchFinancialSummary(month);
-  }, [fetchFinancialSummary, key, month]);
+  }, [clinicId, fetchFinancialSummary, key, month]);
 
   return {
     data: entry?.data ?? undefined,

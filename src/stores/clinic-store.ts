@@ -67,9 +67,7 @@ export const useClinicStore = create<ClinicStore>()(
               (membership) => membership.clinicId === activeClinicId,
             )
               ? activeClinicId
-              : memberships.length === 1
-                ? memberships[0].clinicId
-                : null;
+              : (memberships[0]?.clinicId ?? null);
 
           set({ memberships, activeClinicId: validActive, loading: false });
           return memberships;

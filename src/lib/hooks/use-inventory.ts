@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useInventoryStore,
   type InventoryItemInput,
@@ -14,10 +15,11 @@ export function useInventoryItems() {
   const fetchInventoryItems = useInventoryStore(
     (state) => state.fetchInventoryItems,
   );
+  const clinicId = useClinicId();
 
   useEffect(() => {
     void fetchInventoryItems();
-  }, [fetchInventoryItems]);
+  }, [clinicId, fetchInventoryItems]);
 
   return {
     data: entry.data ?? undefined,

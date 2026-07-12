@@ -27,7 +27,10 @@ function externalMemberships(memberships: ClinicMembershipView[]) {
   return memberships.filter((membership) => membership.role === "external");
 }
 
-function needsClinicSelector(memberships: ClinicMembershipView[], activeClinicId: string | null) {
+function needsClinicSelector(
+  memberships: ClinicMembershipView[],
+  activeClinicId: string | null,
+) {
   const external = externalMemberships(memberships);
 
   if (external.length < 2) {
@@ -41,7 +44,9 @@ function needsClinicSelector(memberships: ClinicMembershipView[], activeClinicId
   return !external.some((membership) => membership.clinicId === activeClinicId);
 }
 
-export function resolvePostAuthRoute(input: PostAuthRouteInput): PostAuthRouteResult {
+export function resolvePostAuthRoute(
+  input: PostAuthRouteInput,
+): PostAuthRouteResult {
   if (input.pendingInviteToken) {
     return { href: `/invite/${input.pendingInviteToken}` };
   }
@@ -77,7 +82,9 @@ export function resolvePostAuthRoute(input: PostAuthRouteInput): PostAuthRouteRe
   }
 
   if (activeMemberships.length >= 2) {
-    const nonExternal = activeMemberships.some((membership) => membership.role !== "external");
+    const nonExternal = activeMemberships.some(
+      (membership) => membership.role !== "external",
+    );
 
     if (nonExternal) {
       return { href: "/login" };
@@ -94,24 +101,28 @@ export function resolvePostAuthRoute(input: PostAuthRouteInput): PostAuthRouteRe
     return { href: "/login" };
   }
 
-  if (input.onboardingIntent === "employee") {
-    if (!hasRegistrationProfile(input.user)) {
-      return { href: "/register-employee" };
-    }
-
-    return { href: "/login" };
-  }
-
-  if (input.onboardingIntent === "owner" || isOwnerRegistration(input.user)) {
-    if (!hasRegistrationProfile(input.user)) {
-      return { href: "/register-employee" };
-    }
-
-    return { href: "/create-clinic" };
-  }
-
   if (activeMemberships.length === 0 && input.isAuthenticated) {
-    return { href: "/create-clinic" };
+    if (input.onboardingIntent === "employee") {
+      if (!hasRegistrationProfile(input.user)) {
+        return { href: "/register-employee" };
+      }
+
+      return { href: "/login" };
+    }
+
+    if (input.onboardingIntent === "owner" || isOwnerRegistration(input.user)) {
+      if (!hasRegistrationProfile(input.user)) {
+        return { href: "/register-employee" };
+      }
+
+      if (input.onboardingIntent === "owner") {
+        return { href: "/create-clinic" };
+      }
+
+      return { href: "/no-membership" };
+    }
+
+    return { href: "/no-membership" };
   }
 
   return { href: "/login" };

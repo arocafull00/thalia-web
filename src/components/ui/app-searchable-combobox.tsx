@@ -25,6 +25,7 @@ export type AppSearchableComboboxOption = {
   value: string;
   label: string;
   leading?: ReactNode;
+  trailing?: ReactNode;
 };
 
 type AppSearchableComboboxProps = {
@@ -40,6 +41,7 @@ type AppSearchableComboboxProps = {
   clearLabel?: string;
   variant?: "input" | "pill";
   triggerLeading?: ReactNode;
+  triggerTrailing?: ReactNode;
   className?: string;
   showSearch?: boolean;
 };
@@ -66,6 +68,7 @@ export default function AppSearchableCombobox({
   clearLabel,
   variant = "input",
   triggerLeading,
+  triggerTrailing,
   className,
   showSearch = true,
 }: AppSearchableComboboxProps) {
@@ -184,6 +187,7 @@ export default function AppSearchableCombobox({
               {showInitialLoading ? COMBOBOX_COPY.loading : triggerLabel}
             </span>
           </span>
+          {triggerTrailing ?? null}
         </ComboboxTrigger>
         <ComboboxContent
           container={portalContainer}

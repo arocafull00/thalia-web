@@ -35,7 +35,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     }
 
     if (!clinicId && !clinicLoading) {
-      router.replace("/create-clinic");
+      router.replace("/no-membership");
     }
   }, [clinicId, clinicLoading, loading, router, user]);
 

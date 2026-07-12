@@ -39,6 +39,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         return;
       }
 
+      useClinicStore.setState({ loading: true });
       refreshProfile()
         .then(() =>
           useClinicStore.getState().fetchMemberships(nextSession.user.id),

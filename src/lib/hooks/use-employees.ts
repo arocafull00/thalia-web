@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useEmployeesStore,
   type CreateEmployeeInput,
@@ -12,10 +13,11 @@ export type { CreateEmployeeInput };
 export function useEmployees() {
   const entry = useEmployeesStore((state) => state.list);
   const fetchEmployees = useEmployeesStore((state) => state.fetchEmployees);
+  const clinicId = useClinicId();
 
   useEffect(() => {
     void fetchEmployees();
-  }, [fetchEmployees]);
+  }, [clinicId, fetchEmployees]);
 
   return {
     data: entry.data ?? undefined,

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { FINANCES_COPY } from "@/copy/finances-copy";
@@ -51,8 +52,9 @@ export default function AppTopbar() {
       <SidebarTrigger
         variant="ghost"
         size="icon"
-        className="rounded-button text-ink-secondary hover:bg-[var(--hover-overlay)] hover:text-ink lg:hidden"
+        className="rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
       />
+      <TopbarClinicSelector />
       {breadcrumb ? (
         <Breadcrumb aria-label={breadcrumb.rootLabel} className="min-w-0">
           <BreadcrumbList>

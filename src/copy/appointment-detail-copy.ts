@@ -1,4 +1,5 @@
 export const APPOINTMENT_DETAIL_COPY = {
+  breadcrumbRoot: "Citas",
   patient: "Paciente",
   employee: "Profesional",
   treatments: "Tratamientos",

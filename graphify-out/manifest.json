@@ -130,8 +130,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-page-client.tsx": {
-    "mtime": 1783534473.1472702,
-    "ast_hash": "b857b03c14af7fb472e556d1b14d4fe6",
+    "mtime": 1783879075.7409225,
+    "ast_hash": "d69e43ecf04fa5d33dd660906df6e331",
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
@@ -655,8 +655,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-detail-copy.ts": {
-    "mtime": 1783534482.2060223,
-    "ast_hash": "76f1997fb8850b5388f38840766a1f5e",
+    "mtime": 1783878933.3154998,
+    "ast_hash": "b1f581910f5269f05d7bd870e90aea7a",
     "semantic_hash": ""
   },
   "src/copy/calendar-copy.ts": {
@@ -1250,23 +1250,13 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-header.tsx": {
-    "mtime": 1783871935.1259942,
-    "ast_hash": "d9ff8e0ee8c875dcc465ba91b0871a62",
-    "semantic_hash": ""
-  },
-  "src/components/appointments/components/appointment-patient-card.tsx": {
-    "mtime": 1783534452.5087273,
-    "ast_hash": "628e16a74fd36f4d897e28a4895122be",
+    "mtime": 1783879152.6878276,
+    "ast_hash": "5ef30f5b668f96e87671678521f2fe90",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-person-avatar.tsx": {
     "mtime": 1783098817.835918,
     "ast_hash": "33c38a6f506375ab7f78340a3f85a6e1",
-    "semantic_hash": ""
-  },
-  "src/components/appointments/components/appointment-professional-card.tsx": {
-    "mtime": 1783534456.398456,
-    "ast_hash": "d2e2294682c40107687baf0b78089eb8",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-status-badge.tsx": {
@@ -1685,8 +1675,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1783878792.5524535,
-    "ast_hash": "c89e1d4dcb0049cf54a6efd254afca1b",
+    "mtime": 1783878915.3723545,
+    "ast_hash": "59e142b33a564a5f2726ba56a388a9f8",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -2425,33 +2415,43 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-header.tsx": {
-    "mtime": 1783878853.7193854,
-    "ast_hash": "dc002962574b9a61abd856e957a7f7f0",
+    "mtime": 1783878915.2799344,
+    "ast_hash": "45452dea459a64af884496fc11db0b32",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-tab-bar.tsx": {
-    "mtime": 1783878855.1855164,
-    "ast_hash": "fbf4eba2e9a634163ac09f8e6fbde59d",
+    "mtime": 1783878915.2941842,
+    "ast_hash": "d4e911f0132d211bd15c0c32769ef647",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-tab-button.tsx": {
-    "mtime": 1783878851.714634,
-    "ast_hash": "60649d65709a954b8bbdc72b2702c2f2",
+    "mtime": 1783878915.3062146,
+    "ast_hash": "16f50e4c43b1679ff788bbdbef8942b0",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-tab-content.tsx": {
-    "mtime": 1783878856.8294914,
-    "ast_hash": "5fd2672980275588cd878b4f93cf1a12",
+    "mtime": 1783878915.3182719,
+    "ast_hash": "2509d7289164b01e412d91304a15ab79",
     "semantic_hash": ""
   },
   "src/components/settings/settings-detail-actions.ts": {
-    "mtime": 1783878858.146012,
-    "ast_hash": "f5115260aada52d134c3cb2b002a6b9e",
+    "mtime": 1783878915.3398118,
+    "ast_hash": "9895575e9f47088955dcbaec379557f8",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-settings-tabs.ts": {
-    "mtime": 1783878851.6500678,
-    "ast_hash": "754ef23f9125d4f90c475eb15946f8cb",
+    "mtime": 1783878915.4047277,
+    "ast_hash": "8af78f046126e6cf2bebbad0b8c9a738",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/appointment-detail-actions.ts": {
+    "mtime": 1783878933.3134964,
+    "ast_hash": "8ce9873bfc3c99dbb1b3e2c00de75b78",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/components/appointment-header-person.tsx": {
+    "mtime": 1783879148.3431592,
+    "ast_hash": "b66a07275e03962c823fecd146ffee1e",
     "semantic_hash": ""
   }
 }

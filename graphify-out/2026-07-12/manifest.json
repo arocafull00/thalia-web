@@ -130,8 +130,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-page-client.tsx": {
-    "mtime": 1783534473.1472702,
-    "ast_hash": "b857b03c14af7fb472e556d1b14d4fe6",
+    "mtime": 1783879075.7409225,
+    "ast_hash": "d69e43ecf04fa5d33dd660906df6e331",
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/settings-page-client.tsx": {
-    "mtime": 1783878313.2145126,
-    "ast_hash": "d6ebacf4391f559e29d7032bed534517",
+    "mtime": 1783878862.1016088,
+    "ast_hash": "b6d996f040761bb9c60f346ee5f06e22",
     "semantic_hash": ""
   },
   "src/components/settings/settings-profile-panel.tsx": {
@@ -655,8 +655,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-detail-copy.ts": {
-    "mtime": 1783534482.2060223,
-    "ast_hash": "76f1997fb8850b5388f38840766a1f5e",
+    "mtime": 1783878933.3154998,
+    "ast_hash": "b1f581910f5269f05d7bd870e90aea7a",
     "semantic_hash": ""
   },
   "src/copy/calendar-copy.ts": {
@@ -720,8 +720,8 @@
     "semantic_hash": ""
   },
   "src/copy/settings-copy.ts": {
-    "mtime": 1783528101.8713422,
-    "ast_hash": "0d059f4a22a53082d1bb2d29b9055d02",
+    "mtime": 1783878872.424675,
+    "ast_hash": "cb6009f371d67b2aaffd3c41ac8462db",
     "semantic_hash": ""
   },
   "src/copy/sidebar-copy.ts": {
@@ -1250,23 +1250,13 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-header.tsx": {
-    "mtime": 1783871935.1259942,
-    "ast_hash": "d9ff8e0ee8c875dcc465ba91b0871a62",
-    "semantic_hash": ""
-  },
-  "src/components/appointments/components/appointment-patient-card.tsx": {
-    "mtime": 1783534452.5087273,
-    "ast_hash": "628e16a74fd36f4d897e28a4895122be",
+    "mtime": 1783879075.051042,
+    "ast_hash": "1f116ed93f26296900d319508f69204c",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-person-avatar.tsx": {
     "mtime": 1783098817.835918,
     "ast_hash": "33c38a6f506375ab7f78340a3f85a6e1",
-    "semantic_hash": ""
-  },
-  "src/components/appointments/components/appointment-professional-card.tsx": {
-    "mtime": 1783534456.398456,
-    "ast_hash": "d2e2294682c40107687baf0b78089eb8",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-status-badge.tsx": {
@@ -1395,8 +1385,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-profile-summary.tsx": {
-    "mtime": 1783098817.916716,
-    "ast_hash": "7c08cc647b90e4b3bf06f0262b9a34d9",
+    "mtime": 1783878873.9538138,
+    "ast_hash": "b6490226a1fa3f58b315f5b59996893f",
     "semantic_hash": ""
   },
   "src/copy/finances-copy.ts": {
@@ -1685,8 +1675,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1783878792.5524535,
-    "ast_hash": "c89e1d4dcb0049cf54a6efd254afca1b",
+    "mtime": 1783878915.3723545,
+    "ast_hash": "59e142b33a564a5f2726ba56a388a9f8",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -2422,6 +2412,46 @@
   "src/components/ui/topbar-clinic-selector.tsx": {
     "mtime": 1783878785.8313355,
     "ast_hash": "3c2a90d6af3f0df2356732ef2f7649d2",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-detail-header.tsx": {
+    "mtime": 1783878915.2799344,
+    "ast_hash": "45452dea459a64af884496fc11db0b32",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-detail-tab-bar.tsx": {
+    "mtime": 1783878915.2941842,
+    "ast_hash": "d4e911f0132d211bd15c0c32769ef647",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-detail-tab-button.tsx": {
+    "mtime": 1783878915.3062146,
+    "ast_hash": "16f50e4c43b1679ff788bbdbef8942b0",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-detail-tab-content.tsx": {
+    "mtime": 1783878915.3182719,
+    "ast_hash": "2509d7289164b01e412d91304a15ab79",
+    "semantic_hash": ""
+  },
+  "src/components/settings/settings-detail-actions.ts": {
+    "mtime": 1783878915.3398118,
+    "ast_hash": "9895575e9f47088955dcbaec379557f8",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-settings-tabs.ts": {
+    "mtime": 1783878915.4047277,
+    "ast_hash": "8af78f046126e6cf2bebbad0b8c9a738",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/appointment-detail-actions.ts": {
+    "mtime": 1783878933.3134964,
+    "ast_hash": "8ce9873bfc3c99dbb1b3e2c00de75b78",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/components/appointment-header-person.tsx": {
+    "mtime": 1783879073.6031961,
+    "ast_hash": "3f93ecf9fd8734bd8745cbd9e0a6772d",
     "semantic_hash": ""
   }
 }

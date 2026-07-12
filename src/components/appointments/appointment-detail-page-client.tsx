@@ -1,21 +1,21 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { CheckCircle, Pencil } from "lucide-react";
 
+import { getAppointmentDetailMenuActions } from "@/components/appointments/appointment-detail-actions";
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentDetailSidebar from "@/components/appointments/components/appointment-detail-sidebar";
 import AppointmentHeader from "@/components/appointments/components/appointment-header";
 import AppointmentMaterialsSection from "@/components/appointments/components/appointment-materials-section";
-import AppointmentPatientCard from "@/components/appointments/components/appointment-patient-card";
-import AppointmentProfessionalCard from "@/components/appointments/components/appointment-professional-card";
 import AppointmentTreatmentsSection from "@/components/appointments/components/appointment-treatments-section";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { BackButton } from "@/components/ui/primitives/back-button";
-import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useAppointmentDetail } from "@/lib/hooks/use-appointment-detail";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
+import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 
 type AppointmentDetailPageClientProps = {
   appointmentId: string;
@@ -64,12 +64,59 @@ export default function AppointmentDetailPageClient({
     confirmCancel,
   } = useAppointmentDetail(appointmentId);
 
+  const breadcrumbLabel =
+    appointment?.patients?.full_name ?? APPOINTMENT_DETAIL_COPY.patient;
+
+  useTopbarBreadcrumb(
+    appointment
+      ? {
+          rootLabel: APPOINTMENT_DETAIL_COPY.breadcrumbRoot,
+          rootHref: "/appointments",
+          currentLabel: breadcrumbLabel,
+        }
+      : null,
+  );
+
+  useTopbarActions(
+    appointment
+      ? {
+          buttons: [
+            {
+              title: APPOINTMENT_DETAIL_COPY.edit,
+              icon: Pencil,
+              onClick: openEditDialog,
+            },
+            ...(canChangeStatus
+              ? [
+                  {
+                    title: APPOINTMENT_DETAIL_COPY.markCompleted,
+                    icon: CheckCircle,
+                    variant: "ghost" as const,
+                    disabled: updatingStatus,
+                    onClick: () => {
+                      void handleStatusChange("completed");
+                    },
+                  },
+                ]
+              : []),
+          ],
+          menu: {
+            actions: getAppointmentDetailMenuActions(canChangeStatus, {
+              onEdit: openEditDialog,
+              onMarkCompleted: () => {
+                void handleStatusChange("completed");
+              },
+              onCancel: openCancelConfirm,
+            }),
+            ariaLabel: APPOINTMENT_DETAIL_COPY.moreActions,
+          },
+        }
+      : null,
+  );
+
   if (isLoading) {
     return (
-      <div
-        className="flex min-h-0 flex-1 flex-col overflow-y-auto p-8"
-        aria-busy="true"
-      >
+      <div className="p-8" aria-busy="true">
         <SkeletonList count={4} />
       </div>
     );
@@ -102,32 +149,16 @@ export default function AppointmentDetailPageClient({
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <AppointmentHeader appointment={appointment} />
+
+      <div className="flex flex-col gap-6 px-4 py-8 lg:px-8">
         <div className="grid gap-8 xl:grid-cols-[1fr_320px]">
           <div className="flex flex-col divide-y divide-border-subtle">
-            <div className="pb-6">
-              <AppointmentHeader
-                appointment={appointment}
-                canChangeStatus={canChangeStatus}
-                updatingStatus={updatingStatus}
-                onEdit={openEditDialog}
-                onMarkCompleted={() => {
-                  void handleStatusChange("completed");
-                }}
-                onCancel={openCancelConfirm}
-              />
-            </div>
-            <div className="grid gap-8 py-6 sm:grid-cols-2">
-              <AppointmentPatientCard patient={appointment.patients} />
-              <AppointmentProfessionalCard employee={appointment.employees} />
-            </div>
-            <div className="py-6">
-              <AppointmentTreatmentsSection
-                treatments={treatments}
-                totalDurationMinutes={totalDurationMinutes}
-              />
-            </div>
+            <AppointmentTreatmentsSection
+              treatments={treatments}
+              totalDurationMinutes={totalDurationMinutes}
+            />
             <div className="pt-6">
               <AppointmentMaterialsSection appointment={appointment} />
             </div>
@@ -138,12 +169,6 @@ export default function AppointmentDetailPageClient({
           </div>
         </div>
       </div>
-
-      <MobileFab
-        label={APPOINTMENT_DETAIL_COPY.edit}
-        icon={Pencil}
-        onClick={openEditDialog}
-      />
 
       <AppointmentCreateDialog
         open={dialogOpen}

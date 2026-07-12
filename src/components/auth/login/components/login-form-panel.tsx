@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 
 import LoginAuthTabs from "@/components/auth/login/components/login-auth-tabs";
 import LoginFormFields from "@/components/auth/login/components/login-form-fields";
+import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { LOGIN_COPY } from "@/copy/login-copy";
 
@@ -88,20 +89,21 @@ export default function LoginFormPanel({
             {error ? <Notice tone="danger" message={error} /> : null}
 
             <div className="flex flex-col items-center gap-3">
-              <button
+              <Button
                 type="submit"
                 disabled={authDisabled}
-                className="inline-flex min-h-11 w-64 items-center justify-center rounded-full bg-primary px-4 py-2 text-xs font-medium uppercase tracking-wide text-on-primary hover:bg-primary-hover disabled:opacity-50"
+                className="min-h-11 w-64 rounded-full px-4 py-2 text-xs font-medium uppercase tracking-wide"
               >
                 {submitting
                   ? LOGIN_COPY.submit.loading
                   : LOGIN_COPY.submit.idle}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
                 disabled={authDisabled}
                 onClick={() => void handleGoogleSignIn()}
-                className="inline-flex min-h-11 w-64 items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas disabled:opacity-50"
+                className="min-h-11 w-64 rounded-full px-4 py-2 text-xs font-medium uppercase tracking-wide"
               >
                 <svg
                   width="14"
@@ -127,7 +129,7 @@ export default function LoginFormPanel({
                   />
                 </svg>
                 {LOGIN_COPY.google}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

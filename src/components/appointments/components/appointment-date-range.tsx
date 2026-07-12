@@ -7,6 +7,7 @@ import { Calendar, ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import AppDateField from "@/components/ui/app-date-field";
+import { Button } from "@/components/ui/button";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { formatLocalDateInputValue } from "@/lib/date-input";
 
@@ -59,16 +60,17 @@ export default function AppointmentDateRange({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <button
+        <Button
           type="button"
-          className="inline-flex w-full min-w-0 items-center justify-between gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+          variant="outline"
+          className="inline-flex w-full min-w-0 justify-between gap-2 rounded-full px-4 py-2 text-sm motion-reduce:transition-none"
         >
           <span className="flex min-w-0 items-center gap-2">
             <Calendar size={16} className="shrink-0" />
             <span className="truncate">{rangeLabel}</span>
           </span>
           <ChevronDown size={16} className="shrink-0 text-ink-muted" />
-        </button>
+        </Button>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content

@@ -3,6 +3,7 @@
 import { Eye, EyeOff, Lock } from "lucide-react";
 import type { FormEvent } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { LOGIN_COPY } from "@/copy/login-copy";
 import { useResetPassword } from "@/lib/hooks/use-reset-password";
@@ -68,8 +69,10 @@ export default function ResetPasswordPageClient() {
                     minLength={8}
                     className="w-full rounded-xl border border-border bg-surface py-2.5 pr-10 pl-10 text-sm outline-none ring-primary focus:ring-2"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={
                       showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
@@ -81,7 +84,7 @@ export default function ResetPasswordPageClient() {
                     ) : (
                       <Eye className="h-4 w-4" />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </label>
 
@@ -103,8 +106,10 @@ export default function ResetPasswordPageClient() {
                     minLength={8}
                     className="w-full rounded-xl border border-border bg-surface py-2.5 pr-10 pl-10 text-sm outline-none ring-primary focus:ring-2"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     aria-label={
                       showConfirmPassword
@@ -118,22 +123,22 @@ export default function ResetPasswordPageClient() {
                     ) : (
                       <Eye className="h-4 w-4" />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </label>
             </div>
 
             {error ? <Notice tone="danger" message={error} /> : null}
 
-            <button
+            <Button
               type="submit"
               disabled={submitting || !password || !confirmPassword}
-              className="w-full rounded-full bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-on-primary hover:bg-primary-hover disabled:opacity-50"
+              className="w-full rounded-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide"
             >
               {submitting
                 ? LOGIN_COPY.resetPassword.submit.loading
                 : LOGIN_COPY.resetPassword.submit.idle}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

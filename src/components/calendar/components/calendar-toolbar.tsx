@@ -47,36 +47,42 @@ export default function CalendarToolbar({
         </div>
       </div>
       <div className="flex shrink-0 items-center justify-center gap-2">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           aria-label={CALENDAR_COPY.toolbar.previousPeriod}
           onClick={onPrevious}
-          className="flex size-8 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] motion-reduce:transition-none"
+          className="rounded-button motion-reduce:transition-none"
         >
           <ChevronLeft size={16} strokeWidth={1.5} />
-        </button>
+        </Button>
         <span className="w-36 truncate text-center text-sm text-ink-secondary sm:w-52">
           {rangeLabel}
         </span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           aria-label={CALENDAR_COPY.toolbar.nextPeriod}
           onClick={onNext}
-          className="flex size-8 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] motion-reduce:transition-none"
+          className="rounded-button motion-reduce:transition-none"
         >
           <ChevronRight size={16} strokeWidth={1.5} />
-        </button>
+        </Button>
       </div>
       <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
         <div className="hidden md:block">{filter}</div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onOpenFiltersSheet}
           aria-label={CALENDAR_COPY.toolbar.filters}
-          className="inline-flex size-8 shrink-0 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] md:hidden motion-reduce:transition-none"
+          className="rounded-button md:hidden motion-reduce:transition-none"
         >
           <SlidersHorizontal size={16} strokeWidth={1.5} />
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { LOGIN_COPY } from "@/copy/login-copy";
 
 type LoginFormFieldsProps = {
@@ -53,20 +54,22 @@ export default function LoginFormFields({
             placeholder={LOGIN_COPY.fields.passwordPlaceholder}
             className="w-full rounded-xl border border-border bg-surface py-2.5 pr-10 pl-10 text-sm outline-none ring-primary focus:ring-2"
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-sm"
             onClick={onTogglePassword}
             aria-label={
               showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
             }
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-ink-muted hover:text-ink-secondary"
+            className="absolute top-1/2 right-3 -translate-y-1/2"
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" />
             ) : (
               <Eye className="h-4 w-4" />
             )}
-          </button>
+          </Button>
         </div>
       </label>
     </div>

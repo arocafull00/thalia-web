@@ -2,6 +2,7 @@ import TransactionsTable from "@/components/finances/components/transactions-tab
 import FinancesTabBar, {
   type FinancesTabValue,
 } from "@/components/finances/finances-tab-bar";
+import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { FINANCES_COPY } from "@/copy/finances-copy";
@@ -42,13 +43,14 @@ export default function FinancesMovementsSection({
         {!isLoading ? <TransactionsTable transactions={transactions} /> : null}
         {hasMore ? (
           <div className="mt-4 flex justify-center">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onLoadMore}
-              className="rounded-full border border-border px-4 py-2 text-sm text-ink-secondary transition-colors hover:bg-canvas motion-reduce:transition-none"
+              className="rounded-full px-4 py-2 text-sm motion-reduce:transition-none"
             >
               {FINANCES_COPY.movements.loadMore}
-            </button>
+            </Button>
           </div>
         ) : null}
       </div>

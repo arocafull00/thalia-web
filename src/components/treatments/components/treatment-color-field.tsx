@@ -5,6 +5,7 @@ import {
   TREATMENT_COLOR_PRESETS,
   TREATMENTS_COPY,
 } from "@/components/treatments/treatments-copy";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type TreatmentColorFieldProps = {
@@ -25,12 +26,14 @@ export default function TreatmentColorField({
         render={({ field }) => (
           <div className="flex flex-wrap items-center gap-2">
             {TREATMENT_COLOR_PRESETS.map((preset) => (
-              <button
+              <Button
                 key={preset}
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={() => field.onChange(preset)}
                 className={cn(
-                  "size-8 rounded-full border-2 transition-transform hover:scale-110",
+                  "size-8 rounded-full border-2 p-0 transition-transform hover:scale-110",
                   field.value === preset
                     ? "border-ink ring-2 ring-primary"
                     : "border-border",
@@ -49,13 +52,15 @@ export default function TreatmentColorField({
               Personalizado
             </label>
             {field.value ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => field.onChange(null)}
-                className="rounded-full px-3 py-1.5 text-xs text-ink-secondary hover:bg-canvas"
+                className="rounded-full px-3 py-1.5 text-xs"
               >
                 Quitar
-              </button>
+              </Button>
             ) : null}
           </div>
         )}

@@ -4,6 +4,7 @@ import { es } from "date-fns/locale";
 import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import {
@@ -69,13 +70,13 @@ export default function AppDateField({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className={fieldClassName}>
+        <Button type="button" variant="outline" className={fieldClassName}>
           <span className="flex min-w-0 items-center gap-2">
             <CalendarIcon className="size-4 shrink-0 text-ink-muted" />
             <span className="truncate">{label}</span>
           </span>
           <ChevronDown className="size-4 shrink-0 text-ink-muted" />
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent
         className="z-100 w-auto rounded-[14px] border border-border/60 bg-surface p-0 shadow-float"

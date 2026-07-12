@@ -13,6 +13,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -103,10 +104,12 @@ export default function AppTopbar() {
             className="lg:hidden"
           />
         ) : null}
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label="Notificaciones"
-          className="relative rounded-button p-2 text-ink-secondary transition-colors hover:bg-[var(--hover-overlay)] hover:text-ink"
+          className="relative"
         >
           <Bell size={18} strokeWidth={1.5} />
           {notificationCount > 0 ? (
@@ -114,7 +117,7 @@ export default function AppTopbar() {
               {notificationCount > 99 ? "99+" : notificationCount}
             </span>
           ) : null}
-        </button>
+        </Button>
         {action ? (
           <span className="hidden lg:contents">
             <ActionButton

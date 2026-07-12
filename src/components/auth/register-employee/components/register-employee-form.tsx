@@ -1,6 +1,7 @@
 import { Eye, EyeOff, LogOut } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { REGISTER_EMPLOYEE_FORM_COPY } from "@/copy/register-employee-copy";
@@ -118,13 +119,15 @@ export default function RegisterEmployeeForm({
                     type={showPassword ? "text" : "password"}
                     className="w-full rounded-xl border border-border px-3 py-2.5 pr-10 text-sm outline-none ring-primary focus:ring-2"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+                  </Button>
                 </div>
               </label>
               <label className="block space-y-1">
@@ -138,17 +141,19 @@ export default function RegisterEmployeeForm({
                     type={showConfirmPassword ? "text" : "password"}
                     className="w-full rounded-xl border border-border px-3 py-2.5 pr-10 text-sm outline-none ring-primary focus:ring-2"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowConfirmPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink"
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
                   >
                     {showConfirmPassword ? (
                       <EyeOff size={16} />
                     ) : (
                       <Eye size={16} />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </label>
             </>
@@ -163,14 +168,15 @@ export default function RegisterEmployeeForm({
         {confirmError ? <Notice tone="danger" message={confirmError} /> : null}
         {error ? <Notice tone="danger" message={error} /> : null}
         <div className="flex items-center justify-between gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onSignOut}
-            className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
+            className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
           >
             <LogOut size={14} />
             Salir
-          </button>
+          </Button>
           <ActionButton
             title={
               submitting
@@ -182,16 +188,17 @@ export default function RegisterEmployeeForm({
           />
         </div>
         {!hasSession ? (
-          <button
+          <Button
             type="button"
+            variant="link"
             onClick={onLoginPress}
-            className="w-full text-center text-sm text-ink-secondary"
+            className="w-full text-center text-sm"
           >
             {REGISTER_EMPLOYEE_FORM_COPY.loginPrompt}{" "}
             <span className="font-medium text-ink">
               {REGISTER_EMPLOYEE_FORM_COPY.loginAction}
             </span>
-          </button>
+          </Button>
         ) : null}
       </div>
     </section>

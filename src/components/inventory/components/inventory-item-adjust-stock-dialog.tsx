@@ -6,6 +6,7 @@ import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useInventoryAdjustStockDialog } from "@/lib/hooks/use-inventory-adjust-stock-dialog";
@@ -106,13 +107,14 @@ export default function InventoryItemAdjustStockDialog({
           </label>
         </div>
         <AppDialogFooter>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+            className="rounded-button px-3 py-1.5 text-sm"
           >
             {INVENTORY_ITEM_DETAIL_COPY.adjustStock.actions.cancel}
-          </button>
+          </Button>
           <ActionButton
             title={
               dialog.isPending

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { LOGIN_COPY } from "@/copy/login-copy";
 
 type LoginAuthTabsProps = {
@@ -7,19 +8,21 @@ type LoginAuthTabsProps = {
 export default function LoginAuthTabs({ onRegisterPress }: LoginAuthTabsProps) {
   return (
     <div className="flex rounded-xl bg-canvas p-1">
-      <button
+      <Button
         type="button"
-        className="flex-1 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-ink shadow-sm"
+        variant="outline"
+        className="flex-1 rounded-lg px-4 py-2.5 text-sm font-medium shadow-sm"
       >
         {LOGIN_COPY.tabs.signIn}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        variant="ghost"
         onClick={onRegisterPress}
-        className="flex-1 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-secondary hover:text-ink"
+        className="flex-1 rounded-lg px-4 py-2.5 text-sm font-medium"
       >
         {LOGIN_COPY.tabs.register}
-      </button>
+      </Button>
     </div>
   );
 }

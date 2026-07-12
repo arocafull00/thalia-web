@@ -3,6 +3,8 @@
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
+
 type BackButtonProps = {
   fallbackHref: string;
   label: string;
@@ -20,13 +22,14 @@ export function BackButton({ fallbackHref, label }: BackButtonProps) {
   };
 
   return (
-    <button
+    <Button
       type="button"
+      variant="link"
       onClick={handleBack}
       className="inline-flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
     >
       <ArrowLeft className="size-4" aria-hidden="true" />
       {label}
-    </button>
+    </Button>
   );
 }

@@ -2,6 +2,8 @@
 
 import { Plus, type LucideIcon } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 export function MobileFab({
   label,
   onClick,
@@ -14,14 +16,15 @@ export function MobileFab({
   icon?: LucideIcon;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      size="icon-lg"
       disabled={disabled}
       onClick={onClick}
       aria-label={label}
-      className="fixed right-4 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-on-primary hover:bg-primary-hover disabled:opacity-50 motion-reduce:transition-none lg:hidden bottom-[calc(4rem+var(--safe-area-bottom)+0.75rem)]"
+      className="fixed right-4 z-40 size-14 rounded-full lg:hidden bottom-[calc(4rem+var(--safe-area-bottom)+0.75rem)] motion-reduce:transition-none"
     >
       <Icon className="size-6" strokeWidth={2} aria-hidden="true" />
-    </button>
+    </Button>
   );
 }

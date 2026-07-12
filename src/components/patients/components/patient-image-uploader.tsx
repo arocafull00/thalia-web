@@ -9,6 +9,7 @@ import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
+import { Button } from "@/components/ui/button";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { usePatientImageUploader } from "@/lib/hooks/use-patient-image-uploader";
 
@@ -101,23 +102,24 @@ export default function PatientImageUploader({
           </div>
 
           <AppDialogFooter>
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isPending}
-              className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)] disabled:opacity-50"
+              className="rounded-button px-3 py-1.5 text-sm"
             >
               {PATIENT_GALLERY_COPY.delete.cancel}
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isPending}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-medium uppercase tracking-wide text-on-primary hover:bg-primary-hover disabled:opacity-50"
+              className="min-h-11 rounded-full px-4 py-2 text-xs font-medium uppercase tracking-wide"
             >
               {isPending
                 ? PATIENT_GALLERY_COPY.uploader.pending
                 : PATIENT_GALLERY_COPY.uploader.submit}
-            </button>
+            </Button>
           </AppDialogFooter>
         </form>
       </AppDialogContent>

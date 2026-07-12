@@ -6,6 +6,7 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import type { AppointmentInventoryItemWithInventory } from "@/types/database.types";
@@ -58,24 +59,26 @@ export default function AppointmentMaterialsOverrideDialog({
         </div>
         <AppDialogFooter>
           {hasOverride ? (
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => {
                 void dialog.resetToDefault();
               }}
               disabled={dialog.isPending}
-              className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)] disabled:opacity-50"
+              className="rounded-button px-3 py-1.5 text-sm"
             >
               {APPOINTMENT_DETAIL_COPY.resetToDefault}
-            </button>
+            </Button>
           ) : null}
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+            className="rounded-button px-3 py-1.5 text-sm"
           >
             {APPOINTMENT_DETAIL_COPY.materialsCancel}
-          </button>
+          </Button>
           <ActionButton
             title={
               dialog.isPending

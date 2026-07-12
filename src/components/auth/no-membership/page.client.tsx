@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/hooks/use-auth";
 
 export default function NoMembershipPageClient() {
@@ -34,13 +35,14 @@ export default function NoMembershipPageClient() {
             administrador de tu clínica para recibir una invitación.
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={() => void handleSignOut()}
-          className="rounded-full border border-border px-6 py-2.5 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-border-subtle"
+          className="rounded-full px-6 py-2.5 text-xs font-medium uppercase tracking-wide"
         >
           Cerrar sesión
-        </button>
+        </Button>
       </div>
     </section>
   );

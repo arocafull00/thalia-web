@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export type FinancesTabValue = "income" | "expense" | "summary";
 
 type FinancesTabBarProps = {
@@ -14,14 +16,15 @@ export default function FinancesTabBar({
   return (
     <div className="flex gap-2">
       {tabs.map((tab) => (
-        <button
+        <Button
           key={tab}
           type="button"
+          variant="ghost"
           onClick={() => onTabChange(tab)}
-          className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
+          className={`rounded-full px-3 py-1.5 text-sm ${
             selectedTab === tab
-              ? "bg-primary-subtle text-primary"
-              : "text-ink-muted hover:bg-[var(--hover-overlay)] hover:text-ink-secondary"
+              ? "bg-primary-subtle text-primary hover:bg-primary-subtle hover:text-primary"
+              : "text-ink-muted hover:bg-(--hover-overlay) hover:text-ink-secondary"
           }`}
         >
           {tab === "income"
@@ -29,7 +32,7 @@ export default function FinancesTabBar({
             : tab === "expense"
               ? "Gastos"
               : "Resumen"}
-        </button>
+        </Button>
       ))}
     </div>
   );

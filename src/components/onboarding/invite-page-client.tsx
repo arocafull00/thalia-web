@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { useAcceptInvitation } from "@/lib/hooks/use-accept-invitation";
@@ -81,14 +82,15 @@ export default function InvitePageClient({ token }: Props) {
           </label>
         ) : null}
         <div className="flex justify-end gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => void handleReject()}
             disabled={submitting}
-            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)] disabled:opacity-50"
+            className="rounded-button px-3 py-1.5 text-sm"
           >
             Rechazar
-          </button>
+          </Button>
           <ActionButton
             title={submitting ? "Procesando..." : "Aceptar invitación"}
             disabled={submitting}

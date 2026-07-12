@@ -4,6 +4,7 @@ import { useState } from "react";
 import AppointmentDetailCard from "@/components/appointments/components/appointment-detail-card";
 import AppointmentMaterialsOverrideDialog from "@/components/appointments/components/appointment-materials-override-dialog";
 import { useAppointmentMaterials } from "@/components/appointments/hooks/use-appointment-materials";
+import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
@@ -100,14 +101,15 @@ export default function AppointmentMaterialsSection({
             )}
 
             {canEdit ? (
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => setDialogOpen(true)}
-                className="inline-flex items-center gap-2 rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+                className="rounded-button px-3 py-1.5 text-sm"
               >
                 <Pencil className="size-3.5" aria-hidden="true" />
                 {APPOINTMENT_DETAIL_COPY.editMaterials}
-              </button>
+              </Button>
             ) : null}
           </div>
         ) : null}

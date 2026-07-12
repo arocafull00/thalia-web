@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import AppointmentRow from "@/components/appointments/components/appointment-row";
 import CalendarDayDialog from "@/components/calendar/components/calendar-day-dialog";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
@@ -29,13 +30,14 @@ export default function CalendarMobileMonthAppointments({
         <h2 className="text-sm font-semibold text-ink">
           {CALENDAR_COPY.mobileMonth.appointmentsTitle(dayLabel)}
         </h2>
-        <button
+        <Button
           type="button"
+          variant="link"
           onClick={() => setDayDialogOpen(true)}
           className="text-xs uppercase tracking-wide text-ink-secondary hover:text-ink"
         >
           {CALENDAR_COPY.mobileMonth.viewDay}
-        </button>
+        </Button>
       </div>
       {appointments.length === 0 ? (
         <div className="flex flex-col items-center gap-4 px-6 py-10 text-center">

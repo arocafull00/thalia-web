@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import PatientImageDeleteConfirmDialog from "@/components/patients/components/patient-image-delete-confirm-dialog";
+import { Button } from "@/components/ui/button";
 import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { usePatientImageUrl } from "@/lib/hooks/use-patient-images";
@@ -63,12 +64,11 @@ export default function PatientGalleryImageThumb({
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={handleClick}
-        className={`group relative aspect-square overflow-hidden rounded-xl bg-canvas ${
-          isSelected ? "ring-2 ring-primary" : ""
-        }`}
+        className={`group relative aspect-square overflow-hidden rounded-xl ${isSelected ? "ring-2 ring-primary" : ""}`}
       >
         {imageUrl ? (
           <Image
@@ -97,7 +97,7 @@ export default function PatientGalleryImageThumb({
             />
           </div>
         ) : null}
-      </button>
+      </Button>
 
       <PatientImageDeleteConfirmDialog
         patientId={image.patient_id}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { captureEvent } from "@/lib/analytics";
@@ -179,27 +180,29 @@ export default function InviteTeamPageClient() {
                 className="flex-1 rounded-xl border border-border px-3 py-2.5 text-sm"
               />
               {emails.length > 1 ? (
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() =>
                     setEmails((current) =>
                       current.filter((_, entryIndex) => entryIndex !== index),
                     )
                   }
-                  className="rounded-xl border border-border px-3 text-sm text-ink-secondary"
+                  className="rounded-xl px-3 text-sm"
                 >
                   Quitar
-                </button>
+                </Button>
               ) : null}
             </div>
           ))}
-          <button
+          <Button
             type="button"
+            variant="link"
             onClick={() => setEmails((current) => [...current, ""])}
-            className="text-sm font-medium text-ink"
+            className="text-sm font-medium"
           >
             Añadir otro correo
-          </button>
+          </Button>
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
         {notice ? <Notice message={notice} /> : null}
@@ -210,13 +213,14 @@ export default function InviteTeamPageClient() {
           >
             Atrás
           </Link>
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => void handleSkip()}
-            className="px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary"
+            className="px-4 py-2 text-xs uppercase tracking-wide"
           >
             Saltar
-          </button>
+          </Button>
           <ActionButton
             title={submitting ? "Enviando..." : "Continuar"}
             disabled={submitting}

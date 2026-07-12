@@ -4,6 +4,7 @@ import { Mail } from "lucide-react";
 import Link from "next/link";
 import type { FormEvent } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { LOGIN_COPY } from "@/copy/login-copy";
 import { useForgotPassword } from "@/lib/hooks/use-forgot-password";
@@ -82,15 +83,15 @@ export default function ForgotPasswordPageClient() {
 
               {error ? <Notice tone="danger" message={error} /> : null}
 
-              <button
+              <Button
                 type="submit"
                 disabled={submitting || !email.trim()}
-                className="w-full rounded-full bg-primary px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-on-primary hover:bg-primary-hover disabled:opacity-50"
+                className="w-full rounded-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide"
               >
                 {submitting
                   ? LOGIN_COPY.forgotPassword.submit.loading
                   : LOGIN_COPY.forgotPassword.submit.idle}
-              </button>
+              </Button>
 
               <div className="text-center">
                 <Link

@@ -3,6 +3,7 @@
 import { ArrowLeftRight, Columns2, Rows2, X } from "lucide-react";
 
 import type { BeforeAfterOrientation } from "@/components/patients/components/before-after-comparison-slider";
+import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 
@@ -52,23 +53,27 @@ export default function BeforeAfterComparisonToolbar({
           </ToggleGroupItem>
         </ToggleGroup>
 
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="icon"
           onClick={onSwap}
-          className="inline-flex size-10 items-center justify-center rounded-full border border-border text-ink-secondary hover:bg-canvas"
+          className="rounded-full"
           aria-label={PATIENT_GALLERY_COPY.beforeAfter.swap}
         >
           <ArrowLeftRight className="size-4" aria-hidden="true" />
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="icon"
           onClick={onClose}
-          className="inline-flex size-10 items-center justify-center rounded-full border border-border text-ink-secondary hover:bg-canvas"
+          className="rounded-full"
           aria-label={PATIENT_GALLERY_COPY.beforeAfter.close}
         >
           <X className="size-4" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
     </div>
   );

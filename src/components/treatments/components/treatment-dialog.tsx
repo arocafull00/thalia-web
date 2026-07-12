@@ -7,6 +7,7 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { useTreatment } from "@/lib/hooks/use-treatment";
 
@@ -60,13 +61,14 @@ export default function TreatmentDialog({
           )}
         </div>
         <AppDialogFooter>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+            className="rounded-button px-3 py-1.5 text-sm"
           >
             {TREATMENTS_COPY.dialog.cancel}
-          </button>
+          </Button>
           <ActionButton
             title={
               dialog.isPending

@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useTopbarSearchStore } from "@/stores/topbar-search-store";
 
@@ -90,14 +91,16 @@ export default function AppSearchBarInput({
         className="w-full rounded-full border border-border bg-canvas py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
       />
       {inputValue ? (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-xs"
           onClick={handleClear}
           aria-label="Limpiar búsqueda"
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-ink-muted transition-colors hover:bg-primary-subtle hover:text-ink motion-reduce:transition-none"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full motion-reduce:transition-none"
         >
           <X size={16} />
-        </button>
+        </Button>
       ) : null}
     </div>
   );

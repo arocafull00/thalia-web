@@ -7,6 +7,7 @@ import PatientImageDeleteConfirmDialog from "@/components/patients/components/pa
 import PatientImageViewerImage from "@/components/patients/components/patient-image-viewer-image";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogContent from "@/components/ui/app-dialog-content";
+import { Button } from "@/components/ui/button";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { formatInputDate } from "@/lib/format";
 import type { PatientImage } from "@/types/database.types";
@@ -87,22 +88,24 @@ export default function PatientImageViewer({
             </div>
 
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="icon"
                 onClick={() => setDeleteDialogOpen(true)}
-                className="inline-flex size-10 items-center justify-center rounded-full border border-border text-ink-secondary hover:bg-canvas"
                 aria-label={PATIENT_GALLERY_COPY.viewer.delete}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
+                size="icon"
                 onClick={() => onOpenChange(false)}
-                className="inline-flex size-10 items-center justify-center rounded-full border border-border text-ink-secondary hover:bg-canvas"
                 aria-label={PATIENT_GALLERY_COPY.viewer.close}
               >
                 <X className="size-4" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -115,25 +118,29 @@ export default function PatientImageViewer({
             />
 
             {activeIndex > 0 ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => onActiveIndexChange(activeIndex - 1)}
-                className="absolute top-1/2 left-3 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/50 text-on-primary hover:bg-ink/70"
+                className="absolute top-1/2 left-3 -translate-y-1/2 bg-ink/50 text-on-primary hover:bg-ink/70"
                 aria-label={PATIENT_GALLERY_COPY.viewer.previous}
               >
                 <ChevronLeft className="size-5" aria-hidden="true" />
-              </button>
+              </Button>
             ) : null}
 
             {activeIndex < images.length - 1 ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => onActiveIndexChange(activeIndex + 1)}
-                className="absolute top-1/2 right-3 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/50 text-on-primary hover:bg-ink/70"
+                className="absolute top-1/2 right-3 -translate-y-1/2 bg-ink/50 text-on-primary hover:bg-ink/70"
                 aria-label={PATIENT_GALLERY_COPY.viewer.next}
               >
                 <ChevronRight className="size-5" aria-hidden="true" />
-              </button>
+              </Button>
             ) : null}
           </div>
 

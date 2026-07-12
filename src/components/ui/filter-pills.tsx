@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 type FilterPillOption = {
   label: string;
   value: string;
@@ -26,19 +28,20 @@ export default function FilterPills({
         const isActive = active === option.value;
 
         return (
-          <button
+          <Button
             key={option.value || "all"}
             type="button"
+            variant="ghost"
             aria-pressed={isActive}
             onClick={() => onChange(option.value)}
-            className={`rounded-full px-3 py-1.5 text-sm transition-colors motion-reduce:transition-none ${
+            className={`rounded-full px-3 py-1.5 text-sm motion-reduce:transition-none ${
               isActive
-                ? "bg-primary-subtle text-primary"
-                : "bg-surface text-ink-secondary ring-1 ring-border/60 hover:bg-[var(--hover-overlay)]"
+                ? "bg-primary-subtle text-primary hover:bg-primary-subtle hover:text-primary"
+                : "bg-surface text-ink-secondary ring-1 ring-border/60 hover:bg-(--hover-overlay)"
             }`}
           >
             {option.label}
-          </button>
+          </Button>
         );
       })}
     </div>

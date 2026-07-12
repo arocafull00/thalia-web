@@ -4,6 +4,7 @@ import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import type { TreatmentFormValues } from "@/components/treatments/hooks/use-treatment-dialog";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 
 const inputClassName =
@@ -92,14 +93,16 @@ export default function TreatmentInventoryLinkRow({
         ) : null}
       </TableCell>
       <TableCell className="w-12 px-4 py-3">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onRemove}
           aria-label={TREATMENTS_COPY.form.removeMaterial}
-          className="inline-flex size-9 items-center justify-center rounded-full text-ink-secondary transition hover:bg-canvas hover:text-danger"
+          className="rounded-full hover:text-danger"
         >
           <Trash2 className="size-4" aria-hidden="true" />
-        </button>
+        </Button>
       </TableCell>
     </TableRow>
   );

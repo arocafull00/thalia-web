@@ -1,5 +1,7 @@
 import { format, isToday } from "date-fns";
 
+import { Button } from "@/components/ui/button";
+
 type MonthMiniCalendarDayProps = {
   day: Date;
   isCurrentMonth: boolean;
@@ -19,14 +21,15 @@ export default function MonthMiniCalendarDay({
 
   return (
     <div className="flex items-center justify-center py-0.5">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => onSelect(day)}
-        className={`relative flex size-10 flex-col items-center justify-center rounded-full text-sm font-medium motion-reduce:transition-none ${
+        className={`relative size-10 flex-col rounded-full p-0 text-sm font-medium motion-reduce:transition-none ${
           isSelected
-            ? "bg-primary text-on-primary"
+            ? "bg-primary text-on-primary hover:bg-primary hover:text-on-primary"
             : isTodayDay
-              ? "bg-primary-subtle text-ink"
+              ? "bg-primary-subtle text-ink hover:bg-primary-subtle"
               : isCurrentMonth
                 ? "text-ink hover:bg-canvas"
                 : "text-ink-muted"
@@ -41,7 +44,7 @@ export default function MonthMiniCalendarDay({
             aria-hidden
           />
         ) : null}
-      </button>
+      </Button>
     </div>
   );
 }

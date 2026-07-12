@@ -3,6 +3,8 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 type SettingsActionRowProps = {
   description: string;
   disabled?: boolean;
@@ -59,13 +61,14 @@ export default function SettingsActionRow({
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       disabled={disabled}
       onClick={onClick}
-      className={className}
+      className={`h-auto justify-start rounded-none ${className}`}
     >
       {content}
-    </button>
+    </Button>
   );
 }

@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
@@ -32,11 +33,12 @@ export default function SettingsProfilePanel({
 
   return (
     <div className="space-y-6">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         disabled={uploadingAvatar}
         onClick={onPickAvatar}
-        className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-border/60 bg-primary-subtle/40 disabled:opacity-60"
+        className="h-20 w-20 overflow-hidden rounded-full border border-border/60 bg-primary-subtle/40 p-0"
       >
         {displayUri ? (
           <Image
@@ -50,7 +52,7 @@ export default function SettingsProfilePanel({
         ) : (
           <span className="text-sm text-ink-muted">Foto</span>
         )}
-      </button>
+      </Button>
       <div>
         <p className="text-lg font-medium text-ink">{profile.full_name}</p>
         <p className="mt-1 text-xs text-ink-muted">

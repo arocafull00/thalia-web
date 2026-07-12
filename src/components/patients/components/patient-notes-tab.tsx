@@ -1,5 +1,6 @@
 import { Pencil } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import type { Patient } from "@/types/database.types";
 
@@ -18,14 +19,15 @@ export default function PatientNotesTab({
         <h2 className="text-base font-medium text-ink">
           {PATIENT_DETAIL_COPY.clinicalNotes.title}
         </h2>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={PATIENT_DETAIL_COPY.actions.edit}
           onClick={onEditNotes}
-          className="flex size-9 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas"
         >
           <Pencil className="size-4" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
       <p className="mt-4 text-sm whitespace-pre-wrap text-ink-secondary">
         {patient.notes?.trim()

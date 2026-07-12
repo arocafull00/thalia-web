@@ -3,6 +3,7 @@
 import { Building2, Check, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { SIDEBAR_COPY } from "@/copy/sidebar-copy";
 import type { ClinicMembershipView } from "@/stores/clinic-store";
 
@@ -55,29 +56,31 @@ export default function SidebarClinicSwitcher({
 
   return (
     <div ref={dropdownRef} className="relative mt-0.5">
-      <button
+      <Button
         type="button"
+        variant="link"
         aria-expanded={open}
         aria-label={SIDEBAR_COPY.switchClinic}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex min-w-0 max-w-full items-center gap-1.5 text-xs text-ink-muted hover:text-ink-secondary"
+        className="flex h-auto min-w-0 max-w-full items-center gap-1.5 p-0 text-xs text-ink-muted hover:text-ink-secondary"
         title={clinicName}
       >
         <Building2 size={12} className="shrink-0" />
         <span className="truncate">{clinicName}</span>
         <ChevronDown size={12} className="shrink-0" />
-      </button>
+      </Button>
       {open ? (
         <div className="absolute bottom-full left-0 z-30 mb-1 w-full max-w-xs rounded-xl border border-border bg-surface py-1 shadow-sm">
           {memberships.map((membership) => (
-            <button
+            <Button
               key={membership.clinicId}
               type="button"
+              variant="ghost"
               onClick={() => {
                 onSelectClinic(membership.clinicId);
                 setOpen(false);
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-canvas"
+              className="h-auto w-full justify-start rounded-none px-3 py-2 text-left text-sm"
             >
               <span className="flex-1 truncate text-ink">
                 {membership.clinicName}
@@ -85,7 +88,7 @@ export default function SidebarClinicSwitcher({
               {membership.clinicId === activeClinicId ? (
                 <Check size={14} className="shrink-0 text-primary" />
               ) : null}
-            </button>
+            </Button>
           ))}
         </div>
       ) : null}

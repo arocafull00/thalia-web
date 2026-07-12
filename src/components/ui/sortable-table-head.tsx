@@ -3,6 +3,8 @@
 import type { Column } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 type SortableTableHeadProps<TData> = {
   column: Column<TData, unknown>;
   title: string;
@@ -15,13 +17,14 @@ export default function SortableTableHead<TData>({
   className,
 }: SortableTableHeadProps<TData>) {
   return (
-    <button
+    <Button
       type="button"
-      className={`inline-flex items-center text-xs uppercase tracking-wide text-ink-muted transition hover:text-ink ${className ?? ""}`}
+      variant="link"
+      className={`inline-flex h-auto items-center p-0 text-xs uppercase tracking-wide text-ink-muted hover:text-ink ${className ?? ""}`}
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
     >
       {title}
       <ArrowUpDown className="ml-1 size-3" />
-    </button>
+    </Button>
   );
 }

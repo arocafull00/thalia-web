@@ -4,6 +4,7 @@ import { Mail, Pencil, Phone } from "lucide-react";
 import Image from "next/image";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
@@ -31,11 +32,12 @@ export default function SettingsProfileHeader({
 
   return (
     <div className="flex flex-col items-center gap-3 px-4 py-6 text-center lg:gap-4 lg:px-6 lg:py-8">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         disabled={uploadPending}
         onClick={onPickAvatar}
-        className="relative size-14 shrink-0 overflow-visible rounded-full disabled:opacity-60 lg:size-20"
+        className="relative size-14 shrink-0 overflow-visible rounded-full p-0 lg:size-20"
       >
         <span className="flex size-14 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 ring-offset-canvas lg:size-20">
           {displayUri ? (
@@ -54,7 +56,7 @@ export default function SettingsProfileHeader({
         <span className="absolute right-0 bottom-0 flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-primary text-on-primary">
           <Pencil className="size-3.5" aria-hidden="true" />
         </span>
-      </button>
+      </Button>
 
       <div className="min-w-0 space-y-3">
         <h1 className="text-xl font-semibold text-ink text-wrap-balance">

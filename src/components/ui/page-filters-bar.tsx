@@ -3,6 +3,7 @@
 import { SlidersHorizontal } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { Button } from "@/components/ui/button";
 import PageSearchFilter from "@/components/ui/page-search-filter";
 
 type PageFiltersBarProps = {
@@ -35,14 +36,16 @@ export default function PageFiltersBar({
         />
       </div>
       {showMobileSheetButton ? (
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="icon-sm"
           onClick={onOpenSheet}
           aria-label="Filtros"
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-button border border-border/60 bg-surface text-ink-secondary hover:bg-[var(--hover-overlay)] motion-reduce:transition-none sm:hidden"
+          className="rounded-button sm:hidden motion-reduce:transition-none"
         >
           <SlidersHorizontal size={16} />
-        </button>
+        </Button>
       ) : null}
       {children ? (
         <div className="hidden items-center gap-2 sm:flex">{children}</div>

@@ -3,6 +3,7 @@
 import { Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -54,14 +55,16 @@ export default function PageSearchFilter({
         className="w-full rounded-full border border-border bg-surface py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
       />
       {inputValue ? (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-xs"
           onClick={() => setInputValue("")}
           aria-label={clearLabel}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-ink-muted transition-colors hover:bg-primary-subtle hover:text-ink motion-reduce:transition-none"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full motion-reduce:transition-none"
         >
           <X size={16} />
-        </button>
+        </Button>
       ) : null}
     </div>
   );

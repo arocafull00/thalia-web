@@ -44,13 +44,15 @@ export default function FiltersSheet({
           <div className="shrink-0 px-4 pt-2">
             <div className="mb-6 flex items-center justify-between">
               <span className="text-base font-medium text-ink">Filtros</span>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={onDismiss}
-                className="rounded-button p-1.5 text-ink-muted hover:bg-[var(--hover-overlay)]"
+                className="rounded-button"
               >
                 <X size={18} strokeWidth={1.5} />
-              </button>
+              </Button>
             </div>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-4">

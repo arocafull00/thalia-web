@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import AppointmentPersonAvatar from "@/components/appointments/components/appointment-person-avatar";
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
@@ -82,13 +83,15 @@ export default function AppointmentHeader({
         {canChangeStatus ? (
           <Popover.Root open={menuOpen} onOpenChange={setMenuOpen}>
             <Popover.Trigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label={APPOINTMENT_DETAIL_COPY.moreActions}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-ink-secondary hover:bg-canvas"
+                className="rounded-full border border-border"
               >
                 <MoreVertical className="size-4" aria-hidden="true" />
-              </button>
+              </Button>
             </Popover.Trigger>
             <Popover.Portal>
               <Popover.Content
@@ -96,32 +99,34 @@ export default function AppointmentHeader({
                 sideOffset={8}
                 className="z-100 min-w-52 rounded-[14px] border border-border/60 bg-surface p-1.5 shadow-float"
               >
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   disabled={updatingStatus}
                   onClick={() => {
                     closeMenu();
                     onMarkCompleted();
                   }}
-                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-ink hover:bg-canvas disabled:opacity-50"
+                  className="h-auto w-full justify-start rounded-xl px-3 py-2 text-sm"
                 >
                   <CheckCircle
                     className="size-4 text-ink-muted"
                     aria-hidden="true"
                   />
                   {APPOINTMENT_DETAIL_COPY.markCompleted}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   disabled={updatingStatus}
                   onClick={() => {
                     closeMenu();
                     onCancel();
                   }}
-                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-danger hover:bg-danger-subtle disabled:opacity-50"
+                  className="h-auto w-full justify-start rounded-xl px-3 py-2 text-sm text-danger hover:bg-danger-subtle hover:text-danger"
                 >
                   {APPOINTMENT_DETAIL_COPY.cancel}
-                </button>
+                </Button>
               </Popover.Content>
             </Popover.Portal>
           </Popover.Root>

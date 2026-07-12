@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import CalendarViewModeToggle from "@/components/calendar/components/calendar-view-mode-toggle";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import { Button } from "@/components/ui/button";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -97,13 +98,14 @@ export default function CalendarFiltersSheet({
         />
       </div>
 
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={handleToday}
-        className="flex min-h-11 w-full items-center justify-center rounded-full border border-border text-sm font-medium text-ink-secondary hover:bg-canvas motion-reduce:transition-none"
+        className="min-h-11 w-full rounded-full text-sm font-medium motion-reduce:transition-none"
       >
         {CALENDAR_COPY.toolbar.today}
-      </button>
+      </Button>
 
       <div className="space-y-2">
         <p className="text-sm font-medium text-ink">

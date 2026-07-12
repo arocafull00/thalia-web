@@ -3,6 +3,7 @@
 import { LogOut, Users } from "lucide-react";
 import Image from "next/image";
 
+import { Button } from "@/components/ui/button";
 import { SIDEBAR_COPY } from "@/copy/sidebar-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -41,14 +42,16 @@ export default function SidebarProfileFooter() {
           </p>
         ) : null}
       </div>
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon-sm"
         aria-label={SIDEBAR_COPY.signOut}
         onClick={() => void signOut()}
-        className="shrink-0 rounded-lg p-1.5 text-ink-muted hover:bg-primary-subtle/40 hover:text-ink"
+        className="shrink-0 rounded-lg text-ink-muted hover:text-ink"
       >
         <LogOut size={16} />
-      </button>
+      </Button>
     </div>
   );
 }

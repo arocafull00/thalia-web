@@ -1,5 +1,6 @@
 import { Building2, LogOut, UserCheck } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { REGISTER_COPY } from "@/copy/register-copy";
 
 type Props = {
@@ -31,7 +32,7 @@ export default function RegisterTypePicker({
           <p className="text-sm text-ink-secondary">{REGISTER_COPY.subtitle}</p>
         </div>
         <div className="space-y-3">
-          <button
+          <Button
             type="button"
             onClick={onPickOwner}
             className="flex w-full items-start gap-4 rounded-2xl border border-border bg-surface p-5 text-left hover:border-primary hover:bg-primary-subtle"
@@ -47,8 +48,8 @@ export default function RegisterTypePicker({
                 {REGISTER_COPY.owner.description}
               </p>
             </div>
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={onPickEmployee}
             className="flex w-full items-start gap-4 rounded-2xl border border-border bg-surface p-5 text-left hover:border-primary hover:bg-primary-subtle"
@@ -64,17 +65,17 @@ export default function RegisterTypePicker({
                 {REGISTER_COPY.employee.description}
               </p>
             </div>
-          </button>
+          </Button>
         </div>
         <div className="flex justify-center">
-          <button
+          <Button
             type="button"
             onClick={onSignOut}
             className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary hover:bg-surface"
           >
             <LogOut size={14} />
             Salir
-          </button>
+          </Button>
         </div>
       </div>
     </div>

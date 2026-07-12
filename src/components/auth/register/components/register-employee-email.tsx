@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { REGISTER_COPY } from "@/copy/register-copy";
@@ -47,14 +48,15 @@ export default function RegisterEmployeeEmail({
         </label>
         {error ? <Notice tone="danger" message={error} /> : null}
         <div className="flex items-center justify-between gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onBack}
-            className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+            className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
           >
             <ArrowLeft size={14} />
             {copy.backButton}
-          </button>
+          </Button>
           <ActionButton
             title={submitting ? "Verificando..." : copy.continueButton}
             disabled={submitting}

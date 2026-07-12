@@ -2,6 +2,8 @@
 
 import { Check } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 type AppSearchableMultiSelectOptionProps = {
   id: string;
   label: string;
@@ -16,12 +18,13 @@ export default function AppSearchableMultiSelectOption({
   onToggle,
 }: AppSearchableMultiSelectOptionProps) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       role="checkbox"
       aria-checked={checked}
       onClick={() => onToggle(id)}
-      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-2 py-1.5 text-left text-sm text-ink hover:bg-canvas"
+      className="h-auto w-full cursor-pointer justify-start gap-2.5 rounded-xl px-2 py-1.5 text-left text-sm"
     >
       <span
         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
@@ -33,6 +36,6 @@ export default function AppSearchableMultiSelectOption({
         {checked ? <Check size={12} strokeWidth={3} /> : null}
       </span>
       <span>{label}</span>
-    </button>
+    </Button>
   );
 }

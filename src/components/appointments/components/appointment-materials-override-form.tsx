@@ -8,6 +8,7 @@ import {
 
 import type { AppointmentMaterialsFormValues } from "@/components/appointments/hooks/use-appointment-materials-override-dialog";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import { Button } from "@/components/ui/button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useInventoryItems } from "@/lib/hooks/use-inventory";
 
@@ -114,27 +115,29 @@ export default function AppointmentMaterialsOverrideForm({
                 ) : null}
               </label>
               <div className="flex items-end">
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => remove(index)}
                   className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
                 >
                   <Trash2 className="size-3.5" aria-hidden="true" />
                   Quitar
-                </button>
+                </Button>
               </div>
             </div>
           ))}
         </div>
       )}
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => append({ inventory_item_id: "", quantity: 1 })}
-        className="inline-flex items-center gap-2 rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+        className="inline-flex items-center gap-2 rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-(--hover-overlay)"
       >
         <Plus className="size-3.5" aria-hidden="true" />
         Añadir material
-      </button>
+      </Button>
     </div>
   );
 }

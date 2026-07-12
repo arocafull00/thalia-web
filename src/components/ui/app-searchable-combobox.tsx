@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import AppSearchableComboboxItem from "@/components/ui/app-searchable-combobox-item";
+import { Button } from "@/components/ui/button";
 import {
   Combobox,
   ComboboxContent,
@@ -203,14 +204,15 @@ export default function AppSearchableCombobox({
           ) : null}
           <div className={showSearch ? "max-h-48 overflow-y-auto" : undefined}>
             {allowClear && clearLabel ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => handleSelect(null)}
-                className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-[var(--hover-overlay)]"
+                className="mb-1 w-full justify-start rounded-md px-2 py-1.5 text-left text-sm"
               >
                 {triggerLeading}
                 {clearLabel}
-              </button>
+              </Button>
             ) : null}
             {showListLoading ? (
               <p className="px-3 py-2 text-sm text-ink-muted">

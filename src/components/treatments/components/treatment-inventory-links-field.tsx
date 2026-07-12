@@ -4,6 +4,7 @@ import { useFieldArray, type Control, type FieldErrors } from "react-hook-form";
 import TreatmentInventoryLinkRow from "@/components/treatments/components/treatment-inventory-link-row";
 import type { TreatmentFormValues } from "@/components/treatments/hooks/use-treatment-dialog";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -84,14 +85,15 @@ export default function TreatmentInventoryLinksField({
           )}
         </TableBody>
       </Table>
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={() => append({ inventory_item_id: "", quantity: 1 })}
-        className="inline-flex items-center gap-2 rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+        className="rounded-button px-3 py-1.5 text-sm"
       >
         <Plus className="size-3.5" aria-hidden="true" />
         {TREATMENTS_COPY.form.addMaterial}
-      </button>
+      </Button>
     </fieldset>
   );
 }

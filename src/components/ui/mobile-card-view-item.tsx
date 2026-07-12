@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { Fragment } from "react";
 
+import { Button } from "@/components/ui/button";
 import type {
   MobileCardAction,
   MobileCardColumn,
@@ -80,18 +81,20 @@ export default function MobileCardViewItem<T>({
         <div className="flex shrink-0 items-center gap-2">
           {actions && actions.length > 0
             ? actions.map((action) => (
-                <button
+                <Button
                   key={action.label}
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   aria-label={action.label}
                   onClick={(event) => {
                     event.stopPropagation();
                     action.onClick(row);
                   }}
-                  className="flex min-h-9 min-w-9 items-center justify-center rounded-button text-ink-muted hover:bg-[var(--hover-overlay)] motion-reduce:transition-none"
+                  className="min-h-9 min-w-9 rounded-button motion-reduce:transition-none"
                 >
                   {action.icon}
-                </button>
+                </Button>
               ))
             : null}
           {clickable ? (

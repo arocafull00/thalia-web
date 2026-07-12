@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react";
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
+import { Button } from "@/components/ui/button";
 import type { TreatmentWithInventory } from "@/types/database.types";
 
 type TreatmentRowActionsProps = {
@@ -16,28 +17,30 @@ export default function TreatmentRowActions({
 }: TreatmentRowActionsProps) {
   return (
     <div className="flex shrink-0 items-center justify-end gap-2">
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={(event) => {
           event.stopPropagation();
           onEdit(treatment);
         }}
-        className="inline-flex items-center gap-2 rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+        className="rounded-button px-3 py-1.5 text-sm"
       >
         <Pencil className="size-3.5" aria-hidden="true" />
         {TREATMENTS_COPY.row.edit}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        variant="destructive"
         onClick={(event) => {
           event.stopPropagation();
           onDelete(treatment);
         }}
-        className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide text-danger hover:bg-canvas"
+        className="rounded-full border border-border px-4 py-2 text-xs font-medium uppercase tracking-wide hover:bg-canvas"
       >
         <Trash2 className="size-3.5" aria-hidden="true" />
         {TREATMENTS_COPY.row.delete}
-      </button>
+      </Button>
     </div>
   );
 }

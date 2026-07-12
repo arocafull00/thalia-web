@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { captureEvent } from "@/lib/analytics";
@@ -170,13 +171,14 @@ export default function CreateClinicPageClient() {
         </div>
         {error ? <Notice tone="danger" message={error} /> : null}
         <div className="flex items-center justify-between gap-3">
-          <button
+          <Button
+            variant="outline"
             onClick={() => void signOut()}
-            className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
+            className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
           >
             <LogOut size={14} />
             Salir
-          </button>
+          </Button>
           <div className="flex gap-3">
             <Link
               href="/register-employee"

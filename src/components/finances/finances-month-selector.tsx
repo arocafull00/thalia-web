@@ -4,6 +4,7 @@ import { addMonths, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { useFinancesUiStore } from "@/stores/finances-ui-store";
 
 export default function FinancesMonthSelector() {
@@ -20,23 +21,27 @@ export default function FinancesMonthSelector() {
 
   return (
     <div className="flex items-center gap-1">
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon-sm"
         onClick={handlePrev}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-primary-subtle/50 hover:text-ink"
+        className="rounded-full"
       >
         <ChevronLeft size={18} />
-      </button>
+      </Button>
       <span className="min-w-36 text-center text-base font-medium text-ink">
         {monthLabel}
       </span>
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon-sm"
         onClick={handleNext}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-primary-subtle/50 hover:text-ink"
+        className="rounded-full"
       >
         <ChevronRight size={18} />
-      </button>
+      </Button>
     </div>
   );
 }

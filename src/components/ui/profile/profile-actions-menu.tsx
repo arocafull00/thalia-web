@@ -4,6 +4,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import type { ProfileAction } from "@/components/ui/profile/profile-action";
 
 type ProfileActionsMenuProps = {
@@ -30,13 +31,15 @@ export default function ProfileActionsMenu({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={ariaLabel}
-          className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-secondary hover:bg-canvas ${className ?? ""}`}
+          className={`rounded-full ${className ?? ""}`}
         >
           <MoreVertical className="size-4" aria-hidden="true" />
-        </button>
+        </Button>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
@@ -67,18 +70,19 @@ export default function ProfileActionsMenu({
             }
 
             return (
-              <button
+              <Button
                 key={action.label}
                 type="button"
+                variant="ghost"
                 onClick={() => {
                   closeMenu();
                   action.onClick?.();
                 }}
-                className={`${itemClassName} text-left`}
+                className={`h-auto justify-start ${itemClassName} text-left`}
               >
                 <Icon className="size-4 text-ink-muted" aria-hidden="true" />
                 {action.label}
-              </button>
+              </Button>
             );
           })}
         </Popover.Content>

@@ -7,6 +7,7 @@ import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
+import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { EMPLOYEE_EDIT_COPY } from "@/copy/employee-edit-copy";
 import { useEmployeeEditDialog } from "@/lib/hooks/use-employee-edit-dialog";
@@ -55,13 +56,14 @@ export default function EmployeeEditDialog({
           />
         </div>
         <AppDialogFooter>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]"
+            className="rounded-button px-3 py-1.5 text-sm"
           >
             {EMPLOYEE_EDIT_COPY.actions.cancel}
-          </button>
+          </Button>
           <ActionButton
             title={
               dialog.isPending

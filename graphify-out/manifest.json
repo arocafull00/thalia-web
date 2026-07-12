@@ -130,12 +130,12 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-page-client.tsx": {
-    "mtime": 1783879075.7409225,
-    "ast_hash": "d69e43ecf04fa5d33dd660906df6e331",
+    "mtime": 1783879366.5858612,
+    "ast_hash": "6fee898203127564d0dab43af9606603",
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
-    "mtime": 1783846516.3859198,
+    "mtime": 1783879312.293569,
     "ast_hash": "5f6c0def3ce1beef6d46ccdf775a74fd",
     "semantic_hash": ""
   },
@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
-    "mtime": 1783845068.623047,
-    "ast_hash": "18d88153428b34ba2cc4fb500f623735",
+    "mtime": 1783879453.259222,
+    "ast_hash": "d948fc4d1fc5f5a0983cd8a5262f102f",
     "semantic_hash": ""
   },
   "src/components/employees/employees-page-client.tsx": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "src/copy/employee-detail-copy.ts": {
-    "mtime": 1783845068.9372227,
-    "ast_hash": "b3f1d5a2d39fbd9deebaa9379b1eaf40",
+    "mtime": 1783879446.74442,
+    "ast_hash": "06bd3d303cf36bab0af55943aecd8fb5",
     "semantic_hash": ""
   },
   "src/copy/employee-edit-copy.ts": {
@@ -1325,8 +1325,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-profile-summary.tsx": {
-    "mtime": 1783098818.089206,
-    "ast_hash": "10b95df86225123c72eac4bbaf098bf9",
+    "mtime": 1783879450.4256287,
+    "ast_hash": "6115b3797bf9a0a65e4158cc4f2b2da3",
     "semantic_hash": ""
   },
   "src/components/employees/components/employee-profile-sidebar.tsx": {
@@ -2445,13 +2445,43 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-actions.ts": {
-    "mtime": 1783878933.3134964,
-    "ast_hash": "8ce9873bfc3c99dbb1b3e2c00de75b78",
+    "mtime": 1783879366.5516727,
+    "ast_hash": "e4726eb0f2f0c3462a3ff97301d95f0b",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-header-person.tsx": {
-    "mtime": 1783879148.3431592,
-    "ast_hash": "b66a07275e03962c823fecd146ffee1e",
+    "mtime": 1783879366.5961585,
+    "ast_hash": "07b152685ff3f19a23fe9586bc386bce",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-avatar-display.tsx": {
+    "mtime": 1783879443.6677482,
+    "ast_hash": "7143faf53efc2d3c5ec134a716ecf0a6",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-header.tsx": {
+    "mtime": 1783879444.3965845,
+    "ast_hash": "6b28bc8bd6c1643b371bb16a202a23e5",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-tab-bar.tsx": {
+    "mtime": 1783879445.9845123,
+    "ast_hash": "713fb1beafc19b6a4a61128c36ca02a3",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-tab-button.tsx": {
+    "mtime": 1783879445.0996208,
+    "ast_hash": "95b6f1057c8bb01efeb742156ee85b4d",
+    "semantic_hash": ""
+  },
+  "src/components/employees/components/employee-detail-tab-content.tsx": {
+    "mtime": 1783879446.8308191,
+    "ast_hash": "9931ad2c15a611716777017306cd5532",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-employee-detail-tabs.ts": {
+    "mtime": 1783879443.2770095,
+    "ast_hash": "f881f3e4ada451e972dda87f2a566013",
     "semantic_hash": ""
   }
 }

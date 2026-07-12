@@ -130,12 +130,12 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-page-client.tsx": {
-    "mtime": 1783879075.7409225,
-    "ast_hash": "d69e43ecf04fa5d33dd660906df6e331",
+    "mtime": 1783879366.5858612,
+    "ast_hash": "6fee898203127564d0dab43af9606603",
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
-    "mtime": 1783846516.3859198,
+    "mtime": 1783879312.293569,
     "ast_hash": "5f6c0def3ce1beef6d46ccdf775a74fd",
     "semantic_hash": ""
   },
@@ -1250,8 +1250,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-header.tsx": {
-    "mtime": 1783879075.051042,
-    "ast_hash": "1f116ed93f26296900d319508f69204c",
+    "mtime": 1783879152.6878276,
+    "ast_hash": "5ef30f5b668f96e87671678521f2fe90",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-person-avatar.tsx": {
@@ -2445,13 +2445,13 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-actions.ts": {
-    "mtime": 1783878933.3134964,
-    "ast_hash": "8ce9873bfc3c99dbb1b3e2c00de75b78",
+    "mtime": 1783879366.5516727,
+    "ast_hash": "e4726eb0f2f0c3462a3ff97301d95f0b",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-header-person.tsx": {
-    "mtime": 1783879073.6031961,
-    "ast_hash": "3f93ecf9fd8734bd8745cbd9e0a6772d",
+    "mtime": 1783879366.5961585,
+    "ast_hash": "07b152685ff3f19a23fe9586bc386bce",
     "semantic_hash": ""
   }
 }

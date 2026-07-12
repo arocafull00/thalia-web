@@ -1,5 +1,10 @@
 export const EMPLOYEE_DETAIL_COPY = {
   back: "Volver al personal",
+  breadcrumbRoot: "Personal",
+  tabs: {
+    summary: "Resumen",
+    appointments: "Citas",
+  },
   sections: {
     summary: "Resumen del profesional",
     history: "Historial de citas",

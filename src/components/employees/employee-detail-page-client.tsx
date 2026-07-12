@@ -1,24 +1,29 @@
 "use client";
 
+import { Pencil } from "lucide-react";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
-import EmployeeDetailActionsMenu from "@/components/employees/components/employee-detail-actions-menu";
+import EmployeeDetailHeader from "@/components/employees/components/employee-detail-header";
+import EmployeeDetailTabBar from "@/components/employees/components/employee-detail-tab-bar";
+import EmployeeDetailTabContent from "@/components/employees/components/employee-detail-tab-content";
 import EmployeeEditDialog from "@/components/employees/components/employee-edit-dialog";
-import EmployeeProfileSidebar from "@/components/employees/components/employee-profile-sidebar";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/employee-status-confirm-dialog";
-import EmployeeTimeline from "@/components/employees/components/employee-timeline";
+import { getEmployeeDetailActions } from "@/components/employees/employee-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { useEmployeeDetailTabs } from "@/lib/hooks/use-employee-detail-tabs";
 import {
   useEmployee,
   useEmployeeAppointmentStats,
   useEmployeeAppointments,
 } from "@/lib/hooks/use-employees";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
+import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { useEmployeesStore } from "@/stores/employees-store";
 
 type EmployeeDetailPageClientProps = {
@@ -40,6 +45,7 @@ export default function EmployeeDetailPageClient({
   const fetchEmployeeAppointments = useEmployeesStore(
     (state) => state.fetchEmployeeAppointments,
   );
+  const { activeTab, setActiveTab } = useEmployeeDetailTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
 
@@ -53,6 +59,39 @@ export default function EmployeeDetailPageClient({
     void fetchEmployeeStats(employeeId);
     void fetchEmployeeAppointments(employeeId);
   };
+
+  const employee = employeeQuery.data;
+
+  useTopbarBreadcrumb(
+    employee
+      ? {
+          rootLabel: EMPLOYEE_DETAIL_COPY.breadcrumbRoot,
+          rootHref: "/employees",
+          currentLabel: employee.full_name,
+        }
+      : null,
+  );
+
+  useTopbarActions(
+    employee
+      ? {
+          buttons: [
+            {
+              title: EMPLOYEE_DETAIL_COPY.actions.edit,
+              icon: Pencil,
+              onClick: () => setEditDialogOpen(true),
+            },
+          ],
+          menu: {
+            actions: getEmployeeDetailActions(employee, {
+              onEdit: () => setEditDialogOpen(true),
+              onToggleStatus: () => setStatusDialogOpen(true),
+            }),
+            ariaLabel: EMPLOYEE_DETAIL_COPY.moreActions,
+          },
+        }
+      : null,
+  );
 
   if (!canManage) {
     return (
@@ -75,13 +114,15 @@ export default function EmployeeDetailPageClient({
 
   if (employeeQuery.error) {
     return (
-      <div className="p-8">
+      <div className="flex min-h-0 flex-1 flex-col space-y-6 overflow-y-auto p-8">
+        <BackButton
+          fallbackHref="/employees"
+          label={EMPLOYEE_DETAIL_COPY.back}
+        />
         <Notice tone="danger" message={EMPLOYEE_DETAIL_COPY.errors.load} />
       </div>
     );
   }
-
-  const employee = employeeQuery.data;
 
   if (!employee) {
     notFound();
@@ -90,33 +131,24 @@ export default function EmployeeDetailPageClient({
   const appointments = appointmentsQuery.data ?? [];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-4 lg:px-8">
-        <BackButton
-          fallbackHref="/employees"
-          label={EMPLOYEE_DETAIL_COPY.back}
-        />
-        <EmployeeDetailActionsMenu
-          employee={employee}
-          onEdit={() => setEditDialogOpen(true)}
-          onToggleStatus={() => setStatusDialogOpen(true)}
-        />
-      </div>
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <EmployeeDetailHeader employee={employee} />
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[20%_1fr]">
-        <EmployeeProfileSidebar
-          employee={employee}
-          stats={statsQuery.data ?? undefined}
-          isLoading={statsQuery.isLoading}
-          error={statsQuery.error}
-          onEdit={() => setEditDialogOpen(true)}
-          onToggleStatus={() => setStatusDialogOpen(true)}
+      <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
+        <EmployeeDetailTabBar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
-        <div className="order-2 flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-6 lg:order-2 lg:px-6 lg:py-8">
-          <EmployeeTimeline
+        <div role="tabpanel">
+          <EmployeeDetailTabContent
+            activeTab={activeTab}
+            employee={employee}
+            stats={statsQuery.data ?? undefined}
+            statsLoading={statsQuery.isLoading}
+            statsError={statsQuery.error}
             appointments={appointments}
-            isLoading={appointmentsQuery.isLoading}
-            error={appointmentsQuery.error}
+            appointmentsLoading={appointmentsQuery.isLoading}
+            appointmentsError={appointmentsQuery.error}
           />
         </div>
       </div>

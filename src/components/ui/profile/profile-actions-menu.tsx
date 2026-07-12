@@ -74,7 +74,8 @@ export default function ProfileActionsMenu({
                 key={action.label}
                 type="button"
                 variant="ghost"
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   closeMenu();
                   action.onClick?.();
                 }}

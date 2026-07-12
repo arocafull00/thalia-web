@@ -193,7 +193,7 @@ export default function AppSearchableCombobox({
         <ComboboxContent
           container={portalContainer}
           sideOffset={8}
-          className={cn(popupClassName, "max-h-none")}
+          className={popupClassName}
         >
           {showSearch ? (
             <ComboboxInput
@@ -202,39 +202,37 @@ export default function AppSearchableCombobox({
               className="mb-2 w-full rounded-input border border-border/60 bg-surface shadow-none focus-within:border-primary"
             />
           ) : null}
-          <div className={showSearch ? "max-h-48 overflow-y-auto" : undefined}>
-            {allowClear && clearLabel ? (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => handleSelect(null)}
-                className="mb-1 w-full justify-start rounded-md px-2 py-1.5 text-left text-sm"
-              >
-                {triggerLeading}
-                {clearLabel}
-              </Button>
-            ) : null}
-            {showListLoading ? (
-              <p className="px-3 py-2 text-sm text-ink-muted">
-                {COMBOBOX_COPY.loading}
-              </p>
-            ) : null}
-            {!showListLoading ? (
-              <>
-                <ComboboxEmpty className="px-3 py-2 text-ink-muted">
-                  {emptyMessage}
-                </ComboboxEmpty>
-                <ComboboxList className="max-h-none p-0">
-                  {(option: AppSearchableComboboxOption) => (
-                    <AppSearchableComboboxItem
-                      key={option.value}
-                      option={option}
-                    />
-                  )}
-                </ComboboxList>
-              </>
-            ) : null}
-          </div>
+          {allowClear && clearLabel ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => handleSelect(null)}
+              className="mb-1 w-full justify-start rounded-md px-2 py-1.5 text-left text-sm"
+            >
+              {triggerLeading}
+              {clearLabel}
+            </Button>
+          ) : null}
+          {showListLoading ? (
+            <p className="px-3 py-2 text-sm text-ink-muted">
+              {COMBOBOX_COPY.loading}
+            </p>
+          ) : null}
+          {!showListLoading ? (
+            <>
+              <ComboboxEmpty className="px-3 py-2 text-ink-muted">
+                {emptyMessage}
+              </ComboboxEmpty>
+              <ComboboxList className="p-0">
+                {(option: AppSearchableComboboxOption) => (
+                  <AppSearchableComboboxItem
+                    key={option.value}
+                    option={option}
+                  />
+                )}
+              </ComboboxList>
+            </>
+          ) : null}
         </ComboboxContent>
       </Combobox>
     </div>

@@ -3,10 +3,14 @@
 import * as Dialog from "@radix-ui/react-dialog";
 
 import AppDialogClose from "@/components/ui/app-dialog-close";
+import { cn } from "@/lib/utils";
 
 type AppDialogContentProps = Dialog.DialogContentProps & {
   showClose?: boolean;
 };
+
+const defaultDialogContentClassName =
+  "left-1/2 top-1/2 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-dialog border border-border/60 p-6 shadow-dialog";
 
 export default function AppDialogContent({
   children,
@@ -18,10 +22,11 @@ export default function AppDialogContent({
     <Dialog.Portal>
       <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40" />
       <Dialog.Content
-        className={
-          className ??
-          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-dialog border border-border/60 bg-surface p-6 shadow-dialog focus:outline-none"
-        }
+        className={cn(
+          "fixed z-[51] bg-surface focus:outline-none",
+          defaultDialogContentClassName,
+          className,
+        )}
         {...props}
       >
         {children}

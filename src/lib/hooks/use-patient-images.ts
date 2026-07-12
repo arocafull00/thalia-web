@@ -1,10 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { getImageUrl } from "@/dal/patient-images.dal";
 import { peekCachedPatientImageUrl } from "@/lib/patient-image-storage";
 import { usePatientImagesStore } from "@/stores/patient-images-store";
 import { isInitialLoading } from "@/stores/query-state";
 import type { PatientImage } from "@/types/database.types";
+
+export type PatientImageViewerSlide = {
+  src: string;
+  alt: string;
+};
 
 export function usePatientImages(patientId: string) {
   const entry = usePatientImagesStore(
@@ -115,4 +121,75 @@ export function usePatientImageUrl(image: PatientImage | null) {
   }
 
   return null;
+}
+
+export function usePatientImageViewerSlides(
+  images: PatientImage[],
+): PatientImageViewerSlide[] {
+  const imageKeys = useMemo(
+    () => images.map((image) => image.storage_key).join("\0"),
+    [images],
+  );
+  const [urlByKey, setUrlByKey] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const results = await Promise.all(
+        images.map(async (image) => {
+          const cached = peekCachedPatientImageUrl(image.storage_key);
+
+          if (cached) {
+            return [image.storage_key, cached] as const;
+          }
+
+          try {
+            const url = await getImageUrl(image);
+            return [image.storage_key, url] as const;
+          } catch {
+            return null;
+          }
+        }),
+      );
+
+      if (cancelled) {
+        return;
+      }
+
+      const updates = Object.fromEntries(
+        results.filter(
+          (entry): entry is readonly [string, string] => entry !== null,
+        ),
+      );
+
+      setUrlByKey((current) => {
+        const hasNew = Object.entries(updates).some(
+          ([key, url]) => current[key] !== url,
+        );
+
+        if (!hasNew) {
+          return current;
+        }
+
+        return { ...current, ...updates };
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [imageKeys, images]);
+
+  return useMemo(
+    () =>
+      images.map((image) => ({
+        src:
+          peekCachedPatientImageUrl(image.storage_key) ??
+          urlByKey[image.storage_key] ??
+          "",
+        alt: image.original_filename ?? PATIENT_GALLERY_COPY.title,
+      })),
+    [images, urlByKey],
+  );
 }

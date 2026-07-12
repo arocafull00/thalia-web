@@ -63,7 +63,7 @@ export default function SettingsPageClient() {
         onChange={(event) => {
           const file = event.target.files?.[0];
           if (!file) return;
-          handleAvatarPress(URL.createObjectURL(file));
+          handleAvatarPress(file);
         }}
       />
 

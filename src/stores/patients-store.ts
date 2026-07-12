@@ -61,10 +61,7 @@ type PatientsStore = {
     id: string,
     values: Partial<PatientFormInput>,
   ) => Promise<Patient>;
-  uploadPatientAvatar: (
-    patientId: string,
-    imageUri: string,
-  ) => Promise<Patient>;
+  uploadPatientAvatar: (patientId: string, file: File) => Promise<Patient>;
 };
 
 export const usePatientsStore = create<PatientsStore>((set, get) => ({
@@ -242,14 +239,14 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     }
   },
 
-  uploadPatientAvatar: async (patientId, imageUri) => {
+  uploadPatientAvatar: async (patientId, file) => {
     set({ uploadingAvatar: true, uploadAvatarError: null });
 
     try {
       const key = await uploadFile(
-        `patients/${patientId}/avatar.jpg`,
-        imageUri,
-        "image/jpeg",
+        `patients/${patientId}/avatar.webp`,
+        file,
+        "image/webp",
       );
       const patient = await updatePatient(patientId, { avatar_url: key });
 

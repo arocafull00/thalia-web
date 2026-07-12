@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
+import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { PATIENT_EDIT_COPY } from "@/copy/patient-edit-copy";
 import type { PatientFormValues } from "@/lib/hooks/use-patient-create-dialog";
 import { patientSchema } from "@/lib/schemas/patient-schema";
@@ -39,11 +40,15 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
     defaultValues: toFormValues(patient),
   });
+
+  const fullName = watch("full_name");
+  const avatarInitials = getProfileInitials(fullName);
 
   useEffect(() => {
     reset(toFormValues(patient));
@@ -94,5 +99,6 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
     isPending: isPending || isSubmitting,
     reset: () => reset(toFormValues(patient)),
     handleSubmit: onSubmit,
+    avatarInitials,
   };
 }

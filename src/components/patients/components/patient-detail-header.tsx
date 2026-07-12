@@ -1,27 +1,27 @@
 "use client";
 
-import { Images } from "lucide-react";
-import Image from "next/image";
-
+import PatientAvatarField from "@/components/patients/components/patient-avatar-field";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import { formatAge } from "@/lib/format";
-import { useFileUrl } from "@/lib/hooks/use-file-url";
 import type { Patient } from "@/types/database.types";
 
 type PatientDetailHeaderProps = {
   patient: Patient;
+  avatarDisplayUri: string | null;
+  avatarUploadPending: boolean;
+  onAvatarFileSelected: (file: File) => void;
   onEdit: () => void;
-  onOpenGallery: () => void;
 };
 
 export default function PatientDetailHeader({
   patient,
+  avatarDisplayUri,
+  avatarUploadPending,
+  onAvatarFileSelected,
   onEdit,
-  onOpenGallery,
 }: PatientDetailHeaderProps) {
-  const resolvedAvatarUrl = useFileUrl(patient.avatar_url ?? null);
   const initials = getProfileInitials(patient.full_name);
   const subtitleParts = [
     formatAge(patient.birth_date),
@@ -32,20 +32,12 @@ export default function PatientDetailHeader({
   return (
     <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-6 lg:px-8">
       <div className="flex items-center gap-4">
-        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-1 ring-border-subtle">
-          {resolvedAvatarUrl ? (
-            <Image
-              src={resolvedAvatarUrl}
-              alt=""
-              width={80}
-              height={80}
-              unoptimized
-              className="size-full object-cover"
-            />
-          ) : (
-            <span className="text-xl font-medium">{initials}</span>
-          )}
-        </div>
+        <PatientAvatarField
+          displayUri={avatarDisplayUri}
+          initials={initials}
+          uploadPending={avatarUploadPending}
+          onFileSelected={onAvatarFileSelected}
+        />
 
         <div className="min-w-0 space-y-1">
           <h1 className="text-xl font-semibold text-ink">
@@ -63,12 +55,6 @@ export default function PatientDetailHeader({
         <ActionButton
           title={PATIENT_DETAIL_COPY.actions.edit}
           onClick={onEdit}
-        />
-        <ActionButton
-          title={PATIENT_DETAIL_COPY.actions.openGallery}
-          icon={Images}
-          variant="ghost"
-          onClick={onOpenGallery}
         />
       </div>
     </div>

@@ -5,6 +5,7 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
+import PatientAvatarField from "@/components/patients/components/patient-avatar-field";
 import NewPatientDateField from "@/components/patients/new-patient-date-field";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import type { PatientFormValues } from "@/lib/hooks/use-patient-create-dialog";
@@ -16,15 +17,29 @@ type PatientCreateFormProps = {
   register: UseFormRegister<PatientFormValues>;
   control: Control<PatientFormValues>;
   errors: FieldErrors<PatientFormValues>;
+  avatarDisplayUri: string | null;
+  avatarInitials: string;
+  avatarUploadPending: boolean;
+  onAvatarFileSelected: (file: File) => void;
 };
 
 export default function PatientCreateForm({
   register,
   control,
   errors,
+  avatarDisplayUri,
+  avatarInitials,
+  avatarUploadPending,
+  onAvatarFileSelected,
 }: PatientCreateFormProps) {
   return (
     <div className="mt-4 space-y-4">
+      <PatientAvatarField
+        displayUri={avatarDisplayUri}
+        initials={avatarInitials}
+        uploadPending={avatarUploadPending}
+        onFileSelected={onAvatarFileSelected}
+      />
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {PATIENT_CREATE_COPY.fields.fullName}{" "}

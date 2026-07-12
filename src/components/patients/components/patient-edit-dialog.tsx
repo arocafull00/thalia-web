@@ -16,6 +16,9 @@ import type { Patient } from "@/types/database.types";
 type PatientEditDialogProps = {
   patient: Patient;
   open: boolean;
+  avatarDisplayUri: string | null;
+  avatarUploadPending: boolean;
+  onAvatarFileSelected: (file: File) => void;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 };
@@ -23,6 +26,9 @@ type PatientEditDialogProps = {
 export default function PatientEditDialog({
   patient,
   open,
+  avatarDisplayUri,
+  avatarUploadPending,
+  onAvatarFileSelected,
   onOpenChange,
   onSuccess,
 }: PatientEditDialogProps) {
@@ -53,6 +59,10 @@ export default function PatientEditDialog({
             register={dialog.register}
             control={dialog.control}
             errors={dialog.errors}
+            avatarDisplayUri={avatarDisplayUri}
+            avatarInitials={dialog.avatarInitials}
+            avatarUploadPending={avatarUploadPending}
+            onAvatarFileSelected={onAvatarFileSelected}
           />
         </div>
         <AppDialogFooter>

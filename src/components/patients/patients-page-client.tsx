@@ -123,6 +123,10 @@ export default function PatientsPageClient() {
               register={dialog.register}
               control={dialog.control}
               errors={dialog.errors}
+              avatarDisplayUri={dialog.avatarDisplayUri}
+              avatarInitials={dialog.avatarInitials}
+              avatarUploadPending={dialog.avatarUploadPending}
+              onAvatarFileSelected={dialog.onAvatarFileSelected}
             />
           </div>
           <AppDialogFooter>

@@ -1,8 +1,6 @@
+import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import type { Treatment } from "@/types/database.types";
-
-const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type PatientImageTreatmentSelectProps = {
   treatments: Treatment[];
@@ -15,20 +13,20 @@ export default function PatientImageTreatmentSelect({
   value,
   onChange,
 }: PatientImageTreatmentSelectProps) {
+  const treatmentOptions = treatments.map((treatment) => ({
+    value: treatment.id,
+    label: treatment.name,
+  }));
+
   return (
-    <select
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className={inputClassName}
-    >
-      <option value="">
-        {PATIENT_GALLERY_COPY.uploader.treatmentPlaceholder}
-      </option>
-      {treatments.map((treatment) => (
-        <option key={treatment.id} value={treatment.id}>
-          {treatment.name}
-        </option>
-      ))}
-    </select>
+    <AppSearchableCombobox
+      value={value || null}
+      onValueChange={(nextValue) => onChange(nextValue ?? "")}
+      options={treatmentOptions}
+      placeholder={PATIENT_GALLERY_COPY.uploader.treatmentPlaceholder}
+      searchPlaceholder={PATIENT_GALLERY_COPY.uploader.fields.treatment}
+      allowClear
+      clearLabel={PATIENT_GALLERY_COPY.uploader.treatmentPlaceholder}
+    />
   );
 }

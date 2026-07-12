@@ -124,19 +124,17 @@ export function useUploadPatientAvatar() {
 
   const mutate = useCallback(
     (
-      { patientId, imageUri }: { patientId: string; imageUri: string },
+      { patientId, file }: { patientId: string; file: File },
       options?: { onSuccess?: () => void },
     ) => {
-      uploadPatientAvatar(patientId, imageUri).then(() =>
-        options?.onSuccess?.(),
-      );
+      uploadPatientAvatar(patientId, file).then(() => options?.onSuccess?.());
     },
     [uploadPatientAvatar],
   );
 
   const mutateAsync = useCallback(
-    ({ patientId, imageUri }: { patientId: string; imageUri: string }) =>
-      uploadPatientAvatar(patientId, imageUri),
+    ({ patientId, file }: { patientId: string; file: File }) =>
+      uploadPatientAvatar(patientId, file),
     [uploadPatientAvatar],
   );
 

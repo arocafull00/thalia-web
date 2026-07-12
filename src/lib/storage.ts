@@ -14,6 +14,19 @@ function resolvePublicFileUrl(key: string) {
   return null;
 }
 
+export function withFileUrlCacheBust(
+  url: string | null,
+  version: string | null,
+) {
+  if (!url || !version) {
+    return url;
+  }
+
+  const separator = url.includes("?") ? "&" : "?";
+
+  return `${url}${separator}v=${encodeURIComponent(version)}`;
+}
+
 export function peekCachedFileUrl(key: string | null) {
   if (!key) {
     return null;
@@ -32,15 +45,12 @@ export function peekCachedFileUrl(key: string | null) {
 
 export async function uploadFile(
   key: string,
-  fileUri: string,
+  file: File | Blob,
   contentType: string,
 ) {
-  const fileResponse = await fetch(fileUri);
-  const blob = await fileResponse.blob();
-
   const { error } = await supabase.storage
     .from(AVATARS_BUCKET)
-    .upload(key, blob, { contentType, upsert: true });
+    .upload(key, file, { contentType, upsert: true });
 
   if (error) {
     throw error;

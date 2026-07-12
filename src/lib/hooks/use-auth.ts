@@ -25,7 +25,10 @@ export function useUpdateProfile() {
   const error = useAuthStore((state) => state.updateError);
 
   const mutate = useCallback(
-    ({ values }: { values: UpdateProfileInput }, options?: { onSuccess?: () => void }) => {
+    (
+      { values }: { values: UpdateProfileInput },
+      options?: { onSuccess?: () => void },
+    ) => {
       updateProfile(values).then(() => options?.onSuccess?.());
     },
     [updateProfile],
@@ -35,13 +38,15 @@ export function useUpdateProfile() {
 }
 
 export function useUploadProfileAvatar() {
-  const uploadProfileAvatar = useAuthStore((state) => state.uploadProfileAvatar);
+  const uploadProfileAvatar = useAuthStore(
+    (state) => state.uploadProfileAvatar,
+  );
   const isPending = useAuthStore((state) => state.uploadingAvatar);
   const error = useAuthStore((state) => state.uploadAvatarError);
 
   const mutate = useCallback(
-    ({ imageUri }: { imageUri: string }, options?: { onSuccess?: () => void }) => {
-      uploadProfileAvatar(imageUri).then(() => options?.onSuccess?.());
+    ({ file }: { file: File }, options?: { onSuccess?: () => void }) => {
+      uploadProfileAvatar(file).then(() => options?.onSuccess?.());
     },
     [uploadProfileAvatar],
   );

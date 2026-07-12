@@ -31,6 +31,7 @@ export const PATIENT_DETAIL_COPY = {
     clinicalHistory: "Historial clínico",
     treatments: "Tratamientos",
     appointments: "Citas",
+    gallery: "Galería",
     finances: "Finanzas",
     documents: "Documentos",
     notes: "Notas",
@@ -63,7 +64,6 @@ export const PATIENT_DETAIL_COPY = {
     call: "Llamar",
     email: "Enviar email",
     createAppointment: "Crear cita",
-    openGallery: "Ver galería",
   },
   moreActions: "Más acciones",
   errors: {

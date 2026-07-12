@@ -1,64 +1,44 @@
-const DEFAULT_MAX_DIMENSION = 1920;
-const JPEG_QUALITY = 0.85;
+import imageCompression from "browser-image-compression";
 
-function getScaledDimensions(
-  width: number,
-  height: number,
-  maxDimension: number,
-) {
-  const largestSide = Math.max(width, height);
-
-  if (largestSide <= maxDimension) {
-    return { width, height };
+export async function compressAvatarImage(file: File): Promise<File> {
+  try {
+    return await imageCompression(file, {
+      maxSizeMB: 0.4,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
+      fileType: "image/webp",
+      initialQuality: 0.9,
+    });
+  } catch (error) {
+    console.error("Avatar compression failed, using original file:", error);
+    return file;
   }
-
-  const scale = maxDimension / largestSide;
-
-  return {
-    width: Math.round(width * scale),
-    height: Math.round(height * scale),
-  };
 }
 
-export async function compressImageToBlob(
-  file: File,
-  maxDimension = DEFAULT_MAX_DIMENSION,
-) {
-  const bitmap = await createImageBitmap(file);
-  const { width, height } = getScaledDimensions(
-    bitmap.width,
-    bitmap.height,
-    maxDimension,
-  );
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    bitmap.close();
-    throw new Error("No se pudo preparar la imagen");
-  }
-
-  context.drawImage(bitmap, 0, 0, width, height);
-  bitmap.close();
-
-  const blob = await new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(
-      (result) => {
-        if (!result) {
-          reject(new Error("No se pudo comprimir la imagen"));
-          return;
-        }
-
-        resolve(result);
-      },
-      "image/jpeg",
-      JPEG_QUALITY,
+export async function compressTreatmentImage(file: File): Promise<File> {
+  try {
+    return await imageCompression(file, {
+      maxSizeMB: 1.2,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: "image/webp",
+      initialQuality: 0.92,
+    });
+  } catch (error) {
+    console.error(
+      "Treatment image compression failed, using original file:",
+      error,
     );
-  });
+    return file;
+  }
+}
 
-  return { blob, width, height };
+export async function getImageDimensions(file: File | Blob) {
+  const bitmap = await createImageBitmap(file);
+
+  try {
+    return { width: bitmap.width, height: bitmap.height };
+  } finally {
+    bitmap.close();
+  }
 }

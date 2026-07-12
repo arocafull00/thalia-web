@@ -1,5 +1,6 @@
 import PatientAppointmentsTab from "@/components/patients/components/patient-appointments-tab";
 import PatientClinicalHistoryTab from "@/components/patients/components/patient-clinical-history-tab";
+import PatientGalleryTab from "@/components/patients/components/patient-gallery-tab";
 import PatientSummaryTab from "@/components/patients/components/patient-summary-tab";
 import PatientTreatmentsTab from "@/components/patients/components/patient-treatments-tab";
 import type { PatientDetailTabId } from "@/lib/hooks/use-patient-detail-tabs";
@@ -12,6 +13,7 @@ type PatientDetailTabContentProps = {
   isLoading: boolean;
   error: Error | null | undefined;
   onEditNotes: () => void;
+  onOpenUploader: () => void;
 };
 
 export default function PatientDetailTabContent({
@@ -21,6 +23,7 @@ export default function PatientDetailTabContent({
   isLoading,
   error,
   onEditNotes,
+  onOpenUploader,
 }: PatientDetailTabContentProps) {
   if (activeTab === "summary") {
     return (
@@ -46,6 +49,12 @@ export default function PatientDetailTabContent({
 
   if (activeTab === "treatments") {
     return <PatientTreatmentsTab appointments={appointments} />;
+  }
+
+  if (activeTab === "gallery") {
+    return (
+      <PatientGalleryTab patient={patient} onOpenUploader={onOpenUploader} />
+    );
   }
 
   return <PatientAppointmentsTab appointments={appointments} />;

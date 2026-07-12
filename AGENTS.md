@@ -44,7 +44,8 @@ Todo formulario con 2 o más campos usa **react-hook-form** (`useForm`) con **zo
 
 - El **hook** del formulario (`hooks/use-[feature].ts` o `src/lib/hooks/use-*-dialog.ts`) configura `useForm`, define `defaultValues`, expone `register`, `control`, `handleSubmit`, `formState.errors`, `reset` e `isPending`. Los campos que el usuario no rellena (p. ej. `clinic_id`) se omiten del schema de formulario con `.omit()` y se inyectan en el submit.
 - El **subcomponente de formulario** recibe `register`, `control` y `errors` por props; muestra errores de campo con `text-danger`. No recibe `value`/`onChange` por campo.
-- Inputs nativos (`input`, `textarea`, `select` simple) → `{...register("campo")}`.
+- Inputs nativos (`input`, `textarea`) → `{...register("campo")}`.
+- Selects y desplegables → **nunca** `<select>` ni `<option>` nativos. Usa siempre `AppSearchableCombobox` de `@/components/ui/app-searchable-combobox` (envuelve el combobox de shadcn en `@/components/ui/combobox`). Con react-hook-form, usa `Controller`. Referencias: `src/components/patients/components/patient-image-uploader-form.tsx`, `src/components/appointments/components/appointment-status-select.tsx`, `src/components/patients/components/patient-gallery-filters.tsx`.
 - Componentes custom (date pickers, combobox, multi-select) → `Controller` de react-hook-form.
 - Estado auxiliar de UI que no es un campo persistido (p. ej. texto de búsqueda en un picker) puede quedarse en `useState` aparte del formulario.
 - Errores de validación globales o de submit siguen usando `toast.error(...)` además de los mensajes inline por campo.

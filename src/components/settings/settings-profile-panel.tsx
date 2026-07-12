@@ -41,14 +41,16 @@ export default function SettingsProfilePanel({
         className="h-20 w-20 overflow-hidden rounded-full border border-border/60 bg-primary-subtle/40 p-0"
       >
         {displayUri ? (
-          <Image
-            src={displayUri}
-            alt=""
-            width={80}
-            height={80}
-            unoptimized
-            className="h-full w-full object-cover"
-          />
+          <div className="relative size-20 shrink-0 overflow-hidden rounded-full bg-primary-subtle">
+            <Image
+              src={displayUri}
+              alt={`Avatar de ${profile.full_name}`}
+              fill
+              sizes="160px"
+              quality={90}
+              className="object-cover"
+            />
+          </div>
         ) : (
           <span className="text-sm text-ink-muted">Foto</span>
         )}

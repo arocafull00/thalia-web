@@ -13,6 +13,7 @@ const sortOptions = [
 
 export type PatientGalleryFilterValues = {
   category: string;
+  phase: string;
   sort: string;
 };
 
@@ -20,6 +21,7 @@ type PatientGalleryFiltersSheetProps = {
   open: boolean;
   filters: PatientGalleryFilterValues;
   categoryOptions: Array<{ label: string; value: string }>;
+  phaseOptions: Array<{ label: string; value: string }>;
   onApply: (updates: PatientGalleryFilterValues) => void;
   onClear: () => void;
   onDismiss: () => void;
@@ -29,6 +31,7 @@ export default function PatientGalleryFiltersSheet({
   open,
   filters,
   categoryOptions,
+  phaseOptions,
   onApply,
   onClear,
   onDismiss,
@@ -70,6 +73,22 @@ export default function PatientGalleryFiltersSheet({
           />
         </div>
       ) : null}
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-ink">
+          {PATIENT_GALLERY_COPY.filters.phase}
+        </p>
+        <AppSearchableCombobox
+          value={pending.phase || null}
+          onValueChange={(value) =>
+            setPending((prev) => ({ ...prev, phase: value ?? "" }))
+          }
+          options={phaseOptions}
+          placeholder={PATIENT_GALLERY_COPY.filters.allPhases}
+          searchPlaceholder={PATIENT_GALLERY_COPY.filters.phase}
+          allowClear
+          clearLabel={PATIENT_GALLERY_COPY.filters.allPhases}
+        />
+      </div>
       <div className="space-y-2">
         <p className="text-sm font-medium text-ink">
           {PATIENT_GALLERY_COPY.filters.sort}

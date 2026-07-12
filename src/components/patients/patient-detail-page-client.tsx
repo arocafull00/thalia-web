@@ -4,25 +4,22 @@ import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import PatientDetailHeader from "@/components/patients/components/patient-detail-header";
-import PatientDetailStatsRow from "@/components/patients/components/patient-detail-stats";
 import PatientDetailTabBar from "@/components/patients/components/patient-detail-tab-bar";
 import PatientDetailTabContent from "@/components/patients/components/patient-detail-tab-content";
 import PatientEditDialog from "@/components/patients/components/patient-edit-dialog";
-import PatientGalleryDialog from "@/components/patients/components/patient-gallery-dialog";
+import PatientImageDeleteConfirmDialog from "@/components/patients/components/patient-image-delete-confirm-dialog";
+import PatientImageUploaderDialog from "@/components/patients/components/patient-image-uploader-dialog";
 import { getPatientDetailActions } from "@/components/patients/patient-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
+import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientDetailTabs } from "@/lib/hooks/use-patient-detail-tabs";
-import {
-  usePatient,
-  usePatientAppointments,
-  useUpcomingPatientAppointments,
-} from "@/lib/hooks/use-patients";
+import { usePatient, usePatientAppointments } from "@/lib/hooks/use-patients";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
-import { derivePatientDetailStats } from "@/lib/patient-detail-stats";
+import { usePatientImagesStore } from "@/stores/patient-images-store";
 import { usePatientsStore } from "@/stores/patients-store";
 
 type PatientDetailPageClientProps = {
@@ -34,7 +31,6 @@ export default function PatientDetailPageClient({
 }: PatientDetailPageClientProps) {
   const patientQuery = usePatient(patientId);
   const appointmentsQuery = usePatientAppointments(patientId);
-  const upcomingQuery = useUpcomingPatientAppointments(patientId);
   const fetchPatient = usePatientsStore((state) => state.fetchPatient);
   const fetchPatientAppointments = usePatientsStore(
     (state) => state.fetchPatientAppointments,
@@ -42,24 +38,15 @@ export default function PatientDetailPageClient({
   const { activeTab, setActiveTab } = usePatientDetailTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [appointmentDialogOpen, setAppointmentDialogOpen] = useState(false);
-  const [galleryDialogOpen, setGalleryDialogOpen] = useState(false);
+  const [uploaderOpen, setUploaderOpen] = useState(false);
+  const deleteConfirm = usePatientImagesStore((state) => state.deleteConfirm);
+  const closeDeleteConfirm = usePatientImagesStore(
+    (state) => state.closeDeleteConfirm,
+  );
 
   const appointments = useMemo(
     () => appointmentsQuery.data ?? [],
     [appointmentsQuery.data],
-  );
-  const upcomingAppointments = useMemo(
-    () => upcomingQuery.data ?? [],
-    [upcomingQuery.data],
-  );
-  const stats = useMemo(
-    () =>
-      derivePatientDetailStats(
-        appointments,
-        upcomingAppointments,
-        PATIENT_DETAIL_COPY.stats.empty,
-      ),
-    [appointments, upcomingAppointments],
   );
 
   const refetch = () => {
@@ -68,6 +55,7 @@ export default function PatientDetailPageClient({
   };
 
   const patient = patientQuery.data;
+  const patientAvatar = usePatientAvatar(patient);
 
   useTopbarBreadcrumb(
     patient
@@ -87,7 +75,7 @@ export default function PatientDetailPageClient({
             actions: getPatientDetailActions(patient, {
               onEdit: () => setEditDialogOpen(true),
               onCreateAppointment: () => setAppointmentDialogOpen(true),
-              onOpenGallery: () => setGalleryDialogOpen(true),
+              onOpenGallery: () => setActiveTab("gallery"),
             }),
             ariaLabel: PATIENT_DETAIL_COPY.moreActions,
           },
@@ -123,12 +111,13 @@ export default function PatientDetailPageClient({
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <PatientDetailHeader
         patient={patient}
+        avatarDisplayUri={patientAvatar.avatarDisplayUri}
+        avatarUploadPending={patientAvatar.avatarUploadPending}
+        onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
         onEdit={() => setEditDialogOpen(true)}
-        onOpenGallery={() => setGalleryDialogOpen(true)}
       />
 
       <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
-        <PatientDetailStatsRow stats={stats} />
         <PatientDetailTabBar activeTab={activeTab} onTabChange={setActiveTab} />
         <div role="tabpanel">
           <PatientDetailTabContent
@@ -138,6 +127,7 @@ export default function PatientDetailPageClient({
             isLoading={appointmentsQuery.isLoading}
             error={appointmentsQuery.error}
             onEditNotes={() => setEditDialogOpen(true)}
+            onOpenUploader={() => setUploaderOpen(true)}
           />
         </div>
       </div>
@@ -145,6 +135,9 @@ export default function PatientDetailPageClient({
       <PatientEditDialog
         patient={patient}
         open={editDialogOpen}
+        avatarDisplayUri={patientAvatar.avatarDisplayUri}
+        avatarUploadPending={patientAvatar.avatarUploadPending}
+        onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
         onOpenChange={setEditDialogOpen}
         onSuccess={refetch}
       />
@@ -155,11 +148,27 @@ export default function PatientDetailPageClient({
         initialPatientId={patient.id}
       />
 
-      <PatientGalleryDialog
-        patient={patient}
-        open={galleryDialogOpen}
-        onOpenChange={setGalleryDialogOpen}
+      <PatientImageUploaderDialog
+        patientId={patient.id}
+        open={uploaderOpen}
+        onOpenChange={setUploaderOpen}
       />
+
+      {deleteConfirm ? (
+        <PatientImageDeleteConfirmDialog
+          patientId={patientId}
+          image={deleteConfirm.image}
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) {
+              closeDeleteConfirm();
+            }
+          }}
+          onSuccess={() => {
+            deleteConfirm.onSuccess?.();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

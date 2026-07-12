@@ -1,178 +1,95 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
-import PatientImageDeleteConfirmDialog from "@/components/patients/components/patient-image-delete-confirm-dialog";
-import PatientImageViewerImage from "@/components/patients/components/patient-image-viewer-image";
-import AppDialog from "@/components/ui/app-dialog";
-import AppDialogContent from "@/components/ui/app-dialog-content";
-import { Button } from "@/components/ui/button";
-import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
-import { formatInputDate } from "@/lib/format";
-import type { PatientImage } from "@/types/database.types";
+import type { PatientImageViewerSlide } from "@/lib/hooks/use-patient-images";
+
+import "yet-another-react-lightbox/styles.css";
 
 type PatientImageViewerProps = {
-  patientId: string;
-  images: PatientImage[];
+  slides: PatientImageViewerSlide[];
   activeIndex: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onActiveIndexChange: (index: number) => void;
 };
 
-function getPhaseLabel(phase: PatientImage["phase"]) {
-  if (!phase) {
-    return PATIENT_GALLERY_COPY.viewer.emptyMetadata;
+function toLightboxIndex(
+  slides: PatientImageViewerSlide[],
+  activeIndex: number,
+) {
+  const index =
+    slides.slice(0, activeIndex + 1).filter((slide) => slide.src.length > 0)
+      .length - 1;
+
+  return Math.max(0, index);
+}
+
+function toSourceIndex(
+  slides: PatientImageViewerSlide[],
+  lightboxIndex: number,
+) {
+  let resolvedCount = 0;
+
+  for (let index = 0; index < slides.length; index++) {
+    if (!slides[index]?.src) {
+      continue;
+    }
+
+    if (resolvedCount === lightboxIndex) {
+      return index;
+    }
+
+    resolvedCount++;
   }
 
-  return PATIENT_GALLERY_COPY.phases[phase];
+  return 0;
 }
 
 export default function PatientImageViewer({
-  patientId,
-  images,
+  slides,
   activeIndex,
   open,
   onOpenChange,
   onActiveIndexChange,
 }: PatientImageViewerProps) {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const activeImage = images[activeIndex];
+  const readySlides = slides.filter((slide) => slide.src.length > 0);
+  const hasMultipleSlides = readySlides.length > 1;
 
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft" && activeIndex > 0) {
-        onActiveIndexChange(activeIndex - 1);
-      }
-
-      if (event.key === "ArrowRight" && activeIndex < images.length - 1) {
-        onActiveIndexChange(activeIndex + 1);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [activeIndex, images.length, onActiveIndexChange, open]);
-
-  if (!activeImage) {
+  if (readySlides.length === 0) {
     return null;
   }
 
-  const capturedAt = activeImage.captured_at ?? activeImage.created_at;
-
   return (
-    <>
-      <AppDialog open={open} onOpenChange={onOpenChange}>
-        <AppDialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:rounded-none">
-          <div className="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
-            <div className="min-w-0 space-y-1">
-              <p className="truncate text-sm font-medium text-ink">
-                {activeImage.category ??
-                  PATIENT_GALLERY_COPY.viewer.emptyMetadata}
-              </p>
-              <p className="text-xs text-ink-secondary">
-                {capturedAt
-                  ? formatInputDate(capturedAt)
-                  : PATIENT_GALLERY_COPY.viewer.emptyMetadata}
-                {" · "}
-                {getPhaseLabel(activeImage.phase)}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => setDeleteDialogOpen(true)}
-                aria-label={PATIENT_GALLERY_COPY.viewer.delete}
-              >
-                <Trash2 className="size-4" aria-hidden="true" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => onOpenChange(false)}
-                aria-label={PATIENT_GALLERY_COPY.viewer.close}
-              >
-                <X className="size-4" aria-hidden="true" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="relative min-h-0 flex-1">
-            <PatientImageViewerImage
-              image={activeImage}
-              label={
-                activeImage.original_filename ?? PATIENT_GALLERY_COPY.title
-              }
-            />
-
-            {activeIndex > 0 ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => onActiveIndexChange(activeIndex - 1)}
-                className="absolute top-1/2 left-3 -translate-y-1/2 bg-ink/50 text-on-primary hover:bg-ink/70"
-                aria-label={PATIENT_GALLERY_COPY.viewer.previous}
-              >
-                <ChevronLeft className="size-5" aria-hidden="true" />
-              </Button>
-            ) : null}
-
-            {activeIndex < images.length - 1 ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => onActiveIndexChange(activeIndex + 1)}
-                className="absolute top-1/2 right-3 -translate-y-1/2 bg-ink/50 text-on-primary hover:bg-ink/70"
-                aria-label={PATIENT_GALLERY_COPY.viewer.next}
-              >
-                <ChevronRight className="size-5" aria-hidden="true" />
-              </Button>
-            ) : null}
-          </div>
-
-          {activeImage.notes ? (
-            <div className="border-t border-border px-4 py-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-ink-muted">
-                {PATIENT_GALLERY_COPY.viewer.metadata.notes}
-              </p>
-              <p className="mt-1 text-sm text-ink-secondary">
-                {activeImage.notes}
-              </p>
-            </div>
-          ) : null}
-        </AppDialogContent>
-      </AppDialog>
-
-      <PatientImageDeleteConfirmDialog
-        patientId={patientId}
-        image={activeImage}
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        onSuccess={() => {
-          if (images.length <= 1) {
-            onOpenChange(false);
-            return;
-          }
-
-          if (activeIndex >= images.length - 1) {
-            onActiveIndexChange(activeIndex - 1);
-          }
-        }}
-      />
-    </>
+    <Lightbox
+      open={open}
+      close={() => onOpenChange(false)}
+      index={toLightboxIndex(slides, activeIndex)}
+      slides={readySlides}
+      plugins={[Zoom, Fullscreen]}
+      carousel={{
+        finite: true,
+        preload: 2,
+      }}
+      controller={{
+        closeOnBackdropClick: true,
+      }}
+      styles={{
+        container: {
+          backgroundColor: "rgba(8, 8, 10, 0.95)",
+        },
+      }}
+      render={{
+        buttonPrev: hasMultipleSlides ? undefined : () => null,
+        buttonNext: hasMultipleSlides ? undefined : () => null,
+      }}
+      on={{
+        view: ({ index }) => {
+          onActiveIndexChange(toSourceIndex(slides, index));
+        },
+      }}
+    />
   );
 }

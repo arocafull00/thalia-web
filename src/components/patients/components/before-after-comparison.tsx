@@ -25,7 +25,7 @@ export default function BeforeAfterComparison({
   return (
     <AppDialog open={open} onOpenChange={onOpenChange}>
       <AppDialogContent
-        className="flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:rounded-none"
+        className="inset-0 flex h-dvh max-h-dvh w-full max-w-none translate-none flex-col gap-0 rounded-none border-0 p-0 sm:rounded-none"
         showClose={false}
       >
         {open ? (

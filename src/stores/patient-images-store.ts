@@ -5,7 +5,10 @@ import {
   deletePatientImage as deletePatientImageDal,
   getPatientImages,
 } from "@/dal/patient-images.dal";
-import { compressImageToBlob } from "@/lib/image-compression";
+import {
+  compressTreatmentImage,
+  getImageDimensions,
+} from "@/lib/image-compression";
 import {
   buildPatientImageKey,
   uploadPatientImageObject,
@@ -18,6 +21,11 @@ import {
   type QueryEntry,
 } from "@/stores/query-state";
 import type { PatientImage } from "@/types/database.types";
+
+type PatientImageDeleteConfirmState = {
+  image: PatientImage;
+  onSuccess: (() => void) | null;
+};
 
 type UploadPatientImageInput = {
   clinicId: string;
@@ -33,9 +41,12 @@ type PatientImagesStore = {
   uploadError: Error | null;
   deletingId: string | null;
   deleteError: Error | null;
+  deleteConfirm: PatientImageDeleteConfirmState | null;
   fetchPatientImages: (patientId: string) => Promise<void>;
   uploadPatientImage: (input: UploadPatientImageInput) => Promise<PatientImage>;
   deletePatientImage: (patientId: string, image: PatientImage) => Promise<void>;
+  openDeleteConfirm: (image: PatientImage, onSuccess?: () => void) => void;
+  closeDeleteConfirm: () => void;
 };
 
 export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
@@ -45,6 +56,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   uploadError: null,
   deletingId: null,
   deleteError: null,
+  deleteConfirm: null,
 
   fetchPatientImages: async (patientId) => {
     const previous = get().imagesByPatientId[patientId];
@@ -80,19 +92,20 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
     set({ uploading: true, uploadProgress: 0, uploadError: null });
 
     try {
-      const { blob, width, height } = await compressImageToBlob(file);
+      const compressedFile = await compressTreatmentImage(file);
+      const { width, height } = await getImageDimensions(compressedFile);
       const imageId = crypto.randomUUID();
       const storageKey = buildPatientImageKey(
         clinicId,
         patientId,
         imageId,
-        "jpg",
+        "webp",
       );
 
       await uploadPatientImageObject(
         storageKey,
-        blob,
-        "image/jpeg",
+        compressedFile,
+        "image/webp",
         (progress) => set({ uploadProgress: progress }),
       );
 
@@ -105,8 +118,8 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         clinic_id: clinicId,
         storage_key: storageKey,
         original_filename: file.name,
-        mime_type: "image/jpeg",
-        file_size_bytes: blob.size,
+        mime_type: "image/webp",
+        file_size_bytes: compressedFile.size,
         width,
         height,
         category: metadata.category,
@@ -139,4 +152,9 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       throw error;
     }
   },
+
+  openDeleteConfirm: (image, onSuccess) =>
+    set({ deleteConfirm: { image, onSuccess: onSuccess ?? null } }),
+
+  closeDeleteConfirm: () => set({ deleteConfirm: null }),
 }));

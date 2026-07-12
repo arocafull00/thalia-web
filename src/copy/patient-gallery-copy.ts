@@ -16,6 +16,7 @@ export const PATIENT_GALLERY_COPY = {
     search: "Buscar fotos...",
     searchClear: "Limpiar búsqueda",
     category: "Categoría",
+    phase: "Fase",
     sort: "Orden",
     sortRecent: "Más recientes",
     sortOldest: "Más antiguas",
@@ -63,6 +64,7 @@ export const PATIENT_GALLERY_COPY = {
     validation: {
       fileRequired: "Selecciona una imagen para continuar.",
       clinicRequired: "No hay una clínica activa.",
+      formInvalid: "Revisa los campos marcados antes de continuar.",
     },
     progress: (value: number) => `Subiendo... ${value}%`,
   },

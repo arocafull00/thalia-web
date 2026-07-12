@@ -1,7 +1,7 @@
 "use client";
 
-import { Upload } from "lucide-react";
-import Image from "next/image";
+import { CloudUpload } from "lucide-react";
+import { useEffect } from "react";
 import {
   Controller,
   type Control,
@@ -10,7 +10,18 @@ import {
 } from "react-hook-form";
 
 import PatientImageTreatmentSelect from "@/components/patients/components/patient-image-treatment-select";
+import PatientImageUploaderDropzoneFileItem from "@/components/patients/components/patient-image-uploader-dropzone-file-item";
 import NewPatientDateField from "@/components/patients/new-patient-date-field";
+import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import {
+  Dropzone,
+  DropZoneArea,
+  DropzoneDescription,
+  DropzoneFileList,
+  DropzoneMessage,
+  DropzoneTrigger,
+  useDropzone,
+} from "@/components/ui/dropzone";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import type { PatientImageFormValues } from "@/lib/hooks/use-patient-image-uploader";
 import { useTreatments } from "@/lib/hooks/use-treatment";
@@ -18,75 +29,96 @@ import { useTreatments } from "@/lib/hooks/use-treatment";
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
+const phaseOptions = [
+  { label: PATIENT_GALLERY_COPY.phases.antes, value: "antes" },
+  { label: PATIENT_GALLERY_COPY.phases.durante, value: "durante" },
+  { label: PATIENT_GALLERY_COPY.phases.despues, value: "despues" },
+];
+
 type PatientImageUploaderFormProps = {
   register: UseFormRegister<PatientImageFormValues>;
   control: Control<PatientImageFormValues>;
   errors: FieldErrors<PatientImageFormValues>;
-  previewUrl: string | null;
-  isDragActive: boolean;
-  onDragEnter: () => void;
-  onDragLeave: () => void;
-  onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
-  onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onFileSelected: (file: File | null) => void;
 };
 
 export default function PatientImageUploaderForm({
   register,
   control,
   errors,
-  previewUrl,
-  isDragActive,
-  onDragEnter,
-  onDragLeave,
-  onDrop,
-  onFileChange,
+  onFileSelected,
 }: PatientImageUploaderFormProps) {
   const { data: treatments = [] } = useTreatments();
 
+  const dropzone = useDropzone({
+    onDropFile: async (file: File) => {
+      onFileSelected(file);
+      return {
+        status: "success",
+        result: URL.createObjectURL(file),
+      };
+    },
+    onRemoveFile: async () => {
+      onFileSelected(null);
+    },
+    validation: {
+      accept: {
+        "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+      },
+      maxFiles: 1,
+    },
+    shiftOnMaxFiles: true,
+  });
+
+  useEffect(() => {
+    const fileStatuses = dropzone.fileStatuses;
+
+    return () => {
+      for (const file of fileStatuses) {
+        if (file.status === "success" && typeof file.result === "string") {
+          URL.revokeObjectURL(file.result);
+        }
+      }
+    };
+  }, [dropzone.fileStatuses]);
+
   return (
     <div className="space-y-4">
-      <div
-        onDragEnter={onDragEnter}
-        onDragLeave={onDragLeave}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={onDrop}
-        className={`rounded-2xl border border-dashed p-6 text-center transition-colors ${
-          isDragActive
-            ? "border-primary bg-primary-subtle"
-            : "border-border bg-canvas"
-        }`}
-      >
-        {previewUrl ? (
-          <div className="relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-xl">
-            <Image
-              src={previewUrl}
-              alt={PATIENT_GALLERY_COPY.uploader.previewAlt}
-              fill
-              unoptimized
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-3">
-            <Upload className="size-8 text-ink-muted" aria-hidden="true" />
-            <p className="text-sm text-ink-secondary">
-              {isDragActive
-                ? PATIENT_GALLERY_COPY.uploader.dropzoneActive
-                : PATIENT_GALLERY_COPY.uploader.dropzone}
-            </p>
-          </div>
-        )}
+      <Dropzone {...dropzone}>
+        <div className="flex justify-between gap-4">
+          <DropzoneDescription className="text-ink-secondary">
+            {PATIENT_GALLERY_COPY.uploader.dropzone}
+          </DropzoneDescription>
+          <DropzoneMessage className="text-danger" />
+        </div>
 
-        <label className="mt-4 inline-flex cursor-pointer rounded-button border border-border/60 px-3 py-1.5 text-sm text-ink-secondary hover:bg-[var(--hover-overlay)]">
-          {PATIENT_GALLERY_COPY.uploader.chooseFile}
-          <input
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={onFileChange}
-          />
-        </label>
-      </div>
+        {dropzone.fileStatuses.length === 0 ? (
+          <DropZoneArea className="rounded-2xl border border-dashed border-border bg-canvas px-4 py-2">
+            <DropzoneTrigger className="flex w-full flex-col items-center gap-3 rounded-2xl bg-transparent p-6 text-center text-sm shadow-none hover:bg-transparent">
+              <CloudUpload
+                className="size-8 text-ink-muted"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="font-medium text-ink">
+                  {PATIENT_GALLERY_COPY.uploader.chooseFile}
+                </p>
+                <p className="text-sm text-ink-secondary">
+                  {dropzone.isDragActive
+                    ? PATIENT_GALLERY_COPY.uploader.dropzoneActive
+                    : PATIENT_GALLERY_COPY.uploader.dropzone}
+                </p>
+              </div>
+            </DropzoneTrigger>
+          </DropZoneArea>
+        ) : null}
+
+        <DropzoneFileList className="grid grid-cols-3 gap-3 p-0">
+          {dropzone.fileStatuses.map((file) => (
+            <PatientImageUploaderDropzoneFileItem key={file.id} file={file} />
+          ))}
+        </DropzoneFileList>
+      </Dropzone>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block space-y-1.5">
@@ -105,18 +137,22 @@ export default function PatientImageUploaderForm({
           <span className="text-sm text-ink-secondary">
             {PATIENT_GALLERY_COPY.uploader.fields.phase}
           </span>
-          <select {...register("phase")} className={inputClassName}>
-            <option value="">
-              {PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
-            </option>
-            <option value="antes">{PATIENT_GALLERY_COPY.phases.antes}</option>
-            <option value="durante">
-              {PATIENT_GALLERY_COPY.phases.durante}
-            </option>
-            <option value="despues">
-              {PATIENT_GALLERY_COPY.phases.despues}
-            </option>
-          </select>
+          <Controller
+            control={control}
+            name="phase"
+            render={({ field }) => (
+              <AppSearchableCombobox
+                value={field.value || null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                options={phaseOptions}
+                placeholder={PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
+                searchPlaceholder={PATIENT_GALLERY_COPY.uploader.fields.phase}
+                allowClear
+                clearLabel={PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
+                showSearch={false}
+              />
+            )}
+          />
           {errors.phase ? (
             <span className="text-sm text-danger">{errors.phase.message}</span>
           ) : null}

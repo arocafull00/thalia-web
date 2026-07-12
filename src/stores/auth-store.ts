@@ -31,7 +31,7 @@ type AuthStore = {
   setLoading: (loading: boolean) => void;
   refreshProfile: () => Promise<void>;
   updateProfile: (values: UpdateProfileInput) => Promise<Employee>;
-  uploadProfileAvatar: (imageUri: string) => Promise<Employee>;
+  uploadProfileAvatar: (file: File) => Promise<Employee>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     email: string,
@@ -92,7 +92,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
-  uploadProfileAvatar: async (imageUri) => {
+  uploadProfileAvatar: async (file) => {
     const userId =
       get().session?.user.id ??
       (await supabase.auth.getSession()).data.session?.user.id;
@@ -105,9 +105,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     try {
       const key = await uploadFile(
-        `employees/${userId}/avatar.jpg`,
-        imageUri,
-        "image/jpeg",
+        `employees/${userId}/avatar.webp`,
+        file,
+        "image/webp",
       );
       const employee = await updateEmployeeAvatar(userId, key);
       await get().refreshProfile();

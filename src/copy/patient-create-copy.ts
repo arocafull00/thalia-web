@@ -2,6 +2,7 @@ export const PATIENT_CREATE_COPY = {
   title: "Nuevo paciente",
   description: "Registra un paciente en la clínica.",
   fields: {
+    avatarLabel: "Cambiar foto de perfil",
     fullName: "Nombre completo",
     phone: "Teléfono",
     email: "Email",

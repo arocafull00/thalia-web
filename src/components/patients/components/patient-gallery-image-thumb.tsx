@@ -2,13 +2,17 @@
 
 import { Check, Eye, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 
-import PatientImageDeleteConfirmDialog from "@/components/patients/components/patient-image-delete-confirm-dialog";
-import { Button } from "@/components/ui/button";
-import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { usePatientImageUrl } from "@/lib/hooks/use-patient-images";
+import { usePatientImagesStore } from "@/stores/patient-images-store";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientGalleryImageThumbProps = {
@@ -16,7 +20,6 @@ type PatientGalleryImageThumbProps = {
   selectionMode: boolean;
   isSelected: boolean;
   onView: () => void;
-  onDelete: () => void;
   onToggleSelect: () => void;
 };
 
@@ -25,33 +28,12 @@ export default function PatientGalleryImageThumb({
   selectionMode,
   isSelected,
   onView,
-  onDelete,
   onToggleSelect,
 }: PatientGalleryImageThumbProps) {
   const imageUrl = usePatientImageUrl(image);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
-  const thumbActions = selectionMode
-    ? [
-        {
-          label: PATIENT_GALLERY_COPY.thumbActions.select,
-          icon: Check,
-          onClick: onToggleSelect,
-        },
-      ]
-    : [
-        {
-          label: PATIENT_GALLERY_COPY.thumbActions.view,
-          icon: Eye,
-          onClick: onView,
-        },
-        {
-          label: PATIENT_GALLERY_COPY.thumbActions.delete,
-          icon: Trash2,
-          onClick: () => setDeleteDialogOpen(true),
-          variant: "danger" as const,
-        },
-      ];
+  const openDeleteConfirm = usePatientImagesStore(
+    (state) => state.openDeleteConfirm,
+  );
 
   const handleClick = () => {
     if (selectionMode) {
@@ -63,49 +45,49 @@ export default function PatientGalleryImageThumb({
   };
 
   return (
-    <>
-      <Button
-        type="button"
-        variant="ghost"
-        onClick={handleClick}
-        className={`group relative aspect-square overflow-hidden rounded-xl ${isSelected ? "ring-2 ring-primary" : ""}`}
-      >
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt=""
-            fill
-            unoptimized
-            className="object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 animate-pulse bg-border" />
-        )}
-
-        {selectionMode && isSelected ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-ink/30">
-            <Check className="size-6 text-on-primary" aria-hidden="true" />
-          </div>
-        ) : null}
-
-        {!selectionMode ? (
-          <div className="absolute top-1.5 right-1.5 opacity-0 transition-opacity group-hover:opacity-100">
-            <ProfileActionsMenu
-              actions={thumbActions}
-              ariaLabel={PATIENT_GALLERY_COPY.actions.more}
-              className="bg-ink/50 text-on-primary hover:bg-ink/70"
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <button
+          type="button"
+          onClick={handleClick}
+          className={`group relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isSelected ? "ring-2 ring-primary" : ""}`}
+        >
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt=""
+              fill
+              unoptimized
+              className="object-cover"
             />
-          </div>
-        ) : null}
-      </Button>
+          ) : (
+            <div className="absolute inset-0 animate-pulse bg-border" />
+          )}
 
-      <PatientImageDeleteConfirmDialog
-        patientId={image.patient_id}
-        image={image}
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        onSuccess={onDelete}
-      />
-    </>
+          {selectionMode && isSelected ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-ink/30">
+              <Check className="size-6 text-on-primary" aria-hidden="true" />
+            </div>
+          ) : null}
+        </button>
+      </ContextMenuTrigger>
+
+      {!selectionMode ? (
+        <ContextMenuContent>
+          <ContextMenuItem onClick={onView}>
+            <Eye />
+            {PATIENT_GALLERY_COPY.thumbActions.view}
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            variant="destructive"
+            onClick={() => openDeleteConfirm(image)}
+          >
+            <Trash2 />
+            {PATIENT_GALLERY_COPY.thumbActions.delete}
+          </ContextMenuItem>
+        </ContextMenuContent>
+      ) : null}
+    </ContextMenu>
   );
 }

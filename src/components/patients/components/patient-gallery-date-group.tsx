@@ -9,7 +9,6 @@ type PatientGalleryDateGroupProps = {
   selectedImageIds: string[];
   onViewImage: (image: PatientImage) => void;
   onToggleSelect: (image: PatientImage) => void;
-  onDeleteSuccess: () => void;
 };
 
 export default function PatientGalleryDateGroup({
@@ -19,7 +18,6 @@ export default function PatientGalleryDateGroup({
   selectedImageIds,
   onViewImage,
   onToggleSelect,
-  onDeleteSuccess,
 }: PatientGalleryDateGroupProps) {
   return (
     <div>
@@ -34,7 +32,6 @@ export default function PatientGalleryDateGroup({
             selectionMode={selectionMode}
             isSelected={selectedImageIds.includes(image.id)}
             onView={() => onViewImage(image)}
-            onDelete={onDeleteSuccess}
             onToggleSelect={() => onToggleSelect(image)}
           />
         ))}

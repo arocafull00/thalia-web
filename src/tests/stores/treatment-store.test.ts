@@ -176,6 +176,7 @@ describe("treatment-store", () => {
       vi.mocked(treatmentsDal.replaceTreatmentInventoryLinks).mockRejectedValue(
         new Error("FK constraint"),
       );
+      vi.mocked(treatmentsDal.deleteTreatment).mockResolvedValue(undefined);
 
       await expect(
         useTreatmentStore.getState().createTreatment({

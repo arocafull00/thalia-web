@@ -5,10 +5,11 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
-import PatientAvatarField from "@/components/patients/components/patient-avatar-field";
-import NewPatientDateField from "@/components/patients/new-patient-date-field";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import type { PatientFormValues } from "@/lib/hooks/use-patient-create-dialog";
+
+import NewPatientDateField from "../shared/new-patient-date-field";
+import PatientAvatarField from "../shared/patient-avatar-field";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";

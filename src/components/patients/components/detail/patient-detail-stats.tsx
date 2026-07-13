@@ -5,9 +5,10 @@ import {
   History,
 } from "lucide-react";
 
-import PatientStatCard from "@/components/patients/components/patient-stat-card";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import type { PatientDetailStats } from "@/lib/patient-detail-stats";
+
+import PatientStatCard from "./patient-stat-card";
 
 type PatientDetailStatsProps = {
   stats: PatientDetailStats;

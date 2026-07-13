@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import PatientImageUploaderForm from "@/components/patients/components/patient-image-uploader-form";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -12,6 +11,8 @@ import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { usePatientImageUploader } from "@/lib/hooks/use-patient-image-uploader";
+
+import PatientImageUploaderForm from "./patient-image-uploader-form";
 
 type PatientImageUploaderDialogProps = {
   patientId: string;

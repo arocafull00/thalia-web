@@ -1,9 +1,10 @@
 "use client";
 
-import PatientAvatarField from "@/components/patients/components/patient-avatar-field";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { formatAge } from "@/lib/format";
 import type { Patient } from "@/types/database.types";
+
+import PatientAvatarField from "../shared/patient-avatar-field";
 
 type PatientDetailHeaderProps = {
   patient: Patient;

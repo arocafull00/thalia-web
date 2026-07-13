@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 
+import type { PatientImage } from "@/types/database.types";
+
 import BeforeAfterComparisonSlider, {
   type BeforeAfterOrientation,
-} from "@/components/patients/components/before-after-comparison-slider";
-import BeforeAfterComparisonToolbar from "@/components/patients/components/before-after-comparison-toolbar";
-import type { PatientImage } from "@/types/database.types";
+} from "./before-after-comparison-slider";
+import BeforeAfterComparisonToolbar from "./before-after-comparison-toolbar";
 
 type BeforeAfterComparisonContentProps = {
   beforeImage: PatientImage;

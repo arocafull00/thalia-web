@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import PatientClinicalNotesPanel from "@/components/patients/components/patient-clinical-notes-panel";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import {
   usePatientAppointments,
@@ -9,7 +8,9 @@ import {
 import { derivePatientDetailStats } from "@/lib/patient-detail-stats";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
-import PatientDetailStatsRow from "./patient-detail-stats";
+import PatientDetailStatsRow from "../detail/patient-detail-stats";
+
+import PatientClinicalNotesPanel from "./patient-clinical-notes-panel";
 
 type PatientSummaryTabProps = {
   patient: Patient;

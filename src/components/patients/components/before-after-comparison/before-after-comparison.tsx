@@ -1,9 +1,10 @@
 "use client";
 
-import BeforeAfterComparisonContent from "@/components/patients/components/before-after-comparison-content";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogContent from "@/components/ui/app-dialog-content";
 import type { PatientImage } from "@/types/database.types";
+
+import BeforeAfterComparisonContent from "./before-after-comparison-content";
 
 type BeforeAfterComparisonProps = {
   beforeImage: PatientImage;

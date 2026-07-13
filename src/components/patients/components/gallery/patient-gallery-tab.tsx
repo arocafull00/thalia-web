@@ -3,11 +3,6 @@
 import { Columns2, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import BeforeAfterComparison from "@/components/patients/components/before-after-comparison";
-import PatientGalleryDateGroup from "@/components/patients/components/patient-gallery-date-group";
-import PatientGalleryFilters from "@/components/patients/components/patient-gallery-filters";
-import PatientGalleryFiltersSheet from "@/components/patients/components/patient-gallery-filters-sheet";
-import PatientImageViewer from "@/components/patients/components/patient-image-viewer";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { Separator } from "@/components/ui/separator";
@@ -18,6 +13,13 @@ import {
 } from "@/lib/hooks/use-patient-images";
 import { groupImagesByDate } from "@/lib/patient-gallery-grouping";
 import type { Patient, PatientImage } from "@/types/database.types";
+
+import BeforeAfterComparison from "../before-after-comparison/before-after-comparison";
+
+import PatientGalleryDateGroup from "./patient-gallery-date-group";
+import PatientGalleryFilters from "./patient-gallery-filters";
+import PatientGalleryFiltersSheet from "./patient-gallery-filters-sheet";
+import PatientImageViewer from "./patient-image-viewer";
 
 type PatientGalleryTabProps = {
   patient: Patient;

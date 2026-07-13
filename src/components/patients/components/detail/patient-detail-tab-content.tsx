@@ -1,10 +1,11 @@
-import PatientAppointmentsTab from "@/components/patients/components/patient-appointments-tab";
-import PatientClinicalHistoryTab from "@/components/patients/components/patient-clinical-history-tab";
-import PatientGalleryTab from "@/components/patients/components/patient-gallery-tab";
-import PatientSummaryTab from "@/components/patients/components/patient-summary-tab";
-import PatientTreatmentsTab from "@/components/patients/components/patient-treatments-tab";
 import type { PatientDetailTabId } from "@/lib/hooks/use-patient-detail-tabs";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
+
+import PatientGalleryTab from "../gallery/patient-gallery-tab";
+import PatientAppointmentsTab from "../tabs/patient-appointments-tab";
+import PatientClinicalHistoryTab from "../tabs/patient-clinical-history-tab";
+import PatientSummaryTab from "../tabs/patient-summary-tab";
+import PatientTreatmentsTab from "../tabs/patient-treatments-tab";
 
 type PatientDetailTabContentProps = {
   activeTab: PatientDetailTabId;

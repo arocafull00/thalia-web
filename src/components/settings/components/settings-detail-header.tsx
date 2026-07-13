@@ -1,6 +1,6 @@
 "use client";
 
-import PatientAvatarField from "@/components/patients/components/patient-avatar-field";
+import PatientAvatarField from "@/components/patients/components/shared/patient-avatar-field";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { SETTINGS_COPY } from "@/copy/settings-copy";

@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import PatientCreateForm from "@/components/patients/components/patient-create-form";
-import PatientsFilters from "@/components/patients/components/patients-filters";
-import PatientsFiltersSheet from "@/components/patients/components/patients-filters-sheet";
-import PatientsTable from "@/components/patients/components/patients-table";
+import PatientCreateForm from "@/components/patients/components/form/patient-create-form";
+import PatientsFilters from "@/components/patients/components/list/patients-filters";
+import PatientsFiltersSheet from "@/components/patients/components/list/patients-filters-sheet";
+import PatientsTable from "@/components/patients/components/list/patients-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";

@@ -2,11 +2,12 @@
 
 import { useMemo } from "react";
 
-import { getPatientTreatmentsColumns } from "@/components/patients/components/patient-treatments-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import { derivePatientTreatmentUsage } from "@/lib/patient-detail-stats";
 import type { AppointmentWithRelations } from "@/types/database.types";
+
+import { getPatientTreatmentsColumns } from "./patient-treatments-columns";
 
 type PatientTreatmentsTabProps = {
   appointments: AppointmentWithRelations[];

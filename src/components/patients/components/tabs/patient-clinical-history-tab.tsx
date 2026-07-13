@@ -1,6 +1,7 @@
-import PatientTimeline from "@/components/patients/components/patient-timeline";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import type { AppointmentWithRelations } from "@/types/database.types";
+
+import PatientTimeline from "../detail/patient-timeline";
 
 type PatientClinicalHistoryTabProps = {
   appointments: AppointmentWithRelations[];

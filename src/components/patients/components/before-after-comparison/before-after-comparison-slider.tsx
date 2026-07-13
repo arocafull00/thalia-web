@@ -5,11 +5,12 @@ import {
   ReactCompareSliderHandle,
 } from "react-compare-slider";
 
-import BeforeAfterComparisonImage from "@/components/patients/components/before-after-comparison-image";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { formatInputDate } from "@/lib/format";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion";
 import type { PatientImage } from "@/types/database.types";
+
+import BeforeAfterComparisonImage from "./before-after-comparison-image";
 
 export type BeforeAfterOrientation = "horizontal" | "vertical";
 

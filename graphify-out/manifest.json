@@ -1665,8 +1665,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1783880756.0027053,
-    "ast_hash": "16046bb751fb18890d306b05311a4acb",
+    "mtime": 1783958864.5619714,
+    "ast_hash": "a7400dc3b132ea2e6a8028760046e333",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -2155,8 +2155,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-gallery-copy.ts": {
-    "mtime": 1783958494.6803613,
-    "ast_hash": "2672def6201f1559801a13f941c62554",
+    "mtime": 1783958694.9404285,
+    "ast_hash": "2760693c3a0048b3c8edf2821c65c6cb",
     "semantic_hash": ""
   },
   "src/lib/patient-detail-stats.ts": {
@@ -2240,8 +2240,8 @@
     "semantic_hash": ""
   },
   "src/stores/patient-images-store.ts": {
-    "mtime": 1783958505.333594,
-    "ast_hash": "7690bdbbfd2509cd5c204c95097edac1",
+    "mtime": 1783958864.8036323,
+    "ast_hash": "ad4f12debe6bed57fd1422eacf6e205d",
     "semantic_hash": ""
   },
   "supabase/migrations/009_patient_images.sql": {
@@ -2365,8 +2365,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-gallery-tab.tsx": {
-    "mtime": 1783958203.4266045,
-    "ast_hash": "77a47fbef0775d6f4f8b070f1bf4f548",
+    "mtime": 1783958864.4954965,
+    "ast_hash": "3cfbc38542dc66e33e525a84b0e7454c",
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-avatar-field.tsx": {
@@ -2515,8 +2515,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/topbar-secondary-action.tsx": {
-    "mtime": 1783880905.5949235,
-    "ast_hash": "3d90c74c24b44ad636480867336611a0",
+    "mtime": 1783958864.5720055,
+    "ast_hash": "06e9f9569d65172f0c69aa26403581a3",
     "semantic_hash": ""
   }
 }

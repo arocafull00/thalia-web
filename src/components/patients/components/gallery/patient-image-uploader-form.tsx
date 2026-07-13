@@ -9,9 +9,6 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
-import PatientImageTreatmentSelect from "@/components/patients/components/patient-image-treatment-select";
-import PatientImageUploaderDropzoneFileItem from "@/components/patients/components/patient-image-uploader-dropzone-file-item";
-import NewPatientDateField from "@/components/patients/new-patient-date-field";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import {
   Dropzone,
@@ -25,6 +22,11 @@ import {
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import type { PatientImageFormValues } from "@/lib/hooks/use-patient-image-uploader";
 import { useTreatments } from "@/lib/hooks/use-treatment";
+
+import NewPatientDateField from "../shared/new-patient-date-field";
+
+import PatientImageTreatmentSelect from "./patient-image-treatment-select";
+import PatientImageUploaderDropzoneFileItem from "./patient-image-uploader-dropzone-file-item";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";

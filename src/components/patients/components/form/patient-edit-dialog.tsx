@@ -1,6 +1,5 @@
 "use client";
 
-import PatientCreateForm from "@/components/patients/components/patient-create-form";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -12,6 +11,8 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { PATIENT_EDIT_COPY } from "@/copy/patient-edit-copy";
 import { usePatientEditDialog } from "@/lib/hooks/use-patient-edit-dialog";
 import type { Patient } from "@/types/database.types";
+
+import PatientCreateForm from "./patient-create-form";
 
 type PatientEditDialogProps = {
   patient: Patient;

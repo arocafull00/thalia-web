@@ -1,6 +1,7 @@
-import PatientGalleryImageThumb from "@/components/patients/components/patient-gallery-image-thumb";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import type { PatientImage } from "@/types/database.types";
+
+import PatientGalleryImageThumb from "./patient-gallery-image-thumb";
 
 type PatientGalleryDateGroupProps = {
   label: string;

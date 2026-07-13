@@ -2,10 +2,11 @@
 
 import { ArrowLeftRight, Columns2, Rows2, X } from "lucide-react";
 
-import type { BeforeAfterOrientation } from "@/components/patients/components/before-after-comparison-slider";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
+
+import type { BeforeAfterOrientation } from "./before-after-comparison-slider";
 
 type BeforeAfterComparisonToolbarProps = {
   orientation: BeforeAfterOrientation;

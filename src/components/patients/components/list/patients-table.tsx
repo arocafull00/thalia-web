@@ -1,9 +1,10 @@
 "use client";
 
-import { patientsColumns } from "@/components/patients/components/patients-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { patientsMobileColumns } from "@/lib/table-mobile-columns";
 import type { Patient } from "@/types/database.types";
+
+import { patientsColumns } from "./patients-columns";
 
 type PatientsTableProps = {
   patients: Patient[];

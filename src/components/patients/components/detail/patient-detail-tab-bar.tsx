@@ -1,6 +1,7 @@
-import PatientDetailTabButton from "@/components/patients/components/patient-detail-tab-button";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import type { PatientDetailTabId } from "@/lib/hooks/use-patient-detail-tabs";
+
+import PatientDetailTabButton from "./patient-detail-tab-button";
 
 const PATIENT_DETAIL_TAB_ITEMS: ReadonlyArray<{
   id: PatientDetailTabId;

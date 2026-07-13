@@ -4,12 +4,12 @@ import { Pencil } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
-import PatientDetailHeader from "@/components/patients/components/patient-detail-header";
-import PatientDetailTabBar from "@/components/patients/components/patient-detail-tab-bar";
-import PatientDetailTabContent from "@/components/patients/components/patient-detail-tab-content";
-import PatientEditDialog from "@/components/patients/components/patient-edit-dialog";
-import PatientImageDeleteConfirmDialog from "@/components/patients/components/patient-image-delete-confirm-dialog";
-import PatientImageUploaderDialog from "@/components/patients/components/patient-image-uploader-dialog";
+import PatientDetailHeader from "@/components/patients/components/detail/patient-detail-header";
+import PatientDetailTabBar from "@/components/patients/components/detail/patient-detail-tab-bar";
+import PatientDetailTabContent from "@/components/patients/components/detail/patient-detail-tab-content";
+import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
+import PatientImageDeleteConfirmDialog from "@/components/patients/components/gallery/patient-image-delete-confirm-dialog";
+import PatientImageUploaderDialog from "@/components/patients/components/gallery/patient-image-uploader-dialog";
 import { getPatientDetailActions } from "@/components/patients/patient-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";

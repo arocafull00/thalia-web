@@ -38,7 +38,7 @@ export default function PatientGalleryFilters({
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
-      <div className="w-40 min-w-0">
+      <div className="w-40 min-w-0 shrink-0">
         <AppSearchableCombobox
           value={phase || null}
           onValueChange={(value) => onPhaseChange(value ?? "")}
@@ -51,7 +51,7 @@ export default function PatientGalleryFilters({
           className="w-full"
         />
       </div>
-      <div className="w-40 min-w-0">
+      <div className="w-40 min-w-0 shrink-0">
         <AppSearchableCombobox
           value={sort || null}
           onValueChange={(value) => onSortChange(value ?? "recent")}

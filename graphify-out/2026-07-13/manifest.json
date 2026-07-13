@@ -1540,8 +1540,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1783960806.7806258,
-    "ast_hash": "654c41cbdc227db3de835d488c4a0bec",
+    "mtime": 1783961026.5200324,
+    "ast_hash": "599005215b7464e546767d2a1b8a22a4",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -2285,8 +2285,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-date-group.tsx": {
-    "mtime": 1783960138.1783206,
-    "ast_hash": "ba1862a1a25e3f6fcdd86940fd0bc7fa",
+    "mtime": 1783961030.964529,
+    "ast_hash": "16e12079851d13ffe71d77266189c5fa",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-filters-sheet.tsx": {
@@ -2300,13 +2300,13 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-image-thumb.tsx": {
-    "mtime": 1783878313.0643504,
-    "ast_hash": "4d5f4946880344ae3fd52aeb2d150379",
+    "mtime": 1783961030.5923007,
+    "ast_hash": "2977dea7685e22162e9aaece3ca0d374",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-tab.tsx": {
-    "mtime": 1783960138.1783206,
-    "ast_hash": "0bc64c6ff78abb41c47c4475cc93fd2c",
+    "mtime": 1783961031.7864242,
+    "ast_hash": "36c3f69890ebe0cb1fbb37c254de3a78",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-image-delete-confirm-dialog.tsx": {
@@ -2365,8 +2365,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/shared/patient-avatar-field.tsx": {
-    "mtime": 1783878311.417058,
-    "ast_hash": "1a8f81e56be6221d11e45dc96bb65edf",
+    "mtime": 1783961032.3927019,
+    "ast_hash": "76e3a5ee4a8aeb41b94a1f9371575dab",
     "semantic_hash": ""
   },
   "src/components/patients/components/tabs/patient-appointment-row.tsx": {
@@ -2567,6 +2567,11 @@
   "src/lib/logger.ts": {
     "mtime": 1783960984.609782,
     "ast_hash": "f35aff1ca57604578d4aab6010e1ca36",
+    "semantic_hash": ""
+  },
+  "src/components/ui/dropdown-menu.tsx": {
+    "mtime": 1783961208.2120512,
+    "ast_hash": "60e84b6a57dbf661a2910d5fe80baf70",
     "semantic_hash": ""
   }
 }

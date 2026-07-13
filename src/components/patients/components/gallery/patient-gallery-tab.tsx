@@ -175,8 +175,8 @@ export default function PatientGalleryTab({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="min-w-0 flex-1">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 w-full sm:flex-1">
             <PatientGalleryFilters
               search={search}
               phase={phase}
@@ -188,7 +188,7 @@ export default function PatientGalleryTab({
               onOpenSheet={handleOpenFiltersSheet}
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <ActionButton
               title={PATIENT_GALLERY_COPY.actions.upload}
               icon={Upload}

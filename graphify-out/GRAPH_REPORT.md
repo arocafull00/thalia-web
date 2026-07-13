@@ -1,7 +1,7 @@
 # Graph Report - thalia-web  (2026-07-13)
 
 ## Corpus Check
-- 509 files · ~117,485 words
+- 509 files · ~117,492 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `187f442a`
+- Built from commit: `bb7ac0d8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -76,6 +76,7 @@
 - [[_COMMUNITY_finances-category-breakdown.tsx|finances-category-breakdown.tsx]]
 - [[_COMMUNITY_calendar-grid.ts|calendar-grid.ts]]
 - [[_COMMUNITY_use-schedule-x-calendar.ts|use-schedule-x-calendar.ts]]
+- [[_COMMUNITY_patient-image-uploader-form.tsx|patient-image-uploader-form.tsx]]
 - [[_COMMUNITY_before-after-comparison-slider.tsx|before-after-comparison-slider.tsx]]
 - [[_COMMUNITY_patient-detail-tab-content.tsx|patient-detail-tab-content.tsx]]
 - [[_COMMUNITY_calendar-grid.ts|calendar-grid.ts]]
@@ -97,7 +98,6 @@
 - [[_COMMUNITY_use-calendar-mobile-month.ts|use-calendar-mobile-month.ts]]
 - [[_COMMUNITY_app-searchable-multi-select.tsx|app-searchable-multi-select.tsx]]
 - [[_COMMUNITY_finances-category-breakdown.tsx|finances-category-breakdown.tsx]]
-- [[_COMMUNITY_use-file-url.ts|use-file-url.ts]]
 - [[_COMMUNITY_finances-summary-metrics.tsx|finances-summary-metrics.tsx]]
 - [[_COMMUNITY_patients-filters.tsx|patients-filters.tsx]]
 - [[_COMMUNITY_patient-detail-stats.ts|patient-detail-stats.ts]]
@@ -225,7 +225,7 @@ Nodes (38): PatientImageUploaderDropzoneFileItemProps, PatientImageUploaderForm(
 
 ### Community 33 - "index.ts"
 Cohesion: 0.22
-Nodes (11): NoMembershipPageClient(), useRegisterEmployee(), RegisterEmployeePageClient(), CreateClinicPageClient(), InviteTeamPageClient(), InvitationState, useAcceptInvitation(), useAuth() (+3 more)
+Nodes (11): NoMembershipPageClient(), useRegisterEmployee(), RegisterEmployeePageClient(), CreateClinicPageClient(), InvitationState, useAcceptInvitation(), useAuth(), usePostAuthRedirect() (+3 more)
 
 ### Community 36 - "patients-page-client.tsx"
 Cohesion: 0.06
@@ -236,8 +236,8 @@ Cohesion: 0.23
 Nodes (4): LoginFormPanel(), useLogin(), LoginPageClient(), signInWithGoogleFlow()
 
 ### Community 38 - "inventory-page-client.tsx"
-Cohesion: 0.29
-Nodes (5): employeeColors, employeeRoles, EmployeesUiStore, useEmployeesUiStore, EmployeeRole
+Cohesion: 0.28
+Nodes (7): PatientEditDialog(), PATIENT_EDIT_COPY, PatientFormValues, patientFormSchema, toFormValues(), usePatientEditDialog(), patientSchema
 
 ### Community 39 - "app-bottom-nav-more-sheet.tsx"
 Cohesion: 0.10
@@ -355,6 +355,10 @@ Nodes (10): SettingsAccountPanel(), SettingsAccountPanelProps, SettingsActionRow
 Cohesion: 0.17
 Nodes (12): @schedule-x/calendar, CalendarEmptyHeader(), ScheduleXCalendarInner(), buildScheduleEvents(), getInitialCalendarConfig(), getRangeForViewMode(), toPlainDate(), useScheduleXCalendar() (+4 more)
 
+### Community 68 - "patient-image-uploader-form.tsx"
+Cohesion: 0.29
+Nodes (5): employeeColors, employeeRoles, EmployeesUiStore, useEmployeesUiStore, EmployeeRole
+
 ### Community 69 - "before-after-comparison-slider.tsx"
 Cohesion: 0.15
 Nodes (3): LoginHeroIllustration(), loginIllustrationSvg, HERO_INDICATORS
@@ -424,8 +428,8 @@ Cohesion: 0.10
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
 ### Community 90 - "sidebar-profile-footer.tsx"
-Cohesion: 0.16
-Nodes (15): getEmployeeProfile(), ProfileUpdate, updateEmployeeAvatar(), updateEmployeeProfile(), captureEvent(), waitForAuthSessionReady(), useUpdateProfile(), normalizeInviteEmails() (+7 more)
+Cohesion: 0.17
+Nodes (14): getEmployeeProfile(), ProfileUpdate, updateEmployeeAvatar(), updateEmployeeProfile(), captureEvent(), waitForAuthSessionReady(), useUpdateProfile(), normalizeInviteEmails() (+6 more)
 
 ### Community 91 - "use-calendar-mobile-month.ts"
 Cohesion: 0.31
@@ -438,10 +442,6 @@ Nodes (6): BeforeAfterComparisonProps, AppDialogClose(), AppDialogCloseProps, Ap
 ### Community 93 - "finances-category-breakdown.tsx"
 Cohesion: 0.12
 Nodes (17): EmployeeInviteForm(), EmployeeInviteFormProps, roleOptions, EMPLOYEE_INVITE_COPY, defaultValues, EmployeeFormValues, useEmployeeInviteDialog(), useCreateEmployee() (+9 more)
-
-### Community 95 - "use-file-url.ts"
-Cohesion: 0.28
-Nodes (7): PatientEditDialog(), PATIENT_EDIT_COPY, PatientFormValues, patientFormSchema, toFormValues(), usePatientEditDialog(), patientSchema
 
 ### Community 96 - "finances-summary-metrics.tsx"
 Cohesion: 0.13
@@ -460,8 +460,8 @@ Cohesion: 0.18
 Nodes (17): getTransactions(), insertTransaction(), TransactionInsert, useCreateTransaction(), useFinancialSummary(), useTransactions(), createDefaultValues(), transactionFormSchema (+9 more)
 
 ### Community 103 - "use-login.ts"
-Cohesion: 0.33
-Nodes (9): externalMemberships(), needsClinicSelector(), PostAuthRouteInput, PostAuthRouteResult, resolvePostAuthRoute(), buildOwnerProfileMetadata(), hasPendingTeamInvites(), hasRegistrationProfile() (+1 more)
+Cohesion: 0.23
+Nodes (12): InviteTeamPageClient(), navigateAfterAuth(), externalMemberships(), needsClinicSelector(), PostAuthRouteInput, PostAuthRouteResult, resolvePostAuthRoute(), resolveUnauthenticatedRoute() (+4 more)
 
 ### Community 106 - "use-file-url.ts"
 Cohesion: 0.31
@@ -476,8 +476,8 @@ Cohesion: 0.19
 Nodes (11): SettingsDetailHeader(), SettingsDetailHeaderProps, SettingsProfileHeader(), SettingsProfileHeaderProps, SettingsProfileQuickActions(), SettingsProfileQuickActionsProps, SettingsProfileSidebarProps, SettingsDetailActionHandlers (+3 more)
 
 ### Community 110 - "tabs.tsx"
-Cohesion: 0.27
-Nodes (7): resolveUnauthenticatedRoute(), createWebPersistStorage(), webStorage, OnboardingStore, useOnboardingHydrated(), useOnboardingStore, PendingInviteStore
+Cohesion: 0.31
+Nodes (6): createWebPersistStorage(), webStorage, OnboardingStore, useOnboardingHydrated(), useOnboardingStore, PendingInviteStore
 
 ### Community 112 - "patient-detail-actions-menu.tsx"
 Cohesion: 0.13
@@ -513,7 +513,7 @@ Nodes (4): PatientImageViewer(), PatientImageViewerProps, toLightboxIndex(), Pat
 
 ### Community 125 - "auth-provider.tsx"
 Cohesion: 0.17
-Nodes (11): AuthProviderProps, getClientHydratedSnapshot(), getServerHydratedSnapshot(), subscribeToClientHydration(), useAuthHydrated(), SidebarClinicSwitcherProps, ClinicMembershipRow, getMemberships() (+3 more)
+Nodes (10): AuthProviderProps, getClientHydratedSnapshot(), getServerHydratedSnapshot(), subscribeToClientHydration(), useAuthHydrated(), SidebarClinicSwitcherProps, ClinicMembershipRow, getMemberships() (+2 more)
 
 ### Community 130 - "devDependencies"
 Cohesion: 0.11

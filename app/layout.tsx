@@ -24,6 +24,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Thalia",
   description: "Gestión de clínicas estéticas",
+  icons: {
+    icon: "/icon.png",
+    apple: [{ url: "/icon-192x192.png", sizes: "192x192" }],
+  },
 };
 
 export const viewport: Viewport = {

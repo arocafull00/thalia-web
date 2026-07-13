@@ -42,7 +42,7 @@ export default function AppSidebar() {
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo.png"
+            src="/icon.png"
             alt="Thalia"
             width={40}
             height={40}

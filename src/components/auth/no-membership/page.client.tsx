@@ -19,7 +19,7 @@ export default function NoMembershipPageClient() {
       <div className="w-full max-w-[440px] space-y-6 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logo.png"
+          src="/icon.png"
           alt="Thalia"
           width={56}
           height={56}

@@ -20,7 +20,7 @@ export default function RegisterTypePicker({
         <div className="space-y-1 text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo.png"
+            src="/icon.png"
             alt="Thalia"
             width={56}
             height={56}

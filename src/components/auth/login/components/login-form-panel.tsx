@@ -50,7 +50,7 @@ export default function LoginFormPanel({
           <div className="space-y-2 text-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.png"
+              src="/icon.png"
               alt="Thalia"
               width={56}
               height={56}

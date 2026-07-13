@@ -22,7 +22,7 @@ export default function RegisterEmployeeSidebar({
     <section className="hidden flex-1 flex-col justify-center gap-6 border-r border-border bg-surface p-10 lg:flex">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo.png"
+        src="/icon.png"
         alt="Thalia"
         width={64}
         height={64}

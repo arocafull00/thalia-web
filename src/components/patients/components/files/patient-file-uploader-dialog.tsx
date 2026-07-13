@@ -9,22 +9,22 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
-import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
-import { usePatientImageUploader } from "@/lib/hooks/use-patient-image-uploader";
+import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";
+import { usePatientFileUploader } from "@/lib/hooks/use-patient-file-uploader";
 
-import PatientImageUploaderForm from "./patient-image-uploader-form";
+import PatientFileUploaderForm from "./patient-file-uploader-form";
 
-type PatientImageUploaderDialogProps = {
+type PatientFileUploaderDialogProps = {
   patientId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export default function PatientImageUploaderDialog({
+export default function PatientFileUploaderDialog({
   patientId,
   open,
   onOpenChange,
-}: PatientImageUploaderDialogProps) {
+}: PatientFileUploaderDialogProps) {
   const [formKey, setFormKey] = useState(0);
   const {
     register,
@@ -37,7 +37,7 @@ export default function PatientImageUploaderDialog({
     totalFiles,
     setFiles,
     resetForm,
-  } = usePatientImageUploader(patientId, () => onOpenChange(false));
+  } = usePatientFileUploader(patientId, () => onOpenChange(false));
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
@@ -53,16 +53,14 @@ export default function PatientImageUploaderDialog({
       <AppSheetContent>
         <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
           <AppDialogHeader>
-            <AppDialogTitle>
-              {PATIENT_GALLERY_COPY.uploader.title}
-            </AppDialogTitle>
+            <AppDialogTitle>{PATIENT_FILES_COPY.uploader.title}</AppDialogTitle>
             <AppDialogDescription>
-              {PATIENT_GALLERY_COPY.uploader.description}
+              {PATIENT_FILES_COPY.uploader.description}
             </AppDialogDescription>
           </AppDialogHeader>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-1">
-            <PatientImageUploaderForm
+            <PatientFileUploaderForm
               key={formKey}
               register={register}
               control={control}
@@ -79,7 +77,7 @@ export default function PatientImageUploaderDialog({
                   />
                 </div>
                 <p className="text-sm text-ink-secondary">
-                  {PATIENT_GALLERY_COPY.uploader.progress(
+                  {PATIENT_FILES_COPY.uploader.progress(
                     currentFile,
                     totalFiles,
                   )}
@@ -96,12 +94,12 @@ export default function PatientImageUploaderDialog({
               disabled={isPending}
               className="rounded-button px-3 py-1.5 text-sm"
             >
-              {PATIENT_GALLERY_COPY.delete.cancel}
+              {PATIENT_FILES_COPY.delete.cancel}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending
-                ? PATIENT_GALLERY_COPY.uploader.pending
-                : PATIENT_GALLERY_COPY.uploader.submit}
+                ? PATIENT_FILES_COPY.uploader.pending
+                : PATIENT_FILES_COPY.uploader.submit}
             </Button>
           </AppDialogFooter>
         </form>

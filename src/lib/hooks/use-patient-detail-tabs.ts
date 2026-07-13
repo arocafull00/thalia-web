@@ -3,7 +3,12 @@
 import { useState } from "react";
 
 export type PatientDetailTabId =
-  "summary" | "clinical-history" | "treatments" | "appointments" | "gallery";
+  | "summary"
+  | "clinical-history"
+  | "treatments"
+  | "appointments"
+  | "gallery"
+  | "files";
 
 export function usePatientDetailTabs() {
   const [activeTab, setActiveTab] = useState<PatientDetailTabId>("summary");

@@ -1,6 +1,7 @@
 import type { PatientDetailTabId } from "@/lib/hooks/use-patient-detail-tabs";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
+import PatientFilesTab from "../files/patient-files-tab";
 import PatientGalleryTab from "../gallery/patient-gallery-tab";
 import PatientAppointmentsTab from "../tabs/patient-appointments-tab";
 import PatientClinicalHistoryTab from "../tabs/patient-clinical-history-tab";
@@ -15,6 +16,7 @@ type PatientDetailTabContentProps = {
   error: Error | null | undefined;
   onEditNotes: () => void;
   onOpenUploader: () => void;
+  onOpenFilesUploader: () => void;
 };
 
 export default function PatientDetailTabContent({
@@ -25,6 +27,7 @@ export default function PatientDetailTabContent({
   error,
   onEditNotes,
   onOpenUploader,
+  onOpenFilesUploader,
 }: PatientDetailTabContentProps) {
   if (activeTab === "summary") {
     return (
@@ -55,6 +58,12 @@ export default function PatientDetailTabContent({
   if (activeTab === "gallery") {
     return (
       <PatientGalleryTab patient={patient} onOpenUploader={onOpenUploader} />
+    );
+  }
+
+  if (activeTab === "files") {
+    return (
+      <PatientFilesTab patient={patient} onOpenUploader={onOpenFilesUploader} />
     );
   }
 

@@ -7,6 +7,8 @@ import AppointmentCreateDialog from "@/components/appointments/components/appoin
 import PatientDetailHeader from "@/components/patients/components/detail/patient-detail-header";
 import PatientDetailTabBar from "@/components/patients/components/detail/patient-detail-tab-bar";
 import PatientDetailTabContent from "@/components/patients/components/detail/patient-detail-tab-content";
+import PatientFileDeleteConfirmDialog from "@/components/patients/components/files/patient-file-delete-confirm-dialog";
+import PatientFileUploaderDialog from "@/components/patients/components/files/patient-file-uploader-dialog";
 import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
 import PatientImageDeleteConfirmDialog from "@/components/patients/components/gallery/patient-image-delete-confirm-dialog";
 import PatientImageUploaderDialog from "@/components/patients/components/gallery/patient-image-uploader-dialog";
@@ -20,6 +22,7 @@ import { usePatientDetailTabs } from "@/lib/hooks/use-patient-detail-tabs";
 import { usePatient, usePatientAppointments } from "@/lib/hooks/use-patients";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
+import { usePatientFilesStore } from "@/stores/patient-files-store";
 import { usePatientImagesStore } from "@/stores/patient-images-store";
 import { usePatientsStore } from "@/stores/patients-store";
 
@@ -40,8 +43,15 @@ export default function PatientDetailPageClient({
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [appointmentDialogOpen, setAppointmentDialogOpen] = useState(false);
   const [uploaderOpen, setUploaderOpen] = useState(false);
+  const [filesUploaderOpen, setFilesUploaderOpen] = useState(false);
   const deleteConfirm = usePatientImagesStore((state) => state.deleteConfirm);
   const closeDeleteConfirm = usePatientImagesStore(
+    (state) => state.closeDeleteConfirm,
+  );
+  const filesDeleteConfirm = usePatientFilesStore(
+    (state) => state.deleteConfirm,
+  );
+  const closeFilesDeleteConfirm = usePatientFilesStore(
     (state) => state.closeDeleteConfirm,
   );
 
@@ -134,6 +144,7 @@ export default function PatientDetailPageClient({
             error={appointmentsQuery.error}
             onEditNotes={() => setEditDialogOpen(true)}
             onOpenUploader={() => setUploaderOpen(true)}
+            onOpenFilesUploader={() => setFilesUploaderOpen(true)}
           />
         </div>
       </div>
@@ -160,6 +171,12 @@ export default function PatientDetailPageClient({
         onOpenChange={setUploaderOpen}
       />
 
+      <PatientFileUploaderDialog
+        patientId={patient.id}
+        open={filesUploaderOpen}
+        onOpenChange={setFilesUploaderOpen}
+      />
+
       {deleteConfirm ? (
         <PatientImageDeleteConfirmDialog
           patientId={patientId}
@@ -172,6 +189,22 @@ export default function PatientDetailPageClient({
           }}
           onSuccess={() => {
             deleteConfirm.onSuccess?.();
+          }}
+        />
+      ) : null}
+
+      {filesDeleteConfirm ? (
+        <PatientFileDeleteConfirmDialog
+          patientId={patientId}
+          file={filesDeleteConfirm.file}
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) {
+              closeFilesDeleteConfirm();
+            }
+          }}
+          onSuccess={() => {
+            filesDeleteConfirm.onSuccess?.();
           }}
         />
       ) : null}

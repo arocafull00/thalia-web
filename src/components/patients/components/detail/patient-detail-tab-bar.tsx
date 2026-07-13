@@ -12,6 +12,7 @@ const PATIENT_DETAIL_TAB_ITEMS: ReadonlyArray<{
   { id: "treatments", label: PATIENT_DETAIL_COPY.tabs.treatments },
   { id: "appointments", label: PATIENT_DETAIL_COPY.tabs.appointments },
   { id: "gallery", label: PATIENT_DETAIL_COPY.tabs.gallery },
+  { id: "files", label: PATIENT_DETAIL_COPY.tabs.files },
 ];
 
 type PatientDetailTabBarProps = {

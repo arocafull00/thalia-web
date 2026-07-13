@@ -18,6 +18,7 @@ import {
   appointmentUpdateSchema,
 } from "@/lib/schemas/appointment-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 const appointmentFormSchema = appointmentSchema.omit({ clinicId: true });
@@ -171,7 +172,7 @@ export function useAppointmentCreateDialog(
 
         void updateAppointment(parsed.data)
           .then(() => {
-            toast.success(APPOINTMENT_CREATE_COPY.successEdit);
+            notifySuccess(APPOINTMENT_CREATE_COPY.successEdit);
             resetDialog();
             onSuccess();
           })
@@ -199,7 +200,7 @@ export function useAppointmentCreateDialog(
 
       mutate(parsed.data, {
         onSuccess: () => {
-          toast.success(APPOINTMENT_CREATE_COPY.success);
+          notifySuccess(APPOINTMENT_CREATE_COPY.success);
           resetDialog();
           onSuccess();
         },

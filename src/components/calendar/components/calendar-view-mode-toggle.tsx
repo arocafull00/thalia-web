@@ -45,6 +45,7 @@ export default function CalendarViewModeToggle({
           key={option.value}
           value={option.value}
           aria-label={option.label}
+          data-cuelume-toggle=""
           className={cn(fullWidth && "flex-1")}
         >
           {option.label}

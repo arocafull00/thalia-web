@@ -7,6 +7,7 @@ import AppShell from "@/components/ui/app-shell";
 import { Notice } from "@/components/ui/primitives/notice";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { initSounds } from "@/lib/sound";
 import { useShellStore } from "@/stores/shell-store";
 
 type AppLayoutClientProps = {
@@ -23,6 +24,10 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     platformRole === "owner" ||
     platformRole === "admin" ||
     platformRole === null;
+
+  useEffect(() => {
+    initSounds();
+  }, []);
 
   useEffect(() => {
     if (loading) {

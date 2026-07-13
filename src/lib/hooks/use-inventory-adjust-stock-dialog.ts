@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useRecordInventoryMovement } from "@/lib/hooks/use-inventory";
+import { notifySuccess } from "@/lib/sound";
 import { useAuthStore } from "@/stores/auth-store";
 import type { InventoryMovementType } from "@/types/database.types";
 
@@ -76,7 +77,7 @@ export function useInventoryAdjustStockDialog(
       },
       {
         onSuccess: () => {
-          toast.success(INVENTORY_ITEM_DETAIL_COPY.adjustStock.success);
+          notifySuccess(INVENTORY_ITEM_DETAIL_COPY.adjustStock.success);
           reset(defaultValues);
           onSuccess();
         },

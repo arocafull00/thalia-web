@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { useDeleteTreatment } from "@/lib/hooks/use-treatment";
+import { notifySuccess } from "@/lib/sound";
 import type { Treatment } from "@/types/database.types";
 
 type TreatmentDeleteConfirmDialogProps = {
@@ -25,7 +26,7 @@ export default function TreatmentDeleteConfirmDialog({
   const handleConfirm = () => {
     mutate(treatment.id, {
       onSuccess: () => {
-        toast.success(TREATMENTS_COPY.delete.success);
+        notifySuccess(TREATMENTS_COPY.delete.success);
         onOpenChange(false);
         onSuccess();
       },

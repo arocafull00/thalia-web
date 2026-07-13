@@ -43,12 +43,14 @@ export default function BeforeAfterComparisonToolbar({
           <ToggleGroupItem
             value="horizontal"
             aria-label={PATIENT_GALLERY_COPY.beforeAfter.orientationHorizontal}
+            data-cuelume-toggle=""
           >
             <Columns2 className="size-4" aria-hidden="true" />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="vertical"
             aria-label={PATIENT_GALLERY_COPY.beforeAfter.orientationVertical}
+            data-cuelume-toggle=""
           >
             <Rows2 className="size-4" aria-hidden="true" />
           </ToggleGroupItem>

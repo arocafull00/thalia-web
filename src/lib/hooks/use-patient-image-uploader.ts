@@ -13,6 +13,7 @@ import {
   type PatientImageUploadInput,
 } from "@/lib/schemas/patient-image-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 
 const patientImageFormSchema = patientImageUploadSchema.extend({
   captured_at: z.date().nullable(),
@@ -108,7 +109,7 @@ export function usePatientImageUploader(
           files: selectedFiles,
           metadata: parsed.data as PatientImageUploadInput,
         });
-        toast.success(PATIENT_GALLERY_COPY.uploader.success(images.length));
+        notifySuccess(PATIENT_GALLERY_COPY.uploader.success(images.length));
         resetForm();
         onSuccess();
       } catch (cause) {

@@ -2615,8 +2615,8 @@
     "semantic_hash": ""
   },
   "src/tests/stores/finances-store.test.ts": {
-    "mtime": 1783963326.5514643,
-    "ast_hash": "99b56d7ab912bcc6a6aa01b536b661c1",
+    "mtime": 1783963415.6483958,
+    "ast_hash": "ee5399f447088ee3de9e6c614d7d6d59",
     "semantic_hash": ""
   }
 }

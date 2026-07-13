@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useReplaceAppointmentInventoryItems } from "@/lib/hooks/use-appointments";
+import { notifySuccess } from "@/lib/sound";
 import type { AppointmentInventoryItemWithInventory } from "@/types/database.types";
 
 const appointmentInventoryLinkSchema = z.object({
@@ -65,7 +66,7 @@ export function useAppointmentMaterialsOverrideDialog(
         appointmentId,
         items: parsed.data.items,
       });
-      toast.success(APPOINTMENT_DETAIL_COPY.materialsSuccess);
+      notifySuccess(APPOINTMENT_DETAIL_COPY.materialsSuccess);
       onSuccess();
     } catch {
       toast.error(APPOINTMENT_DETAIL_COPY.materialsError);
@@ -79,7 +80,7 @@ export function useAppointmentMaterialsOverrideDialog(
         items: [],
       });
       reset({ items: [] });
-      toast.success(APPOINTMENT_DETAIL_COPY.materialsSuccess);
+      notifySuccess(APPOINTMENT_DETAIL_COPY.materialsSuccess);
       onSuccess();
     } catch {
       toast.error(APPOINTMENT_DETAIL_COPY.materialsError);

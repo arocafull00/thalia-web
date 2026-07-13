@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { useDeletePatientImage } from "@/lib/hooks/use-patient-images";
+import { notifySuccess } from "@/lib/sound";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientImageDeleteConfirmDialogProps = {
@@ -27,7 +28,7 @@ export default function PatientImageDeleteConfirmDialog({
   const handleConfirm = async () => {
     try {
       await mutateAsync({ patientId, image });
-      toast.success(PATIENT_GALLERY_COPY.delete.success);
+      notifySuccess(PATIENT_GALLERY_COPY.delete.success);
       onOpenChange(false);
       onSuccess();
     } catch (cause) {

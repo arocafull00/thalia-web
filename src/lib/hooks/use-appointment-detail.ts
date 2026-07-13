@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { toast } from "react-toastify";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useAppointment } from "@/lib/hooks/use-appointments";
+import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
 import type { AppointmentStatus } from "@/types/database.types";
 
@@ -38,7 +38,7 @@ export function useAppointmentDetail(appointmentId: string) {
         await useAppointmentsStore
           .getState()
           .updateAppointmentStatus(appointment.id, status);
-        toast.success(APPOINTMENT_DETAIL_COPY.statusSuccess);
+        notifySuccess(APPOINTMENT_DETAIL_COPY.statusSuccess);
       } catch {
         toast.error(APPOINTMENT_DETAIL_COPY.statusError);
       }

@@ -10,6 +10,7 @@ import { PATIENT_EDIT_COPY } from "@/copy/patient-edit-copy";
 import type { PatientFormValues } from "@/lib/hooks/use-patient-create-dialog";
 import { patientSchema } from "@/lib/schemas/patient-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 import { usePatientsStore } from "@/stores/patients-store";
 import type { Patient } from "@/types/database.types";
 
@@ -83,7 +84,7 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
         address: parsed.data.address,
         notes: parsed.data.notes,
       });
-      toast.success(PATIENT_EDIT_COPY.success);
+      notifySuccess(PATIENT_EDIT_COPY.success);
       onSuccess();
     } catch (cause) {
       toast.error(

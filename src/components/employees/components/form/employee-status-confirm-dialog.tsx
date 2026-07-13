@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { EMPLOYEE_STATUS_COPY } from "@/copy/employee-status-copy";
 import { useUpdateEmployee } from "@/lib/hooks/use-employees";
+import { notifySuccess } from "@/lib/sound";
 import type { Employee } from "@/types/database.types";
 
 type EmployeeStatusConfirmDialogProps = {
@@ -34,7 +35,7 @@ export default function EmployeeStatusConfirmDialog({
       },
       {
         onSuccess: () => {
-          toast.success(copy.success);
+          notifySuccess(copy.success);
           onOpenChange(false);
           onSuccess();
         },

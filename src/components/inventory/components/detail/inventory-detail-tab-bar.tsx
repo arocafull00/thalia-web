@@ -1,6 +1,7 @@
-import InventoryDetailTabButton from "@/components/inventory/components/inventory-detail-tab-button";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import type { InventoryDetailTabId } from "@/lib/hooks/use-inventory-detail-tabs";
+
+import InventoryDetailTabButton from "./inventory-detail-tab-button";
 
 const INVENTORY_DETAIL_TAB_ITEMS: ReadonlyArray<{
   id: InventoryDetailTabId;

@@ -1,9 +1,10 @@
 "use client";
 
-import { employeesColumns } from "@/components/employees/components/employees-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { employeesMobileColumns } from "@/lib/table-mobile-columns";
 import type { Employee } from "@/types/database.types";
+
+import { employeesColumns } from "./employees-columns";
 
 type EmployeesTableProps = {
   employees: Employee[];

@@ -1,8 +1,9 @@
-import EmployeeProfileHeader from "@/components/employees/components/employee-profile-header";
-import EmployeeProfileSummary from "@/components/employees/components/employee-profile-summary";
-import EmployeeQuickActions from "@/components/employees/components/employee-quick-actions";
 import type { EmployeeAppointmentStats } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
+
+import EmployeeProfileHeader from "./employee-profile-header";
+import EmployeeProfileSummary from "./employee-profile-summary";
+import EmployeeQuickActions from "./employee-quick-actions";
 
 type EmployeeProfileSidebarProps = {
   employee: Employee;

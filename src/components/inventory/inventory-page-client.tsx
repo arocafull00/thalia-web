@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import InventoryFilters from "@/components/inventory/components/inventory-filters";
-import InventoryFiltersSheet from "@/components/inventory/components/inventory-filters-sheet";
-import InventoryItemCreateForm from "@/components/inventory/components/inventory-item-create-form";
-import InventoryTable from "@/components/inventory/components/inventory-table";
+import InventoryItemCreateForm from "@/components/inventory/components/form/inventory-item-create-form";
+import InventoryFilters from "@/components/inventory/components/list/inventory-filters";
+import InventoryFiltersSheet from "@/components/inventory/components/list/inventory-filters-sheet";
+import InventoryTable from "@/components/inventory/components/list/inventory-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";

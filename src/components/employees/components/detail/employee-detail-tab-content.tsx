@@ -1,11 +1,13 @@
-import EmployeeProfileSummary from "@/components/employees/components/employee-profile-summary";
-import EmployeeTimeline from "@/components/employees/components/employee-timeline";
 import type { EmployeeDetailTabId } from "@/lib/hooks/use-employee-detail-tabs";
 import type {
   EmployeeAppointmentRow,
   EmployeeAppointmentStats,
 } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
+
+import EmployeeTimeline from "../history/employee-timeline";
+
+import EmployeeProfileSummary from "./employee-profile-summary";
 
 type EmployeeDetailTabContentProps = {
   activeTab: EmployeeDetailTabId;

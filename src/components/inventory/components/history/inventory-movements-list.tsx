@@ -1,4 +1,3 @@
-import InventoryMovementRow from "@/components/inventory/components/inventory-movement-row";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
@@ -7,6 +6,8 @@ import type {
   InventoryItem,
   InventoryMovementWithEmployee,
 } from "@/types/database.types";
+
+import InventoryMovementRow from "./inventory-movement-row";
 
 type InventoryMovementsListProps = {
   item: InventoryItem;

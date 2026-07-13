@@ -1,6 +1,7 @@
-import EmployeeDetailTabButton from "@/components/employees/components/employee-detail-tab-button";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import type { EmployeeDetailTabId } from "@/lib/hooks/use-employee-detail-tabs";
+
+import EmployeeDetailTabButton from "./employee-detail-tab-button";
 
 const EMPLOYEE_DETAIL_TAB_ITEMS: ReadonlyArray<{
   id: EmployeeDetailTabId;

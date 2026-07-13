@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import EmployeeInviteForm from "@/components/employees/components/employee-invite-form";
-import EmployeesFilters from "@/components/employees/components/employees-filters";
-import EmployeesFiltersSheet from "@/components/employees/components/employees-filters-sheet";
-import EmployeesTable from "@/components/employees/components/employees-table";
+import EmployeeInviteForm from "@/components/employees/components/form/employee-invite-form";
+import EmployeesFilters from "@/components/employees/components/list/employees-filters";
+import EmployeesFiltersSheet from "@/components/employees/components/list/employees-filters-sheet";
+import EmployeesTable from "@/components/employees/components/list/employees-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";

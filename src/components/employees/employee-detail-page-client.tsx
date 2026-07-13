@@ -4,11 +4,11 @@ import { Pencil } from "lucide-react";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
-import EmployeeDetailHeader from "@/components/employees/components/employee-detail-header";
-import EmployeeDetailTabBar from "@/components/employees/components/employee-detail-tab-bar";
-import EmployeeDetailTabContent from "@/components/employees/components/employee-detail-tab-content";
-import EmployeeEditDialog from "@/components/employees/components/employee-edit-dialog";
-import EmployeeStatusConfirmDialog from "@/components/employees/components/employee-status-confirm-dialog";
+import EmployeeDetailHeader from "@/components/employees/components/detail/employee-detail-header";
+import EmployeeDetailTabBar from "@/components/employees/components/detail/employee-detail-tab-bar";
+import EmployeeDetailTabContent from "@/components/employees/components/detail/employee-detail-tab-content";
+import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
+import EmployeeStatusConfirmDialog from "@/components/employees/components/form/employee-status-confirm-dialog";
 import { getEmployeeDetailActions } from "@/components/employees/employee-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";

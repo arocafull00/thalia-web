@@ -1,11 +1,12 @@
 "use client";
 
-import InventoryItemIconDisplay from "@/components/inventory/components/inventory-item-icon-display";
 import {
   getInventoryStockLevel,
   inventoryStockLevelLabel,
 } from "@/lib/inventory-stock";
 import type { InventoryItem } from "@/types/database.types";
+
+import InventoryItemIconDisplay from "./inventory-item-icon-display";
 
 type InventoryDetailHeaderProps = {
   item: InventoryItem;

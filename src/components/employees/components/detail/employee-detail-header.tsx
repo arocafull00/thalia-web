@@ -1,9 +1,10 @@
 "use client";
 
-import EmployeeAvatarDisplay from "@/components/employees/components/employee-avatar-display";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import type { Employee } from "@/types/database.types";
+
+import EmployeeAvatarDisplay from "./employee-avatar-display";
 
 type EmployeeDetailHeaderProps = {
   employee: Employee;

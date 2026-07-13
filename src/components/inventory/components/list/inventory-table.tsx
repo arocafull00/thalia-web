@@ -1,9 +1,10 @@
 "use client";
 
-import { inventoryColumns } from "@/components/inventory/components/inventory-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { inventoryMobileColumns } from "@/lib/table-mobile-columns";
 import type { InventoryItem } from "@/types/database.types";
+
+import { inventoryColumns } from "./inventory-columns";
 
 type InventoryTableProps = {
   items: InventoryItem[];

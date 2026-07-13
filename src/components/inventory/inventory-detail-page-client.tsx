@@ -4,10 +4,10 @@ import { TrendingUp } from "lucide-react";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 
-import InventoryDetailHeader from "@/components/inventory/components/inventory-detail-header";
-import InventoryDetailTabBar from "@/components/inventory/components/inventory-detail-tab-bar";
-import InventoryDetailTabContent from "@/components/inventory/components/inventory-detail-tab-content";
-import InventoryItemAdjustStockDialog from "@/components/inventory/components/inventory-item-adjust-stock-dialog";
+import InventoryDetailHeader from "@/components/inventory/components/detail/inventory-detail-header";
+import InventoryDetailTabBar from "@/components/inventory/components/detail/inventory-detail-tab-bar";
+import InventoryDetailTabContent from "@/components/inventory/components/detail/inventory-detail-tab-content";
+import InventoryItemAdjustStockDialog from "@/components/inventory/components/form/inventory-item-adjust-stock-dialog";
 import { getInventoryDetailActions } from "@/components/inventory/inventory-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";

@@ -1,6 +1,5 @@
 "use client";
 
-import EmployeeEditForm from "@/components/employees/components/employee-edit-form";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -12,6 +11,8 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { EMPLOYEE_EDIT_COPY } from "@/copy/employee-edit-copy";
 import { useEmployeeEditDialog } from "@/lib/hooks/use-employee-edit-dialog";
 import type { Employee } from "@/types/database.types";
+
+import EmployeeEditForm from "./employee-edit-form";
 
 type EmployeeEditDialogProps = {
   employee: Employee;

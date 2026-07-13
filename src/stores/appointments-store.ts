@@ -19,6 +19,7 @@ import {
 } from "@/dal/appointments.dal";
 import { getTreatmentsByIds } from "@/dal/treatments.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { logger } from "@/lib/logger";
 import {
   appointmentSchema,
   appointmentUpdateSchema,
@@ -226,6 +227,12 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         byRange: { ...get().byRange, [key]: successQueryEntry(appointments) },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "appointments-store",
+        action: "fetchAppointments",
+        clinicId: getActiveClinicId(),
+        employeeId,
+      });
       set({
         byRange: {
           ...get().byRange,
@@ -253,6 +260,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "appointments-store",
+        action: "fetchAppointment",
+        appointmentId,
+      });
       set({
         byId: {
           ...get().byId,
@@ -283,6 +295,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "appointments-store",
+        action: "fetchAppointmentInventoryItems",
+        appointmentId,
+      });
       set({
         appointmentInventoryById: {
           ...get().appointmentInventoryById,
@@ -314,6 +331,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "appointments-store",
+        action: "fetchDefaultMaterials",
+        treatmentIds,
+      });
       set({
         defaultMaterialsByKey: {
           ...get().defaultMaterialsByKey,
@@ -335,6 +357,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({ replacingInventory: false });
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "replaceAppointmentInventoryItems",
+        appointmentId,
+      });
       set({ replacingInventory: false, replaceInventoryError: error });
       throw error;
     }
@@ -378,6 +405,12 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       return createdAppointment;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "createAppointment",
+        clinicId: input.clinicId,
+        patientId: input.patientId,
+      });
       set({ creating: false, createError: error });
       throw error;
     }
@@ -424,6 +457,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       return appointment;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "updateAppointment",
+        appointmentId: input.id,
+      });
       set({ updating: false, updateError: error });
       throw error;
     }
@@ -446,6 +484,12 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       return appointment;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "updateAppointmentStatus",
+        appointmentId: id,
+        status,
+      });
       set({ updatingStatus: false, updateStatusError: error });
       throw error;
     }
@@ -468,6 +512,11 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       return appointment;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "rescheduleAppointment",
+        appointmentId: id,
+      });
       set({ rescheduling: false, rescheduleError: error });
       throw error;
     }

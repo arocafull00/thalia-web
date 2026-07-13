@@ -53,86 +53,90 @@ export default function AppTopbar() {
     ) ?? [];
 
   return (
-    <header className="sticky top-0 z-40 grid h-12 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-border-subtle bg-surface px-6">
-      <div className="flex min-w-0 items-center gap-2">
-        <SidebarTrigger
-          variant="ghost"
-          size="icon"
-          className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
-        />
-        {breadcrumb ? (
-          <Breadcrumb
-            aria-label={breadcrumb.rootLabel}
-            className="min-w-0 flex-1"
+    <header className="sticky top-0 z-40 border-b border-border-subtle bg-surface">
+      <div className="flex flex-wrap items-center gap-x-2 px-6 lg:grid lg:h-12 lg:grid-cols-[1fr_auto_1fr]">
+        <div className="order-1 flex h-12 min-w-0 flex-1 items-center gap-2">
+          <SidebarTrigger
+            variant="ghost"
+            size="icon"
+            className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
+          />
+          {breadcrumb ? (
+            <Breadcrumb
+              aria-label={breadcrumb.rootLabel}
+              className="min-w-0 flex-1"
+            >
+              <BreadcrumbList className="min-w-0 flex-nowrap">
+                <BreadcrumbItem className="shrink-0">
+                  <BreadcrumbLink asChild>
+                    <Link href={breadcrumb.rootHref}>
+                      {breadcrumb.rootLabel}
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="shrink-0" />
+                <BreadcrumbItem className="min-w-0">
+                  <BreadcrumbPage className="truncate">
+                    {breadcrumb.currentLabel}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          ) : title ? (
+            <h1 className="truncate text-sm font-medium text-ink-secondary">
+              {title}
+            </h1>
+          ) : null}
+        </div>
+        <div className="order-3 flex w-full items-center justify-center border-t border-border-subtle py-2 lg:order-2 lg:w-auto lg:border-t-0 lg:py-0">
+          <TopbarClinicSelector />
+        </div>
+        <div className="order-2 flex h-12 items-center justify-end gap-2 lg:order-3">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Notificaciones"
+            className="relative"
           >
-            <BreadcrumbList className="min-w-0 flex-nowrap">
-              <BreadcrumbItem className="shrink-0">
-                <BreadcrumbLink asChild>
-                  <Link href={breadcrumb.rootHref}>{breadcrumb.rootLabel}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="shrink-0" />
-              <BreadcrumbItem className="min-w-0">
-                <BreadcrumbPage className="truncate">
-                  {breadcrumb.currentLabel}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        ) : title ? (
-          <h1 className="truncate text-sm font-medium text-ink-secondary">
-            {title}
-          </h1>
-        ) : null}
-      </div>
-      <div className="flex justify-center">
-        <TopbarClinicSelector />
-      </div>
-      <div className="flex items-center justify-end gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label="Notificaciones"
-          className="relative"
-        >
-          <Bell size={18} strokeWidth={1.5} />
-          {notificationCount > 0 ? (
-            <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
-              {notificationCount > 99 ? "99+" : notificationCount}
+            <Bell size={18} strokeWidth={1.5} />
+            {notificationCount > 0 ? (
+              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
+                {notificationCount > 99 ? "99+" : notificationCount}
+              </span>
+            ) : null}
+          </Button>
+          {actions.length > 0 || secondaryMenuActions.length > 0 ? (
+            <div className="flex items-center gap-2">
+              {secondaryMenuActions.map((menuAction) => (
+                <TopbarSecondaryAction
+                  key={menuAction.label}
+                  action={menuAction}
+                />
+              ))}
+              {actions.map((topbarAction) => (
+                <ActionButton
+                  key={topbarAction.title}
+                  title={topbarAction.title}
+                  icon={topbarAction.icon}
+                  disabled={topbarAction.disabled}
+                  variant={topbarAction.variant}
+                  onClick={topbarAction.onClick}
+                />
+              ))}
+            </div>
+          ) : null}
+          {action ? (
+            <span className="hidden lg:contents">
+              <ActionButton
+                title={action.title}
+                icon={action.icon ?? Plus}
+                disabled={action.disabled}
+                onClick={action.onClick}
+              />
             </span>
           ) : null}
-        </Button>
-        {actions.length > 0 || secondaryMenuActions.length > 0 ? (
-          <div className="flex items-center gap-2">
-            {secondaryMenuActions.map((menuAction) => (
-              <TopbarSecondaryAction
-                key={menuAction.label}
-                action={menuAction}
-              />
-            ))}
-            {actions.map((topbarAction) => (
-              <ActionButton
-                key={topbarAction.title}
-                title={topbarAction.title}
-                icon={topbarAction.icon}
-                disabled={topbarAction.disabled}
-                variant={topbarAction.variant}
-                onClick={topbarAction.onClick}
-              />
-            ))}
-          </div>
-        ) : null}
-        {action ? (
-          <span className="hidden lg:contents">
-            <ActionButton
-              title={action.title}
-              icon={action.icon ?? Plus}
-              disabled={action.disabled}
-              onClick={action.onClick}
-            />
-          </span>
-        ) : null}
+        </div>
       </div>
     </header>
   );

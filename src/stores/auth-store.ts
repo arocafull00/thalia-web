@@ -7,6 +7,7 @@ import {
   updateEmployeeProfile,
 } from "@/dal/auth.dal";
 import { captureEvent } from "@/lib/analytics";
+import { logger } from "@/lib/logger";
 import { uploadFile } from "@/lib/storage";
 import { assertSupabaseConfigured, supabase } from "@/lib/supabase";
 import { useEmployeesStore } from "@/stores/employees-store";
@@ -87,6 +88,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       return employee;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "auth-store",
+        action: "updateProfile",
+      });
       set({ updating: false, updateError: error });
       throw error;
     }
@@ -116,6 +121,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       return employee;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "auth-store",
+        action: "uploadProfileAvatar",
+      });
       set({ uploadingAvatar: false, uploadAvatarError: error });
       throw error;
     }

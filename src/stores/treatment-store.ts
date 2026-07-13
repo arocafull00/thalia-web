@@ -8,6 +8,7 @@ import {
   replaceTreatmentInventoryLinks,
   updateTreatment,
 } from "@/dal/treatments.dal";
+import { logger } from "@/lib/logger";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -70,6 +71,10 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       const treatments = await getTreatments();
       set({ list: successQueryEntry(treatments) });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "treatment-store",
+        action: "fetchTreatments",
+      });
       set({
         list: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -91,6 +96,11 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         byId: { ...get().byId, [treatmentId]: successQueryEntry(treatment) },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "treatment-store",
+        action: "fetchTreatment",
+        treatmentId,
+      });
       set({
         byId: {
           ...get().byId,
@@ -126,6 +136,11 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       }
 
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "treatment-store",
+        action: "createTreatment",
+        clinicId: input.clinic_id,
+      });
       set({ creating: false, createError: error });
       throw error;
     }
@@ -153,6 +168,11 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       return treatmentWithInventory;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "treatment-store",
+        action: "updateTreatment",
+        treatmentId,
+      });
       set({ updating: false, updateError: error });
       throw error;
     }
@@ -171,6 +191,11 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       set({ byId: nextById, deleting: false });
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "treatment-store",
+        action: "deleteTreatment",
+        treatmentId,
+      });
       set({ deleting: false, deleteError: error });
       throw error;
     }

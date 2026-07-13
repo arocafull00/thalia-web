@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 import { getTodayAppointments } from "@/dal/dashboard.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { logger } from "@/lib/logger";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -44,6 +45,11 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         }),
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "dashboard-store",
+        action: "fetchDashboard",
+        clinicId: getActiveClinicId(),
+      });
       set({
         data: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),

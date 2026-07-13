@@ -9,6 +9,7 @@ import {
   updatePatient,
 } from "@/dal/patients.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { logger } from "@/lib/logger";
 import {
   patientSchema,
   patientUpdateSchema,
@@ -96,6 +97,12 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "patients-store",
+        action: "fetchPatients",
+        clinicId: getActiveClinicId(),
+        search: key,
+      });
       set({
         listBySearch: {
           ...get().listBySearch,
@@ -116,6 +123,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       const patient = await getPatient(patientId);
       set({ byId: { ...get().byId, [patientId]: successQueryEntry(patient) } });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "patients-store",
+        action: "fetchPatient",
+        patientId,
+      });
       set({
         byId: {
           ...get().byId,
@@ -146,6 +158,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "patients-store",
+        action: "fetchPatientAppointments",
+        patientId,
+      });
       set({
         appointmentsByPatientId: {
           ...get().appointmentsByPatientId,
@@ -176,6 +193,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "patients-store",
+        action: "fetchUpcomingPatientAppointments",
+        patientId,
+      });
       set({
         upcomingByPatientId: {
           ...get().upcomingByPatientId,
@@ -208,6 +230,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       return patient;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patients-store",
+        action: "createPatient",
+        clinicId: input.clinic_id,
+      });
       set({ creating: false, createError: error });
       throw error;
     }
@@ -234,6 +261,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       return patient;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patients-store",
+        action: "updatePatient",
+        patientId: id,
+      });
       set({ updating: false, updateError: error });
       throw error;
     }
@@ -261,6 +293,11 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       return patient;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patients-store",
+        action: "uploadPatientAvatar",
+        patientId,
+      });
       set({ uploadingAvatar: false, uploadAvatarError: error });
       throw error;
     }

@@ -91,6 +91,18 @@ components/[dominio]/[feature]/
 
 Para **todos** los mensajes de error o éxito mostrados al usuario, usa **siempre** `react-toastify`. No uses `alert`, `confirm`, ni ningún otro mecanismo nativo o custom. Llama a `toast.error(...)` para errores y `toast.success(...)` para operaciones exitosas.
 
+## Logging y errores
+
+Usa **siempre** `logger` de `@/lib/logger`. Nunca importes `@sentry/nextjs` directamente en `src/`.
+
+Patrones obligatorios:
+
+- Estructurado: `logger.info(logger.fmt\`Patient ${patientId} created\`)`
+- Excepción con contexto: `logger.captureException(error, { patientId, clinicId })`
+- Aviso: `logger.warn(logger.fmt\`Retry ${n} for ${operationName}\`)`
+
+El único archivo autorizado a importar `@sentry/nextjs` es `src/lib/logger.ts` y los archivos de configuración raíz (`sentry.*.config.ts`).
+
 ## Alcance del trabajo
 
 - Cambios mínimos y enfocados: no toques código no relacionado con la tarea.

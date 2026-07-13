@@ -8,6 +8,7 @@ import {
   insertInventoryMovement,
 } from "@/dal/inventory.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { logger } from "@/lib/logger";
 import { inventorySchema } from "@/lib/schemas/inventory-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import {
@@ -74,6 +75,11 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       const items = await getInventoryItems(clinicId);
       set({ list: successQueryEntry(items) });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "inventory-store",
+        action: "fetchInventoryItems",
+        clinicId: getActiveClinicId(),
+      });
       set({
         list: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -91,6 +97,11 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       const item = await getInventoryItem(itemId);
       set({ byId: { ...get().byId, [itemId]: successQueryEntry(item) } });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "inventory-store",
+        action: "fetchInventoryItem",
+        itemId,
+      });
       set({
         byId: {
           ...get().byId,
@@ -121,6 +132,11 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "inventory-store",
+        action: "fetchInventoryMovements",
+        itemId,
+      });
       set({
         movementsByItemId: {
           ...get().movementsByItemId,
@@ -149,6 +165,11 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       return item;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "inventory-store",
+        action: "createInventoryItem",
+        clinicId: input.clinic_id,
+      });
       set({ creating: false, createError: error });
       throw error;
     }
@@ -166,6 +187,12 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       set({ recording: false });
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "inventory-store",
+        action: "recordInventoryMovement",
+        itemId: input.item_id,
+        employeeId: input.employee_id,
+      });
       set({ recording: false, recordError: error });
       throw error;
     }

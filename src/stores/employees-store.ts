@@ -11,6 +11,7 @@ import {
   type EmployeeAppointmentStats,
 } from "@/dal/employees.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { logger } from "@/lib/logger";
 import {
   employeeInviteSchema,
   employeeUpdateSchema,
@@ -73,6 +74,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
       const employees = await getEmployees(clinicId);
       set({ list: successQueryEntry(employees) });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "employees-store",
+        action: "fetchEmployees",
+        clinicId: getActiveClinicId(),
+      });
       set({
         list: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -92,6 +98,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         byId: { ...get().byId, [employeeId]: successQueryEntry(employee) },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "employees-store",
+        action: "fetchEmployee",
+        employeeId,
+      });
       set({
         byId: {
           ...get().byId,
@@ -122,6 +133,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "employees-store",
+        action: "fetchEmployeeAppointments",
+        employeeId,
+      });
       set({
         appointmentsByEmployeeId: {
           ...get().appointmentsByEmployeeId,
@@ -152,6 +168,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "employees-store",
+        action: "fetchEmployeeStats",
+        employeeId,
+      });
       set({
         statsByEmployeeId: {
           ...get().statsByEmployeeId,
@@ -182,6 +203,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
       return employee;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "employees-store",
+        action: "createEmployee",
+        clinicId: getActiveClinicId(),
+      });
       set({ creating: false, createError: error });
       throw error;
     }
@@ -204,6 +230,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
       return employee;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "employees-store",
+        action: "updateEmployee",
+        employeeId: id,
+      });
       set({ updating: false, updateError: error });
       throw error;
     }

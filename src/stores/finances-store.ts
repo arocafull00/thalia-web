@@ -2,6 +2,7 @@ import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { create } from "zustand";
 
 import { getTransactions, insertTransaction } from "@/dal/finances.dal";
+import { logger } from "@/lib/logger";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -80,6 +81,12 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "finances-store",
+        action: "fetchTransactions",
+        month: key,
+        type,
+      });
       set({
         transactionsByKey: {
           ...get().transactionsByKey,
@@ -160,6 +167,11 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "finances-store",
+        action: "fetchFinancialSummary",
+        month: key,
+      });
       set({
         summaryByKey: {
           ...get().summaryByKey,
@@ -201,6 +213,11 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       return transaction;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "finances-store",
+        action: "createTransaction",
+        clinicId: input.clinic_id,
+      });
       set({ creating: false, createError: error });
       throw error;
     }

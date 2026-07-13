@@ -9,6 +9,7 @@ import {
   compressTreatmentImage,
   getImageDimensions,
 } from "@/lib/image-compression";
+import { logger } from "@/lib/logger";
 import {
   buildPatientImageKey,
   uploadPatientImageObject,
@@ -126,6 +127,11 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         },
       });
     } catch (cause) {
+      logger.captureException(cause, {
+        store: "patient-images-store",
+        action: "fetchPatientImages",
+        patientId,
+      });
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
@@ -163,6 +169,12 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       return image;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patient-images-store",
+        action: "uploadPatientImage",
+        clinicId,
+        patientId,
+      });
       set({
         uploading: false,
         uploadCurrentFile: 0,
@@ -211,6 +223,13 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       return images;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patient-images-store",
+        action: "uploadPatientImages",
+        clinicId,
+        patientId,
+        fileCount: total,
+      });
       set({
         uploading: false,
         uploadCurrentFile: 0,
@@ -230,6 +249,12 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       set({ deletingId: null });
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patient-images-store",
+        action: "deletePatientImage",
+        patientId,
+        imageId: image.id,
+      });
       set({ deletingId: null, deleteError: error });
       throw error;
     }

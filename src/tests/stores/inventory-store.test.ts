@@ -150,7 +150,7 @@ describe("inventory-store", () => {
     await useInventoryStore.getState().recordInventoryMovement({
       item_id: ITEM_ID,
       employee_id: EMPLOYEE_ID,
-      type: "entrada",
+      type: "in",
       quantity: 5,
       notes: null,
     });

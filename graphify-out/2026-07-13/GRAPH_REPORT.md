@@ -1,7 +1,7 @@
 # Graph Report - thalia-web  (2026-07-13)
 
 ## Corpus Check
-- 517 files · ~119,313 words
+- 517 files · ~119,318 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

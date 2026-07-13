@@ -2225,7 +2225,7 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/detail/patient-detail-actions-menu.tsx": {
-    "mtime": 1783846432.264898,
+    "mtime": 1783962140.843961,
     "ast_hash": "fa5e4f4fecd5bc63ad97ec05d26fe427",
     "semantic_hash": ""
   },
@@ -2610,8 +2610,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-actions-menu.tsx": {
-    "mtime": 1783962040.9874158,
-    "ast_hash": "9802f1e0425e7cffcb9c305e378896cd",
+    "mtime": 1783962174.228505,
+    "ast_hash": "c40b67cee7b0d70c6ea154198a914618",
     "semantic_hash": ""
   }
 }

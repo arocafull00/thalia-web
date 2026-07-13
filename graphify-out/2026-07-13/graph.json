@@ -31190,7 +31190,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/dashboard/dashboard-page-client.tsx",
-      "source_location": "L32",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_components_dashboard_dashboard_page_client_dashboardpageclient",
       "target": "src_lib_hooks_use_topbar_action_usetopbaraction"

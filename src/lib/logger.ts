@@ -54,9 +54,10 @@ export const logger = {
     error: unknown,
     context?: {
       action?: string;
-      clinicId?: string;
+      clinicId?: string | null;
       userId?: string;
-      extra?: Record<string, unknown>;
+      store?: string;
+      [key: string]: unknown;
     },
   ) {
     if (isDev) {
@@ -65,12 +66,20 @@ export const logger = {
     }
 
     Sentry.withScope((scope) => {
-      if (context?.action) scope.setTag("action", context.action);
-      if (context?.clinicId) scope.setTag("clinic_id", context.clinicId);
-      if (context?.userId) scope.setUser({ id: context.userId });
+      if (!context) {
+        Sentry.captureException(error);
+        return;
+      }
 
-      if (context?.extra) {
-        scope.setExtras(context.extra);
+      const { action, clinicId, userId, store, ...rest } = context;
+
+      if (action) scope.setTag("action", action);
+      if (store) scope.setTag("store", store);
+      if (clinicId) scope.setTag("clinic_id", clinicId);
+      if (userId) scope.setUser({ id: userId });
+
+      if (Object.keys(rest).length > 0) {
+        scope.setExtras(rest);
       }
 
       Sentry.captureException(error);

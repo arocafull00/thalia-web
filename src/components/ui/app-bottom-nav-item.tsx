@@ -24,7 +24,6 @@ export default function AppBottomNavItem({
       aria-label={label}
       aria-current={active ? "page" : undefined}
       onClick={onClick}
-      data-cuelume-hover="tick"
       className={`flex min-h-12 flex-col items-center justify-center gap-0.5 px-2 text-[11px] transition motion-reduce:transition-none ${
         active ? "text-primary" : "text-ink-muted hover:text-ink-secondary"
       }`}

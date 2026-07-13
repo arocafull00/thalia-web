@@ -42,7 +42,6 @@ export function ActionButton({
       disabled={disabled}
       onClick={onClick}
       data-cuelume-press=""
-      data-cuelume-release=""
     >
       {Icon ? <Icon className="size-3.5 shrink-0" aria-hidden="true" /> : null}
       {title}

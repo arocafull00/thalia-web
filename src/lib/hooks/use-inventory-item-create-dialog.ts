@@ -8,6 +8,7 @@ import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useCreateInventoryItem } from "@/lib/hooks/use-inventory";
 import { inventorySchema } from "@/lib/schemas/inventory-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 
 const inventoryFormSchema = inventorySchema.omit({ clinic_id: true });
 
@@ -54,7 +55,7 @@ export function useInventoryItemCreateDialog(onSuccess: () => void) {
 
     mutate(parsed.data, {
       onSuccess: () => {
-        toast.success(INVENTORY_ITEM_CREATE_COPY.success);
+        notifySuccess(INVENTORY_ITEM_CREATE_COPY.success);
         reset(defaultValues);
         onSuccess();
       },

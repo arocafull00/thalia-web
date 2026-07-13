@@ -33,7 +33,6 @@ export default function AppSidebarNavItem({
         <Link
           href={item.href}
           onClick={onNavigate}
-          data-cuelume-hover="tick"
           className="flex items-center gap-3"
         >
           {item.icon}

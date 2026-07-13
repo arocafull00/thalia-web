@@ -11,6 +11,7 @@ import {
   useUpdateTreatment,
 } from "@/lib/hooks/use-treatment";
 import { treatmentFormSchema } from "@/lib/schemas/treatment-schema";
+import { notifySuccess } from "@/lib/sound";
 import type { TreatmentWithInventory } from "@/types/database.types";
 
 export type TreatmentFormValues = z.input<typeof treatmentFormSchema>;
@@ -91,7 +92,7 @@ export function useTreatmentDialog(
     if (treatment) {
       updateTreatment(treatment.id, payload, {
         onSuccess: () => {
-          toast.success(TREATMENTS_COPY.dialog.successUpdate);
+          notifySuccess(TREATMENTS_COPY.dialog.successUpdate);
           onSuccess();
         },
         onError: () => toast.error(TREATMENTS_COPY.dialog.error),
@@ -103,7 +104,7 @@ export function useTreatmentDialog(
       { clinic_id: clinicId, ...payload },
       {
         onSuccess: () => {
-          toast.success(TREATMENTS_COPY.dialog.successCreate);
+          notifySuccess(TREATMENTS_COPY.dialog.successCreate);
           reset(emptyValues);
           onSuccess();
         },

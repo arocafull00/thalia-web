@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1783961806.4017246,
-    "ast_hash": "a5505bfd4ec2c9ff4ba4e060b6dbfb1e",
+    "mtime": 1783964555.9372666,
+    "ast_hash": "ac355832932aacb03fea2ac93b413bf3",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
-    "mtime": 1783879312.293569,
-    "ast_hash": "5f6c0def3ce1beef6d46ccdf775a74fd",
+    "mtime": 1783964583.1857328,
+    "ast_hash": "837c9e44f46a9d7a7ecc5a731d28d7b0",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-create-dialog.tsx": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "src/components/providers/app-layout-client.tsx": {
-    "mtime": 1783846581.1742966,
-    "ast_hash": "1baa5e60d2fed5828475e5f2eeba5a72",
+    "mtime": 1783964587.03643,
+    "ast_hash": "05f7655a43232523338d34aee13da3bf",
     "semantic_hash": ""
   },
   "src/components/providers/auth-provider.tsx": {
@@ -515,8 +515,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/primitives/action-button.tsx": {
-    "mtime": 1783846430.4378948,
-    "ast_hash": "96584470295ec0a7dc70491f6881c63b",
+    "mtime": 1783964587.08744,
+    "ast_hash": "0b9a9ec47c9fadf5820b9e6d24abbc77",
     "semantic_hash": ""
   },
   "src/components/ui/primitives/notice.tsx": {
@@ -710,13 +710,13 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointment-create-dialog.ts": {
-    "mtime": 1783099978.969017,
-    "ast_hash": "1428a900a3c84033b993bfe2ed613d23",
+    "mtime": 1783964586.6424778,
+    "ast_hash": "41d584152f0a15a1c99691490672efcc",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointment-detail.ts": {
-    "mtime": 1783096398.1826153,
-    "ast_hash": "e80a86748632cbe9d3a4e28b4448bc16",
+    "mtime": 1783964587.130947,
+    "ast_hash": "a08339686809602e1aa5e93897f729b8",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointments-page.ts": {
@@ -745,13 +745,13 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-employee-edit-dialog.ts": {
-    "mtime": 1782906180.815003,
-    "ast_hash": "669997e09385d084d5f63fc43d44bb6f",
+    "mtime": 1783964580.4153159,
+    "ast_hash": "120912a752b96f339fffcab8f7ac8b62",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-employee-invite-dialog.ts": {
-    "mtime": 1783095608.0132434,
-    "ast_hash": "582a896d89491b8d59c03fe2bcf119e1",
+    "mtime": 1783964583.1857328,
+    "ast_hash": "59abe8602d14420c87d448101d5206a4",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-employees.ts": {
@@ -775,8 +775,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-inventory-item-create-dialog.ts": {
-    "mtime": 1782906180.8854773,
-    "ast_hash": "bb97a03f3e0afe1f363f5474e233aaa6",
+    "mtime": 1783964580.064252,
+    "ast_hash": "7c2aea07e5d93ce61b8e125641651ca2",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-inventory-page.ts": {
@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-create-dialog.ts": {
-    "mtime": 1783878313.4461951,
-    "ast_hash": "d169788569a215c59ef2416057ac488e",
+    "mtime": 1783964579.8276381,
+    "ast_hash": "3964452b87c4cb035dea1193ec6acbec",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patients.ts": {
@@ -825,8 +825,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-transaction-create-dialog.ts": {
-    "mtime": 1782925960.6852763,
-    "ast_hash": "5fb4fae59afc8b4f1caca3ad8697b6d6",
+    "mtime": 1783964584.4540339,
+    "ast_hash": "0bf6513506d9844afd9bf163ff507854",
     "semantic_hash": ""
   },
   "src/lib/inventory-stock.ts": {
@@ -1210,8 +1210,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-edit-dialog.ts": {
-    "mtime": 1783878313.465196,
-    "ast_hash": "0af3f78d7e582fcbaae2c6a19d868d65",
+    "mtime": 1783964586.6424778,
+    "ast_hash": "6ee9c850ba43dea0ee8ab0873a75045c",
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-timeline-item.tsx": {
@@ -1300,8 +1300,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/hooks/use-appointment-materials-override-dialog.ts": {
-    "mtime": 1783100210.9044495,
-    "ast_hash": "f912511bc59da33d14c3f9c39b29c26e",
+    "mtime": 1783964572.1864676,
+    "ast_hash": "e708b537611f68df40cfd06ee2901da7",
     "semantic_hash": ""
   },
   "src/components/appointments/hooks/use-appointment-materials.ts": {
@@ -1350,8 +1350,8 @@
     "semantic_hash": ""
   },
   "src/components/treatments/components/treatment-delete-confirm-dialog.tsx": {
-    "mtime": 1783100211.0001683,
-    "ast_hash": "353134881771f0823d1725244e1e3186",
+    "mtime": 1783964562.5884197,
+    "ast_hash": "c6cb7b5849d1987aad598f9ee5eb8dd2",
     "semantic_hash": ""
   },
   "src/components/treatments/components/treatment-dialog.tsx": {
@@ -1375,8 +1375,8 @@
     "semantic_hash": ""
   },
   "src/components/treatments/hooks/use-treatment-dialog.ts": {
-    "mtime": 1783100211.003169,
-    "ast_hash": "ef6039790e98afeca07440afab68596a",
+    "mtime": 1783964583.874287,
+    "ast_hash": "2035fc66da2614a1bd00d2f56940a648",
     "semantic_hash": ""
   },
   "src/components/treatments/hooks/use-treatments-page.ts": {
@@ -1475,8 +1475,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-bottom-nav-item.tsx": {
-    "mtime": 1783846431.6936278,
-    "ast_hash": "bb91336b505c25257d450a872a8e7908",
+    "mtime": 1783964587.06433,
+    "ast_hash": "541761297bc9b03be90bc087a6391b64",
     "semantic_hash": ""
   },
   "src/components/ui/mobile-card-view-item.tsx": {
@@ -1570,8 +1570,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-inventory-adjust-stock-dialog.ts": {
-    "mtime": 1783444785.1928575,
-    "ast_hash": "bbf00e0b6e5dfd30fc62122524ac25a2",
+    "mtime": 1783964571.3684435,
+    "ast_hash": "f977da69c51f0d4629c3605fef013d01",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-date-range.tsx": {
@@ -1740,8 +1740,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-profile-edit-dialog.ts": {
-    "mtime": 1783528101.9363954,
-    "ast_hash": "6047521aeffe3d527e7d930112211c8e",
+    "mtime": 1783964584.2827077,
+    "ast_hash": "b962ec762166fdfeab6801349947553d",
     "semantic_hash": ""
   },
   "src/components/calendar/hooks/use-swipe-navigation.ts": {
@@ -1750,8 +1750,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/components/calendar-view-mode-toggle.tsx": {
-    "mtime": 1783846431.7636614,
-    "ast_hash": "7a10e43e92b65a75815a3a43cffbf76e",
+    "mtime": 1783964586.9706883,
+    "ast_hash": "aecf54dfdc9bff2d24b2508c622d25f0",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-element-height.ts": {
@@ -1925,8 +1925,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-image-uploader.ts": {
-    "mtime": 1783958519.0695002,
-    "ast_hash": "00cda1a6ef53b9317d43b3eb2bb9d339",
+    "mtime": 1783964586.6424778,
+    "ast_hash": "983c473e1d4ea23860cad1fde706ac7a",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-images.ts": {
@@ -1990,8 +1990,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-sidebar-nav-item.tsx": {
-    "mtime": 1783846431.845612,
-    "ast_hash": "d9497cda198d817b06a273ab8466150a",
+    "mtime": 1783964587.0743523,
+    "ast_hash": "3544191e3418d76a1bf715f031eb4c93",
     "semantic_hash": ""
   },
   "src/components/ui/toggle-group.tsx": {
@@ -2205,8 +2205,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/before-after-comparison/before-after-comparison-toolbar.tsx": {
-    "mtime": 1783960136.7982621,
-    "ast_hash": "54a639c42daa69a0513a611c2d24cb9e",
+    "mtime": 1783964587.007383,
+    "ast_hash": "8d026e1164d9cfbc28d6be982750706d",
     "semantic_hash": ""
   },
   "src/components/patients/components/before-after-comparison/before-after-comparison.tsx": {
@@ -2300,8 +2300,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-image-delete-confirm-dialog.tsx": {
-    "mtime": 1783846432.5186255,
-    "ast_hash": "52c705d208bbf093f563af1d949111c2",
+    "mtime": 1783964561.9066129,
+    "ast_hash": "f84184295c90588682331dfe74dd409b",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-image-treatment-select.tsx": {
@@ -2365,8 +2365,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/tabs/patient-appointments-tab.tsx": {
-    "mtime": 1783846432.2390513,
-    "ast_hash": "ca5bff5a349f9b6e478ed0ed4b6ca99f",
+    "mtime": 1783964584.6113253,
+    "ast_hash": "fdc428b0270c7744e37939beeb26d455",
     "semantic_hash": ""
   },
   "src/components/patients/components/tabs/patient-clinical-history-tab.tsx": {
@@ -2500,8 +2500,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/form/employee-status-confirm-dialog.tsx": {
-    "mtime": 1782906181.2370706,
-    "ast_hash": "af2b539ffe012609beada702d8916df0",
+    "mtime": 1783964573.05234,
+    "ast_hash": "820f1401089e8709a753632b94c886cd",
     "semantic_hash": ""
   },
   "src/components/employees/components/history/employee-appointment-row.tsx": {
@@ -2610,8 +2610,33 @@
     "semantic_hash": ""
   },
   "src/tests/stores/treatment-store.test.ts": {
-    "mtime": 1783963205.5104594,
-    "ast_hash": "7b5b151289a0dbf52da23165aeed3a3f",
+    "mtime": 1783963282.256218,
+    "ast_hash": "c6c01566a545ddcc570401339b19229a",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/finances-store.test.ts": {
+    "mtime": 1783963415.6483958,
+    "ast_hash": "ee5399f447088ee3de9e6c614d7d6d59",
+    "semantic_hash": ""
+  },
+  "src/lib/sound.ts": {
+    "mtime": 1783964587.1751852,
+    "ast_hash": "6061d488a2ba9a6495b19f42b503ffb0",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/clinic-store.test.ts": {
+    "mtime": 1783964587.2114992,
+    "ast_hash": "075c91828a593af7c390745b873e927f",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/dashboard-store.test.ts": {
+    "mtime": 1783964587.2240238,
+    "ast_hash": "fd368cf436ec68bfb57a6a9ee7e76251",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/employees-store.test.ts": {
+    "mtime": 1783964587.2525814,
+    "ast_hash": "64df35168567529986b9c9b48e7d633e",
     "semantic_hash": ""
   }
 }

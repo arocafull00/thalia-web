@@ -17,6 +17,7 @@ import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
 import type { AppointmentStatus } from "@/types/database.types";
 
@@ -61,7 +62,7 @@ export default function AppointmentsPageClient() {
         await useAppointmentsStore
           .getState()
           .updateAppointmentStatus(id, status);
-        toast.success("Estado de la cita actualizado.");
+        notifySuccess("Estado de la cita actualizado.");
       } catch {
         toast.error("No se pudo actualizar el estado de la cita.");
       }

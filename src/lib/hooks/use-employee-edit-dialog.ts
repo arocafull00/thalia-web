@@ -11,6 +11,7 @@ import {
   nullableSpanishPhone,
   nullableTrimmedString,
 } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 import type { Employee, EmployeeRole } from "@/types/database.types";
 
 const employeeEditFormSchema = z.object({
@@ -78,7 +79,7 @@ export function useEmployeeEditDialog(
       },
       {
         onSuccess: () => {
-          toast.success(EMPLOYEE_EDIT_COPY.success);
+          notifySuccess(EMPLOYEE_EDIT_COPY.success);
           onSuccess();
         },
         onError: (cause) => {

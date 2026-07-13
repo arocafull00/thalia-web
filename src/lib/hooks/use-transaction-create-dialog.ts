@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/hooks/use-auth";
 import { useCreateTransaction } from "@/lib/hooks/use-finances";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { transactionSchema } from "@/lib/schemas/transaction-schema";
+import { notifySuccess } from "@/lib/sound";
 import type { TransactionType } from "@/types/database.types";
 
 const transactionFormSchema = z.object({
@@ -86,7 +87,7 @@ export function useTransactionCreateDialog(
 
     mutate(parsed.data, {
       onSuccess: () => {
-        toast.success(TRANSACTION_CREATE_COPY.success);
+        notifySuccess(TRANSACTION_CREATE_COPY.success);
         reset(createDefaultValues(initialType));
         onSuccess();
       },

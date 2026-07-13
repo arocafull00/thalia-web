@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { toast } from "react-toastify";
 
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
+import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
 import type {
   AppointmentStatus,
@@ -26,7 +27,7 @@ export default function PatientAppointmentsTab({
         await useAppointmentsStore
           .getState()
           .updateAppointmentStatus(id, status);
-        toast.success("Estado de la cita actualizado.");
+        notifySuccess("Estado de la cita actualizado.");
       } catch {
         toast.error("No se pudo actualizar el estado de la cita.");
       }

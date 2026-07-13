@@ -32,6 +32,7 @@ export const PATIENT_DETAIL_COPY = {
     treatments: "Tratamientos",
     appointments: "Citas",
     gallery: "Galería",
+    files: "Archivos",
     finances: "Finanzas",
     documents: "Documentos",
     notes: "Notas",

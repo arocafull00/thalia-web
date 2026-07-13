@@ -121,6 +121,43 @@ export type PatientImageInsert = {
   captured_at: string;
 };
 
+export type PatientFileCategory =
+  | "consentimiento"
+  | "historia_clinica"
+  | "receta"
+  | "analitica"
+  | "informe"
+  | "otro";
+
+export type PatientFile = {
+  id: string;
+  patient_id: string;
+  clinic_id: string;
+  storage_key: string;
+  original_filename: string;
+  mime_type: string;
+  file_size_bytes: number;
+  category: PatientFileCategory;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PatientFileInsert = {
+  patient_id: string;
+  clinic_id: string;
+  storage_key: string;
+  original_filename: string;
+  mime_type: string;
+  file_size_bytes: number;
+  category: PatientFileCategory;
+  notes: string | null;
+  created_by: string | null;
+};
+
+export type PatientFileUpdate = Pick<PatientFile, "category" | "notes">;
+
 export type Treatment = {
   id: string;
   clinic_id: string;

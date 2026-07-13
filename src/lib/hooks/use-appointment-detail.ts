@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { toast } from "react-toastify";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useAppointment } from "@/lib/hooks/use-appointments";

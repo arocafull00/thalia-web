@@ -15,6 +15,7 @@ import {
 import { compressAvatarImage } from "@/lib/image-compression";
 import { patientSchema } from "@/lib/schemas/patient-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 
 const patientFormSchema = patientSchema
   .omit({ clinic_id: true, birth_date: true })
@@ -114,7 +115,7 @@ export function usePatientCreateDialog(onSuccess: () => void) {
         });
       }
 
-      toast.success(PATIENT_CREATE_COPY.success);
+      notifySuccess(PATIENT_CREATE_COPY.success);
       reset(defaultValues);
       resetAvatar();
       onSuccess();

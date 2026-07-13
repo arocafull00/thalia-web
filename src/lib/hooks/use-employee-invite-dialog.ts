@@ -6,6 +6,7 @@ import type { z } from "zod";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { useCreateEmployee } from "@/lib/hooks/use-employees";
 import { employeeInviteSchema } from "@/lib/schemas/employee-schema";
+import { notifySuccess } from "@/lib/sound";
 
 const employeeFormSchema = employeeInviteSchema;
 
@@ -33,7 +34,7 @@ export function useEmployeeInviteDialog(onSuccess: () => void) {
   const onSubmit = handleSubmit((data) => {
     mutate(data, {
       onSuccess: () => {
-        toast.success(EMPLOYEE_INVITE_COPY.success);
+        notifySuccess(EMPLOYEE_INVITE_COPY.success);
         reset(defaultValues);
         onSuccess();
       },

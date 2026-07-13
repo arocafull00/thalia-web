@@ -10,6 +10,7 @@ import {
   nullableSpanishPhone,
   nullableTrimmedString,
 } from "@/lib/schemas/schema-helpers";
+import { notifySuccess } from "@/lib/sound";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Employee } from "@/types/database.types";
 
@@ -71,7 +72,7 @@ export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
         phone: parsed.data.phone,
         color: parsed.data.color,
       });
-      toast.success(PROFILE_EDIT_COPY.success);
+      notifySuccess(PROFILE_EDIT_COPY.success);
       onSuccess();
     } catch (cause) {
       toast.error(

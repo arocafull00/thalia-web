@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1783960081.2361372,
-    "ast_hash": "3f2f595ba805390a8a4b435ad3899d57",
+    "mtime": 1783961806.4017246,
+    "ast_hash": "a5505bfd4ec2c9ff4ba4e060b6dbfb1e",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -2565,13 +2565,38 @@
     "semantic_hash": ""
   },
   "src/lib/logger.ts": {
-    "mtime": 1783960984.609782,
-    "ast_hash": "f35aff1ca57604578d4aab6010e1ca36",
+    "mtime": 1783961847.6318398,
+    "ast_hash": "9096a49a4aa40fb1c86dfd6e659cd091",
     "semantic_hash": ""
   },
   "src/components/ui/dropdown-menu.tsx": {
     "mtime": 1783961208.2120512,
     "ast_hash": "60e84b6a57dbf661a2910d5fe80baf70",
+    "semantic_hash": ""
+  },
+  "src/tests/mocks.ts": {
+    "mtime": 1783961799.9500427,
+    "ast_hash": "043abaef47634cf921edfc2e531ed4d3",
+    "semantic_hash": ""
+  },
+  "src/tests/setup.ts": {
+    "mtime": 1783961784.0642798,
+    "ast_hash": "d523e5b00ffe1cdb986f4100074e1cbb",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/appointments-store.test.ts": {
+    "mtime": 1783961854.930604,
+    "ast_hash": "08f70ade213d515290a6dec5776f6e0b",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/auth-store.test.ts": {
+    "mtime": 1783961832.0033963,
+    "ast_hash": "1541c565f7b5366263d193409a510855",
+    "semantic_hash": ""
+  },
+  "vitest.config.ts": {
+    "mtime": 1783961781.3932514,
+    "ast_hash": "ab9e3dc65fb2c39475d2043f38d9ed22",
     "semantic_hash": ""
   }
 }

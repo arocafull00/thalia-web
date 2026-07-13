@@ -2,53 +2,84 @@ import * as Sentry from "@sentry/nextjs";
 
 const isDev = process.env.NODE_ENV === "development";
 
-type InfoArgs = Parameters<typeof Sentry.logger.info>;
-type WarnArgs = Parameters<typeof Sentry.logger.warn>;
-type ErrorArgs = Parameters<typeof Sentry.logger.error>;
+type SentryLogArgs =
+  | [message: string, attributes?: Record<string, unknown>]
+  | [
+      messageTemplate: string,
+      messageParams: readonly unknown[],
+      attributes?: Record<string, unknown>,
+    ];
+
+type SentryLogMethod = (...args: SentryLogArgs) => void;
+
+function forwardSentryLog(
+  method: typeof Sentry.logger.info,
+  args: SentryLogArgs,
+) {
+  (method as SentryLogMethod)(...args);
+}
 
 export const logger = {
   fmt: Sentry.logger.fmt,
 
-  info(...args: InfoArgs) {
+  info(...args: SentryLogArgs) {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.info(...args);
       return;
     }
 
-    Sentry.logger.info(...args);
+    forwardSentryLog(Sentry.logger.info, args);
   },
 
-  warn(...args: WarnArgs) {
+  warn(...args: SentryLogArgs) {
     if (isDev) {
       console.warn(...args);
       return;
     }
 
-    Sentry.logger.warn(...args);
+    forwardSentryLog(Sentry.logger.warn, args);
   },
 
-  error(...args: ErrorArgs) {
+  error(...args: SentryLogArgs) {
     if (isDev) {
       console.error(...args);
       return;
     }
 
-    Sentry.logger.error(...args);
+    forwardSentryLog(Sentry.logger.error, args);
   },
 
-  captureException(error: unknown, context?: Record<string, unknown>) {
+  captureException(
+    error: unknown,
+    context?: {
+      action?: string;
+      clinicId?: string;
+      userId?: string;
+      extra?: Record<string, unknown>;
+    },
+  ) {
     if (isDev) {
       console.error(error, context);
       return;
     }
 
-    Sentry.captureException(error, {
-      extra: context,
+    Sentry.withScope((scope) => {
+      if (context?.action) scope.setTag("action", context.action);
+      if (context?.clinicId) scope.setTag("clinic_id", context.clinicId);
+      if (context?.userId) scope.setUser({ id: context.userId });
+
+      if (context?.extra) {
+        scope.setExtras(context.extra);
+      }
+
+      Sentry.captureException(error);
     });
   },
 
   captureMessage(message: string) {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.info(message);
       return;
     }

@@ -8,6 +8,10 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "validate:push": "pnpm typecheck && pnpm test:run",
     "lint:staged": "lint-staged",
     "prepare": "husky",
     "dev:https": "next dev --experimental-https"

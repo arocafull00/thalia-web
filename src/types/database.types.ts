@@ -21,6 +21,17 @@ export type AppointmentStatus =
 
 export type InventoryMovementType = "in" | "out" | "adjustment";
 
+export type InventoryAlert = {
+  id: string;
+  clinic_id: string;
+  inventory_item_id: string;
+  item_name: string;
+  stock: number;
+  min_stock: number;
+  resolved_at: string | null;
+  created_at: string | null;
+};
+
 export type TransactionType = "income" | "expense";
 
 export type Clinic = {

@@ -3,8 +3,10 @@
 import { Bell, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
+import AppDialog from "@/components/ui/app-dialog";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import NotificationsSheet from "@/components/ui/notifications-sheet";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
@@ -30,6 +33,7 @@ import { FINANCES_COPY } from "@/copy/finances-copy";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
+import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useTopbarActionStore } from "@/stores/topbar-action-store";
 
 const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
@@ -44,11 +48,13 @@ const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
 
 export default function AppTopbar() {
   const pathname = usePathname();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const action = useTopbarActionStore((state) => state.action);
   const breadcrumb = useTopbarActionStore((state) => state.breadcrumb);
   const actions = useTopbarActionStore((state) => state.actions);
   const menu = useTopbarActionStore((state) => state.menu);
-  const notificationCount = 0;
+  const alerts = useInventoryAlertsStore((state) => state.alerts);
+  const notificationCount = alerts.data?.length ?? 0;
   const title = PAGE_TITLES_BY_ROUTE[pathname];
   const primaryTitles = new Set(
     actions.map((topbarAction) => topbarAction.title),
@@ -111,20 +117,27 @@ export default function AppTopbar() {
           <TopbarClinicSelector />
         </div>
         <div className="order-2 flex h-12 items-center justify-end gap-2 lg:order-3">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label="Notificaciones"
-            className="relative"
+          <AppDialog
+            open={notificationsOpen}
+            onOpenChange={setNotificationsOpen}
           >
-            <Bell size={18} strokeWidth={1.5} />
-            {notificationCount > 0 ? (
-              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
-                {notificationCount > 99 ? "99+" : notificationCount}
-              </span>
-            ) : null}
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Notificaciones"
+              className="relative size-9 text-ink-secondary hover:text-ink"
+              onClick={() => setNotificationsOpen(true)}
+            >
+              <Bell size={20} strokeWidth={1.75} />
+              {notificationCount > 0 ? (
+                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
+                  {notificationCount > 99 ? "99+" : notificationCount}
+                </span>
+              ) : null}
+            </Button>
+            <NotificationsSheet onClose={() => setNotificationsOpen(false)} />
+          </AppDialog>
           {hasMobileActions ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="lg:hidden">

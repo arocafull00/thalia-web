@@ -1,6 +1,13 @@
 "use client";
 
-import { Boxes, Pencil, Trash2, TrendingUp } from "lucide-react";
+import {
+  Boxes,
+  CircleDollarSign,
+  Pencil,
+  ShieldAlert,
+  Trash2,
+  TrendingUp,
+} from "lucide-react";
 import { toast } from "react-toastify";
 
 import { ProfileInfoRow } from "@/components/ui/profile/profile-info-row";
@@ -73,30 +80,35 @@ export default function InventoryItemSidebar({
           <ProfileInfoRow
             icon={Boxes}
             iconLabel={INVENTORY_ITEM_DETAIL_COPY.fields.stock}
+            label={INVENTORY_ITEM_DETAIL_COPY.fields.stock}
             value={`${stock} ${item.unit ?? "un."}`}
           />
           <ProfileInfoRow
-            icon={TrendingUp}
+            icon={ShieldAlert}
             iconLabel={INVENTORY_ITEM_DETAIL_COPY.fields.minStock}
-            value={String(minStock)}
+            label={INVENTORY_ITEM_DETAIL_COPY.fields.minStock}
+            value={`${minStock} ${item.unit ?? "un."}`}
           />
           <ProfileInfoRow
             icon={TrendingUp}
             iconLabel={INVENTORY_ITEM_DETAIL_COPY.fields.level}
+            label={INVENTORY_ITEM_DETAIL_COPY.fields.level}
           >
             <span className={inventoryStockLevelToneClass(level)}>
               {inventoryStockLevelLabel(level)}
             </span>
           </ProfileInfoRow>
           <ProfileInfoRow
-            icon={TrendingUp}
+            icon={CircleDollarSign}
             iconLabel={INVENTORY_ITEM_DETAIL_COPY.fields.unitPrice}
+            label={INVENTORY_ITEM_DETAIL_COPY.fields.unitPrice}
             value={unitPrice}
           />
           <ProfileInfoRow
             icon={Boxes}
             iconLabel={INVENTORY_ITEM_DETAIL_COPY.fields.reference}
-            value={`REF: ${item.id.slice(0, 8).toUpperCase()}`}
+            label={INVENTORY_ITEM_DETAIL_COPY.fields.reference}
+            value={item.id.slice(0, 8).toUpperCase()}
           />
         </div>
       </div>

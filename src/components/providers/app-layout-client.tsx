@@ -8,6 +8,7 @@ import { Notice } from "@/components/ui/primitives/notice";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { initSounds } from "@/lib/sound";
+import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useShellStore } from "@/stores/shell-store";
 
 type AppLayoutClientProps = {
@@ -19,6 +20,13 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
   const { loading, user } = useAuth();
   const { clinicId, platformRole, loading: clinicLoading } = useActiveClinic();
   const setNavVisibility = useShellStore((state) => state.setNavVisibility);
+  const subscribeRealtime = useInventoryAlertsStore(
+    (state) => state.subscribeRealtime,
+  );
+  const unsubscribeRealtime = useInventoryAlertsStore(
+    (state) => state.unsubscribeRealtime,
+  );
+  const fetchAlerts = useInventoryAlertsStore((state) => state.fetchAlerts);
 
   const canManageClinic =
     platformRole === "owner" ||
@@ -28,6 +36,15 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
   useEffect(() => {
     initSounds();
   }, []);
+
+  useEffect(() => {
+    if (!clinicId) return;
+    void fetchAlerts(clinicId);
+    subscribeRealtime(clinicId);
+    return () => {
+      unsubscribeRealtime();
+    };
+  }, [clinicId, fetchAlerts, subscribeRealtime, unsubscribeRealtime]);
 
   useEffect(() => {
     if (loading) {

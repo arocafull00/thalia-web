@@ -35,21 +35,23 @@ export function usePatientImages(patientId: string) {
   };
 }
 
-export function useUploadPatientImage() {
-  const uploadPatientImage = usePatientImagesStore(
-    (state) => state.uploadPatientImage,
+export function useUploadPatientImages() {
+  const uploadPatientImages = usePatientImagesStore(
+    (state) => state.uploadPatientImages,
   );
   const isPending = usePatientImagesStore((state) => state.uploading);
   const progress = usePatientImagesStore((state) => state.uploadProgress);
+  const currentFile = usePatientImagesStore((state) => state.uploadCurrentFile);
+  const totalFiles = usePatientImagesStore((state) => state.uploadTotalFiles);
   const error = usePatientImagesStore((state) => state.uploadError);
 
   const mutateAsync = useCallback(
-    (input: Parameters<typeof uploadPatientImage>[0]) =>
-      uploadPatientImage(input),
-    [uploadPatientImage],
+    (input: Parameters<typeof uploadPatientImages>[0]) =>
+      uploadPatientImages(input),
+    [uploadPatientImages],
   );
 
-  return { mutateAsync, isPending, progress, error };
+  return { mutateAsync, isPending, progress, currentFile, totalFiles, error };
 }
 
 export function useDeletePatientImage() {

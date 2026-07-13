@@ -10,13 +10,10 @@ const sortOptions = [
 ];
 
 type PatientGalleryFiltersProps = {
-  category: string;
-  categoryOptions: Array<{ label: string; value: string }>;
   phase: string;
   phaseOptions: Array<{ label: string; value: string }>;
   search: string;
   sort: string;
-  onCategoryChange: (value: string) => void;
   onOpenSheet: () => void;
   onPhaseChange: (value: string) => void;
   onSearchChange: (value: string) => void;
@@ -24,13 +21,10 @@ type PatientGalleryFiltersProps = {
 };
 
 export default function PatientGalleryFilters({
-  category,
-  categoryOptions,
   phase,
   phaseOptions,
   search,
   sort,
-  onCategoryChange,
   onOpenSheet,
   onPhaseChange,
   onSearchChange,
@@ -44,21 +38,6 @@ export default function PatientGalleryFilters({
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
-      {categoryOptions.length > 0 ? (
-        <div className="w-40 min-w-0">
-          <AppSearchableCombobox
-            value={category || null}
-            onValueChange={(value) => onCategoryChange(value ?? "")}
-            options={categoryOptions}
-            placeholder={PATIENT_GALLERY_COPY.filters.all}
-            searchPlaceholder={PATIENT_GALLERY_COPY.filters.category}
-            allowClear
-            clearLabel={PATIENT_GALLERY_COPY.filters.all}
-            variant="pill"
-            className="w-full"
-          />
-        </div>
-      ) : null}
       <div className="w-40 min-w-0">
         <AppSearchableCombobox
           value={phase || null}

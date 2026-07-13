@@ -1,6 +1,6 @@
 "use client";
 
-import { CloudUpload } from "lucide-react";
+import { CloudUpload, Plus } from "lucide-react";
 import { useEffect } from "react";
 import {
   Controller,
@@ -39,36 +39,35 @@ type PatientImageUploaderFormProps = {
   register: UseFormRegister<PatientImageFormValues>;
   control: Control<PatientImageFormValues>;
   errors: FieldErrors<PatientImageFormValues>;
-  onFileSelected: (file: File | null) => void;
+  onFilesChanged: (files: File[]) => void;
 };
 
 export default function PatientImageUploaderForm({
   register,
   control,
   errors,
-  onFileSelected,
+  onFilesChanged,
 }: PatientImageUploaderFormProps) {
   const { data: treatments = [] } = useTreatments();
 
   const dropzone = useDropzone({
-    onDropFile: async (file: File) => {
-      onFileSelected(file);
-      return {
-        status: "success",
-        result: URL.createObjectURL(file),
-      };
-    },
-    onRemoveFile: async () => {
-      onFileSelected(null);
-    },
+    onDropFile: async (file: File) => ({
+      status: "success",
+      result: URL.createObjectURL(file),
+    }),
     validation: {
       accept: {
         "image/*": [".png", ".jpg", ".jpeg", ".webp"],
       },
-      maxFiles: 1,
     },
-    shiftOnMaxFiles: true,
   });
+
+  useEffect(() => {
+    const files = dropzone.fileStatuses
+      .filter((file) => file.status === "success")
+      .map((file) => file.file);
+    onFilesChanged(files);
+  }, [dropzone.fileStatuses, onFilesChanged]);
 
   useEffect(() => {
     const fileStatuses = dropzone.fileStatuses;
@@ -82,6 +81,8 @@ export default function PatientImageUploaderForm({
     };
   }, [dropzone.fileStatuses]);
 
+  const hasFiles = dropzone.fileStatuses.length > 0;
+
   return (
     <div className="space-y-4">
       <Dropzone {...dropzone}>
@@ -92,7 +93,7 @@ export default function PatientImageUploaderForm({
           <DropzoneMessage className="text-danger" />
         </div>
 
-        {dropzone.fileStatuses.length === 0 ? (
+        {!hasFiles ? (
           <DropZoneArea className="rounded-2xl border border-dashed border-border bg-canvas px-4 py-2">
             <DropzoneTrigger className="flex w-full flex-col items-center gap-3 rounded-2xl bg-transparent p-6 text-center text-sm shadow-none hover:bg-transparent">
               <CloudUpload
@@ -113,51 +114,47 @@ export default function PatientImageUploaderForm({
           </DropZoneArea>
         ) : null}
 
-        <DropzoneFileList className="grid grid-cols-3 gap-3 p-0">
-          {dropzone.fileStatuses.map((file) => (
-            <PatientImageUploaderDropzoneFileItem key={file.id} file={file} />
-          ))}
-        </DropzoneFileList>
+        {hasFiles ? (
+          <DropzoneFileList className="grid grid-cols-3 gap-3 p-0">
+            {dropzone.fileStatuses.map((file) => (
+              <PatientImageUploaderDropzoneFileItem key={file.id} file={file} />
+            ))}
+            <DropZoneArea className="rounded-xl border border-dashed border-border bg-canvas p-0">
+              <DropzoneTrigger className="flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl bg-transparent p-3 text-center text-xs shadow-none hover:bg-transparent">
+                <Plus className="size-5 text-ink-muted" aria-hidden="true" />
+                <span className="font-medium text-ink-secondary">
+                  {PATIENT_GALLERY_COPY.uploader.addMore}
+                </span>
+              </DropzoneTrigger>
+            </DropZoneArea>
+          </DropzoneFileList>
+        ) : null}
       </Dropzone>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-1.5">
-          <span className="text-sm text-ink-secondary">
-            {PATIENT_GALLERY_COPY.uploader.fields.category}
-          </span>
-          <input {...register("category")} className={inputClassName} />
-          {errors.category ? (
-            <span className="text-sm text-danger">
-              {errors.category.message}
-            </span>
-          ) : null}
-        </label>
-
-        <label className="block space-y-1.5">
-          <span className="text-sm text-ink-secondary">
-            {PATIENT_GALLERY_COPY.uploader.fields.phase}
-          </span>
-          <Controller
-            control={control}
-            name="phase"
-            render={({ field }) => (
-              <AppSearchableCombobox
-                value={field.value || null}
-                onValueChange={(value) => field.onChange(value ?? "")}
-                options={phaseOptions}
-                placeholder={PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
-                searchPlaceholder={PATIENT_GALLERY_COPY.uploader.fields.phase}
-                allowClear
-                clearLabel={PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
-                showSearch={false}
-              />
-            )}
-          />
-          {errors.phase ? (
-            <span className="text-sm text-danger">{errors.phase.message}</span>
-          ) : null}
-        </label>
-      </div>
+      <label className="block space-y-1.5">
+        <span className="text-sm text-ink-secondary">
+          {PATIENT_GALLERY_COPY.uploader.fields.phase}
+        </span>
+        <Controller
+          control={control}
+          name="phase"
+          render={({ field }) => (
+            <AppSearchableCombobox
+              value={field.value || null}
+              onValueChange={(value) => field.onChange(value ?? "")}
+              options={phaseOptions}
+              placeholder={PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
+              searchPlaceholder={PATIENT_GALLERY_COPY.uploader.fields.phase}
+              allowClear
+              clearLabel={PATIENT_GALLERY_COPY.uploader.phasePlaceholder}
+              showSearch={false}
+            />
+          )}
+        />
+        {errors.phase ? (
+          <span className="text-sm text-danger">{errors.phase.message}</span>
+        ) : null}
+      </label>
 
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">

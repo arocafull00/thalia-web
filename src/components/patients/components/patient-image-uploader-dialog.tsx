@@ -32,7 +32,9 @@ export default function PatientImageUploaderDialog({
     onSubmit,
     isPending,
     progress,
-    setFile,
+    currentFile,
+    totalFiles,
+    setFiles,
     resetForm,
   } = usePatientImageUploader(patientId, () => onOpenChange(false));
 
@@ -64,7 +66,7 @@ export default function PatientImageUploaderDialog({
               register={register}
               control={control}
               errors={errors}
-              onFileSelected={setFile}
+              onFilesChanged={setFiles}
             />
 
             {isPending ? (
@@ -76,7 +78,10 @@ export default function PatientImageUploaderDialog({
                   />
                 </div>
                 <p className="text-sm text-ink-secondary">
-                  {PATIENT_GALLERY_COPY.uploader.progress(progress)}
+                  {PATIENT_GALLERY_COPY.uploader.progress(
+                    currentFile,
+                    totalFiles,
+                  )}
                 </p>
               </div>
             ) : null}

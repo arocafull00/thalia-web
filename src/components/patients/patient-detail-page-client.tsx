@@ -1,5 +1,6 @@
 "use client";
 
+import { Pencil } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
@@ -70,7 +71,13 @@ export default function PatientDetailPageClient({
   useTopbarActions(
     patient
       ? {
-          buttons: [],
+          buttons: [
+            {
+              title: PATIENT_DETAIL_COPY.actions.edit,
+              icon: Pencil,
+              onClick: () => setEditDialogOpen(true),
+            },
+          ],
           menu: {
             actions: getPatientDetailActions(patient, {
               onEdit: () => setEditDialogOpen(true),
@@ -114,7 +121,6 @@ export default function PatientDetailPageClient({
         avatarDisplayUri={patientAvatar.avatarDisplayUri}
         avatarUploadPending={patientAvatar.avatarUploadPending}
         onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
-        onEdit={() => setEditDialogOpen(true)}
       />
 
       <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">

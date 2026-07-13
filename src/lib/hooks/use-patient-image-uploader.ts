@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
-import { useUploadPatientImage } from "@/lib/hooks/use-patient-images";
+import { useUploadPatientImages } from "@/lib/hooks/use-patient-images";
 import {
   patientImageUploadSchema,
   type PatientImageUploadInput,
@@ -21,7 +21,6 @@ const patientImageFormSchema = patientImageUploadSchema.extend({
 export type PatientImageFormValues = z.input<typeof patientImageFormSchema>;
 
 const defaultValues: PatientImageFormValues = {
-  category: "",
   phase: "",
   treatment_id: "",
   notes: "",
@@ -52,8 +51,9 @@ export function usePatientImageUploader(
   onSuccess: () => void,
 ) {
   const clinicId = useClinicId();
-  const { mutateAsync, isPending, progress } = useUploadPatientImage();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { mutateAsync, isPending, progress, currentFile, totalFiles } =
+    useUploadPatientImages();
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const {
     register,
@@ -68,11 +68,11 @@ export function usePatientImageUploader(
 
   const resetForm = useCallback(() => {
     reset(defaultValues);
-    setSelectedFile(null);
+    setSelectedFiles([]);
   }, [reset]);
 
-  const setFile = useCallback((file: File | null) => {
-    setSelectedFile(file);
+  const setFiles = useCallback((files: File[]) => {
+    setSelectedFiles(files);
   }, []);
 
   const onSubmit = handleSubmit(
@@ -82,13 +82,12 @@ export function usePatientImageUploader(
         return;
       }
 
-      if (!selectedFile) {
+      if (selectedFiles.length === 0) {
         toast.error(PATIENT_GALLERY_COPY.uploader.validation.fileRequired);
         return;
       }
 
       const parsed = patientImageUploadSchema.safeParse({
-        category: data.category,
         phase: data.phase,
         treatment_id: data.treatment_id,
         notes: data.notes,
@@ -103,13 +102,13 @@ export function usePatientImageUploader(
       }
 
       try {
-        await mutateAsync({
+        const images = await mutateAsync({
           clinicId,
           patientId,
-          file: selectedFile,
+          files: selectedFiles,
           metadata: parsed.data as PatientImageUploadInput,
         });
-        toast.success(PATIENT_GALLERY_COPY.uploader.success);
+        toast.success(PATIENT_GALLERY_COPY.uploader.success(images.length));
         resetForm();
         onSuccess();
       } catch (cause) {
@@ -135,8 +134,10 @@ export function usePatientImageUploader(
     onSubmit,
     isPending: isPending || isSubmitting,
     progress,
-    selectedFile,
-    setFile,
+    currentFile,
+    totalFiles,
+    selectedFiles,
+    setFiles,
     resetForm,
   };
 }

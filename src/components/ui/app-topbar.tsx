@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
-import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
+import { TopbarSecondaryAction } from "@/components/ui/topbar-secondary-action";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { FINANCES_COPY } from "@/copy/finances-copy";
@@ -44,17 +44,22 @@ export default function AppTopbar() {
   const menu = useTopbarActionStore((state) => state.menu);
   const notificationCount = 0;
   const title = PAGE_TITLES_BY_ROUTE[pathname];
-  const desktopMenuActions = menu ? menu.actions.slice(2) : [];
-  const mobileMenuActions = menu?.actions ?? [];
+  const primaryTitles = new Set(
+    actions.map((topbarAction) => topbarAction.title),
+  );
+  const secondaryMenuActions =
+    menu?.actions.filter(
+      (menuAction) => !primaryTitles.has(menuAction.label),
+    ) ?? [];
 
   return (
-    <header className="sticky top-0 z-40 flex h-12 items-center gap-2 border-b border-border-subtle bg-surface px-6">
-      <SidebarTrigger
-        variant="ghost"
-        size="icon"
-        className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
-      />
-      <div className="flex min-w-0 flex-1 items-center">
+    <header className="sticky top-0 z-40 grid h-12 grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-border-subtle bg-surface px-6">
+      <div className="flex min-w-0 items-center gap-2">
+        <SidebarTrigger
+          variant="ghost"
+          size="icon"
+          className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
+        />
         {breadcrumb ? (
           <Breadcrumb
             aria-label={breadcrumb.rootLabel}
@@ -80,37 +85,10 @@ export default function AppTopbar() {
           </h1>
         ) : null}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex justify-center">
         <TopbarClinicSelector />
-        {actions.length > 0 ? (
-          <div className="hidden items-center gap-2 lg:flex">
-            {actions.map((topbarAction) => (
-              <ActionButton
-                key={topbarAction.title}
-                title={topbarAction.title}
-                icon={topbarAction.icon}
-                disabled={topbarAction.disabled}
-                variant={topbarAction.variant}
-                onClick={topbarAction.onClick}
-              />
-            ))}
-          </div>
-        ) : null}
-        {menu && desktopMenuActions.length > 0 ? (
-          <div className="hidden lg:contents">
-            <ProfileActionsMenu
-              actions={desktopMenuActions}
-              ariaLabel={menu.ariaLabel}
-            />
-          </div>
-        ) : null}
-        {menu && mobileMenuActions.length > 0 ? (
-          <ProfileActionsMenu
-            actions={mobileMenuActions}
-            ariaLabel={menu.ariaLabel}
-            className="lg:hidden"
-          />
-        ) : null}
+      </div>
+      <div className="flex items-center justify-end gap-2">
         <Button
           type="button"
           variant="ghost"
@@ -125,6 +103,26 @@ export default function AppTopbar() {
             </span>
           ) : null}
         </Button>
+        {actions.length > 0 || secondaryMenuActions.length > 0 ? (
+          <div className="flex items-center gap-2">
+            {secondaryMenuActions.map((menuAction) => (
+              <TopbarSecondaryAction
+                key={menuAction.label}
+                action={menuAction}
+              />
+            ))}
+            {actions.map((topbarAction) => (
+              <ActionButton
+                key={topbarAction.title}
+                title={topbarAction.title}
+                icon={topbarAction.icon}
+                disabled={topbarAction.disabled}
+                variant={topbarAction.variant}
+                onClick={topbarAction.onClick}
+              />
+            ))}
+          </div>
+        ) : null}
         {action ? (
           <span className="hidden lg:contents">
             <ActionButton

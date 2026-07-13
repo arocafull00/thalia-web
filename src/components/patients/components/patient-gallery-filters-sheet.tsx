@@ -12,7 +12,6 @@ const sortOptions = [
 ];
 
 export type PatientGalleryFilterValues = {
-  category: string;
   phase: string;
   sort: string;
 };
@@ -20,7 +19,6 @@ export type PatientGalleryFilterValues = {
 type PatientGalleryFiltersSheetProps = {
   open: boolean;
   filters: PatientGalleryFilterValues;
-  categoryOptions: Array<{ label: string; value: string }>;
   phaseOptions: Array<{ label: string; value: string }>;
   onApply: (updates: PatientGalleryFilterValues) => void;
   onClear: () => void;
@@ -30,7 +28,6 @@ type PatientGalleryFiltersSheetProps = {
 export default function PatientGalleryFiltersSheet({
   open,
   filters,
-  categoryOptions,
   phaseOptions,
   onApply,
   onClear,
@@ -55,24 +52,6 @@ export default function PatientGalleryFiltersSheet({
       onApply={handleApply}
       onClear={handleClear}
     >
-      {categoryOptions.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-ink">
-            {PATIENT_GALLERY_COPY.filters.category}
-          </p>
-          <AppSearchableCombobox
-            value={pending.category || null}
-            onValueChange={(value) =>
-              setPending((prev) => ({ ...prev, category: value ?? "" }))
-            }
-            options={categoryOptions}
-            placeholder={PATIENT_GALLERY_COPY.filters.all}
-            searchPlaceholder={PATIENT_GALLERY_COPY.filters.category}
-            allowClear
-            clearLabel={PATIENT_GALLERY_COPY.filters.all}
-          />
-        </div>
-      ) : null}
       <div className="space-y-2">
         <p className="text-sm font-medium text-ink">
           {PATIENT_GALLERY_COPY.filters.phase}

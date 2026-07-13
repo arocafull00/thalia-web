@@ -99,7 +99,6 @@ export type PatientImage = {
   file_size_bytes: number | null;
   width: number | null;
   height: number | null;
-  category: string | null;
   phase: PatientImagePhase | null;
   treatment_id: string | null;
   notes: string | null;
@@ -116,7 +115,6 @@ export type PatientImageInsert = {
   file_size_bytes: number;
   width: number;
   height: number;
-  category: string | null;
   phase: PatientImagePhase | null;
   treatment_id: string | null;
   notes: string | null;

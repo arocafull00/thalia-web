@@ -1130,8 +1130,8 @@
     "semantic_hash": ""
   },
   "src/types/database.types.ts": {
-    "mtime": 1783846431.1419306,
-    "ast_hash": "390d265d977227f9b38c6b8f0db48fb0",
+    "mtime": 1783958045.765763,
+    "ast_hash": "5927294dbf0423d1397606c69b23489a",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -1675,8 +1675,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1783878915.3723545,
-    "ast_hash": "59e142b33a564a5f2726ba56a388a9f8",
+    "mtime": 1783880756.0027053,
+    "ast_hash": "16046bb751fb18890d306b05311a4acb",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -1740,8 +1740,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-date-range.tsx": {
-    "mtime": 1783871800.4853601,
-    "ast_hash": "4442f735cee1f25e6994ef42b1577ef6",
+    "mtime": 1783957940.866164,
+    "ast_hash": "e9ca871d31aa811422ac0a25bcc1c53f",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-employee-filter.tsx": {
@@ -2165,8 +2165,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-gallery-copy.ts": {
-    "mtime": 1783878313.3947823,
-    "ast_hash": "3f3ebea552b79a831a2267f7f03c2348",
+    "mtime": 1783958049.9922333,
+    "ast_hash": "47e76af669c656531d2665444060c0c9",
     "semantic_hash": ""
   },
   "src/lib/patient-detail-stats.ts": {
@@ -2180,13 +2180,13 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-gallery-filters-sheet.tsx": {
-    "mtime": 1783878313.0345151,
-    "ast_hash": "ad2d1e99e2e13de6dfb4cda96d83e723",
+    "mtime": 1783958053.309234,
+    "ast_hash": "2615754f46ae01c4b13e901df9bd8996",
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-gallery-filters.tsx": {
-    "mtime": 1783878313.0493472,
-    "ast_hash": "7bca8d4e92c01ca57069a5c6982fe40c",
+    "mtime": 1783958051.2796426,
+    "ast_hash": "ab2c17703a7f859fb09ee3c91db8dfd2",
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-detail-tab-bar.tsx": {
@@ -2215,8 +2215,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-image-uploader.ts": {
-    "mtime": 1783878313.4771996,
-    "ast_hash": "0a631084c7fc4d554f32d98849f5d43e",
+    "mtime": 1783958045.0525503,
+    "ast_hash": "5e8a8af5713c5eb3355160049a0fccf0",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-images.ts": {
@@ -2245,13 +2245,13 @@
     "semantic_hash": ""
   },
   "src/lib/schemas/patient-image-schema.ts": {
-    "mtime": 1783846431.05017,
-    "ast_hash": "67529d6944767808728b905c4873a35a",
+    "mtime": 1783958044.728794,
+    "ast_hash": "c39a2e0662ee32c05b1731032b8455f1",
     "semantic_hash": ""
   },
   "src/stores/patient-images-store.ts": {
-    "mtime": 1783878313.5712347,
-    "ast_hash": "0bed79a79747fd3aec5ee4d058b330b9",
+    "mtime": 1783958045.1284642,
+    "ast_hash": "8198e73f17fc5fe62ee50586590c4756",
     "semantic_hash": ""
   },
   "supabase/migrations/009_patient_images.sql": {
@@ -2260,8 +2260,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-image-uploader-form.tsx": {
-    "mtime": 1783878313.1539643,
-    "ast_hash": "3568f34120d7d66e1e369461f7eec17e",
+    "mtime": 1783958046.9419608,
+    "ast_hash": "e253cb7a17986947c0b01c3b9d7a13ca",
     "semantic_hash": ""
   },
   "src/components/patients/components/before-after-comparison.tsx": {
@@ -2375,8 +2375,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-gallery-tab.tsx": {
-    "mtime": 1783878313.1100583,
-    "ast_hash": "b8e97efae7ad97732fb1e01b3d53c25a",
+    "mtime": 1783958063.6709993,
+    "ast_hash": "bdfb416871088ca9c3df63623b991f26",
     "semantic_hash": ""
   },
   "src/components/patients/components/patient-avatar-field.tsx": {
@@ -2522,6 +2522,11 @@
   "src/lib/hooks/use-inventory-detail-tabs.ts": {
     "mtime": 1783880388.856423,
     "ast_hash": "445ce0a951bfdd3042a9f3ffd71d96ab",
+    "semantic_hash": ""
+  },
+  "src/components/ui/topbar-secondary-action.tsx": {
+    "mtime": 1783880905.5949235,
+    "ast_hash": "3d90c74c24b44ad636480867336611a0",
     "semantic_hash": ""
   }
 }

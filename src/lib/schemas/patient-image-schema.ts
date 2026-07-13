@@ -15,7 +15,6 @@ const patientImageTreatmentIdSchema = z
   .transform((value) => (value === "" ? null : value));
 
 export const patientImageUploadSchema = z.object({
-  category: nullableTrimmedString(100, "La categoría es demasiado larga."),
   phase: patientImagePhaseSchema,
   treatment_id: patientImageTreatmentIdSchema,
   notes: nullableTrimmedString(1000, "Las notas son demasiado largas."),

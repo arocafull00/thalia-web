@@ -34,25 +34,75 @@ type UploadPatientImageInput = {
   metadata: PatientImageUploadInput;
 };
 
+type UploadPatientImagesInput = {
+  clinicId: string;
+  patientId: string;
+  files: File[];
+  metadata: PatientImageUploadInput;
+};
+
 type PatientImagesStore = {
   imagesByPatientId: Record<string, QueryEntry<PatientImage[]>>;
   uploading: boolean;
   uploadProgress: number;
+  uploadCurrentFile: number;
+  uploadTotalFiles: number;
   uploadError: Error | null;
   deletingId: string | null;
   deleteError: Error | null;
   deleteConfirm: PatientImageDeleteConfirmState | null;
   fetchPatientImages: (patientId: string) => Promise<void>;
   uploadPatientImage: (input: UploadPatientImageInput) => Promise<PatientImage>;
+  uploadPatientImages: (
+    input: UploadPatientImagesInput,
+  ) => Promise<PatientImage[]>;
   deletePatientImage: (patientId: string, image: PatientImage) => Promise<void>;
   openDeleteConfirm: (image: PatientImage, onSuccess?: () => void) => void;
   closeDeleteConfirm: () => void;
 };
 
+async function uploadSinglePatientImage(
+  { clinicId, patientId, file, metadata }: UploadPatientImageInput,
+  onProgress: (progress: number) => void,
+): Promise<PatientImage> {
+  const compressedFile = await compressTreatmentImage(file);
+  const { width, height } = await getImageDimensions(compressedFile);
+  const imageId = crypto.randomUUID();
+  const storageKey = buildPatientImageKey(clinicId, patientId, imageId, "webp");
+
+  await uploadPatientImageObject(
+    storageKey,
+    compressedFile,
+    "image/webp",
+    onProgress,
+  );
+
+  const capturedAt = metadata.captured_at
+    ? new Date(`${metadata.captured_at}T12:00:00`).toISOString()
+    : new Date().toISOString();
+
+  return createPatientImage({
+    patient_id: patientId,
+    clinic_id: clinicId,
+    storage_key: storageKey,
+    original_filename: file.name,
+    mime_type: "image/webp",
+    file_size_bytes: compressedFile.size,
+    width,
+    height,
+    phase: metadata.phase,
+    treatment_id: metadata.treatment_id,
+    notes: metadata.notes,
+    captured_at: capturedAt,
+  });
+}
+
 export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   imagesByPatientId: {},
   uploading: false,
   uploadProgress: 0,
+  uploadCurrentFile: 0,
+  uploadTotalFiles: 0,
   uploadError: null,
   deletingId: null,
   deleteError: null,
@@ -89,52 +139,84 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   },
 
   uploadPatientImage: async ({ clinicId, patientId, file, metadata }) => {
-    set({ uploading: true, uploadProgress: 0, uploadError: null });
+    set({
+      uploading: true,
+      uploadProgress: 0,
+      uploadCurrentFile: 1,
+      uploadTotalFiles: 1,
+      uploadError: null,
+    });
 
     try {
-      const compressedFile = await compressTreatmentImage(file);
-      const { width, height } = await getImageDimensions(compressedFile);
-      const imageId = crypto.randomUUID();
-      const storageKey = buildPatientImageKey(
-        clinicId,
-        patientId,
-        imageId,
-        "webp",
-      );
-
-      await uploadPatientImageObject(
-        storageKey,
-        compressedFile,
-        "image/webp",
+      const image = await uploadSinglePatientImage(
+        { clinicId, patientId, file, metadata },
         (progress) => set({ uploadProgress: progress }),
       );
 
-      const capturedAt = metadata.captured_at
-        ? new Date(`${metadata.captured_at}T12:00:00`).toISOString()
-        : new Date().toISOString();
-
-      const image = await createPatientImage({
-        patient_id: patientId,
-        clinic_id: clinicId,
-        storage_key: storageKey,
-        original_filename: file.name,
-        mime_type: "image/webp",
-        file_size_bytes: compressedFile.size,
-        width,
-        height,
-        category: metadata.category,
-        phase: metadata.phase,
-        treatment_id: metadata.treatment_id,
-        notes: metadata.notes,
-        captured_at: capturedAt,
-      });
-
       await get().fetchPatientImages(patientId);
-      set({ uploading: false, uploadProgress: 100 });
+      set({
+        uploading: false,
+        uploadProgress: 100,
+        uploadCurrentFile: 0,
+        uploadTotalFiles: 0,
+      });
       return image;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
-      set({ uploading: false, uploadError: error });
+      set({
+        uploading: false,
+        uploadCurrentFile: 0,
+        uploadTotalFiles: 0,
+        uploadError: error,
+      });
+      throw error;
+    }
+  },
+
+  uploadPatientImages: async ({ clinicId, patientId, files, metadata }) => {
+    const total = files.length;
+    set({
+      uploading: true,
+      uploadProgress: 0,
+      uploadCurrentFile: 1,
+      uploadTotalFiles: total,
+      uploadError: null,
+    });
+
+    try {
+      const images: PatientImage[] = [];
+
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        set({ uploadCurrentFile: index + 1 });
+
+        const image = await uploadSinglePatientImage(
+          { clinicId, patientId, file, metadata },
+          (fileProgress) =>
+            set({
+              uploadProgress: ((index + fileProgress / 100) / total) * 100,
+            }),
+        );
+
+        images.push(image);
+      }
+
+      await get().fetchPatientImages(patientId);
+      set({
+        uploading: false,
+        uploadProgress: 100,
+        uploadCurrentFile: 0,
+        uploadTotalFiles: 0,
+      });
+      return images;
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      set({
+        uploading: false,
+        uploadCurrentFile: 0,
+        uploadTotalFiles: 0,
+        uploadError: error,
+      });
       throw error;
     }
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import { Columns2, Download, Upload } from "lucide-react";
+import { Columns2, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import BeforeAfterComparison from "@/components/patients/components/before-after-comparison";
@@ -10,7 +10,6 @@ import PatientGalleryFiltersSheet from "@/components/patients/components/patient
 import PatientImageViewer from "@/components/patients/components/patient-image-viewer";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
-import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { Separator } from "@/components/ui/separator";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import {
@@ -28,17 +27,12 @@ type PatientGalleryTabProps = {
 function filterImages(
   images: PatientImage[],
   search: string,
-  category: string,
   phase: string,
   sortOrder: string,
 ) {
   const normalizedSearch = search.trim().toLowerCase();
 
   const filtered = images.filter((image) => {
-    if (category && image.category !== category) {
-      return false;
-    }
-
     if (phase && image.phase !== phase) {
       return false;
     }
@@ -72,7 +66,6 @@ export default function PatientGalleryTab({
   onOpenUploader,
 }: PatientGalleryTabProps) {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
   const [phase, setPhase] = useState("");
   const [sortOrder, setSortOrder] = useState("recent");
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -86,18 +79,6 @@ export default function PatientGalleryTab({
 
   const images = useMemo(() => imagesQuery.data ?? [], [imagesQuery.data]);
 
-  const categoryOptions = useMemo(() => {
-    const uniqueCategories = [
-      ...new Set(
-        images
-          .map((image) => image.category)
-          .filter((value): value is string => Boolean(value)),
-      ),
-    ];
-
-    return uniqueCategories.map((entry) => ({ label: entry, value: entry }));
-  }, [images]);
-
   const phaseOptions = [
     { label: PATIENT_GALLERY_COPY.phases.antes, value: "antes" },
     { label: PATIENT_GALLERY_COPY.phases.durante, value: "durante" },
@@ -105,8 +86,8 @@ export default function PatientGalleryTab({
   ];
 
   const filteredImages = useMemo(
-    () => filterImages(images, search, category, phase, sortOrder),
-    [images, search, category, phase, sortOrder],
+    () => filterImages(images, search, phase, sortOrder),
+    [images, search, phase, sortOrder],
   );
 
   const viewerSlides = usePatientImageViewerSlides(filteredImages);
@@ -127,14 +108,6 @@ export default function PatientGalleryTab({
       images.filter((image) => selectedImageIds.includes(image.id)).slice(0, 2),
     [images, selectedImageIds],
   );
-
-  const moreActions = [
-    {
-      label: PATIENT_GALLERY_COPY.actions.export,
-      icon: Download,
-      onClick: () => {},
-    },
-  ];
 
   const handleToggleSelect = (image: PatientImage) => {
     setSelectedImageIds((current) => {
@@ -171,18 +144,12 @@ export default function PatientGalleryTab({
     setSheetOpen(true);
   };
 
-  const handleApplyFilters = (updates: {
-    category: string;
-    phase: string;
-    sort: string;
-  }) => {
-    setCategory(updates.category);
+  const handleApplyFilters = (updates: { phase: string; sort: string }) => {
     setPhase(updates.phase);
     setSortOrder(updates.sort);
   };
 
   const handleClearFilters = () => {
-    setCategory("");
     setPhase("");
     setSortOrder("recent");
   };
@@ -199,23 +166,16 @@ export default function PatientGalleryTab({
               {PATIENT_GALLERY_COPY.photosCount(totalPhotos)}
             </p>
           </div>
-          <ProfileActionsMenu
-            actions={moreActions}
-            ariaLabel={PATIENT_GALLERY_COPY.actions.more}
-          />
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
             <PatientGalleryFilters
               search={search}
-              category={category}
-              categoryOptions={categoryOptions}
               phase={phase}
               phaseOptions={phaseOptions}
               sort={sortOrder}
               onSearchChange={setSearch}
-              onCategoryChange={setCategory}
               onPhaseChange={setPhase}
               onSortChange={setSortOrder}
               onOpenSheet={handleOpenFiltersSheet}
@@ -312,8 +272,7 @@ export default function PatientGalleryTab({
       <PatientGalleryFiltersSheet
         key={sheetKey}
         open={sheetOpen}
-        filters={{ category, phase, sort: sortOrder }}
-        categoryOptions={categoryOptions}
+        filters={{ phase, sort: sortOrder }}
         phaseOptions={phaseOptions}
         onApply={handleApplyFilters}
         onClear={handleClearFilters}

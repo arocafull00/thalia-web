@@ -79,11 +79,11 @@ export default function AppointmentDateRange({
           align="start"
         >
           <div className="flex flex-col gap-3">
-            <label className="flex items-center justify-between gap-2 text-sm text-ink-secondary">
+            <label className="flex flex-col gap-1.5 text-sm text-ink-secondary">
               <span>{APPOINTMENTS_COPY.filters.dateFrom}</span>
               <AppDateField value={from} onChange={onFromChange} />
             </label>
-            <label className="flex items-center justify-between gap-2 text-sm text-ink-secondary">
+            <label className="flex flex-col gap-1.5 text-sm text-ink-secondary">
               <span>{APPOINTMENTS_COPY.filters.dateTo}</span>
               <AppDateField value={to} onChange={onToChange} />
             </label>

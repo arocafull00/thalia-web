@@ -287,7 +287,7 @@ describe("finances-store", () => {
       });
 
       expect(financesDal.insertTransaction).toHaveBeenCalled();
-      expect(financesDal.getTransactions).toHaveBeenCalledTimes(2);
+      expect(financesDal.getTransactions).toHaveBeenCalledTimes(4);
       expect(useFinancesStore.getState().creating).toBe(false);
       expect(useFinancesStore.getState().createError).toBeNull();
     });

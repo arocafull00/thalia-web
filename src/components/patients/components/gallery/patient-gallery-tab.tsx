@@ -103,6 +103,11 @@ export default function PatientGalleryTab({
     [filteredImages, sortOrder],
   );
 
+  const eagerImageIds = useMemo(
+    () => new Set(filteredImages.slice(0, 4).map((image) => image.id)),
+    [filteredImages],
+  );
+
   const totalPhotos = filteredImages.length;
 
   const selectedImages = useMemo(
@@ -246,6 +251,7 @@ export default function PatientGalleryTab({
                   images={group.images}
                   selectionMode={selectionMode}
                   selectedImageIds={selectedImageIds}
+                  eagerImageIds={eagerImageIds}
                   onViewImage={handleOpenViewer}
                   onToggleSelect={handleToggleSelect}
                 />

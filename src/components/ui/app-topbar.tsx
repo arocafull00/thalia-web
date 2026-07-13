@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Plus } from "lucide-react";
+import { Bell, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,6 +14,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
@@ -51,6 +57,19 @@ export default function AppTopbar() {
     menu?.actions.filter(
       (menuAction) => !primaryTitles.has(menuAction.label),
     ) ?? [];
+
+  const allMobileActions = [
+    ...(action ? [action] : []),
+    ...actions,
+    ...secondaryMenuActions.map((a) => ({
+      title: a.label,
+      icon: a.icon,
+      onClick: a.onClick ?? (() => {}),
+      disabled: false,
+      variant: a.variant === "danger" ? ("ghost" as const) : ("ghost" as const),
+    })),
+  ];
+  const hasMobileActions = allMobileActions.length > 0;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border-subtle bg-surface">
@@ -106,36 +125,61 @@ export default function AppTopbar() {
               </span>
             ) : null}
           </Button>
-          {actions.length > 0 || secondaryMenuActions.length > 0 ? (
-            <div className="flex items-center gap-2">
-              {secondaryMenuActions.map((menuAction) => (
-                <TopbarSecondaryAction
-                  key={menuAction.label}
-                  action={menuAction}
-                />
-              ))}
-              {actions.map((topbarAction) => (
-                <ActionButton
-                  key={topbarAction.title}
-                  title={topbarAction.title}
-                  icon={topbarAction.icon}
-                  disabled={topbarAction.disabled}
-                  variant={topbarAction.variant}
-                  onClick={topbarAction.onClick}
-                />
-              ))}
-            </div>
+          {hasMobileActions ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="lg:hidden">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Más acciones"
+                >
+                  <MoreHorizontal size={18} strokeWidth={1.5} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {allMobileActions.map((a) => {
+                  const Icon = a.icon ?? Plus;
+                  return (
+                    <DropdownMenuItem
+                      key={a.title}
+                      onClick={a.onClick}
+                      disabled={a.disabled}
+                    >
+                      <Icon className="size-4 shrink-0" aria-hidden="true" />
+                      {a.title}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : null}
-          {action ? (
-            <span className="hidden lg:contents">
+          <div className="hidden items-center gap-2 lg:flex">
+            {secondaryMenuActions.map((menuAction) => (
+              <TopbarSecondaryAction
+                key={menuAction.label}
+                action={menuAction}
+              />
+            ))}
+            {actions.map((topbarAction) => (
+              <ActionButton
+                key={topbarAction.title}
+                title={topbarAction.title}
+                icon={topbarAction.icon}
+                disabled={topbarAction.disabled}
+                variant={topbarAction.variant}
+                onClick={topbarAction.onClick}
+              />
+            ))}
+            {action ? (
               <ActionButton
                 title={action.title}
                 icon={action.icon ?? Plus}
                 disabled={action.disabled}
                 onClick={action.onClick}
               />
-            </span>
-          ) : null}
+            ) : null}
+          </div>
         </div>
       </div>
     </header>

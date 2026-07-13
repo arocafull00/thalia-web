@@ -19,6 +19,7 @@ type PatientGalleryImageThumbProps = {
   image: PatientImage;
   selectionMode: boolean;
   isSelected: boolean;
+  loading?: "eager" | "lazy";
   onView: () => void;
   onToggleSelect: () => void;
 };
@@ -27,6 +28,7 @@ export default function PatientGalleryImageThumb({
   image,
   selectionMode,
   isSelected,
+  loading = "lazy",
   onView,
   onToggleSelect,
 }: PatientGalleryImageThumbProps) {
@@ -57,6 +59,7 @@ export default function PatientGalleryImageThumb({
               src={imageUrl}
               alt=""
               fill
+              loading={loading}
               unoptimized
               className="object-cover"
             />

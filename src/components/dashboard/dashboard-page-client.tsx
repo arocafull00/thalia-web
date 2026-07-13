@@ -18,7 +18,10 @@ export default function DashboardPageClient() {
   const { data, isLoading, error } = useDashboard();
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const appointments = data?.appointments ?? [];
+  const appointments = useMemo(
+    () => data?.appointments ?? [],
+    [data?.appointments],
+  );
   const agendaAppointments = useMemo(
     () => toAgendaAppointments(appointments),
     [appointments],

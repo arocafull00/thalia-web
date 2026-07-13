@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/dashboard-page-client.tsx": {
-    "mtime": 1783960984.5285823,
-    "ast_hash": "0d95d15a070321673d77348d4197644a",
+    "mtime": 1783962086.394206,
+    "ast_hash": "2128708ee80c122f9316d9e94490c1f6",
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
@@ -2565,8 +2565,8 @@
     "semantic_hash": ""
   },
   "src/lib/logger.ts": {
-    "mtime": 1783961847.6318398,
-    "ast_hash": "9096a49a4aa40fb1c86dfd6e659cd091",
+    "mtime": 1783961980.924816,
+    "ast_hash": "22311ff1fb1d24a9a4a6b7955d94a0d1",
     "semantic_hash": ""
   },
   "src/components/ui/dropdown-menu.tsx": {
@@ -2575,28 +2575,43 @@
     "semantic_hash": ""
   },
   "src/tests/mocks.ts": {
-    "mtime": 1783961799.9500427,
-    "ast_hash": "043abaef47634cf921edfc2e531ed4d3",
+    "mtime": 1783961980.945863,
+    "ast_hash": "79287cad5b1c3780fcd7900df5f686ae",
     "semantic_hash": ""
   },
   "src/tests/setup.ts": {
-    "mtime": 1783961784.0642798,
-    "ast_hash": "d523e5b00ffe1cdb986f4100074e1cbb",
+    "mtime": 1783961980.9518697,
+    "ast_hash": "166a26ce4265ed1175aab3efd38ff02b",
     "semantic_hash": ""
   },
   "src/tests/stores/appointments-store.test.ts": {
-    "mtime": 1783961854.930604,
-    "ast_hash": "08f70ade213d515290a6dec5776f6e0b",
+    "mtime": 1783961981.0148654,
+    "ast_hash": "6583d9029bb0e293c864e3389b346a7d",
     "semantic_hash": ""
   },
   "src/tests/stores/auth-store.test.ts": {
-    "mtime": 1783961832.0033963,
-    "ast_hash": "1541c565f7b5366263d193409a510855",
+    "mtime": 1783961981.049957,
+    "ast_hash": "7c17056e1a06812ed317ed249d8903da",
     "semantic_hash": ""
   },
   "vitest.config.ts": {
-    "mtime": 1783961781.3932514,
-    "ast_hash": "ab9e3dc65fb2c39475d2043f38d9ed22",
+    "mtime": 1783961981.1076798,
+    "ast_hash": "387530a3e28cbb9508be8e692dc8e73b",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/inventory-store.test.ts": {
+    "mtime": 1783961981.07502,
+    "ast_hash": "4f836b4531bf77de75bce56668cad9ef",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/patients-store.test.ts": {
+    "mtime": 1783961981.0991573,
+    "ast_hash": "b908408f5f05efaedf094829291e1e49",
+    "semantic_hash": ""
+  },
+  "src/components/ui/profile/profile-actions-menu.tsx": {
+    "mtime": 1783962040.9874158,
+    "ast_hash": "9802f1e0425e7cffcb9c305e378896cd",
     "semantic_hash": ""
   }
 }

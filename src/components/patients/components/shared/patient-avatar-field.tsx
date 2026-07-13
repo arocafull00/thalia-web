@@ -48,16 +48,16 @@ export default function PatientAvatarField({
         onClick={() => fileInputRef.current?.click()}
         className="relative size-20 shrink-0 overflow-visible rounded-full p-0"
       >
-        <span className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 ring-offset-canvas">
+        <span className="relative flex size-20 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 ring-offset-canvas">
           {displayUri ? (
             <Image
               src={displayUri}
               alt=""
-              width={80}
-              height={80}
+              fill
+              sizes="80px"
               priority
               unoptimized
-              className="size-full object-cover"
+              className="object-cover"
             />
           ) : (
             <span className="text-xl font-semibold">{initials}</span>

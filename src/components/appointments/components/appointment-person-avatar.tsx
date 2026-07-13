@@ -36,17 +36,17 @@ export default function AppointmentPersonAvatar({
 
   return (
     <div
-      className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ${fallbackClassName}`}
+      className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ${fallbackClassName}`}
       style={!resolvedAvatarUrl ? fallbackStyle : undefined}
     >
       {resolvedAvatarUrl ? (
         <Image
           src={resolvedAvatarUrl}
           alt=""
-          width={48}
-          height={48}
+          fill
+          sizes="48px"
           unoptimized
-          className="h-full w-full object-cover"
+          className="object-cover"
         />
       ) : (
         <span className="text-sm font-medium">{getInitials(name)}</span>

@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "app/manifest.ts": {
-    "mtime": 1783962838.0507193,
-    "ast_hash": "06643e5b436e8e2aea4f3dba89b032b7",
+    "mtime": 1783963015.77961,
+    "ast_hash": "8ac095a998c9e548f0c3c2d7eaf17b19",
     "semantic_hash": ""
   },
   "app/page.tsx": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register-employee/components/register-employee-sidebar.tsx": {
-    "mtime": 1783962916.5256371,
-    "ast_hash": "22768127fda9b0b1fa56cee293f4f6aa",
+    "mtime": 1783963015.854778,
+    "ast_hash": "035c7a12c271a76828a8183c237aed09",
     "semantic_hash": ""
   },
   "src/components/auth/register-employee/hooks/use-register-employee.ts": {
@@ -485,8 +485,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-sidebar.tsx": {
-    "mtime": 1783962916.4115198,
-    "ast_hash": "f36e89e5c4cef30d4e194dfe8b0eafbc",
+    "mtime": 1783963015.8960266,
+    "ast_hash": "d1c1863d8d20b923d2b61f4e25a7cf02",
     "semantic_hash": ""
   },
   "src/components/ui/button.tsx": {
@@ -1170,8 +1170,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-person-avatar.tsx": {
-    "mtime": 1783098817.835918,
-    "ast_hash": "33c38a6f506375ab7f78340a3f85a6e1",
+    "mtime": 1783963089.9017494,
+    "ast_hash": "3d7753d676c916f270f53303482cf6f1",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-status-badge.tsx": {
@@ -2355,8 +2355,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/shared/patient-avatar-field.tsx": {
-    "mtime": 1783961032.3927019,
-    "ast_hash": "76e3a5ee4a8aeb41b94a1f9371575dab",
+    "mtime": 1783963088.816108,
+    "ast_hash": "07a28637196830529a6cb7e40fe33bf2",
     "semantic_hash": ""
   },
   "src/components/patients/components/tabs/patient-appointment-row.tsx": {
@@ -2607,6 +2607,11 @@
   "public/icon.png": {
     "mtime": 1782644579.019197,
     "ast_hash": "1e01e7b3321fe5d7383c5d85f2cbfe47",
+    "semantic_hash": ""
+  },
+  "src/tests/stores/treatment-store.test.ts": {
+    "mtime": 1783963023.1235998,
+    "ast_hash": "355312c9306856af1308e9c5a3d15296",
     "semantic_hash": ""
   }
 }

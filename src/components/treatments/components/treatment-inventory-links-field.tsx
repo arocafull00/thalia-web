@@ -53,17 +53,16 @@ export default function TreatmentInventoryLinksField({
             <TableHead className="px-4 pb-3 pt-1">
               {TREATMENTS_COPY.form.material}
             </TableHead>
-            <TableHead className="w-[120px] px-4 pb-3 pt-1">
+            <TableHead className="w-[160px] px-4 pb-3 pt-1">
               {TREATMENTS_COPY.form.quantity}
             </TableHead>
-            <TableHead className="w-12 px-4 pb-3 pt-1" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {fields.length === 0 ? (
             <TableRow className="hover:bg-transparent">
               <TableCell
-                colSpan={3}
+                colSpan={2}
                 className="py-6 text-center text-ink-secondary"
               >
                 {TREATMENTS_COPY.row.noMaterials}

@@ -2,21 +2,12 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
-import TreatmentRowActions from "@/components/treatments/components/treatment-row-actions";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import SortableTableHead from "@/components/ui/sortable-table-head";
 import { formatCurrency } from "@/lib/format";
 import type { TreatmentWithInventory } from "@/types/database.types";
 
-type GetTreatmentsColumnsParams = {
-  onEdit: (treatment: TreatmentWithInventory) => void;
-  onDelete: (treatment: TreatmentWithInventory) => void;
-};
-
-export function getTreatmentsColumns({
-  onEdit,
-  onDelete,
-}: GetTreatmentsColumnsParams): ColumnDef<TreatmentWithInventory>[] {
+export function getTreatmentsColumns(): ColumnDef<TreatmentWithInventory>[] {
   return [
     {
       accessorKey: "name",
@@ -97,17 +88,6 @@ export function getTreatmentsColumns({
           </span>
         );
       },
-    },
-    {
-      id: "actions",
-      header: () => null,
-      cell: ({ row }) => (
-        <TreatmentRowActions
-          treatment={row.original}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ),
     },
   ];
 }

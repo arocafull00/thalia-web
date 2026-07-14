@@ -17,13 +17,9 @@ type PatientSummaryTabProps = {
   appointments: AppointmentWithRelations[];
   isLoading: boolean;
   error: Error | null | undefined;
-  onEditNotes: () => void;
 };
 
-export default function PatientSummaryTab({
-  patient,
-  onEditNotes,
-}: PatientSummaryTabProps) {
+export default function PatientSummaryTab({ patient }: PatientSummaryTabProps) {
   const appointmentsQuery = usePatientAppointments(patient.id);
   const upcomingQuery = useUpcomingPatientAppointments(patient.id);
 
@@ -48,7 +44,7 @@ export default function PatientSummaryTab({
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <PatientDetailStatsRow stats={stats} />
 
-      <PatientClinicalNotesPanel patient={patient} onEditNotes={onEditNotes} />
+      <PatientClinicalNotesPanel patient={patient} />
     </div>
   );
 }

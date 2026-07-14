@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ActionButton } from "@/components/ui/primitives/action-button";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
@@ -18,7 +17,6 @@ type SettingsProfilePanelProps = {
 
 export default function SettingsProfilePanel({
   uploadingAvatar,
-  onEdit,
   onPickAvatar,
 }: SettingsProfilePanelProps) {
   const { profile } = useAuth();
@@ -67,7 +65,6 @@ export default function SettingsProfilePanel({
         ) : null}
         <Badge variant="muted">Suscripción Pro</Badge>
       </div>
-      <ActionButton title="Editar perfil" variant="ghost" onClick={onEdit} />
     </div>
   );
 }

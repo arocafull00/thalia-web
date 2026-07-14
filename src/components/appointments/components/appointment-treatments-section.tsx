@@ -35,6 +35,7 @@ export default function AppointmentTreatmentsSection({
             {treatments.map((entry) => (
               <AppointmentDetailTreatmentItem
                 key={entry.id}
+                treatmentId={entry.treatment_id}
                 name={entry.treatment?.name ?? "Tratamiento"}
                 color={entry.treatment?.color ?? null}
                 priceAtBooking={entry.price_at_booking}

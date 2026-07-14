@@ -1,9 +1,7 @@
 "use client";
 
 import PatientAvatarField from "@/components/patients/components/shared/patient-avatar-field";
-import { ActionButton } from "@/components/ui/primitives/action-button";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
-import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
 import type { Employee } from "@/types/database.types";
 
@@ -13,7 +11,6 @@ type SettingsDetailHeaderProps = {
   avatarDisplayUri: string | null;
   avatarUploadPending: boolean;
   onAvatarFileSelected: (file: File) => void;
-  onEdit: () => void;
 };
 
 export default function SettingsDetailHeader({
@@ -22,7 +19,6 @@ export default function SettingsDetailHeader({
   avatarDisplayUri,
   avatarUploadPending,
   onAvatarFileSelected,
-  onEdit,
 }: SettingsDetailHeaderProps) {
   const initials = getProfileInitials(profile.full_name);
   const subtitleParts = [
@@ -51,13 +47,6 @@ export default function SettingsDetailHeader({
             </p>
           ) : null}
         </div>
-      </div>
-
-      <div className="hidden shrink-0 items-center gap-2 lg:flex">
-        <ActionButton
-          title={SETTINGS_COPY.profile.editProfile}
-          onClick={onEdit}
-        />
       </div>
     </div>
   );

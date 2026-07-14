@@ -8,13 +8,13 @@ import { SETTINGS_COPY } from "@/copy/settings-copy";
 const MANAGEMENT_LINKS = [
   {
     description: SETTINGS_COPY.management.teamDescription,
-    href: "/settings/team",
+    href: "/employees",
     icon: Users,
     title: SETTINGS_COPY.management.team,
   },
   {
     description: SETTINGS_COPY.management.staffDescription,
-    href: "/settings/staff",
+    href: "/employees",
     icon: User,
     title: SETTINGS_COPY.management.staff,
   },

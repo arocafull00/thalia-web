@@ -1,8 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import TreatmentDeleteConfirmDialog from "@/components/treatments/components/treatment-delete-confirm-dialog";
 import TreatmentDialog from "@/components/treatments/components/treatment-dialog";
 import TreatmentsFilters from "@/components/treatments/components/treatments-filters";
 import TreatmentsFiltersSheet from "@/components/treatments/components/treatments-filters-sheet";
@@ -21,6 +21,7 @@ import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 const TREATMENT_FILTER_DEFAULTS = { category: "", q: "" };
 
 export default function TreatmentsPageClient() {
+  const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { filters, setFilter, setFilters } = useUrlFilters(
@@ -85,8 +86,7 @@ export default function TreatmentsPageClient() {
           {!treatments.isLoading && !treatments.error ? (
             <TreatmentsTable
               treatments={filteredTreatments}
-              onEdit={page.openEditDialog}
-              onDelete={page.openDeleteDialog}
+              onRowClick={(id) => router.push(`/treatments/${id}`)}
             />
           ) : null}
         </div>
@@ -100,19 +100,6 @@ export default function TreatmentsPageClient() {
           }
         }}
       />
-
-      {page.treatmentToDelete ? (
-        <TreatmentDeleteConfirmDialog
-          treatment={page.treatmentToDelete}
-          open={page.deleteDialogOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              page.closeDeleteDialog();
-            }
-          }}
-          onSuccess={page.closeDeleteDialog}
-        />
-      ) : null}
       {showCategoryFilter ? (
         <TreatmentsFiltersSheet
           key={sheetKey}

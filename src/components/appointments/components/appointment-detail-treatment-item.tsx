@@ -1,6 +1,9 @@
+import Link from "next/link";
+
 import { formatCurrency } from "@/lib/format";
 
 type AppointmentDetailTreatmentItemProps = {
+  treatmentId: string | null;
   name: string;
   color: string | null;
   priceAtBooking: number;
@@ -8,13 +11,14 @@ type AppointmentDetailTreatmentItemProps = {
 };
 
 export default function AppointmentDetailTreatmentItem({
+  treatmentId,
   name,
   color,
   priceAtBooking,
   durationMinutes,
 }: AppointmentDetailTreatmentItemProps) {
-  return (
-    <div className="flex items-center justify-between gap-4 border-b border-border-subtle py-3 last:border-b-0">
+  const content = (
+    <>
       <div className="flex min-w-0 items-center gap-3">
         <span
           className={`h-3 w-3 shrink-0 rounded-full ${color ? "" : "bg-border"}`}
@@ -29,6 +33,23 @@ export default function AppointmentDetailTreatmentItem({
           {formatCurrency(priceAtBooking)}
         </span>
       </div>
-    </div>
+    </>
+  );
+
+  if (!treatmentId) {
+    return (
+      <div className="flex items-center justify-between gap-4 border-b border-border-subtle py-3 last:border-b-0">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={`/treatments/${treatmentId}`}
+      className="flex items-center justify-between gap-4 border-b border-border-subtle py-3 transition-colors last:border-b-0 hover:bg-(--hover-overlay)"
+    >
+      {content}
+    </Link>
   );
 }

@@ -142,7 +142,6 @@ export default function PatientDetailPageClient({
             appointments={appointments}
             isLoading={appointmentsQuery.isLoading}
             error={appointmentsQuery.error}
-            onEditNotes={() => setEditDialogOpen(true)}
             onOpenUploader={() => setUploaderOpen(true)}
             onOpenFilesUploader={() => setFilesUploaderOpen(true)}
           />

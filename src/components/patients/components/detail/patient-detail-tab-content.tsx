@@ -14,7 +14,6 @@ type PatientDetailTabContentProps = {
   appointments: AppointmentWithRelations[];
   isLoading: boolean;
   error: Error | null | undefined;
-  onEditNotes: () => void;
   onOpenUploader: () => void;
   onOpenFilesUploader: () => void;
 };
@@ -25,7 +24,6 @@ export default function PatientDetailTabContent({
   appointments,
   isLoading,
   error,
-  onEditNotes,
   onOpenUploader,
   onOpenFilesUploader,
 }: PatientDetailTabContentProps) {
@@ -36,7 +34,6 @@ export default function PatientDetailTabContent({
         appointments={appointments}
         isLoading={isLoading}
         error={error}
-        onEditNotes={onEditNotes}
       />
     );
   }

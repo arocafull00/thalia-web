@@ -63,7 +63,8 @@ export function useAppointmentMaterials(
     : defaultMaterials;
 
   const isLoading =
-    isInitialLoading(inventoryEntry) || isInitialLoading(defaultsEntry);
+    isInitialLoading(inventoryEntry) ||
+    (treatmentIds.length > 0 && isInitialLoading(defaultsEntry));
   const error = inventoryEntry?.error ?? defaultsEntry?.error ?? null;
 
   return {

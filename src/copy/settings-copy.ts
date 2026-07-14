@@ -6,7 +6,6 @@ export const SETTINGS_COPY = {
   tabs: {
     summary: "Resumen",
     account: "Cuenta",
-    management: "Gestión",
     app: "Aplicación",
   },
   actions: {

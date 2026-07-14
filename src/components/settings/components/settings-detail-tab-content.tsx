@@ -1,6 +1,5 @@
 import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
 import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
-import SettingsManagementPanel from "@/components/settings/components/settings-management-panel";
 import SettingsProfileSummary from "@/components/settings/components/settings-profile-summary";
 import type { SettingsTabId } from "@/lib/hooks/use-settings-tabs";
 
@@ -50,10 +49,6 @@ export default function SettingsDetailTabContent({
         signOutSubmitting={signOutSubmitting}
       />
     );
-  }
-
-  if (activeTab === "management") {
-    return <SettingsManagementPanel />;
   }
 
   return <PwaInstallPanel />;

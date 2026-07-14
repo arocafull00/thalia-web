@@ -72,7 +72,6 @@ export default function SettingsPageClient() {
       <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
         <SettingsDetailTabBar
           activeTab={activeTab}
-          isAdmin={isAdmin}
           onTabChange={setActiveTab}
         />
         <div role="tabpanel">

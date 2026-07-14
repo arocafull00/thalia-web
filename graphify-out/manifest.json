@@ -120,8 +120,8 @@
     "semantic_hash": ""
   },
   "proxy.ts": {
-    "mtime": 1783846581.0836384,
-    "ast_hash": "058455deb62fdf4652b3adead69d01ff",
+    "mtime": 1784040334.9679487,
+    "ast_hash": "35695be6a86912409937863b18a6e89d",
     "semantic_hash": ""
   },
   "public/sw.js": {
@@ -190,8 +190,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/login/components/login-hero-panel.tsx": {
-    "mtime": 1784039208.0419703,
-    "ast_hash": "7211a1e293625167e0685597413b4c18",
+    "mtime": 1784039415.23792,
+    "ast_hash": "53a616bf6c5dd245db76ab7de2f1d981",
     "semantic_hash": ""
   },
   "src/components/auth/login/hooks/use-login.ts": {
@@ -220,8 +220,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register-employee/page.client.tsx": {
-    "mtime": 1784039222.126511,
-    "ast_hash": "fbd02743d39f0e7a717bd21d0a322872",
+    "mtime": 1784039415.2995868,
+    "ast_hash": "06be3269b982bf17298dec8a81e9d859",
     "semantic_hash": ""
   },
   "src/components/calendar/calendar-employee-filter.tsx": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "src/lib/auth/sign-in-with-google-flow.ts": {
-    "mtime": 1782338465.2944665,
-    "ast_hash": "6404e75611a498cc0cdc53e8f5362df8",
+    "mtime": 1784040334.5125885,
+    "ast_hash": "a883fd97564c1b83c26741e3f8a92cbd",
     "semantic_hash": ""
   },
   "src/lib/auth/wait-for-auth-session.ts": {
@@ -960,8 +960,8 @@
     "semantic_hash": ""
   },
   "src/stores/auth-store.ts": {
-    "mtime": 1784038708.0881686,
-    "ast_hash": "8bd71c6f5ea836ceb92f528e87c7672d",
+    "mtime": 1784040331.5357647,
+    "ast_hash": "fa4c09c85d26a5d43ff50f5061eb6da8",
     "semantic_hash": ""
   },
   "src/stores/calendar-store.ts": {
@@ -1520,8 +1520,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register/components/register-type-picker.tsx": {
-    "mtime": 1784039222.126511,
-    "ast_hash": "377c471030fe2d567b8f951464e76b16",
+    "mtime": 1784039283.750117,
+    "ast_hash": "d59f8220dc98e8023db96ac021243a40",
     "semantic_hash": ""
   },
   "src/components/auth/register/page.client.tsx": {
@@ -2747,6 +2747,11 @@
   "src/components/patients/components/files/patient-file-pdf-viewer-content.tsx": {
     "mtime": 1783966007.4299154,
     "ast_hash": "fd104f7ddc5804e9a847c5d68aeac8fd",
+    "semantic_hash": ""
+  },
+  "app/(auth)/callback/route.ts": {
+    "mtime": 1784040012.9288528,
+    "ast_hash": "7a35a7eabaca7af7eb867e0778b2fbf0",
     "semantic_hash": ""
   }
 }

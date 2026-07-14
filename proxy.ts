@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession, withSessionCookies } from "@/lib/supabase/proxy";
 
 const publicRoutes = [
+  "/callback",
   "/login",
   "/register",
   "/register-employee",

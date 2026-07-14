@@ -160,14 +160,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signInWithGoogle: async () => {
     assertSupabaseConfigured();
 
-    const origin =
-      typeof globalThis.location !== "undefined"
-        ? globalThis.location.origin
-        : "";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${origin}/dashboard`,
+        redirectTo: `${window.location.origin}/callback?next=/dashboard`,
       },
     });
 

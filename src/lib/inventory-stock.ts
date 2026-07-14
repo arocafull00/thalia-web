@@ -1,11 +1,14 @@
 export type InventoryStockLevel = "critical" | "low" | "optimal";
 
-export function getInventoryStockLevel(stock: number, minStock: number): InventoryStockLevel {
-  if (stock <= minStock * 0.5) {
+export function getInventoryStockLevel(
+  stock: number,
+  minStock: number,
+): InventoryStockLevel {
+  if (stock <= 0) {
     return "critical";
   }
 
-  if (stock <= minStock * 1.2) {
+  if (stock - minStock < 10) {
     return "low";
   }
 
@@ -14,11 +17,11 @@ export function getInventoryStockLevel(stock: number, minStock: number): Invento
 
 export function inventoryStockLevelLabel(level: InventoryStockLevel) {
   if (level === "critical") {
-    return "Stock Crítico";
+    return "Crítico";
   }
 
   if (level === "low") {
-    return "Stock Bajo";
+    return "Bajo";
   }
 
   return "Óptimo";
@@ -29,7 +32,10 @@ export function inventoryStockSummaryCounts(
 ) {
   return items.reduce(
     (counts, item) => {
-      const level = getInventoryStockLevel(Number(item.stock ?? 0), Number(item.min_stock ?? 0));
+      const level = getInventoryStockLevel(
+        Number(item.stock ?? 0),
+        Number(item.min_stock ?? 0),
+      );
 
       if (level === "critical") {
         counts.critical += 1;

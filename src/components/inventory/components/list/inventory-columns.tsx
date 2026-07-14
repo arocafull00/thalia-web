@@ -80,15 +80,16 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
       const minStock = Number(row.original.min_stock ?? 0);
       const level = getInventoryStockLevel(stock, minStock);
 
+      const badgeClass =
+        level === "critical"
+          ? "bg-danger/10 text-danger"
+          : level === "low"
+            ? "bg-warning/10 text-warning"
+            : "bg-success/10 text-success";
+
       return (
         <span
-          className={`text-xs uppercase tracking-wide ${
-            level === "critical"
-              ? "text-danger"
-              : level === "low"
-                ? "text-warning"
-                : "text-success"
-          }`}
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeClass}`}
         >
           {inventoryStockLevelLabel(level)}
         </span>

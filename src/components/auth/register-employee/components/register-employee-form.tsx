@@ -171,6 +171,7 @@ export default function RegisterEmployeeForm({
           <Button
             type="button"
             variant="outline"
+            disabled={authDisabled}
             onClick={onSignOut}
             className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
           >

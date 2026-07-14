@@ -34,13 +34,14 @@ export default function RegisterTypePicker({
         <div className="space-y-3">
           <Button
             type="button"
+            variant="outline"
             onClick={onPickOwner}
-            className="flex w-full items-start gap-4 rounded-2xl border border-border bg-surface p-5 text-left hover:border-primary hover:bg-primary-subtle"
+            className="h-auto w-full items-start justify-start gap-4 whitespace-normal rounded-2xl p-5 text-left hover:border-primary hover:bg-primary-subtle"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-primary">
               <Building2 size={20} />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="font-medium text-ink">
                 {REGISTER_COPY.owner.title}
               </p>
@@ -51,13 +52,14 @@ export default function RegisterTypePicker({
           </Button>
           <Button
             type="button"
+            variant="outline"
             onClick={onPickEmployee}
-            className="flex w-full items-start gap-4 rounded-2xl border border-border bg-surface p-5 text-left hover:border-primary hover:bg-primary-subtle"
+            className="h-auto w-full items-start justify-start gap-4 whitespace-normal rounded-2xl p-5 text-left hover:border-primary hover:bg-primary-subtle"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-primary">
               <UserCheck size={20} />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="font-medium text-ink">
                 {REGISTER_COPY.employee.title}
               </p>
@@ -70,8 +72,9 @@ export default function RegisterTypePicker({
         <div className="flex justify-center">
           <Button
             type="button"
+            variant="outline"
             onClick={onSignOut}
-            className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide text-ink-secondary hover:bg-surface"
+            className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
           >
             <LogOut size={14} />
             Salir

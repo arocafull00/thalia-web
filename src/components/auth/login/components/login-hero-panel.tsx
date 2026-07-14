@@ -1,8 +1,6 @@
 import LoginHeroIllustration from "@/components/auth/login/components/login-hero-illustration";
 import { LOGIN_COPY } from "@/copy/login-copy";
 
-const HERO_INDICATORS = [0, 1, 2, 3];
-
 export default function LoginHeroPanel() {
   return (
     <section className="relative hidden min-h-screen flex-1 flex-col overflow-hidden bg-primary lg:flex">
@@ -22,14 +20,6 @@ export default function LoginHeroPanel() {
         <p className="mx-auto max-w-lg text-sm text-on-primary/80">
           {LOGIN_COPY.hero.body}
         </p>
-        <div className="flex justify-center gap-2 pt-2">
-          {HERO_INDICATORS.map((index) => (
-            <span
-              key={index}
-              className={`h-1 rounded-full ${index === 0 ? "w-8 bg-on-primary" : "w-4 bg-on-primary/40"}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );

@@ -68,6 +68,7 @@ const eslintConfig = defineConfig([
       "src/components/ui/select.tsx",
       "src/components/ui/calendar.tsx",
       "src/components/ui/dropzone.tsx",
+      "src/components/ui/dropzone.tsx",
       "src/components/ui/*"
     ],
     rules: {

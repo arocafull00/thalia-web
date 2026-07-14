@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/settings-page-client.tsx": {
-    "mtime": 1784041944.9975328,
-    "ast_hash": "ca548a86ebde4a845d82cf865bd97ac0",
+    "mtime": 1784042403.3083785,
+    "ast_hash": "af68087e1ba99e0b459ceda3ae517eaa",
     "semantic_hash": ""
   },
   "src/components/settings/settings-profile-panel.tsx": {
@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/sidebar-profile-footer.tsx": {
-    "mtime": 1784038708.0881686,
-    "ast_hash": "692e57e7dce32e9bc2a6726d9023f5ad",
+    "mtime": 1784042687.017559,
+    "ast_hash": "cfee18754055807d7dfc46ae9eaed022",
     "semantic_hash": ""
   },
   "src/components/ui/sortable-table-head.tsx": {
@@ -640,13 +640,13 @@
     "semantic_hash": ""
   },
   "src/copy/settings-copy.ts": {
-    "mtime": 1783878872.424675,
-    "ast_hash": "cb6009f371d67b2aaffd3c41ac8462db",
+    "mtime": 1784042410.3204684,
+    "ast_hash": "9f8d2e7962939a1c23ddfe1edb7c61eb",
     "semantic_hash": ""
   },
   "src/copy/sidebar-copy.ts": {
-    "mtime": 1784038708.10869,
-    "ast_hash": "197300904963dc0b9b5b9aa8902d63a3",
+    "mtime": 1784042684.277282,
+    "ast_hash": "4275b8a11554fcab8792133c1f0e04ec",
     "semantic_hash": ""
   },
   "src/copy/transaction-create-copy.ts": {
@@ -2055,8 +2055,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-tab-bar.tsx": {
-    "mtime": 1783878915.2941842,
-    "ast_hash": "d4e911f0132d211bd15c0c32769ef647",
+    "mtime": 1784042384.6788065,
+    "ast_hash": "9fb9a5cd911241cc714bb3d7f51dcb11",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-tab-button.tsx": {
@@ -2065,8 +2065,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-tab-content.tsx": {
-    "mtime": 1783878915.3182719,
-    "ast_hash": "2509d7289164b01e412d91304a15ab79",
+    "mtime": 1784042396.5208735,
+    "ast_hash": "45eafde2d94f0bc9ab1dcc4f4b45837f",
     "semantic_hash": ""
   },
   "src/components/settings/settings-detail-actions.ts": {
@@ -2075,8 +2075,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-settings-tabs.ts": {
-    "mtime": 1783878915.4047277,
-    "ast_hash": "8af78f046126e6cf2bebbad0b8c9a738",
+    "mtime": 1784042370.8024147,
+    "ast_hash": "f6ff7e793c5a3c0d62277f46024ec63b",
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-actions.ts": {
@@ -2807,6 +2807,11 @@
   "src/lib/hooks/use-treatment-detail.ts": {
     "mtime": 1784041945.133901,
     "ast_hash": "7d2315054911aa993e75eea9b9a329c3",
+    "semantic_hash": ""
+  },
+  "src/components/ui/sidebar-sign-out-confirm-dialog.tsx": {
+    "mtime": 1784042685.4606776,
+    "ast_hash": "8d1a0dfcfe09c46687583bf955cc5670",
     "semantic_hash": ""
   }
 }

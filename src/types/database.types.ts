@@ -28,6 +28,7 @@ export type InventoryAlert = {
   item_name: string;
   stock: number;
   min_stock: number;
+  read_at: string | null;
   resolved_at: string | null;
   created_at: string | null;
 };

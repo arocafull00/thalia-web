@@ -33,6 +33,7 @@ import { FINANCES_COPY } from "@/copy/finances-copy";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
+import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useTopbarActionStore } from "@/stores/topbar-action-store";
 
@@ -53,8 +54,8 @@ export default function AppTopbar() {
   const breadcrumb = useTopbarActionStore((state) => state.breadcrumb);
   const actions = useTopbarActionStore((state) => state.actions);
   const menu = useTopbarActionStore((state) => state.menu);
-  const alerts = useInventoryAlertsStore((state) => state.alerts);
-  const notificationCount = alerts.data?.length ?? 0;
+  const unreadCount = useInventoryAlertsStore((state) => state.unreadCount);
+  const markAsRead = useInventoryAlertsStore((state) => state.markAsRead);
   const title = PAGE_TITLES_BY_ROUTE[pathname];
   const primaryTitles = new Set(
     actions.map((topbarAction) => topbarAction.title),
@@ -127,12 +128,16 @@ export default function AppTopbar() {
               size="icon"
               aria-label="Notificaciones"
               className="relative size-9 text-ink-secondary hover:text-ink"
-              onClick={() => setNotificationsOpen(true)}
+              onClick={() => {
+                setNotificationsOpen(true);
+                const clinicId = getActiveClinicId();
+                if (clinicId) void markAsRead(clinicId);
+              }}
             >
               <Bell size={20} strokeWidth={1.75} />
-              {notificationCount > 0 ? (
-                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
-                  {notificationCount > 99 ? "99+" : notificationCount}
+              {unreadCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-danger px-0.5 text-[9px] font-semibold text-white">
+                  {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               ) : null}
             </Button>

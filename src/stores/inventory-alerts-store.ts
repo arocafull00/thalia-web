@@ -2,7 +2,10 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 import { toast } from "react-toastify";
 import { create } from "zustand";
 
-import { getInventoryAlerts } from "@/dal/inventory-alerts.dal";
+import {
+  getInventoryAlerts,
+  markInventoryAlertsAsRead,
+} from "@/dal/inventory-alerts.dal";
 import { logger } from "@/lib/logger";
 import { supabase } from "@/lib/supabase";
 import {
@@ -16,7 +19,9 @@ import type { InventoryAlert } from "@/types/database.types";
 
 type InventoryAlertsStore = {
   alerts: QueryEntry<InventoryAlert[]>;
+  unreadCount: number;
   fetchAlerts: (clinicId: string) => Promise<void>;
+  markAsRead: (clinicId: string) => Promise<void>;
   subscribeRealtime: (clinicId: string) => void;
   unsubscribeRealtime: () => void;
 };
@@ -27,13 +32,15 @@ let inventoryAlertsSubscribers = 0;
 export const useInventoryAlertsStore = create<InventoryAlertsStore>(
   (set, get) => ({
     alerts: emptyQueryEntry(),
+    unreadCount: 0,
 
     fetchAlerts: async (clinicId) => {
       set({ alerts: loadingQueryEntry(get().alerts) });
 
       try {
         const alerts = await getInventoryAlerts(clinicId);
-        set({ alerts: successQueryEntry(alerts) });
+        const unreadCount = alerts.filter((a) => !a.read_at).length;
+        set({ alerts: successQueryEntry(alerts), unreadCount });
       } catch (cause) {
         logger.captureException(cause, {
           store: "inventory-alerts-store",
@@ -85,6 +92,28 @@ export const useInventoryAlertsStore = create<InventoryAlertsStore>(
           },
         )
         .subscribe();
+    },
+
+    markAsRead: async (clinicId) => {
+      set({ unreadCount: 0 });
+      try {
+        await markInventoryAlertsAsRead(clinicId);
+        const alerts = get().alerts.data;
+        if (alerts) {
+          const now = new Date().toISOString();
+          set({
+            alerts: successQueryEntry(
+              alerts.map((a) => (a.read_at ? a : { ...a, read_at: now })),
+            ),
+          });
+        }
+      } catch (cause) {
+        logger.captureException(cause, {
+          store: "inventory-alerts-store",
+          action: "markAsRead",
+          clinicId,
+        });
+      }
     },
 
     unsubscribeRealtime: () => {

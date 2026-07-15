@@ -16,16 +16,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
-      setLoading(false);
 
       if (!data.session?.user.id) {
         useClinicStore.getState().clearClinicState();
         useAuthStore.setState({ profile: null });
+        setLoading(false);
         return;
       }
 
       await useClinicStore.getState().fetchMemberships(data.session.user.id);
       await refreshProfile();
+      setLoading(false);
     });
 
     const {

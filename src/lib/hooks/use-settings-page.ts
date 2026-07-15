@@ -72,7 +72,7 @@ export function useSettingsPageActions() {
         ? globalThis.location.origin
         : "";
     const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-      redirectTo: `${origin}/login`,
+      redirectTo: `${origin}/callback?next=/reset-password`,
     });
 
     setPasswordSubmitting(false);

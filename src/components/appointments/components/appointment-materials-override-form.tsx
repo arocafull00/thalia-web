@@ -2,6 +2,7 @@ import { Plus, Trash2 } from "lucide-react";
 import {
   Controller,
   useFieldArray,
+  useWatch,
   type Control,
   type FieldErrors,
 } from "react-hook-form";
@@ -14,6 +15,13 @@ import { useInventoryItems } from "@/lib/hooks/use-inventory";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+
+function hasInsufficientStock(
+  stock: number | null | undefined,
+  quantity: unknown,
+) {
+  return (stock ?? 0) < Number(quantity ?? 0);
+}
 
 type AppointmentMaterialsOverrideFormProps = {
   control: Control<AppointmentMaterialsFormValues>;
@@ -29,6 +37,7 @@ export default function AppointmentMaterialsOverrideForm({
     control,
     name: "items",
   });
+  const items = useWatch({ control, name: "items" }) ?? [];
 
   const inventoryOptions = (inventory.data ?? []).map((item) => ({
     value: item.id,
@@ -111,6 +120,16 @@ export default function AppointmentMaterialsOverrideForm({
                 {errors.items?.[index]?.quantity ? (
                   <span className="text-sm text-danger">
                     {errors.items[index]?.quantity?.message}
+                  </span>
+                ) : null}
+                {hasInsufficientStock(
+                  (inventory.data ?? []).find(
+                    (item) => item.id === items[index]?.inventory_item_id,
+                  )?.stock,
+                  items[index]?.quantity,
+                ) ? (
+                  <span className="text-sm text-danger">
+                    Stock insuficiente
                   </span>
                 ) : null}
               </label>

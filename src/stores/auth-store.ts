@@ -10,6 +10,7 @@ import { captureEvent } from "@/lib/analytics";
 import { logger } from "@/lib/logger";
 import { uploadFile } from "@/lib/storage";
 import { assertSupabaseConfigured, supabase } from "@/lib/supabase";
+import { useClinicStore } from "@/stores/clinic-store";
 import { useEmployeesStore } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
 
@@ -179,6 +180,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       throw error;
     }
 
+    useClinicStore.getState().clearClinicState();
+    set({ session: null, profile: null, loading: false });
     captureEvent("logout");
   },
 }));

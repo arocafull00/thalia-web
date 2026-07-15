@@ -88,6 +88,15 @@ export function useCreateInventoryItem() {
   return { mutate, isPending, error };
 }
 
+export function useUpdateInventoryItem() {
+  const updateInventoryItem = useInventoryStore(
+    (state) => state.updateInventoryItem,
+  );
+  const isPending = useInventoryStore((state) => state.updating);
+
+  return { updateInventoryItem, isPending };
+}
+
 export function useRecordInventoryMovement() {
   const recordInventoryMovement = useInventoryStore(
     (state) => state.recordInventoryMovement,

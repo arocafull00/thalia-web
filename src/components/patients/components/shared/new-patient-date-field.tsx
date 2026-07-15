@@ -11,5 +11,12 @@ export default function NewPatientDateField({
   value,
   onChange,
 }: NewPatientDateFieldProps) {
-  return <AppDateField value={value ?? new Date()} onChange={onChange} />;
+  return (
+    <AppDateField
+      value={value}
+      onChange={onChange}
+      minDate={new Date(1900, 0, 1)}
+      maxDate={new Date()}
+    />
+  );
 }

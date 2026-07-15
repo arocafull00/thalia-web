@@ -13,6 +13,7 @@ export const REGISTER_COPY = {
     title: "Accede con tu invitación",
     subtitle: "Introduce el correo con el que recibiste la invitación.",
     emailLabel: "Email",
+    emailPlaceholder: "correo@ejemplo.com",
     continueButton: "Continuar",
     backButton: "Volver",
     errors: {

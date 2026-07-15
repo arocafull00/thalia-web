@@ -1,6 +1,20 @@
-export function unwrapSupabase<T>(data: T | null, error: { message: string } | null): T {
+type SupabaseQueryError = {
+  message: string;
+  code?: string;
+  details?: string;
+  hint?: string;
+};
+
+function toSupabaseQueryError(error: SupabaseQueryError): Error {
+  return Object.assign(new Error(error.message), error);
+}
+
+export function unwrapSupabase<T>(
+  data: T | null,
+  error: SupabaseQueryError | null,
+): T {
   if (error) {
-    throw new Error(error.message);
+    throw toSupabaseQueryError(error);
   }
 
   if (data === null) {
@@ -10,9 +24,12 @@ export function unwrapSupabase<T>(data: T | null, error: { message: string } | n
   return data;
 }
 
-export function unwrapSupabaseList<T>(data: T[] | null, error: { message: string } | null): T[] {
+export function unwrapSupabaseList<T>(
+  data: T[] | null,
+  error: SupabaseQueryError | null,
+): T[] {
   if (error) {
-    throw new Error(error.message);
+    throw toSupabaseQueryError(error);
   }
 
   return data ?? [];

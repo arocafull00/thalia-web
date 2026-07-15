@@ -4,7 +4,7 @@ import { addDays, addMonths, addWeeks, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useEffect } from "react";
 
-import { formatMonthLabel } from "@/lib/calendar-grid";
+import { formatFullDayLabel, formatMonthLabel } from "@/lib/calendar-grid";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
 
@@ -52,11 +52,13 @@ export function useCalendarPage() {
   }, [setEmployeeId]);
 
   const rangeLabel =
-    viewMode === "month"
-      ? formatMonthLabel(weekAnchor)
-      : visibleRangeStart && visibleRangeEnd
-        ? formatVisibleRangeLabel(visibleRangeStart, visibleRangeEnd)
-        : "";
+    viewMode === "day"
+      ? formatFullDayLabel(weekAnchor)
+      : viewMode === "month"
+        ? formatMonthLabel(weekAnchor)
+        : visibleRangeStart && visibleRangeEnd
+          ? formatVisibleRangeLabel(visibleRangeStart, visibleRangeEnd)
+          : "";
 
   const onPrevious = () => {
     if (viewMode === "month") {

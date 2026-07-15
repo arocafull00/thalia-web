@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/sidebar-profile-footer.tsx": {
-    "mtime": 1784038708.0881686,
-    "ast_hash": "692e57e7dce32e9bc2a6726d9023f5ad",
+    "mtime": 1784042687.017559,
+    "ast_hash": "cfee18754055807d7dfc46ae9eaed022",
     "semantic_hash": ""
   },
   "src/components/ui/sortable-table-head.tsx": {
@@ -645,8 +645,8 @@
     "semantic_hash": ""
   },
   "src/copy/sidebar-copy.ts": {
-    "mtime": 1784038708.10869,
-    "ast_hash": "197300904963dc0b9b5b9aa8902d63a3",
+    "mtime": 1784042684.277282,
+    "ast_hash": "4275b8a11554fcab8792133c1f0e04ec",
     "semantic_hash": ""
   },
   "src/copy/transaction-create-copy.ts": {
@@ -2807,6 +2807,11 @@
   "src/lib/hooks/use-treatment-detail.ts": {
     "mtime": 1784041945.133901,
     "ast_hash": "7d2315054911aa993e75eea9b9a329c3",
+    "semantic_hash": ""
+  },
+  "src/components/ui/sidebar-sign-out-confirm-dialog.tsx": {
+    "mtime": 1784042685.4606776,
+    "ast_hash": "8d1a0dfcfe09c46687583bf955cc5670",
     "semantic_hash": ""
   }
 }

@@ -33,8 +33,8 @@ type EmployeeDetailPageClientProps = {
 export default function EmployeeDetailPageClient({
   employeeId,
 }: EmployeeDetailPageClientProps) {
-  const { profile } = useAuth();
-  const { platformRole } = useActiveClinic();
+  const { profile, loading: authLoading } = useAuth();
+  const { platformRole, loading: clinicLoading } = useActiveClinic();
   const employeeQuery = useEmployee(employeeId);
   const statsQuery = useEmployeeAppointmentStats(employeeId);
   const appointmentsQuery = useEmployeeAppointments(employeeId);
@@ -93,18 +93,7 @@ export default function EmployeeDetailPageClient({
       : null,
   );
 
-  if (!canManage) {
-    return (
-      <div className="p-8">
-        <Notice
-          tone="danger"
-          message={EMPLOYEE_DETAIL_COPY.errors.permissions}
-        />
-      </div>
-    );
-  }
-
-  if (employeeQuery.isLoading) {
+  if (authLoading || clinicLoading || employeeQuery.isLoading) {
     return (
       <div className="p-8" aria-busy="true">
         <SkeletonList />
@@ -123,7 +112,16 @@ export default function EmployeeDetailPageClient({
       </div>
     );
   }
-
+  if (!canManage) {
+    return (
+      <div className="p-8">
+        <Notice
+          tone="danger"
+          message={EMPLOYEE_DETAIL_COPY.errors.permissions}
+        />
+      </div>
+    );
+  }
   if (!employee) {
     notFound();
   }

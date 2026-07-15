@@ -6,7 +6,7 @@ import {
   Euro,
   LayoutGrid,
   Package,
-  Scissors,
+  Stethoscope,
   Settings,
   UserPlus,
   Users,
@@ -47,7 +47,7 @@ const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
   {
     href: "/treatments",
     label: "Tratamientos",
-    icon: <Scissors size={18} strokeWidth={1.5} />,
+    icon: <Stethoscope size={18} strokeWidth={1.5} />,
   },
   {
     href: "/inventory",

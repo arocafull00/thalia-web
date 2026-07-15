@@ -48,8 +48,11 @@ const REGISTER_COPY: Record<
 
 export const REGISTER_EMPLOYEE_FORM_COPY = {
   fullNameLabel: "Nombre completo",
+  fullNamePlaceholder: "Nombre y apellidos",
   emailLabel: "Email",
+  emailPlaceholder: "correo@ejemplo.com",
   passwordLabel: "Contraseña",
+  passwordPlaceholder: "••••••••",
   confirmPasswordLabel: "Confirmar contraseña",
   continueButton: "Continuar",
   savingButton: "Guardando...",

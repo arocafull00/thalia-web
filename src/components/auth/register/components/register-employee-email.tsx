@@ -44,6 +44,7 @@ export default function RegisterEmployeeEmail({
             }}
             className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
             autoFocus
+            placeholder={copy.emailPlaceholder}
           />
         </label>
         {error ? <Notice tone="danger" message={error} /> : null}

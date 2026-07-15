@@ -8,9 +8,9 @@ export const LOGIN_COPY = {
   },
   fields: {
     emailLabel: "Correo electrónico",
-    emailPlaceholder: "Ingresa tu correo electrónico",
+    emailPlaceholder: "correo@ejemplo.com",
     passwordLabel: "Contraseña",
-    passwordPlaceholder: "Ingresa tu contraseña",
+    passwordPlaceholder: "••••••••",
     requiredMark: "*",
   },
   submit: {

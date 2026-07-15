@@ -76,6 +76,45 @@ function calculateEndDate(startsAt: Date, treatments: Treatment[]) {
   return addMinutes(startsAt, duration || 30);
 }
 
+type ControlledAppointmentError = Error & {
+  controlled: true;
+};
+
+function controlledAppointmentError(
+  message: string,
+): ControlledAppointmentError {
+  return Object.assign(new Error(message), { controlled: true as const });
+}
+
+function isControlledAppointmentError(
+  error: Error,
+): error is ControlledAppointmentError {
+  return "controlled" in error && error.controlled === true;
+}
+
+function toAppointmentError(cause: unknown): Error {
+  const error = cause instanceof Error ? cause : new Error(String(cause));
+  const code = (cause as { code?: string; message?: string })?.code;
+
+  if (code === "23505") {
+    return controlledAppointmentError(
+      "Ya existe una cita para ese profesional a esa hora.",
+    );
+  }
+  if (code === "23P01") {
+    return controlledAppointmentError(
+      "El paciente ya tiene una cita programada para esa hora.",
+    );
+  }
+  if (error.message.includes("Stock insuficiente")) {
+    return controlledAppointmentError(
+      "No hay stock suficiente para los materiales de la cita.",
+    );
+  }
+
+  return error;
+}
+
 async function refreshAllAppointmentEntries() {
   const { byRange, fetchAppointments } = useAppointmentsStore.getState();
   await Promise.all(
@@ -356,12 +395,14 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       await get().fetchAppointmentInventoryItems(appointmentId);
       set({ replacingInventory: false });
     } catch (cause) {
-      const error = cause instanceof Error ? cause : new Error(String(cause));
-      logger.captureException(error, {
-        store: "appointments-store",
-        action: "replaceAppointmentInventoryItems",
-        appointmentId,
-      });
+      const error = toAppointmentError(cause);
+      if (!isControlledAppointmentError(error)) {
+        logger.captureException(error, {
+          store: "appointments-store",
+          action: "replaceAppointmentInventoryItems",
+          appointmentId,
+        });
+      }
       set({ replacingInventory: false, replaceInventoryError: error });
       throw error;
     }
@@ -404,13 +445,15 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({ creating: false });
       return createdAppointment;
     } catch (cause) {
-      const error = cause instanceof Error ? cause : new Error(String(cause));
-      logger.captureException(error, {
-        store: "appointments-store",
-        action: "createAppointment",
-        clinicId: input.clinicId,
-        patientId: input.patientId,
-      });
+      const error = toAppointmentError(cause);
+      if (!isControlledAppointmentError(error)) {
+        logger.captureException(error, {
+          store: "appointments-store",
+          action: "createAppointment",
+          clinicId: input.clinicId,
+          patientId: input.patientId,
+        });
+      }
       set({ creating: false, createError: error });
       throw error;
     }
@@ -456,12 +499,14 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({ updating: false });
       return appointment;
     } catch (cause) {
-      const error = cause instanceof Error ? cause : new Error(String(cause));
-      logger.captureException(error, {
-        store: "appointments-store",
-        action: "updateAppointment",
-        appointmentId: input.id,
-      });
+      const error = toAppointmentError(cause);
+      if (!isControlledAppointmentError(error)) {
+        logger.captureException(error, {
+          store: "appointments-store",
+          action: "updateAppointment",
+          appointmentId: input.id,
+        });
+      }
       set({ updating: false, updateError: error });
       throw error;
     }
@@ -483,13 +528,15 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({ updatingStatus: false });
       return appointment;
     } catch (cause) {
-      const error = cause instanceof Error ? cause : new Error(String(cause));
-      logger.captureException(error, {
-        store: "appointments-store",
-        action: "updateAppointmentStatus",
-        appointmentId: id,
-        status,
-      });
+      const error = toAppointmentError(cause);
+      if (!isControlledAppointmentError(error)) {
+        logger.captureException(error, {
+          store: "appointments-store",
+          action: "updateAppointmentStatus",
+          appointmentId: id,
+          status,
+        });
+      }
       set({ updatingStatus: false, updateStatusError: error });
       throw error;
     }
@@ -511,12 +558,14 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({ rescheduling: false });
       return appointment;
     } catch (cause) {
-      const error = cause instanceof Error ? cause : new Error(String(cause));
-      logger.captureException(error, {
-        store: "appointments-store",
-        action: "rescheduleAppointment",
-        appointmentId: id,
-      });
+      const error = toAppointmentError(cause);
+      if (!isControlledAppointmentError(error)) {
+        logger.captureException(error, {
+          store: "appointments-store",
+          action: "rescheduleAppointment",
+          appointmentId: id,
+        });
+      }
       set({ rescheduling: false, rescheduleError: error });
       throw error;
     }

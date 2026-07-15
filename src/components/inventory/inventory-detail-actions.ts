@@ -6,6 +6,7 @@ import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 
 type InventoryDetailActionHandlers = {
   onAdjustStock: () => void;
+  onEdit: () => void;
 };
 
 function showComingSoon() {
@@ -25,7 +26,7 @@ export function getInventoryDetailActions(
     {
       label: INVENTORY_ITEM_DETAIL_COPY.actions.edit,
       icon: Pencil,
-      onClick: showComingSoon,
+      onClick: handlers.onEdit,
       buttonVariant: "ghost",
     },
     {

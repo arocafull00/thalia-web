@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LOGIN_COPY } from "@/copy/login-copy";
 import { supabase } from "@/lib/supabase";
@@ -14,6 +14,14 @@ export function useResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        setError("El enlace de recuperación no es válido o ha expirado.");
+      }
+    });
+  }, []);
 
   const handleSubmit = async () => {
     setError(null);
@@ -40,7 +48,9 @@ export function useResetPassword() {
           "El enlace ha expirado. Solicita un nuevo enlace de recuperación.",
         );
       } else {
-        setError(updateError.message);
+        setError(
+          "No se pudo actualizar la contraseña. Solicita un enlace nuevo.",
+        );
       }
       return;
     }

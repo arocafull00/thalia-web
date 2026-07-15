@@ -6,6 +6,7 @@ import {
   getInventoryMovements,
   insertInventoryItem,
   insertInventoryMovement,
+  updateInventoryItem,
 } from "@/dal/inventory.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
@@ -45,10 +46,16 @@ type InventoryStore = {
   createError: Error | null;
   recording: boolean;
   recordError: Error | null;
+  updating: boolean;
+  updateError: Error | null;
   fetchInventoryItems: () => Promise<void>;
   fetchInventoryItem: (itemId: string) => Promise<void>;
   fetchInventoryMovements: (itemId: string) => Promise<void>;
   createInventoryItem: (input: InventoryItemInput) => Promise<InventoryItem>;
+  updateInventoryItem: (
+    itemId: string,
+    input: Omit<InventoryItemInput, "clinic_id">,
+  ) => Promise<InventoryItem>;
   recordInventoryMovement: (input: {
     item_id: string;
     employee_id: string;
@@ -66,6 +73,8 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   createError: null,
   recording: false,
   recordError: null,
+  updating: false,
+  updateError: null,
 
   fetchInventoryItems: async () => {
     set({ list: loadingQueryEntry(get().list) });
@@ -171,6 +180,27 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         clinicId: input.clinic_id,
       });
       set({ creating: false, createError: error });
+      throw error;
+    }
+  },
+
+  updateInventoryItem: async (itemId, input) => {
+    set({ updating: true, updateError: null });
+
+    try {
+      const item = await updateInventoryItem(itemId, input);
+      await get().fetchInventoryItems();
+      await get().fetchInventoryItem(itemId);
+      set({ updating: false });
+      return item;
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "inventory-store",
+        action: "updateInventoryItem",
+        itemId,
+      });
+      set({ updating: false, updateError: error });
       throw error;
     }
   },

@@ -90,6 +90,7 @@ export default function RegisterEmployeeForm({
             <input
               value={fullName}
               onChange={(event) => onFullNameChange(event.target.value)}
+              placeholder={REGISTER_EMPLOYEE_FORM_COPY.fullNamePlaceholder}
               className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
             />
           </label>
@@ -104,6 +105,7 @@ export default function RegisterEmployeeForm({
                     value={email}
                     onChange={(event) => onEmailChange(event.target.value)}
                     type="email"
+                    placeholder={REGISTER_EMPLOYEE_FORM_COPY.emailPlaceholder}
                     className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
                   />
                 </label>
@@ -117,6 +119,9 @@ export default function RegisterEmployeeForm({
                     value={password}
                     onChange={(event) => onPasswordChange(event.target.value)}
                     type={showPassword ? "text" : "password"}
+                    placeholder={
+                      REGISTER_EMPLOYEE_FORM_COPY.passwordPlaceholder
+                    }
                     className="w-full rounded-xl border border-border px-3 py-2.5 pr-10 text-sm outline-none ring-primary focus:ring-2"
                   />
                   <Button
@@ -139,6 +144,9 @@ export default function RegisterEmployeeForm({
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
                     type={showConfirmPassword ? "text" : "password"}
+                    placeholder={
+                      REGISTER_EMPLOYEE_FORM_COPY.passwordPlaceholder
+                    }
                     className="w-full rounded-xl border border-border px-3 py-2.5 pr-10 text-sm outline-none ring-primary focus:ring-2"
                   />
                   <Button

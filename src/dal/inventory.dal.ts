@@ -68,6 +68,19 @@ export async function insertInventoryItem(
   return unwrapSupabase(data, error) as InventoryItem;
 }
 
+export async function updateInventoryItem(
+  itemId: string,
+  input: Omit<InventoryItemInsert, "clinic_id">,
+): Promise<InventoryItem> {
+  const { data, error } = await supabase
+    .from("inventory_items")
+    .update(input)
+    .eq("id", itemId)
+    .select("*")
+    .single();
+  return unwrapSupabase(data, error) as InventoryItem;
+}
+
 export async function insertInventoryMovement(
   input: InventoryMovementInsert,
 ): Promise<void> {

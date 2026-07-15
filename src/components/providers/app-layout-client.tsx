@@ -17,7 +17,7 @@ type AppLayoutClientProps = {
 
 export default function AppLayoutClient({ children }: AppLayoutClientProps) {
   const router = useRouter();
-  const { loading, user } = useAuth();
+  const { loading, profile, user } = useAuth();
   const { clinicId, platformRole, loading: clinicLoading } = useActiveClinic();
   const setNavVisibility = useShellStore((state) => state.setNavVisibility);
   const subscribeRealtime = useInventoryAlertsStore(
@@ -57,9 +57,9 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     }
 
     if (!clinicId && !clinicLoading) {
-      router.replace("/no-membership");
+      router.replace(profile ? "/create-clinic" : "/register");
     }
-  }, [clinicId, clinicLoading, loading, router, user]);
+  }, [clinicId, clinicLoading, loading, profile, router, user]);
 
   useEffect(() => {
     const isExternal = platformRole === "external";

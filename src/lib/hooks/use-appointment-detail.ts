@@ -40,8 +40,12 @@ export function useAppointmentDetail(appointmentId: string) {
           .getState()
           .updateAppointmentStatus(appointment.id, status);
         notifySuccess(APPOINTMENT_DETAIL_COPY.statusSuccess);
-      } catch {
-        toast.error(APPOINTMENT_DETAIL_COPY.statusError);
+      } catch (cause) {
+        toast.error(
+          cause instanceof Error
+            ? cause.message
+            : APPOINTMENT_DETAIL_COPY.statusError,
+        );
       }
     },
     [appointment],

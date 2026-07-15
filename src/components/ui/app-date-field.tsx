@@ -1,7 +1,8 @@
 "use client";
 
+import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, ChevronDown } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,32 +13,34 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { formatInputDate, formatInputDateTime } from "@/lib/format";
 
 const fieldClassName =
-  "flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none ring-primary focus:ring-2";
 
 function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
 type AppDateFieldProps = {
-  value: Date;
+  value: Date | null;
   onChange: (value: Date) => void;
   mode?: "date" | "datetime-local";
+  minDate?: Date;
+  maxDate?: Date;
 };
 
 export default function AppDateField({
   value,
   onChange,
   mode = "date",
+  minDate,
+  maxDate,
 }: AppDateFieldProps) {
   const [open, setOpen] = useState(false);
-  const label =
-    mode === "datetime-local"
-      ? formatInputDateTime(value)
-      : formatInputDate(value);
-  const timeValue = `${pad(value.getHours())}:${pad(value.getMinutes())}`;
+  const timeValue = value
+    ? `${pad(value.getHours())}:${pad(value.getMinutes())}`
+    : "";
+  const inputValue = value ? format(value, "yyyy-MM-dd") : "";
 
   const handleDateSelect = (selected: Date | undefined) => {
     if (!selected) {
@@ -45,7 +48,7 @@ export default function AppDateField({
     }
 
     const next = new Date(selected);
-    if (mode === "datetime-local") {
+    if (mode === "datetime-local" && value) {
       next.setHours(value.getHours(), value.getMinutes(), 0, 0);
     }
 
@@ -56,7 +59,25 @@ export default function AppDateField({
     }
   };
 
+  const handleManualDateChange = (nextValue: string) => {
+    const [year, month, day] = nextValue.split("-").map(Number);
+    if (!year || !month || !day) {
+      return;
+    }
+
+    const next = new Date(year, month - 1, day);
+    if (mode === "datetime-local" && value) {
+      next.setHours(value.getHours(), value.getMinutes(), 0, 0);
+    }
+
+    onChange(next);
+  };
+
   const handleTimeChange = (nextTime: string) => {
+    if (!value) {
+      return;
+    }
+
     const [hours, minutes] = nextTime.split(":").map(Number);
     if (Number.isNaN(hours) || Number.isNaN(minutes)) {
       return;
@@ -69,24 +90,45 @@ export default function AppDateField({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button type="button" variant="outline" className={fieldClassName}>
-          <span className="flex min-w-0 items-center gap-2">
-            <CalendarIcon className="size-4 shrink-0 text-ink-muted" />
-            <span className="truncate">{label}</span>
-          </span>
-          <ChevronDown className="size-4 shrink-0 text-ink-muted" />
-        </Button>
-      </PopoverTrigger>
+      <div className="relative">
+        <Input
+          type="date"
+          value={inputValue}
+          min={minDate ? format(minDate, "yyyy-MM-dd") : undefined}
+          max={maxDate ? format(maxDate, "yyyy-MM-dd") : undefined}
+          onChange={(event) => handleManualDateChange(event.target.value)}
+          aria-label="Editar fecha manualmente"
+          className={`${fieldClassName} pr-11 [&::-webkit-calendar-picker-indicator]:hidden`}
+        />
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Abrir calendario"
+            className="absolute top-1/2 right-1.5 size-8 -translate-y-1/2 text-ink-muted hover:bg-primary-subtle hover:text-ink"
+          >
+            <CalendarIcon className="size-4" />
+          </Button>
+        </PopoverTrigger>
+      </div>
       <PopoverContent
         className="z-100 w-auto rounded-[14px] border border-border/60 bg-surface p-0 shadow-float"
         align="start"
       >
         <Calendar
           mode="single"
-          selected={value}
+          selected={value ?? undefined}
+          defaultMonth={value ?? maxDate}
           onSelect={handleDateSelect}
           locale={es}
+          captionLayout="dropdown"
+          startMonth={minDate}
+          endMonth={maxDate}
+          disabled={[
+            ...(minDate ? [{ before: minDate }] : []),
+            ...(maxDate ? [{ after: maxDate }] : []),
+          ]}
           className="bg-transparent p-3"
         />
         {mode === "datetime-local" ? (

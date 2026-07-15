@@ -22,6 +22,7 @@ export const CALENDAR_COPY = {
   event: {
     defaultPatient: "Paciente",
     defaultTreatment: "Cita",
+    loadError: "No se pudieron cargar las citas del calendario.",
   },
   month: {
     weekdays: ["L", "M", "X", "J", "V", "S", "D"],

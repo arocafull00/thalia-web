@@ -1,6 +1,10 @@
 "use client";
 
-import { createViewMonthGrid, createViewWeek } from "@schedule-x/calendar";
+import {
+  createViewDay,
+  createViewMonthGrid,
+  createViewWeek,
+} from "@schedule-x/calendar";
 import { createCalendarControlsPlugin } from "@schedule-x/calendar-controls";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
 import { useNextCalendarApp } from "@schedule-x/react";
@@ -14,6 +18,7 @@ import {
 } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { Temporal } from "temporal-polyfill";
 import "temporal-polyfill/global";
 
@@ -123,6 +128,7 @@ export function useScheduleXCalendar(gridHeight: number) {
 
   const eventsService = useState(() => createEventsServicePlugin())[0];
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
+  const dayView = useState(() => createViewDay())[0];
   const weekView = useState(() => createViewWeek())[0];
   const monthView = useState(() => createViewMonthGrid())[0];
   const customComponents = useState(() => ({
@@ -138,7 +144,6 @@ export function useScheduleXCalendar(gridHeight: number) {
   const routerRef = useRef(router);
   const openCreateDialogRef = useRef(openCreateDialog);
   const setVisibleRangeRef = useRef(setVisibleRange);
-  const hasSyncedEventsRef = useRef(false);
   const syncedWeekAnchorRef = useRef(initialConfig.weekAnchor);
 
   useEffect(() => {
@@ -159,21 +164,18 @@ export function useScheduleXCalendar(gridHeight: number) {
 
   function viewNameFor(mode: CalendarViewMode) {
     if (mode === "month") return monthView.name;
+    if (mode === "day") return dayView.name;
     return weekView.name;
   }
 
-  function nDaysFor(mode: CalendarViewMode) {
-    return mode === "day" ? 1 : 7;
-  }
-
   const calendarApp = useNextCalendarApp({
-    views: [weekView, monthView],
+    views: [dayView, weekView, monthView],
     defaultView: viewNameFor(initialConfig.viewMode),
     locale: "es-ES",
     firstDayOfWeek: 1,
     isResponsive: false,
     weekOptions: {
-      nDays: nDaysFor(initialConfig.viewMode),
+      nDays: 7,
       gridHeight,
     },
     selectedDate: initialConfig.selectedDate,
@@ -201,13 +203,16 @@ export function useScheduleXCalendar(gridHeight: number) {
   });
 
   useEffect(() => {
-    if (!hasSyncedEventsRef.current) {
-      hasSyncedEventsRef.current = true;
-      return;
-    }
+    if (!calendarApp) return;
 
     eventsService.set(scheduleEvents);
-  }, [eventsService, scheduleEvents]);
+  }, [calendarApp, eventsService, scheduleEvents]);
+
+  useEffect(() => {
+    if (!appointments.error) return;
+
+    toast.error(CALENDAR_COPY.event.loadError);
+  }, [appointments.error]);
 
   useEffect(() => {
     if (!calendarApp) return;
@@ -238,17 +243,14 @@ export function useScheduleXCalendar(gridHeight: number) {
       return;
     }
 
-    calendarControls.setView(weekView.name);
-    calendarControls.setWeekOptions({
-      nDays: nDaysFor(viewMode),
-      gridHeight,
-    });
+    calendarControls.setView(viewMode === "day" ? dayView.name : weekView.name);
+    calendarControls.setDate(toPlainDate(weekAnchor));
     pushVisibleRange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     calendarApp,
     calendarControls,
-    gridHeight,
+    dayView.name,
     monthView.name,
     viewMode,
     weekView.name,
@@ -257,5 +259,6 @@ export function useScheduleXCalendar(gridHeight: number) {
   return {
     calendarApp,
     customComponents,
+    isLoading: appointments.isLoading,
   };
 }

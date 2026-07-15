@@ -8,6 +8,7 @@ import InventoryDetailHeader from "@/components/inventory/components/detail/inve
 import InventoryDetailTabBar from "@/components/inventory/components/detail/inventory-detail-tab-bar";
 import InventoryDetailTabContent from "@/components/inventory/components/detail/inventory-detail-tab-content";
 import InventoryItemAdjustStockDialog from "@/components/inventory/components/form/inventory-item-adjust-stock-dialog";
+import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
 import { getInventoryDetailActions } from "@/components/inventory/inventory-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
@@ -39,6 +40,7 @@ export default function InventoryDetailPageClient({
   );
   const { activeTab, setActiveTab } = useInventoryDetailTabs();
   const [adjustDialogOpen, setAdjustDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const refetch = () => {
     void fetchInventoryItem(itemId);
@@ -70,6 +72,7 @@ export default function InventoryDetailPageClient({
           menu: {
             actions: getInventoryDetailActions({
               onAdjustStock: () => setAdjustDialogOpen(true),
+              onEdit: () => setEditDialogOpen(true),
             }),
             ariaLabel: INVENTORY_ITEM_DETAIL_COPY.moreActions,
           },
@@ -130,6 +133,12 @@ export default function InventoryDetailPageClient({
         itemId={item.id}
         open={adjustDialogOpen}
         onOpenChange={setAdjustDialogOpen}
+        onSuccess={refetch}
+      />
+      <InventoryItemEditDialog
+        item={item}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
         onSuccess={refetch}
       />
     </div>

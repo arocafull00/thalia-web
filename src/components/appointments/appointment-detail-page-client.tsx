@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle, Pencil } from "lucide-react";
+import { BadgeCheck, CheckCircle, Pencil } from "lucide-react";
 
 import { getAppointmentDetailMenuActions } from "@/components/appointments/appointment-detail-actions";
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
@@ -88,6 +88,19 @@ export default function AppointmentDetailPageClient({
             },
             ...(canChangeStatus
               ? [
+                  ...(appointment.status === "scheduled"
+                    ? [
+                        {
+                          title: "Confirmar cita",
+                          icon: BadgeCheck,
+                          variant: "ghost" as const,
+                          disabled: updatingStatus,
+                          onClick: () => {
+                            void handleStatusChange("confirmed");
+                          },
+                        },
+                      ]
+                    : []),
                   {
                     title: APPOINTMENT_DETAIL_COPY.markCompleted,
                     icon: CheckCircle,

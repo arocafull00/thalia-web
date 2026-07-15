@@ -36,7 +36,7 @@ export default function FiltersSheet({
         side="bottom"
         showCloseButton={false}
         className={cn(
-          "max-h-[85dvh] gap-0 overflow-hidden rounded-t-[18px] border-border/60 bg-surface px-0 pb-0 pt-0 shadow-float",
+          "max-h-[85dvh] gap-0 overflow-hidden rounded-t-dialog border-border/60 bg-surface px-0 pb-0 pt-0 shadow-float",
           contentClassName,
         )}
       >

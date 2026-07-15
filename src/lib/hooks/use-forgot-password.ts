@@ -20,7 +20,7 @@ export function useForgotPassword() {
         : "";
 
     await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${origin}/reset-password`,
+      redirectTo: `${origin}/callback?next=/reset-password`,
     });
 
     setSubmitting(false);

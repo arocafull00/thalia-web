@@ -65,6 +65,15 @@ export default function AppointmentCreateForm({
 
   return (
     <div className="mt-4 space-y-4">
+      {errors.root?.message ? (
+        <p
+          role="alert"
+          aria-live="polite"
+          className="rounded-xl bg-danger/10 px-3 py-2.5 text-sm text-danger"
+        >
+          {errors.root.message}
+        </p>
+      ) : null}
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.patient}{" "}

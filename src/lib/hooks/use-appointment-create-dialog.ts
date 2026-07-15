@@ -82,6 +82,7 @@ export function useAppointmentCreateDialog(
     handleSubmit,
     reset,
     setValue,
+    setError,
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<AppointmentFormValues>({
@@ -153,7 +154,9 @@ export function useAppointmentCreateDialog(
   const onSubmit = handleSubmit(
     (data) => {
       if (!clinicId) {
-        toast.error(APPOINTMENT_CREATE_COPY.validation.clinicRequired);
+        const message = APPOINTMENT_CREATE_COPY.validation.clinicRequired;
+        setError("root", { message });
+        toast.error(message);
         return;
       }
 
@@ -177,11 +180,12 @@ export function useAppointmentCreateDialog(
             onSuccess();
           })
           .catch((cause) => {
-            toast.error(
+            const message =
               cause instanceof Error
                 ? cause.message
-                : APPOINTMENT_CREATE_COPY.errorEdit,
-            );
+                : APPOINTMENT_CREATE_COPY.errorEdit;
+            setError("root", { message });
+            toast.error(message);
           });
 
         return;
@@ -205,7 +209,9 @@ export function useAppointmentCreateDialog(
           onSuccess();
         },
         onError: (cause) => {
-          toast.error(cause.message || APPOINTMENT_CREATE_COPY.error);
+          const message = cause.message || APPOINTMENT_CREATE_COPY.error;
+          setError("root", { message });
+          toast.error(message);
         },
       });
     },

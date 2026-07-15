@@ -13,6 +13,7 @@ export const APPOINTMENT_STATUS_COPY = {
   legacyStockError:
     "No hay stock suficiente para los materiales del tratamiento.",
   reviewStock: "Revisar stock",
+  stockColumn: "Stock",
   stockShortLabel: "Stock",
   viewProduct: "Ver producto",
   stockError: (issue: AppointmentStockIssue) => {

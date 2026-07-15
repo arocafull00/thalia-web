@@ -4,7 +4,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
 import AppointmentStatusSelect from "@/components/appointments/components/appointment-status-select";
+import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
 import SortableTableHead from "@/components/ui/sortable-table-head";
+import { APPOINTMENT_STATUS_COPY } from "@/copy/appointment-status-copy";
+import { getAppointmentStockIssue } from "@/lib/appointment-stock";
 import {
   appointmentStatusLabel,
   formatDateTime,
@@ -90,6 +93,16 @@ export function buildAppointmentsColumns(
         const rightStatus = appointmentStatusLabel(right.original.status);
         return leftStatus.localeCompare(rightStatus, "es");
       },
+    },
+    {
+      id: "stock",
+      header: () => APPOINTMENT_STATUS_COPY.stockColumn,
+      cell: ({ row }) => (
+        <AppointmentStockButton
+          issue={getAppointmentStockIssue(row.original)}
+        />
+      ),
+      enableSorting: false,
     },
   ];
 }

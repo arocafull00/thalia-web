@@ -1,8 +1,7 @@
-import { AlertTriangle, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { APPOINTMENT_STATUS_COPY } from "@/copy/appointment-status-copy";
+import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
 import { formatTime } from "@/lib/format";
 
@@ -38,29 +37,7 @@ export default function AppointmentRow({ appointment }: AppointmentRowProps) {
           </p>
         </div>
       </Link>
-      {appointment.stockIssue ? (
-        <Button asChild variant="destructive" size="xs">
-          <Link
-            href={`/inventory/${appointment.stockIssue.inventoryItemId}`}
-            aria-label={APPOINTMENT_STATUS_COPY.reviewStockLabel(
-              appointment.stockIssue,
-            )}
-          >
-            <AlertTriangle className="size-3.5" aria-hidden="true" />
-            <span className="hidden sm:inline">
-              {APPOINTMENT_STATUS_COPY.reviewStock}
-            </span>
-            <span className="sm:hidden">
-              {APPOINTMENT_STATUS_COPY.stockShortLabel}
-            </span>
-            {appointment.stockIssue.shortageCount > 1 ? (
-              <span aria-hidden="true">
-                ({appointment.stockIssue.shortageCount})
-              </span>
-            ) : null}
-          </Link>
-        </Button>
-      ) : null}
+      <AppointmentStockButton issue={appointment.stockIssue} />
       <ChevronRight className="size-4 shrink-0 text-ink-muted" aria-hidden />
     </div>
   );

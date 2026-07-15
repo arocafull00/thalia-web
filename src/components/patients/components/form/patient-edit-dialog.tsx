@@ -66,7 +66,7 @@ export default function PatientEditDialog({
             onAvatarFileSelected={onAvatarFileSelected}
           />
         </div>
-        <AppDialogFooter>
+        <AppDialogFooter errorMessage={dialog.errors.root?.message}>
           <Button
             type="button"
             variant="outline"

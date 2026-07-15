@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
@@ -25,6 +24,8 @@ export function useEmployeeInviteDialog(onSuccess: () => void) {
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
@@ -32,6 +33,8 @@ export function useEmployeeInviteDialog(onSuccess: () => void) {
   });
 
   const onSubmit = handleSubmit((data) => {
+    clearErrors("root");
+
     mutate(data, {
       onSuccess: () => {
         notifySuccess(EMPLOYEE_INVITE_COPY.success);
@@ -39,7 +42,9 @@ export function useEmployeeInviteDialog(onSuccess: () => void) {
         onSuccess();
       },
       onError: (cause) => {
-        toast.error(cause.message || EMPLOYEE_INVITE_COPY.error);
+        setError("root", {
+          message: cause.message || EMPLOYEE_INVITE_COPY.error,
+        });
       },
     });
   });

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
@@ -58,6 +57,8 @@ export function useTreatmentDialog(
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<TreatmentFormValues>({
     resolver: zodResolver(treatmentFormSchema),
@@ -69,8 +70,10 @@ export function useTreatmentDialog(
   }, [treatment, reset]);
 
   const onSubmit = handleSubmit((data) => {
+    clearErrors("root");
+
     if (!clinicId) {
-      toast.error(TREATMENTS_COPY.dialog.clinicRequired);
+      setError("root", { message: TREATMENTS_COPY.dialog.clinicRequired });
       return;
     }
 
@@ -95,7 +98,9 @@ export function useTreatmentDialog(
           notifySuccess(TREATMENTS_COPY.dialog.successUpdate);
           onSuccess();
         },
-        onError: () => toast.error(TREATMENTS_COPY.dialog.error),
+        onError: () => {
+          setError("root", { message: TREATMENTS_COPY.dialog.error });
+        },
       });
       return;
     }
@@ -108,7 +113,9 @@ export function useTreatmentDialog(
           reset(emptyValues);
           onSuccess();
         },
-        onError: () => toast.error(TREATMENTS_COPY.dialog.error),
+        onError: () => {
+          setError("root", { message: TREATMENTS_COPY.dialog.error });
+        },
       },
     );
   });

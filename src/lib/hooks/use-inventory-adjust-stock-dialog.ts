@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
@@ -43,6 +42,8 @@ export function useInventoryAdjustStockDialog(
     register,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<InventoryAdjustStockFormValues>({
     resolver: zodResolver(inventoryAdjustStockSchema),
@@ -50,20 +51,24 @@ export function useInventoryAdjustStockDialog(
   });
 
   const onSubmit = handleSubmit((data) => {
+    clearErrors("root");
+
     if (!profile?.id) {
-      toast.error(
-        INVENTORY_ITEM_DETAIL_COPY.adjustStock.validation.employeeRequired,
-      );
+      setError("root", {
+        message:
+          INVENTORY_ITEM_DETAIL_COPY.adjustStock.validation.employeeRequired,
+      });
       return;
     }
 
     const parsed = inventoryAdjustStockSchema.safeParse(data);
 
     if (!parsed.success) {
-      toast.error(
-        parsed.error.issues[0]?.message ??
+      setError("root", {
+        message:
+          parsed.error.issues[0]?.message ??
           INVENTORY_ITEM_DETAIL_COPY.adjustStock.error,
-      );
+      });
       return;
     }
 
@@ -82,9 +87,10 @@ export function useInventoryAdjustStockDialog(
           onSuccess();
         },
         onError: (cause) => {
-          toast.error(
-            cause.message || INVENTORY_ITEM_DETAIL_COPY.adjustStock.error,
-          );
+          setError("root", {
+            message:
+              cause.message || INVENTORY_ITEM_DETAIL_COPY.adjustStock.error,
+          });
         },
       },
     );

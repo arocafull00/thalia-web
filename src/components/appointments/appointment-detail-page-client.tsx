@@ -54,6 +54,7 @@ export default function AppointmentDetailPageClient({
     error,
     dialogOpen,
     cancelConfirmOpen,
+    cancelError,
     updatingStatus,
     canChangeStatus,
     openEditDialog,
@@ -210,6 +211,7 @@ export default function AppointmentDetailPageClient({
           void confirmCancel();
         }}
         confirmTone="danger"
+        errorMessage={cancelError ?? undefined}
       />
     </div>
   );

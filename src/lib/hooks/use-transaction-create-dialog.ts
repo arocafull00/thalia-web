@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
@@ -48,6 +47,8 @@ export function useTransactionCreateDialog(
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
@@ -59,13 +60,19 @@ export function useTransactionCreateDialog(
   };
 
   const onSubmit = handleSubmit((data) => {
+    clearErrors("root");
+
     if (!clinicId) {
-      toast.error(TRANSACTION_CREATE_COPY.validation.clinicRequired);
+      setError("root", {
+        message: TRANSACTION_CREATE_COPY.validation.clinicRequired,
+      });
       return;
     }
 
     if (!profile?.id) {
-      toast.error(TRANSACTION_CREATE_COPY.validation.profileRequired);
+      setError("root", {
+        message: TRANSACTION_CREATE_COPY.validation.profileRequired,
+      });
       return;
     }
 
@@ -81,7 +88,7 @@ export function useTransactionCreateDialog(
     });
 
     if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
+      setError("root", { message: formatZodError(parsed.error) });
       return;
     }
 
@@ -92,7 +99,9 @@ export function useTransactionCreateDialog(
         onSuccess();
       },
       onError: (cause) => {
-        toast.error(cause.message || TRANSACTION_CREATE_COPY.error);
+        setError("root", {
+          message: cause.message || TRANSACTION_CREATE_COPY.error,
+        });
       },
     });
   });

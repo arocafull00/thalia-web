@@ -38,10 +38,14 @@ export function useInventoryItemEditDialog(
   }, [form, item]);
 
   const handleSubmit = form.handleSubmit(async (values) => {
+    form.clearErrors("root");
+
     const parsed = inventoryEditSchema.safeParse(values);
 
     if (!parsed.success) {
-      toast.error("Revisa los campos del material.");
+      form.setError("root", {
+        message: "Revisa los campos del material.",
+      });
       return;
     }
 
@@ -50,11 +54,12 @@ export function useInventoryItemEditDialog(
       toast.success("Material actualizado correctamente.");
       onSuccess();
     } catch (cause) {
-      toast.error(
-        cause instanceof Error
-          ? cause.message
-          : "No se pudo actualizar el material.",
-      );
+      form.setError("root", {
+        message:
+          cause instanceof Error
+            ? cause.message
+            : "No se pudo actualizar el material.",
+      });
     }
   });
 

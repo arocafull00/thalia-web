@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
@@ -31,6 +30,8 @@ export function useInventoryItemCreateDialog(onSuccess: () => void) {
     register,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<InventoryFormValues>({
     resolver: zodResolver(inventoryFormSchema),
@@ -38,8 +39,12 @@ export function useInventoryItemCreateDialog(onSuccess: () => void) {
   });
 
   const onSubmit = handleSubmit((data) => {
+    clearErrors("root");
+
     if (!clinicId) {
-      toast.error(INVENTORY_ITEM_CREATE_COPY.validation.clinicRequired);
+      setError("root", {
+        message: INVENTORY_ITEM_CREATE_COPY.validation.clinicRequired,
+      });
       return;
     }
 
@@ -49,7 +54,7 @@ export function useInventoryItemCreateDialog(onSuccess: () => void) {
     });
 
     if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
+      setError("root", { message: formatZodError(parsed.error) });
       return;
     }
 
@@ -60,7 +65,9 @@ export function useInventoryItemCreateDialog(onSuccess: () => void) {
         onSuccess();
       },
       onError: (cause) => {
-        toast.error(cause.message || INVENTORY_ITEM_CREATE_COPY.error);
+        setError("root", {
+          message: cause.message || INVENTORY_ITEM_CREATE_COPY.error,
+        });
       },
     });
   });

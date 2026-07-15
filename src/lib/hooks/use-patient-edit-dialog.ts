@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format, parseISO } from "date-fns";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
@@ -42,6 +41,8 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
     handleSubmit,
     reset,
     watch,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
@@ -56,6 +57,8 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
   }, [patient, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
+    clearErrors("root");
+
     const parsed = patientSchema.safeParse({
       clinic_id: patient.clinic_id,
       full_name: data.full_name,
@@ -70,7 +73,7 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
     });
 
     if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
+      setError("root", { message: formatZodError(parsed.error) });
       return;
     }
 
@@ -87,9 +90,10 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
       notifySuccess(PATIENT_EDIT_COPY.success);
       onSuccess();
     } catch (cause) {
-      toast.error(
-        cause instanceof Error ? cause.message : PATIENT_EDIT_COPY.error,
-      );
+      setError("root", {
+        message:
+          cause instanceof Error ? cause.message : PATIENT_EDIT_COPY.error,
+      });
     }
   });
 

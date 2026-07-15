@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "react-toastify";
+import { useState } from "react";
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
@@ -22,24 +22,35 @@ export default function TreatmentDeleteConfirmDialog({
   onSuccess,
 }: TreatmentDeleteConfirmDialogProps) {
   const { mutate, isPending } = useDeleteTreatment();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleConfirm = () => {
+    setErrorMessage(null);
+
     mutate(treatment.id, {
       onSuccess: () => {
         notifySuccess(TREATMENTS_COPY.delete.success);
-        onOpenChange(false);
+        handleOpenChange(false);
         onSuccess();
       },
       onError: (cause) => {
-        toast.error(cause.message);
+        setErrorMessage(cause.message || TREATMENTS_COPY.dialog.error);
       },
     });
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setErrorMessage(null);
+    }
+
+    onOpenChange(nextOpen);
   };
 
   return (
     <AppConfirmDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       title={TREATMENTS_COPY.delete.title}
       description={TREATMENTS_COPY.delete.description(treatment.name)}
       confirmLabel={TREATMENTS_COPY.delete.confirm}
@@ -48,6 +59,7 @@ export default function TreatmentDeleteConfirmDialog({
       isPending={isPending}
       onConfirm={handleConfirm}
       confirmTone="danger"
+      errorMessage={errorMessage ?? undefined}
     />
   );
 }

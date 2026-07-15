@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "react-toastify";
+import { useState } from "react";
 
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
@@ -24,15 +24,18 @@ export default function PatientImageDeleteConfirmDialog({
   onSuccess,
 }: PatientImageDeleteConfirmDialogProps) {
   const { mutateAsync, isPending } = useDeletePatientImage();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleConfirm = async () => {
+    setErrorMessage(null);
+
     try {
       await mutateAsync({ patientId, image });
       notifySuccess(PATIENT_GALLERY_COPY.delete.success);
-      onOpenChange(false);
+      handleOpenChange(false);
       onSuccess();
     } catch (cause) {
-      toast.error(
+      setErrorMessage(
         cause instanceof Error
           ? cause.message
           : PATIENT_GALLERY_COPY.delete.error,
@@ -40,10 +43,18 @@ export default function PatientImageDeleteConfirmDialog({
     }
   };
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setErrorMessage(null);
+    }
+
+    onOpenChange(nextOpen);
+  };
+
   return (
     <AppConfirmDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       title={PATIENT_GALLERY_COPY.delete.title}
       description={PATIENT_GALLERY_COPY.delete.description}
       confirmLabel={PATIENT_GALLERY_COPY.delete.confirm}
@@ -52,6 +63,7 @@ export default function PatientImageDeleteConfirmDialog({
       isPending={isPending}
       onConfirm={handleConfirm}
       confirmTone="danger"
+      errorMessage={errorMessage ?? undefined}
     />
   );
 }

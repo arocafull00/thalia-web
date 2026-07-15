@@ -86,7 +86,7 @@ export default function PatientFileUploaderDialog({
             ) : null}
           </div>
 
-          <AppDialogFooter>
+          <AppDialogFooter errorMessage={errors.root?.message}>
             <Button
               type="button"
               variant="outline"

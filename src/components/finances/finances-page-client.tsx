@@ -174,7 +174,7 @@ export default function FinancesPageClient() {
               errors={dialog.errors}
             />
           </div>
-          <AppDialogFooter>
+          <AppDialogFooter errorMessage={dialog.errors.root?.message}>
             <Button
               type="button"
               variant="outline"

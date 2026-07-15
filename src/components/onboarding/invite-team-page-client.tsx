@@ -9,6 +9,7 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { captureEvent } from "@/lib/analytics";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
+import { createEmployeeInviteError } from "@/lib/employee-invite-errors";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import {
@@ -121,7 +122,8 @@ export default function InviteTeamPageClient() {
         );
 
         if (invokeError) {
-          failures.push(`${inviteEmail}: ${invokeError.message}`);
+          const inviteError = await createEmployeeInviteError(invokeError);
+          failures.push(`${inviteEmail}: ${inviteError.message}`);
         }
       }
 

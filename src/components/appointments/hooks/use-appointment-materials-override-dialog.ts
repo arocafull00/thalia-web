@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
@@ -44,6 +43,8 @@ export function useAppointmentMaterialsOverrideDialog(
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<AppointmentMaterialsFormValues>({
     resolver: zodResolver(appointmentMaterialsFormSchema),
@@ -55,6 +56,8 @@ export function useAppointmentMaterialsOverrideDialog(
   }, [initialItems, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
+    clearErrors("root");
+
     const parsed = appointmentMaterialsFormSchema.safeParse(data);
 
     if (!parsed.success) {
@@ -69,11 +72,13 @@ export function useAppointmentMaterialsOverrideDialog(
       notifySuccess(APPOINTMENT_DETAIL_COPY.materialsSuccess);
       onSuccess();
     } catch {
-      toast.error(APPOINTMENT_DETAIL_COPY.materialsError);
+      setError("root", { message: APPOINTMENT_DETAIL_COPY.materialsError });
     }
   });
 
   const resetToDefault = async () => {
+    clearErrors("root");
+
     try {
       await mutateAsync({
         appointmentId,
@@ -83,7 +88,7 @@ export function useAppointmentMaterialsOverrideDialog(
       notifySuccess(APPOINTMENT_DETAIL_COPY.materialsSuccess);
       onSuccess();
     } catch {
-      toast.error(APPOINTMENT_DETAIL_COPY.materialsError);
+      setError("root", { message: APPOINTMENT_DETAIL_COPY.materialsError });
     }
   };
 

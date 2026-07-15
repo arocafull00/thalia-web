@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
@@ -83,6 +82,7 @@ export function useAppointmentCreateDialog(
     reset,
     setValue,
     setError,
+    clearErrors,
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<AppointmentFormValues>({
@@ -153,10 +153,11 @@ export function useAppointmentCreateDialog(
 
   const onSubmit = handleSubmit(
     (data) => {
+      clearErrors("root");
+
       if (!clinicId) {
         const message = APPOINTMENT_CREATE_COPY.validation.clinicRequired;
         setError("root", { message });
-        toast.error(message);
         return;
       }
 
@@ -169,7 +170,7 @@ export function useAppointmentCreateDialog(
         });
 
         if (!parsed.success) {
-          toast.error(formatZodError(parsed.error));
+          setError("root", { message: formatZodError(parsed.error) });
           return;
         }
 
@@ -185,7 +186,6 @@ export function useAppointmentCreateDialog(
                 ? cause.message
                 : APPOINTMENT_CREATE_COPY.errorEdit;
             setError("root", { message });
-            toast.error(message);
           });
 
         return;
@@ -198,7 +198,7 @@ export function useAppointmentCreateDialog(
       });
 
       if (!parsed.success) {
-        toast.error(formatZodError(parsed.error));
+        setError("root", { message: formatZodError(parsed.error) });
         return;
       }
 
@@ -211,16 +211,10 @@ export function useAppointmentCreateDialog(
         onError: (cause) => {
           const message = cause.message || APPOINTMENT_CREATE_COPY.error;
           setError("root", { message });
-          toast.error(message);
         },
       });
     },
-    (formErrors) => {
-      console.error("Appointment form validation failed", {
-        values: getValues(),
-        errors: formErrors,
-      });
-    },
+    () => clearErrors("root"),
   );
 
   return {

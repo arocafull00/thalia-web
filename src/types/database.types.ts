@@ -230,6 +230,18 @@ export type AppointmentInventoryItemWithInventory = AppointmentInventoryItem & {
   inventory_items: Pick<InventoryItem, "id" | "name" | "unit"> | null;
 };
 
+export type AppointmentInventoryItemWithStock = AppointmentInventoryItem & {
+  inventory_items: Pick<InventoryItem, "id" | "name" | "unit" | "stock"> | null;
+};
+
+export type AppointmentTreatmentInventoryItemWithStock =
+  TreatmentInventoryItem & {
+    inventory_items: Pick<
+      InventoryItem,
+      "id" | "name" | "unit" | "stock"
+    > | null;
+  };
+
 export type InventoryItem = {
   id: string;
   clinic_id: string;
@@ -274,12 +286,16 @@ export type AppointmentWithRelations = Appointment & {
     "id" | "full_name" | "color" | "specialty" | "role" | "avatar_url"
   > | null;
   appointment_treatments: (AppointmentTreatment & {
-    treatment: Pick<
-      Treatment,
-      "id" | "name" | "color" | "price" | "duration_minutes"
-    > | null;
+    treatment:
+      | (Pick<
+          Treatment,
+          "id" | "name" | "color" | "price" | "duration_minutes"
+        > & {
+          treatment_inventory_items?: AppointmentTreatmentInventoryItemWithStock[];
+        })
+      | null;
   })[];
-  appointment_inventory_items?: AppointmentInventoryItemWithInventory[];
+  appointment_inventory_items?: AppointmentInventoryItemWithStock[];
 };
 
 export type InventoryMovementWithEmployee = InventoryMovement & {

@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentFilters from "@/components/appointments/components/appointment-filters";
 import AppointmentFiltersSheet from "@/components/appointments/components/appointment-filters-sheet";
+import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
 import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
@@ -63,8 +63,8 @@ export default function AppointmentsPageClient() {
           .getState()
           .updateAppointmentStatus(id, status);
         notifySuccess("Estado de la cita actualizado.");
-      } catch {
-        toast.error("No se pudo actualizar el estado de la cita.");
+      } catch (cause) {
+        notifyAppointmentStatusError(cause);
       }
     },
     [],

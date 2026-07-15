@@ -106,7 +106,7 @@ export default function InventoryItemAdjustStockDialog({
             ) : null}
           </label>
         </div>
-        <AppDialogFooter>
+        <AppDialogFooter errorMessage={dialog.errors.root?.message}>
           <Button
             type="button"
             variant="outline"

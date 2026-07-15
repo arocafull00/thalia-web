@@ -14,8 +14,8 @@ export type EffectiveAppointmentMaterial = {
   unit: string | null;
 };
 
-const appointmentListSelect =
-  "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))";
+export const APPOINTMENT_LIST_SELECT =
+  "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_inventory_items(*, inventory_items(id, name, unit, stock)), appointment_treatments(*, treatment(id, name, color, price, duration_minutes, treatment_inventory_items(*, inventory_items(id, name, unit, stock))))";
 
 const appointmentDetailSelect =
   "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role, avatar_url), appointment_treatments(*, treatment(id, name, color, price, duration_minutes))";
@@ -63,7 +63,7 @@ export async function getAppointments(
 ): Promise<AppointmentWithRelations[]> {
   let query = supabase
     .from("appointments")
-    .select(appointmentListSelect)
+    .select(APPOINTMENT_LIST_SELECT)
     .gte("starts_at", params.startIso)
     .lte("starts_at", params.endIso)
     .order("starts_at");

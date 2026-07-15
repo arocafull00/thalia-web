@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
@@ -23,15 +24,18 @@ export default function PatientFileDeleteConfirmDialog({
   onSuccess,
 }: PatientFileDeleteConfirmDialogProps) {
   const { mutateAsync, isPending } = useDeletePatientFile();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleConfirm = async () => {
+    setErrorMessage(null);
+
     try {
       await mutateAsync({ patientId, file });
       toast.success(PATIENT_FILES_COPY.delete.success);
-      onOpenChange(false);
+      handleOpenChange(false);
       onSuccess();
     } catch (cause) {
-      toast.error(
+      setErrorMessage(
         cause instanceof Error
           ? cause.message
           : PATIENT_FILES_COPY.delete.error,
@@ -39,10 +43,18 @@ export default function PatientFileDeleteConfirmDialog({
     }
   };
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setErrorMessage(null);
+    }
+
+    onOpenChange(nextOpen);
+  };
+
   return (
     <AppConfirmDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       title={PATIENT_FILES_COPY.delete.title}
       description={PATIENT_FILES_COPY.delete.description(
         file.original_filename,
@@ -53,6 +65,7 @@ export default function PatientFileDeleteConfirmDialog({
       isPending={isPending}
       onConfirm={handleConfirm}
       confirmTone="danger"
+      errorMessage={errorMessage ?? undefined}
     />
   );
 }

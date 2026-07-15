@@ -48,6 +48,8 @@ export default function PatientFileEditDialog({
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<PatientFileEditFormValues>({
     resolver: zodResolver(patientFileEditFormSchema),
@@ -68,6 +70,8 @@ export default function PatientFileEditDialog({
   };
 
   const onSubmit = handleSubmit(async (data) => {
+    clearErrors("root");
+
     if (!file) {
       return;
     }
@@ -75,7 +79,7 @@ export default function PatientFileEditDialog({
     const parsed = patientFileUpdateSchema.safeParse(data);
 
     if (!parsed.success) {
-      toast.error(PATIENT_FILES_COPY.edit.error);
+      setError("root", { message: PATIENT_FILES_COPY.edit.error });
       return;
     }
 
@@ -88,9 +92,12 @@ export default function PatientFileEditDialog({
       toast.success(PATIENT_FILES_COPY.edit.success);
       handleOpenChange(false);
     } catch (cause) {
-      toast.error(
-        cause instanceof Error ? cause.message : PATIENT_FILES_COPY.edit.error,
-      );
+      setError("root", {
+        message:
+          cause instanceof Error
+            ? cause.message
+            : PATIENT_FILES_COPY.edit.error,
+      });
     }
   });
 
@@ -158,7 +165,7 @@ export default function PatientFileEditDialog({
             </label>
           </div>
 
-          <AppDialogFooter>
+          <AppDialogFooter errorMessage={errors.root?.message}>
             <Button
               type="button"
               variant="outline"

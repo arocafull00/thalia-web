@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
-import { useForm, type FieldErrors } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -27,25 +27,6 @@ const defaultValues: PatientFileFormValues = {
   notes: "",
 };
 
-function getFirstFieldError(errors: FieldErrors): string | null {
-  for (const value of Object.values(errors)) {
-    if (!value || typeof value !== "object") {
-      continue;
-    }
-
-    if ("message" in value && value.message) {
-      return String(value.message);
-    }
-
-    const nested = getFirstFieldError(value as FieldErrors);
-    if (nested) {
-      return nested;
-    }
-  }
-
-  return null;
-}
-
 export function usePatientFileUploader(
   patientId: string,
   onSuccess: () => void,
@@ -60,6 +41,8 @@ export function usePatientFileUploader(
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<PatientFileFormValues>({
     resolver: zodResolver(patientFileFormSchema),
@@ -77,13 +60,19 @@ export function usePatientFileUploader(
 
   const onSubmit = handleSubmit(
     async (data) => {
+      clearErrors("root");
+
       if (!clinicId) {
-        toast.error(PATIENT_FILES_COPY.uploader.validation.clinicRequired);
+        setError("root", {
+          message: PATIENT_FILES_COPY.uploader.validation.clinicRequired,
+        });
         return;
       }
 
       if (selectedFiles.length === 0) {
-        toast.error(PATIENT_FILES_COPY.uploader.validation.fileRequired);
+        setError("root", {
+          message: PATIENT_FILES_COPY.uploader.validation.fileRequired,
+        });
         return;
       }
 
@@ -91,11 +80,12 @@ export function usePatientFileUploader(
         try {
           validatePatientFile(file);
         } catch (cause) {
-          toast.error(
-            cause instanceof Error
-              ? cause.message
-              : PATIENT_FILES_COPY.uploader.validation.invalidFile,
-          );
+          setError("root", {
+            message:
+              cause instanceof Error
+                ? cause.message
+                : PATIENT_FILES_COPY.uploader.validation.invalidFile,
+          });
           return;
         }
       }
@@ -106,7 +96,7 @@ export function usePatientFileUploader(
       });
 
       if (!parsed.success) {
-        toast.error(formatZodError(parsed.error));
+        setError("root", { message: formatZodError(parsed.error) });
         return;
       }
 
@@ -121,19 +111,15 @@ export function usePatientFileUploader(
         resetForm();
         onSuccess();
       } catch (cause) {
-        toast.error(
-          cause instanceof Error
-            ? cause.message
-            : PATIENT_FILES_COPY.uploader.error,
-        );
+        setError("root", {
+          message:
+            cause instanceof Error
+              ? cause.message
+              : PATIENT_FILES_COPY.uploader.error,
+        });
       }
     },
-    (fieldErrors) => {
-      toast.error(
-        getFirstFieldError(fieldErrors) ??
-          PATIENT_FILES_COPY.uploader.validation.formInvalid,
-      );
-    },
+    () => clearErrors("root"),
   );
 
   return {

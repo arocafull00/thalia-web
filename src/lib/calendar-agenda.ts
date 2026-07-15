@@ -1,6 +1,10 @@
 import { format } from "date-fns";
 
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
+import {
+  getAppointmentStockIssue,
+  type AppointmentStockIssue,
+} from "@/lib/appointment-stock";
 import { HOUR_HEIGHT } from "@/lib/calendar-grid";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
@@ -16,6 +20,7 @@ export type AgendaAppointment = {
   treatmentName: string;
   employeeName: string | null;
   employeeColor: string | null;
+  stockIssue: AppointmentStockIssue | null;
 };
 
 export function toAgendaAppointments(
@@ -33,6 +38,7 @@ export function toAgendaAppointments(
         CALENDAR_COPY.event.defaultTreatment,
       employeeName: appointment.employees?.full_name ?? null,
       employeeColor: appointment.employees?.color ?? null,
+      stockIssue: getAppointmentStockIssue(appointment),
     }))
     .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
 }

@@ -57,7 +57,7 @@ export default function AppointmentMaterialsOverrideDialog({
             errors={dialog.errors}
           />
         </div>
-        <AppDialogFooter>
+        <AppDialogFooter errorMessage={dialog.errors.root?.message}>
           {hasOverride ? (
             <Button
               type="button"

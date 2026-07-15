@@ -1,3 +1,4 @@
+import { createEmployeeInviteError } from "@/lib/employee-invite-errors";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type {
@@ -112,6 +113,11 @@ export async function inviteEmployee(
     "invite-employee",
     { body: input },
   );
+
+  if (error) {
+    throw await createEmployeeInviteError(error);
+  }
+
   return unwrapSupabase(data, error);
 }
 

@@ -1,8 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useCallback, useState } from "react";
-import { useForm, type FieldErrors } from "react-hook-form";
-import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
@@ -28,25 +27,6 @@ const defaultValues: PatientImageFormValues = {
   captured_at: null,
 };
 
-function getFirstFieldError(errors: FieldErrors): string | null {
-  for (const value of Object.values(errors)) {
-    if (!value || typeof value !== "object") {
-      continue;
-    }
-
-    if ("message" in value && value.message) {
-      return String(value.message);
-    }
-
-    const nested = getFirstFieldError(value as FieldErrors);
-    if (nested) {
-      return nested;
-    }
-  }
-
-  return null;
-}
-
 export function usePatientImageUploader(
   patientId: string,
   onSuccess: () => void,
@@ -61,6 +41,8 @@ export function usePatientImageUploader(
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<PatientImageFormValues>({
     resolver: zodResolver(patientImageFormSchema),
@@ -78,13 +60,19 @@ export function usePatientImageUploader(
 
   const onSubmit = handleSubmit(
     async (data) => {
+      clearErrors("root");
+
       if (!clinicId) {
-        toast.error(PATIENT_GALLERY_COPY.uploader.validation.clinicRequired);
+        setError("root", {
+          message: PATIENT_GALLERY_COPY.uploader.validation.clinicRequired,
+        });
         return;
       }
 
       if (selectedFiles.length === 0) {
-        toast.error(PATIENT_GALLERY_COPY.uploader.validation.fileRequired);
+        setError("root", {
+          message: PATIENT_GALLERY_COPY.uploader.validation.fileRequired,
+        });
         return;
       }
 
@@ -98,7 +86,7 @@ export function usePatientImageUploader(
       });
 
       if (!parsed.success) {
-        toast.error(formatZodError(parsed.error));
+        setError("root", { message: formatZodError(parsed.error) });
         return;
       }
 
@@ -113,19 +101,15 @@ export function usePatientImageUploader(
         resetForm();
         onSuccess();
       } catch (cause) {
-        toast.error(
-          cause instanceof Error
-            ? cause.message
-            : PATIENT_GALLERY_COPY.uploader.error,
-        );
+        setError("root", {
+          message:
+            cause instanceof Error
+              ? cause.message
+              : PATIENT_GALLERY_COPY.uploader.error,
+        });
       }
     },
-    (fieldErrors) => {
-      toast.error(
-        getFirstFieldError(fieldErrors) ??
-          PATIENT_GALLERY_COPY.uploader.validation.formInvalid,
-      );
-    },
+    () => clearErrors("root"),
   );
 
   return {

@@ -28,8 +28,16 @@ export default function InventoryItemEditDialog({
     onSuccess();
   });
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      dialog.reset();
+    }
+
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <AppDialog open={open} onOpenChange={onOpenChange}>
+    <AppDialog open={open} onOpenChange={handleOpenChange}>
       <AppSheetContent>
         <AppDialogHeader>
           <AppDialogTitle>Editar material</AppDialogTitle>
@@ -84,11 +92,11 @@ export default function InventoryItemEditDialog({
             </label>
           </div>
         </div>
-        <AppDialogFooter>
+        <AppDialogFooter errorMessage={dialog.formState.errors.root?.message}>
           <Button
             type="button"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => handleOpenChange(false)}
           >
             Cancelar
           </Button>

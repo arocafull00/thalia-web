@@ -1,3 +1,4 @@
+import { APPOINTMENT_LIST_SELECT } from "@/dal/appointments.dal";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabaseList } from "@/lib/supabase-query";
 import type { AppointmentWithRelations } from "@/types/database.types";
@@ -9,9 +10,7 @@ export async function getTodayAppointments(
 ): Promise<AppointmentWithRelations[]> {
   let query = supabase
     .from("appointments")
-    .select(
-      "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-    )
+    .select(APPOINTMENT_LIST_SELECT)
     .gte("starts_at", from)
     .lte("starts_at", to)
     .order("starts_at");

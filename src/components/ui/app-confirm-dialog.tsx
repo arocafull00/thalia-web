@@ -20,6 +20,7 @@ type AppConfirmDialogProps = {
   isPending: boolean;
   onConfirm: () => void;
   confirmTone?: "danger" | "primary";
+  errorMessage?: string;
 };
 
 export default function AppConfirmDialog({
@@ -33,6 +34,7 @@ export default function AppConfirmDialog({
   isPending,
   onConfirm,
   confirmTone = "primary",
+  errorMessage,
 }: AppConfirmDialogProps) {
   return (
     <AppDialog open={open} onOpenChange={onOpenChange}>
@@ -41,7 +43,7 @@ export default function AppConfirmDialog({
           <AppDialogTitle>{title}</AppDialogTitle>
           <AppDialogDescription>{description}</AppDialogDescription>
         </AppDialogHeader>
-        <AppDialogFooter>
+        <AppDialogFooter errorMessage={errorMessage}>
           <Button
             type="button"
             variant="outline"

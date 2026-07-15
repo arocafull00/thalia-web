@@ -19,6 +19,10 @@ import {
 } from "@/dal/appointments.dal";
 import { getTreatmentsByIds } from "@/dal/treatments.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import {
+  isControlledAppointmentError,
+  toAppointmentError,
+} from "@/lib/appointment-errors";
 import { logger } from "@/lib/logger";
 import {
   appointmentSchema,
@@ -74,45 +78,6 @@ function calculateEndDate(startsAt: Date, treatments: Treatment[]) {
     0,
   );
   return addMinutes(startsAt, duration || 30);
-}
-
-type ControlledAppointmentError = Error & {
-  controlled: true;
-};
-
-function controlledAppointmentError(
-  message: string,
-): ControlledAppointmentError {
-  return Object.assign(new Error(message), { controlled: true as const });
-}
-
-function isControlledAppointmentError(
-  error: Error,
-): error is ControlledAppointmentError {
-  return "controlled" in error && error.controlled === true;
-}
-
-function toAppointmentError(cause: unknown): Error {
-  const error = cause instanceof Error ? cause : new Error(String(cause));
-  const code = (cause as { code?: string; message?: string })?.code;
-
-  if (code === "23505") {
-    return controlledAppointmentError(
-      "Ya existe una cita para ese profesional a esa hora.",
-    );
-  }
-  if (code === "23P01") {
-    return controlledAppointmentError(
-      "El paciente ya tiene una cita programada para esa hora.",
-    );
-  }
-  if (error.message.includes("Stock insuficiente")) {
-    return controlledAppointmentError(
-      "No hay stock suficiente para los materiales de la cita.",
-    );
-  }
-
-  return error;
 }
 
 async function refreshAllAppointmentEntries() {

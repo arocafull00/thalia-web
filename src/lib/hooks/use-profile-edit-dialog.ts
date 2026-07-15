@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { PROFILE_EDIT_COPY } from "@/copy/profile-edit-copy";
@@ -47,6 +46,8 @@ export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<ProfileEditFormValues>({
     resolver: zodResolver(profileEditFormSchema),
@@ -58,10 +59,12 @@ export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
   }, [profile, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
+    clearErrors("root");
+
     const parsed = profileEditFormSchema.safeParse(data);
 
     if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
+      setError("root", { message: formatZodError(parsed.error) });
       return;
     }
 
@@ -75,9 +78,10 @@ export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
       notifySuccess(PROFILE_EDIT_COPY.success);
       onSuccess();
     } catch (cause) {
-      toast.error(
-        cause instanceof Error ? cause.message : PROFILE_EDIT_COPY.error,
-      );
+      setError("root", {
+        message:
+          cause instanceof Error ? cause.message : PROFILE_EDIT_COPY.error,
+      });
     }
   });
 

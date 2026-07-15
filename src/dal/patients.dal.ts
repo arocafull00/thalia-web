@@ -1,3 +1,4 @@
+import { APPOINTMENT_LIST_SELECT } from "@/dal/appointments.dal";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
@@ -51,9 +52,7 @@ export async function getPatientAppointments(
 ): Promise<AppointmentWithRelations[]> {
   const { data, error } = await supabase
     .from("appointments")
-    .select(
-      "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-    )
+    .select(APPOINTMENT_LIST_SELECT)
     .eq("patient_id", patientId)
     .order("starts_at", { ascending: false });
   return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
@@ -64,9 +63,7 @@ export async function getUpcomingPatientAppointments(
 ): Promise<AppointmentWithRelations[]> {
   const { data, error } = await supabase
     .from("appointments")
-    .select(
-      "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_treatments(*, treatment(id, name, color, price))",
-    )
+    .select(APPOINTMENT_LIST_SELECT)
     .eq("patient_id", patientId)
     .gt("starts_at", new Date().toISOString())
     .order("starts_at");

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { EMPLOYEE_EDIT_COPY } from "@/copy/employee-edit-copy";
@@ -49,6 +48,8 @@ export function useEmployeeEditDialog(
     control,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<EmployeeEditFormValues>({
     resolver: zodResolver(employeeEditFormSchema),
@@ -60,10 +61,12 @@ export function useEmployeeEditDialog(
   }, [employee, reset]);
 
   const onSubmit = handleSubmit((data) => {
+    clearErrors("root");
+
     const parsed = employeeEditFormSchema.safeParse(data);
 
     if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
+      setError("root", { message: formatZodError(parsed.error) });
       return;
     }
 
@@ -83,7 +86,9 @@ export function useEmployeeEditDialog(
           onSuccess();
         },
         onError: (cause) => {
-          toast.error(cause.message || EMPLOYEE_EDIT_COPY.error);
+          setError("root", {
+            message: cause.message || EMPLOYEE_EDIT_COPY.error,
+          });
         },
       },
     );

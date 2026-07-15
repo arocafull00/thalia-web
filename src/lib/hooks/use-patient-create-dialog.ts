@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
@@ -49,6 +48,8 @@ export function usePatientCreateDialog(onSuccess: () => void) {
     handleSubmit,
     reset,
     watch,
+    setError,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
@@ -82,8 +83,12 @@ export function usePatientCreateDialog(onSuccess: () => void) {
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
+    clearErrors("root");
+
     if (!clinicId) {
-      toast.error(PATIENT_CREATE_COPY.validation.clinicRequired);
+      setError("root", {
+        message: PATIENT_CREATE_COPY.validation.clinicRequired,
+      });
       return;
     }
 
@@ -101,7 +106,7 @@ export function usePatientCreateDialog(onSuccess: () => void) {
     });
 
     if (!parsed.success) {
-      toast.error(formatZodError(parsed.error));
+      setError("root", { message: formatZodError(parsed.error) });
       return;
     }
 
@@ -120,9 +125,10 @@ export function usePatientCreateDialog(onSuccess: () => void) {
       resetAvatar();
       onSuccess();
     } catch (cause) {
-      toast.error(
-        cause instanceof Error ? cause.message : PATIENT_CREATE_COPY.error,
-      );
+      setError("root", {
+        message:
+          cause instanceof Error ? cause.message : PATIENT_CREATE_COPY.error,
+      });
     }
   });
 

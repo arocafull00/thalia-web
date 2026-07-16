@@ -10,9 +10,13 @@ import { getAgendaHours, TIME_COLUMN_WIDTH } from "@/lib/calendar-grid";
 type DayAgendaListProps = {
   day: Date;
   appointments: AgendaAppointment[];
+  onAppointmentClick: (appointmentId: string) => void;
 };
 
-export default function DayAgendaList({ appointments }: DayAgendaListProps) {
+export default function DayAgendaList({
+  appointments,
+  onAppointmentClick,
+}: DayAgendaListProps) {
   if (appointments.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center px-6 py-16 text-center text-sm text-ink-secondary">
@@ -63,6 +67,7 @@ export default function DayAgendaList({ appointments }: DayAgendaListProps) {
                 <DayAgendaAppointmentCard
                   key={appointment.id}
                   appointment={appointment}
+                  onClick={() => onAppointmentClick(appointment.id)}
                 />
               ))}
             </div>

@@ -69,6 +69,10 @@ export function useAppointment(appointmentId: string) {
   );
 
   useEffect(() => {
+    if (!appointmentId) {
+      return;
+    }
+
     void fetchAppointment(appointmentId);
   }, [appointmentId, fetchAppointment]);
 

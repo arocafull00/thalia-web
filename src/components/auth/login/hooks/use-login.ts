@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
 import { signInWithGoogleFlow } from "@/lib/auth/sign-in-with-google-flow";
 import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -33,11 +34,7 @@ export function useLogin() {
       await signIn(email.trim(), password);
       await navigateAfterAuth();
     } catch (nextError) {
-      setError(
-        nextError instanceof Error
-          ? nextError.message
-          : "No se pudo iniciar sesión",
-      );
+      setError(getAuthErrorMessage(nextError));
       setSubmitting(false);
     }
   };

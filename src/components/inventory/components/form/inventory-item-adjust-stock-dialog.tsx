@@ -1,15 +1,33 @@
 "use client";
 
+import { Controller } from "react-hook-form";
+
 import AppDialog from "@/components/ui/app-dialog";
-import AppDialogContent from "@/components/ui/app-dialog-content";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
 import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
+import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useInventoryAdjustStockDialog } from "@/lib/hooks/use-inventory-adjust-stock-dialog";
+
+const movementTypeOptions = [
+  {
+    value: "in",
+    label: INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.in,
+  },
+  {
+    value: "out",
+    label: INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.out,
+  },
+  {
+    value: "adjustment",
+    label: INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.adjustment,
+  },
+];
 
 type InventoryItemAdjustStockDialogProps = {
   itemId: string;
@@ -39,7 +57,7 @@ export default function InventoryItemAdjustStockDialog({
 
   return (
     <AppDialog open={open} onOpenChange={handleOpenChange}>
-      <AppDialogContent>
+      <AppSheetContent>
         <AppDialogHeader>
           <AppDialogTitle>
             {INVENTORY_ITEM_DETAIL_COPY.adjustStock.title}
@@ -48,25 +66,26 @@ export default function InventoryItemAdjustStockDialog({
             {INVENTORY_ITEM_DETAIL_COPY.adjustStock.description}
           </AppDialogDescription>
         </AppDialogHeader>
-        <div className="space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-1">
           <label className="block space-y-1.5">
             <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
               {INVENTORY_ITEM_DETAIL_COPY.adjustStock.fields.type}
             </span>
-            <select
-              {...dialog.register("type")}
-              className="w-full rounded-xl border border-border bg-canvas px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="in">
-                {INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.in}
-              </option>
-              <option value="out">
-                {INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.out}
-              </option>
-              <option value="adjustment">
-                {INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.adjustment}
-              </option>
-            </select>
+            <Controller
+              name="type"
+              control={dialog.control}
+              render={({ field }) => (
+                <AppSearchableCombobox
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value ?? "in")}
+                  options={movementTypeOptions}
+                  placeholder={
+                    INVENTORY_ITEM_DETAIL_COPY.adjustStock.fields.type
+                  }
+                  showSearch={false}
+                />
+              )}
+            />
             {dialog.errors.type ? (
               <p className="text-sm text-danger">
                 {dialog.errors.type.message}
@@ -125,7 +144,7 @@ export default function InventoryItemAdjustStockDialog({
             onClick={dialog.handleSubmit}
           />
         </AppDialogFooter>
-      </AppDialogContent>
+      </AppSheetContent>
     </AppDialog>
   );
 }

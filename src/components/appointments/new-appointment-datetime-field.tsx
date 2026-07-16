@@ -12,6 +12,11 @@ export default function NewAppointmentDatetimeField({
   onChange,
 }: NewAppointmentDatetimeFieldProps) {
   return (
-    <AppDateField value={value} onChange={onChange} mode="datetime-local" />
+    <AppDateField
+      value={value}
+      onChange={onChange}
+      mode="datetime-local"
+      roundTimeToMinutes={30}
+    />
   );
 }

@@ -106,8 +106,8 @@ export default function AppointmentMaterialsOverrideForm({
                     return (
                       <input
                         type="number"
-                        min="0.01"
-                        step="0.01"
+                        min="1"
+                        step="1"
                         value={quantityValue}
                         onChange={(event) =>
                           controllerField.onChange(event.target.value)
@@ -133,15 +133,15 @@ export default function AppointmentMaterialsOverrideForm({
                   </span>
                 ) : null}
               </label>
-              <div className="flex items-end">
+              <div className="flex items-start pt-7">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={() => remove(index)}
                   aria-label="Quitar material"
                   title="Quitar material"
-                  className="rounded-full"
+                  className="rounded-full shadow-float"
                 >
                   <Trash2 aria-hidden="true" />
                 </Button>

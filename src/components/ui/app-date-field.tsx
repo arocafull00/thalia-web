@@ -27,6 +27,7 @@ type AppDateFieldProps = {
   mode?: "date" | "datetime-local";
   minDate?: Date;
   maxDate?: Date;
+  roundTimeToMinutes?: number;
 };
 
 export default function AppDateField({
@@ -35,6 +36,7 @@ export default function AppDateField({
   mode = "date",
   minDate,
   maxDate,
+  roundTimeToMinutes,
 }: AppDateFieldProps) {
   const [open, setOpen] = useState(false);
   const timeValue = value
@@ -50,6 +52,12 @@ export default function AppDateField({
     const next = new Date(selected);
     if (mode === "datetime-local" && value) {
       next.setHours(value.getHours(), value.getMinutes(), 0, 0);
+    }
+
+    if (mode === "datetime-local" && roundTimeToMinutes) {
+      const roundedMinutes =
+        Math.round(next.getMinutes() / roundTimeToMinutes) * roundTimeToMinutes;
+      next.setMinutes(roundedMinutes, 0, 0);
     }
 
     onChange(next);

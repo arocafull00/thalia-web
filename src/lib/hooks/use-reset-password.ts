@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { LOGIN_COPY } from "@/copy/login-copy";
+import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
 import { supabase } from "@/lib/supabase";
 
 export function useResetPassword() {
@@ -43,15 +44,7 @@ export function useResetPassword() {
     setSubmitting(false);
 
     if (updateError) {
-      if (updateError.message.toLowerCase().includes("expired")) {
-        setError(
-          "El enlace ha expirado. Solicita un nuevo enlace de recuperación.",
-        );
-      } else {
-        setError(
-          "No se pudo actualizar la contraseña. Solicita un enlace nuevo.",
-        );
-      }
+      setError(getAuthErrorMessage(updateError));
       return;
     }
 

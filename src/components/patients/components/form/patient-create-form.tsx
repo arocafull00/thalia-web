@@ -5,6 +5,7 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
+import AppDialogError from "@/components/ui/app-dialog-error";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import type { PatientFormValues } from "@/lib/hooks/use-patient-create-dialog";
 
@@ -35,6 +36,7 @@ export default function PatientCreateForm({
 }: PatientCreateFormProps) {
   return (
     <div className="mt-4 space-y-4">
+      <AppDialogError message={errors.root?.message} />
       <PatientAvatarField
         displayUri={avatarDisplayUri}
         initials={avatarInitials}

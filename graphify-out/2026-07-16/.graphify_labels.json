@@ -156,8 +156,6 @@
   "154": "page-filters-bar.tsx",
   "155": "page.client.tsx",
   "156": "appointments-table.tsx",
-  "157": "schedule-x-calendar.tsx",
-  "158": "employee-status-confirm-dialog.tsx",
   "245": "skeleton-block.tsx",
   "364": "eslint.config.mjs",
   "365": "next.config.ts",

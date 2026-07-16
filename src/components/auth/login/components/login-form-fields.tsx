@@ -1,6 +1,6 @@
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import PasswordInput from "@/components/auth/components/password-input";
 import { LOGIN_COPY } from "@/copy/login-copy";
 
 type LoginFormFieldsProps = {
@@ -44,33 +44,14 @@ export default function LoginFormFields({
           {LOGIN_COPY.fields.passwordLabel}{" "}
           <span className="text-danger">{LOGIN_COPY.fields.requiredMark}</span>
         </span>
-        <div className="relative">
-          <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-ink-muted" />
-          <input
-            value={password}
-            onChange={(event) => onPasswordChange(event.target.value)}
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            placeholder={LOGIN_COPY.fields.passwordPlaceholder}
-            className="w-full rounded-xl border border-border bg-surface py-2.5 pr-10 pl-10 text-sm outline-none ring-primary focus:ring-2"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={onTogglePassword}
-            aria-label={
-              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-            }
-            className="absolute top-1/2 right-3 -translate-y-1/2"
-          >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
+        <PasswordInput
+          value={password}
+          onChange={(event) => onPasswordChange(event.target.value)}
+          visible={showPassword}
+          onToggleVisibility={onTogglePassword}
+          autoComplete="current-password"
+          placeholder={LOGIN_COPY.fields.passwordPlaceholder}
+        />
       </label>
     </div>
   );

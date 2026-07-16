@@ -1,8 +1,8 @@
 "use client";
 
-import { Eye, EyeOff, Lock } from "lucide-react";
 import type { FormEvent } from "react";
 
+import PasswordInput from "@/components/auth/components/password-input";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { LOGIN_COPY } from "@/copy/login-copy";
@@ -58,34 +58,17 @@ export default function ResetPasswordPageClient() {
                     {LOGIN_COPY.fields.requiredMark}
                   </span>
                 </span>
-                <div className="relative">
-                  <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-ink-muted" />
-                  <input
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    required
-                    minLength={8}
-                    className="w-full rounded-xl border border-border bg-surface py-2.5 pr-10 pl-10 text-sm outline-none ring-primary focus:ring-2"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={
-                      showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                    }
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-ink-muted hover:text-ink-secondary"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                <PasswordInput
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  visible={showPassword}
+                  onToggleVisibility={() =>
+                    setShowPassword((current) => !current)
+                  }
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                />
               </label>
 
               <label className="block space-y-1.5">
@@ -95,36 +78,17 @@ export default function ResetPasswordPageClient() {
                     {LOGIN_COPY.fields.requiredMark}
                   </span>
                 </span>
-                <div className="relative">
-                  <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-ink-muted" />
-                  <input
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    type={showConfirmPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    required
-                    minLength={8}
-                    className="w-full rounded-xl border border-border bg-surface py-2.5 pr-10 pl-10 text-sm outline-none ring-primary focus:ring-2"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={
-                      showConfirmPassword
-                        ? "Ocultar contraseña"
-                        : "Mostrar contraseña"
-                    }
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-ink-muted hover:text-ink-secondary"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                <PasswordInput
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  visible={showConfirmPassword}
+                  onToggleVisibility={() =>
+                    setShowConfirmPassword((current) => !current)
+                  }
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                />
               </label>
             </div>
 

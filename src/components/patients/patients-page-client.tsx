@@ -129,7 +129,7 @@ export default function PatientsPageClient() {
               onAvatarFileSelected={dialog.onAvatarFileSelected}
             />
           </div>
-          <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+          <AppDialogFooter>
             <Button
               type="button"
               variant="outline"

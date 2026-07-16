@@ -17,6 +17,7 @@ export const APPOINTMENT_CREATE_COPY = {
   },
   actions: {
     cancel: "Cancelar",
+    viewDetail: "Ver detalle",
     save: "Guardar",
     saving: "Guardando...",
   },

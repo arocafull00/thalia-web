@@ -3,9 +3,11 @@
 import DayAgendaList from "@/components/calendar/components/day-agenda-list";
 import { useCalendarDayAgenda } from "@/components/calendar/hooks/use-calendar-day-agenda";
 import { formatFullDayLabel } from "@/lib/calendar-grid";
+import { useCalendarStore } from "@/stores/calendar-store";
 
 export default function CalendarMobileDayView() {
   const { day, agenda } = useCalendarDayAgenda();
+  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -14,7 +16,11 @@ export default function CalendarMobileDayView() {
           {formatFullDayLabel(day)}
         </p>
       </div>
-      <DayAgendaList day={day} appointments={agenda} />
+      <DayAgendaList
+        day={day}
+        appointments={agenda}
+        onAppointmentClick={openEditDialog}
+      />
     </div>
   );
 }

@@ -16,7 +16,6 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Temporal } from "temporal-polyfill";
@@ -109,11 +108,11 @@ function getInitialCalendarConfig() {
 }
 
 export function useScheduleXCalendar(gridHeight: number) {
-  const router = useRouter();
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
   const viewMode = useCalendarStore((state) => state.viewMode);
   const employeeId = useCalendarStore((state) => state.employeeId);
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
+  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
 
   const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
@@ -141,14 +140,14 @@ export function useScheduleXCalendar(gridHeight: number) {
     [appointments.data],
   );
 
-  const routerRef = useRef(router);
   const openCreateDialogRef = useRef(openCreateDialog);
+  const openEditDialogRef = useRef(openEditDialog);
   const setVisibleRangeRef = useRef(setVisibleRange);
   const syncedWeekAnchorRef = useRef(initialConfig.weekAnchor);
 
   useEffect(() => {
-    routerRef.current = router;
     openCreateDialogRef.current = openCreateDialog;
+    openEditDialogRef.current = openEditDialog;
     setVisibleRangeRef.current = setVisibleRange;
   });
 
@@ -188,7 +187,7 @@ export function useScheduleXCalendar(gridHeight: number) {
     skipAnimations: true,
     callbacks: {
       onEventClick: (event) => {
-        routerRef.current.push(`/appointments/${String(event.id)}`);
+        openEditDialogRef.current(String(event.id));
       },
       onClickDateTime: (dateTime) => {
         openCreateDialogRef.current(zonedDateTimeToDate(dateTime));

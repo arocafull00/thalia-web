@@ -60,7 +60,7 @@ export default function TreatmentDialog({
             />
           )}
         </div>
-        <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+        <AppDialogFooter>
           <Button
             type="button"
             variant="outline"

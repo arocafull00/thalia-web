@@ -1,10 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { REGISTER_COPY } from "@/copy/register-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
+import {
+  registerInvitationEmailSchema,
+  type RegisterInvitationEmailFormValues,
+} from "@/lib/schemas/register-schema";
 import { supabase } from "@/lib/supabase";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
@@ -18,9 +24,16 @@ export function useRegisterType() {
   const setToken = usePendingInviteStore((state) => state.setToken);
 
   const [step, setStep] = useState<RegisterStep>("pick");
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterInvitationEmailFormValues>({
+    resolver: zodResolver(registerInvitationEmailSchema),
+    defaultValues: { email: "" },
+  });
 
   const handlePickOwner = () => {
     setIntent("owner");
@@ -34,27 +47,16 @@ export function useRegisterType() {
   const handleBack = () => {
     usePendingInviteStore.getState().clearToken();
     setStep("pick");
-    setEmail("");
-    setError(null);
+    reset();
   };
 
-  const handleEmployeeEmailSubmit = async () => {
-    const trimmed = email.trim();
-
-    if (!trimmed) {
-      setError(REGISTER_COPY.employeeEmail.errors.emailRequired);
-      return;
-    }
-
-    setError(null);
-    setSubmitting(true);
-
+  const handleEmployeeEmailSubmit = handleSubmit(async ({ email }) => {
     try {
       const { data, error: queryError } = await supabase
         .from("invitation_tokens")
         .select("token, email")
         .is("used_at", null)
-        .ilike("email", trimmed)
+        .ilike("email", email)
         .gt("expires_at", new Date().toISOString())
         .maybeSingle();
 
@@ -63,7 +65,9 @@ export function useRegisterType() {
       }
 
       if (!data) {
-        setError(REGISTER_COPY.employeeEmail.errors.notInvited);
+        setError("root", {
+          message: REGISTER_COPY.employeeEmail.errors.notInvited,
+        });
         return;
       }
 
@@ -71,11 +75,11 @@ export function useRegisterType() {
       setToken(data.token, data.email);
       router.push("/register-employee");
     } catch {
-      setError(REGISTER_COPY.employeeEmail.errors.lookupFailed);
-    } finally {
-      setSubmitting(false);
+      setError("root", {
+        message: REGISTER_COPY.employeeEmail.errors.lookupFailed,
+      });
     }
-  };
+  });
 
   const handleSignOut = () => {
     usePendingInviteStore.getState().clearToken();
@@ -88,10 +92,10 @@ export function useRegisterType() {
 
   return {
     step,
-    email,
-    error,
-    submitting,
-    setEmail,
+    emailRegister: register("email"),
+    emailError: errors.email?.message,
+    error: errors.root?.message ?? null,
+    submitting: isSubmitting,
     handlePickOwner,
     handlePickEmployee,
     handleBack,

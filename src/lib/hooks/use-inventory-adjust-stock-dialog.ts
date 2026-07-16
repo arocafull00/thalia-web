@@ -1,29 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useRecordInventoryMovement } from "@/lib/hooks/use-inventory";
+import {
+  inventoryAdjustStockSchema,
+  type InventoryAdjustStockFormValues,
+  type InventoryAdjustStockSubmitValues,
+} from "@/lib/schemas/inventory-adjust-stock-schema";
 import { notifySuccess } from "@/lib/sound";
 import { useAuthStore } from "@/stores/auth-store";
 import type { InventoryMovementType } from "@/types/database.types";
-
-const inventoryAdjustStockSchema = z.object({
-  type: z.enum(["in", "out", "adjustment"]),
-  quantity: z.coerce
-    .number({
-      message:
-        INVENTORY_ITEM_DETAIL_COPY.adjustStock.validation.quantityInvalid,
-    })
-    .positive(
-      INVENTORY_ITEM_DETAIL_COPY.adjustStock.validation.quantityPositive,
-    ),
-  notes: z.string().trim().max(500).optional().or(z.literal("")),
-});
-
-export type InventoryAdjustStockFormValues = z.input<
-  typeof inventoryAdjustStockSchema
->;
 
 const defaultValues: InventoryAdjustStockFormValues = {
   type: "in",
@@ -39,13 +26,18 @@ export function useInventoryAdjustStockDialog(
   const { mutate, isPending } = useRecordInventoryMovement();
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
     setError,
     clearErrors,
     formState: { errors, isSubmitting },
-  } = useForm<InventoryAdjustStockFormValues>({
+  } = useForm<
+    InventoryAdjustStockFormValues,
+    unknown,
+    InventoryAdjustStockSubmitValues
+  >({
     resolver: zodResolver(inventoryAdjustStockSchema),
     defaultValues,
   });
@@ -61,24 +53,13 @@ export function useInventoryAdjustStockDialog(
       return;
     }
 
-    const parsed = inventoryAdjustStockSchema.safeParse(data);
-
-    if (!parsed.success) {
-      setError("root", {
-        message:
-          parsed.error.issues[0]?.message ??
-          INVENTORY_ITEM_DETAIL_COPY.adjustStock.error,
-      });
-      return;
-    }
-
     mutate(
       {
         item_id: itemId,
         employee_id: profile.id,
-        type: parsed.data.type as InventoryMovementType,
-        quantity: parsed.data.quantity,
-        notes: parsed.data.notes?.trim() ? parsed.data.notes.trim() : null,
+        type: data.type as InventoryMovementType,
+        quantity: data.quantity,
+        notes: data.notes?.trim() ? data.notes.trim() : null,
       },
       {
         onSuccess: () => {
@@ -98,6 +79,7 @@ export function useInventoryAdjustStockDialog(
 
   return {
     register,
+    control,
     errors,
     isPending: isPending || isSubmitting,
     reset: () => reset(defaultValues),

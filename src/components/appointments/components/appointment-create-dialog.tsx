@@ -19,6 +19,7 @@ type AppointmentCreateDialogProps = {
   appointment?: AppointmentWithRelations | null;
   initialStartsAt?: Date | null;
   initialPatientId?: string | null;
+  onViewDetail?: () => void;
 };
 
 export default function AppointmentCreateDialog({
@@ -27,6 +28,7 @@ export default function AppointmentCreateDialog({
   appointment = null,
   initialStartsAt = null,
   initialPatientId = null,
+  onViewDetail,
 }: AppointmentCreateDialogProps) {
   const dialog = useAppointmentCreateDialog(
     () => onOpenChange(false),
@@ -71,7 +73,17 @@ export default function AppointmentCreateDialog({
             treatmentsLoading={dialog.treatmentsLoading}
           />
         </div>
-        <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+        <AppDialogFooter>
+          {dialog.isEditing && onViewDetail ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onViewDetail}
+              className="mr-auto rounded-button px-3 py-1.5 text-sm"
+            >
+              {APPOINTMENT_CREATE_COPY.actions.viewDetail}
+            </Button>
+          ) : null}
           <Button
             type="button"
             variant="outline"

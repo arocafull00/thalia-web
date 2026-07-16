@@ -7,10 +7,10 @@ import { useRegisterType } from "@/lib/hooks/use-register-type";
 export default function RegisterPageClient() {
   const {
     step,
-    email,
+    emailRegister,
+    emailError,
     error,
     submitting,
-    setEmail,
     handlePickOwner,
     handlePickEmployee,
     handleBack,
@@ -23,10 +23,10 @@ export default function RegisterPageClient() {
       <div className="w-full max-w-[440px]">
         {step === "employee-email" ? (
           <RegisterEmployeeEmail
-            email={email}
+            emailRegister={emailRegister}
+            emailError={emailError}
             error={error}
             submitting={submitting}
-            onEmailChange={setEmail}
             onSubmit={handleEmployeeEmailSubmit}
             onBack={handleBack}
           />

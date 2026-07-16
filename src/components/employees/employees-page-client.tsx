@@ -168,7 +168,7 @@ export default function EmployeesPageClient() {
               errors={dialog.errors}
             />
           </div>
-          <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+          <AppDialogFooter>
             <Button
               type="button"
               variant="outline"

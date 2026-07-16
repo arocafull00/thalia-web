@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
@@ -14,6 +15,7 @@ import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAppointment } from "@/lib/hooks/use-appointments";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
@@ -24,6 +26,7 @@ const CALENDAR_FILTER_DEFAULTS = {
 };
 
 export default function CalendarPageClient() {
+  const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const isMobile = useIsMobile();
@@ -35,6 +38,7 @@ export default function CalendarPageClient() {
     viewMode,
     dialogOpen,
     createStartsAt,
+    editingAppointmentId,
     openCreateDialog,
     closeDialog,
     onPrevious,
@@ -42,6 +46,9 @@ export default function CalendarPageClient() {
     onToday,
     onChangeViewMode,
   } = useCalendarPage();
+  const editingAppointment = useAppointment(editingAppointmentId ?? "");
+  const canRenderAppointmentDialog =
+    !editingAppointmentId || Boolean(editingAppointment.data);
 
   useSwipeNavigation(calendarWrapperRef, {
     enabled: isMobile,
@@ -103,15 +110,26 @@ export default function CalendarPageClient() {
           <ScheduleXCalendar />
         )}
       </div>
-      <AppointmentCreateDialog
-        open={dialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            closeDialog();
+      {canRenderAppointmentDialog ? (
+        <AppointmentCreateDialog
+          open={dialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              closeDialog();
+            }
+          }}
+          appointment={editingAppointment.data ?? null}
+          initialStartsAt={createStartsAt}
+          onViewDetail={
+            editingAppointmentId
+              ? () => {
+                  closeDialog();
+                  router.push(`/appointments/${editingAppointmentId}`);
+                }
+              : undefined
           }
-        }}
-        initialStartsAt={createStartsAt}
-      />
+        />
+      ) : null}
       <CalendarFiltersSheet
         key={sheetKey}
         open={sheetOpen}

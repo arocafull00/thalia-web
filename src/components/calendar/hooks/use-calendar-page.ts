@@ -35,7 +35,11 @@ export function useCalendarPage() {
   const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
   const dialogOpen = useCalendarStore((state) => state.dialogOpen);
   const createStartsAt = useCalendarStore((state) => state.createStartsAt);
+  const editingAppointmentId = useCalendarStore(
+    (state) => state.editingAppointmentId,
+  );
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
+  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const closeDialog = useCalendarStore((state) => state.closeDialog);
   const visibleRangeStart = useCalendarStore(
     (state) => state.visibleRangeStart,
@@ -94,7 +98,9 @@ export function useCalendarPage() {
     viewMode,
     dialogOpen,
     createStartsAt,
+    editingAppointmentId,
     openCreateDialog,
+    openEditDialog,
     closeDialog,
     onPrevious,
     onNext,

@@ -14,18 +14,13 @@ export default function RegisterEmployeePageClient() {
   const {
     authDisabled,
     copy,
-    email,
-    error,
-    fullName,
+    errors,
     hasSession,
     invitationEmail,
     isSupabaseConfigured,
     onContinue,
-    onEmailChange,
-    onFullNameChange,
-    onPasswordChange,
-    password,
     redirectHref,
+    register,
     submitting,
     isRedirecting,
   } = useRegisterEmployee();
@@ -56,17 +51,12 @@ export default function RegisterEmployeePageClient() {
         <RegisterEmployeeForm
           authDisabled={authDisabled}
           copy={copy}
-          email={email}
-          error={error}
-          fullName={fullName}
+          errors={errors}
           hasSession={hasSession}
           invitationEmail={invitationEmail}
           isSupabaseConfigured={isSupabaseConfigured}
           onContinue={onContinue}
-          onEmailChange={onEmailChange}
-          onFullNameChange={onFullNameChange}
           onLoginPress={() => router.replace("/login")}
-          onPasswordChange={onPasswordChange}
           onSignOut={() => {
             usePendingInviteStore.getState().clearToken();
             if (hasSession) {
@@ -75,7 +65,7 @@ export default function RegisterEmployeePageClient() {
               router.replace("/login");
             }
           }}
-          password={password}
+          register={register}
           submitting={submitting}
         />
       </div>

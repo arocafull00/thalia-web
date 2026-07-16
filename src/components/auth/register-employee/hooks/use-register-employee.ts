@@ -1,10 +1,10 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
-import {
-  getRegisterCopy,
-  REGISTER_EMPLOYEE_FORM_COPY,
-} from "@/copy/register-employee-copy";
+import { getRegisterCopy } from "@/copy/register-employee-copy";
+import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -14,6 +14,10 @@ import {
   EMPLOYEE_REGISTRATION_STEP_COUNT,
   OWNER_REGISTRATION_STEP_COUNT,
 } from "@/lib/registration-metadata";
+import {
+  registerEmployeeSchema,
+  type RegisterEmployeeFormValues,
+} from "@/lib/schemas/register-schema";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import {
@@ -21,6 +25,20 @@ import {
   type OnboardingIntent,
 } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
+
+function createDefaultValues(
+  fullName: string,
+  email: string,
+  requiresCredentials: boolean,
+): RegisterEmployeeFormValues {
+  return {
+    fullName,
+    email,
+    password: "",
+    confirmPassword: "",
+    requiresCredentials,
+  };
+}
 
 export function useRegisterEmployee() {
   const router = useRouter();
@@ -32,17 +50,11 @@ export function useRegisterEmployee() {
     (state) => state.invitationEmail,
   );
   const { href, ready } = usePostAuthRedirect(Boolean(user));
-  const [fullNameOverride, setFullNameOverride] = useState<string | null>(null);
-  const [email, setEmail] = useState(invitationEmail ?? "");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
   const metadataFullName =
     typeof user?.user_metadata.full_name === "string"
       ? user.user_metadata.full_name
       : "";
-  const fullName = fullNameOverride ?? metadataFullName;
   const resolvedIntent: OnboardingIntent = intent ?? "owner";
   const isOwner = resolvedIntent === "owner";
   const employeeViaEmail =
@@ -55,7 +67,29 @@ export function useRegisterEmployee() {
   const currentStep = employeeViaEmail ? 2 : 1;
   const hasSession = Boolean(user);
   const copy = getRegisterCopy(resolvedIntent, hasSession);
-  const authDisabled = submitting || !isSupabaseConfigured;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterEmployeeFormValues>({
+    resolver: zodResolver(registerEmployeeSchema),
+    defaultValues: createDefaultValues(
+      metadataFullName,
+      invitationEmail ?? "",
+      !hasSession,
+    ),
+  });
+
+  useEffect(() => {
+    reset(
+      createDefaultValues(metadataFullName, invitationEmail ?? "", !hasSession),
+    );
+  }, [hasSession, invitationEmail, metadataFullName, reset]);
+
+  const authDisabled = isSubmitting || !isSupabaseConfigured;
   const shouldRedirect = Boolean(
     user && ready && href && href !== "/register-employee",
   );
@@ -64,45 +98,23 @@ export function useRegisterEmployee() {
     shouldRedirect ||
     Boolean(user && resolvedIntent === "employee" && pendingToken);
 
-  const handleContinue = async () => {
-    const trimmedName = fullName.trim();
-
-    if (!trimmedName) {
-      setError(REGISTER_EMPLOYEE_FORM_COPY.errors.fullNameRequired);
-      return;
-    }
-
-    if (!hasSession) {
-      const resolvedEmail = invitationEmail ?? email;
-      const trimmedEmail = resolvedEmail.trim();
-      const trimmedPassword = password.trim();
-
-      if (!trimmedEmail || !trimmedPassword) {
-        setError(REGISTER_EMPLOYEE_FORM_COPY.errors.credentialsRequired);
-        return;
-      }
-    }
-
-    setError(null);
-    setSubmitting(true);
-
+  const handleContinue = handleSubmit(async (data) => {
     try {
       setIntent(resolvedIntent);
 
       if (!hasSession) {
-        const resolvedEmail = invitationEmail ?? email;
-        await signUp(resolvedEmail.trim(), password.trim(), {
-          full_name: trimmedName,
+        await signUp(data.email, data.password, {
+          full_name: data.fullName,
         });
         await waitForAuthSessionReady();
       }
 
       const { error: updateError } = await supabase.auth.updateUser({
-        data: buildOwnerProfileMetadata(trimmedName),
+        data: buildOwnerProfileMetadata(data.fullName),
       });
 
       if (updateError) {
-        throw new Error(updateError.message);
+        throw updateError;
       }
 
       const { data: freshUserData } = await supabase.auth.getUser();
@@ -124,37 +136,25 @@ export function useRegisterEmployee() {
 
       if (resolvedIntent === "employee" && pendingToken) {
         router.push(`/invite/${pendingToken}`);
-        return;
       }
-    } catch (nextError) {
-      setError(
-        nextError instanceof Error
-          ? nextError.message
-          : REGISTER_EMPLOYEE_FORM_COPY.errors.saveFailed,
-      );
-    } finally {
-      setSubmitting(false);
+    } catch (cause) {
+      setError("root", { message: getAuthErrorMessage(cause) });
     }
-  };
+  });
 
   return {
     authDisabled,
     copy,
     currentStep,
-    email,
-    error,
-    fullName,
+    errors,
     hasSession,
     invitationEmail,
     isRedirecting,
     isSupabaseConfigured,
     onContinue: handleContinue,
-    onEmailChange: setEmail,
-    onFullNameChange: setFullNameOverride,
-    onPasswordChange: setPassword,
-    password,
     redirectHref,
+    register,
     stepTotal,
-    submitting,
+    submitting: isSubmitting,
   };
 }

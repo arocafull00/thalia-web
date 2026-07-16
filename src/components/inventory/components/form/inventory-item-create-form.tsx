@@ -1,5 +1,6 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 
+import AppDialogError from "@/components/ui/app-dialog-error";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import type { InventoryFormValues } from "@/lib/hooks/use-inventory-item-create-dialog";
 
@@ -17,6 +18,7 @@ export default function InventoryItemCreateForm({
 }: InventoryItemCreateFormProps) {
   return (
     <div className="mt-4 space-y-4">
+      <AppDialogError message={errors.root?.message} />
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {INVENTORY_ITEM_CREATE_COPY.fields.name}{" "}

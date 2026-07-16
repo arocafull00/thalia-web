@@ -4,6 +4,7 @@ import TreatmentColorField from "@/components/treatments/components/treatment-co
 import TreatmentInventoryLinksField from "@/components/treatments/components/treatment-inventory-links-field";
 import type { TreatmentFormValues } from "@/components/treatments/hooks/use-treatment-dialog";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
+import AppDialogError from "@/components/ui/app-dialog-error";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
@@ -21,6 +22,7 @@ export default function TreatmentForm({
 }: TreatmentFormProps) {
   return (
     <div className="mt-4 space-y-4">
+      <AppDialogError message={errors.root?.message} />
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {TREATMENTS_COPY.form.name}{" "}

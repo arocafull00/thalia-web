@@ -5,6 +5,7 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
+import AppDialogError from "@/components/ui/app-dialog-error";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import type { EmployeeFormValues } from "@/lib/hooks/use-employee-invite-dialog";
 import type { ClinicMembershipInvitationRole } from "@/types/database.types";
@@ -31,6 +32,7 @@ export default function EmployeeInviteForm({
 }: EmployeeInviteFormProps) {
   return (
     <div className="mt-4 space-y-4">
+      <AppDialogError message={errors.root?.message} />
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {EMPLOYEE_INVITE_COPY.fields.email}{" "}

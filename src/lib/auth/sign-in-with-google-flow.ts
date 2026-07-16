@@ -1,3 +1,4 @@
+import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
 import { useAuthStore } from "@/stores/auth-store";
 
 export async function signInWithGoogleFlow(): Promise<{
@@ -7,11 +8,6 @@ export async function signInWithGoogleFlow(): Promise<{
     await useAuthStore.getState().signInWithGoogle();
     return { error: null };
   } catch (cause) {
-    return {
-      error:
-        cause instanceof Error
-          ? cause.message
-          : "No se pudo iniciar sesión con Google",
-    };
+    return { error: getAuthErrorMessage(cause) };
   }
 }

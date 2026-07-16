@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -7,17 +5,20 @@ import { cn } from "@/lib/utils";
 type DayAgendaAppointmentCardProps = {
   appointment: AgendaAppointment;
   className?: string;
+  onClick: () => void;
 };
 
 export default function DayAgendaAppointmentCard({
   appointment,
   className,
+  onClick,
 }: DayAgendaAppointmentCardProps) {
   return (
-    <Link
-      href={`/appointments/${appointment.id}`}
+    <button
+      type="button"
+      onClick={onClick}
       className={cn(
-        "flex shrink-0 overflow-hidden rounded-card border border-border/60 bg-surface",
+        "flex shrink-0 overflow-hidden rounded-card border border-border/60 bg-surface text-left",
         className,
       )}
     >
@@ -52,6 +53,6 @@ export default function DayAgendaAppointmentCard({
           </span>
         ) : null}
       </div>
-    </Link>
+    </button>
   );
 }

@@ -141,7 +141,7 @@ export default function InventoryPageClient() {
               errors={dialog.errors}
             />
           </div>
-          <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+          <AppDialogFooter>
             <Button
               type="button"
               variant="outline"

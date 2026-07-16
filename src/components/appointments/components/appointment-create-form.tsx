@@ -6,6 +6,7 @@ import {
 } from "react-hook-form";
 
 import NewAppointmentDatetimeField from "@/components/appointments/new-appointment-datetime-field";
+import AppDialogError from "@/components/ui/app-dialog-error";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSearchableMultiSelect from "@/components/ui/app-searchable-multi-select";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
@@ -65,15 +66,7 @@ export default function AppointmentCreateForm({
 
   return (
     <div className="mt-4 space-y-4">
-      {errors.root?.message ? (
-        <p
-          role="alert"
-          aria-live="polite"
-          className="rounded-xl bg-danger/10 px-3 py-2.5 text-sm text-danger"
-        >
-          {errors.root.message}
-        </p>
-      ) : null}
+      <AppDialogError message={errors.root?.message} />
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.patient}{" "}

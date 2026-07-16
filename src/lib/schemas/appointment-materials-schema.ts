@@ -4,7 +4,10 @@ import { uuidSchema } from "@/lib/schemas/schema-helpers";
 
 const appointmentInventoryLinkSchema = z.object({
   inventory_item_id: uuidSchema("Selecciona un material válido."),
-  quantity: z.coerce.number().positive("La cantidad debe ser mayor que 0."),
+  quantity: z.coerce
+    .number()
+    .int("La cantidad debe ser un número entero.")
+    .positive("La cantidad debe ser mayor que 0."),
 });
 
 export const appointmentMaterialsFormSchema = z.object({

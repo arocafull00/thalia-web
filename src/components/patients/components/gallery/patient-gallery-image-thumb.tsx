@@ -33,6 +33,10 @@ export default function PatientGalleryImageThumb({
   onToggleSelect,
 }: PatientGalleryImageThumbProps) {
   const imageUrl = usePatientImageUrl(image);
+  const imageName = image.original_filename ?? PATIENT_GALLERY_COPY.title;
+  const actionLabel = selectionMode
+    ? PATIENT_GALLERY_COPY.thumbActions.select
+    : PATIENT_GALLERY_COPY.thumbActions.view;
   const openDeleteConfirm = usePatientImagesStore(
     (state) => state.openDeleteConfirm,
   );
@@ -51,6 +55,7 @@ export default function PatientGalleryImageThumb({
       <ContextMenuTrigger asChild>
         <button
           type="button"
+          aria-label={`${actionLabel}: ${imageName}`}
           onClick={handleClick}
           className={`group relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isSelected ? "ring-2 ring-primary" : ""}`}
         >

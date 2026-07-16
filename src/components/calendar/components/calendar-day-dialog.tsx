@@ -13,6 +13,7 @@ type CalendarDayDialogProps = {
   day: Date | null;
   appointments: AgendaAppointment[];
   onOpenChange: (open: boolean) => void;
+  onAppointmentClick: (appointmentId: string) => void;
 };
 
 export default function CalendarDayDialog({
@@ -20,6 +21,7 @@ export default function CalendarDayDialog({
   day,
   appointments,
   onOpenChange,
+  onAppointmentClick,
 }: CalendarDayDialogProps) {
   return (
     <AppDialog open={open} onOpenChange={onOpenChange}>
@@ -28,7 +30,13 @@ export default function CalendarDayDialog({
           <AppDialogTitle>{day ? formatFullDayLabel(day) : ""}</AppDialogTitle>
         </AppDialogHeader>
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-          {day ? <DayAgendaList day={day} appointments={appointments} /> : null}
+          {day ? (
+            <DayAgendaList
+              day={day}
+              appointments={appointments}
+              onAppointmentClick={onAppointmentClick}
+            />
+          ) : null}
         </div>
       </AppSheetContent>
     </AppDialog>

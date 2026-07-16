@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppDialog from "@/components/ui/app-dialog";
+import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -136,9 +137,12 @@ export default function AppTopbar() {
             >
               <Bell size={20} strokeWidth={1.75} />
               {unreadCount > 0 ? (
-                <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-danger px-0.5 text-[9px] font-semibold text-white">
+                <Badge
+                  variant="danger"
+                  className="absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
+                >
                   {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
+                </Badge>
               ) : null}
             </Button>
             <NotificationsSheet onClose={() => setNotificationsOpen(false)} />

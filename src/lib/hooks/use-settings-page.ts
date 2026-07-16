@@ -1,3 +1,4 @@
+import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth, useUploadProfileAvatar } from "@/lib/hooks/use-auth";
@@ -78,7 +79,7 @@ export function useSettingsPageActions() {
     setPasswordSubmitting(false);
 
     if (error) {
-      setPasswordMessage(error.message);
+      setPasswordMessage(SETTINGS_COPY.account.changePasswordError);
       return;
     }
 

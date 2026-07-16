@@ -7,11 +7,11 @@ import {
   type FieldErrors,
 } from "react-hook-form";
 
-import type { AppointmentMaterialsFormValues } from "@/components/appointments/hooks/use-appointment-materials-override-dialog";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { Button } from "@/components/ui/button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useInventoryItems } from "@/lib/hooks/use-inventory";
+import type { AppointmentMaterialsFormValues } from "@/lib/schemas/appointment-materials-schema";
 
 const inputClassName =
   "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
@@ -49,7 +49,7 @@ export default function AppointmentMaterialsOverrideForm({
   );
 
   return (
-    <div className="mt-4 space-y-3">
+    <div className="mt-4 min-w-0 space-y-3">
       {fields.length === 0 ? (
         <p className="text-sm text-ink-secondary">
           {APPOINTMENT_DETAIL_COPY.noMaterials}
@@ -59,9 +59,9 @@ export default function AppointmentMaterialsOverrideForm({
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className="grid gap-3 rounded-xl border border-border-subtle p-3 sm:grid-cols-[1fr_120px_auto]"
+              className="grid min-w-0 gap-3 rounded-xl border border-border-subtle p-3 sm:grid-cols-[minmax(0,1fr)_120px_auto]"
             >
-              <label className="block space-y-1.5">
+              <label className="block min-w-0 space-y-1.5">
                 <span className="text-sm text-ink-secondary">
                   {APPOINTMENT_DETAIL_COPY.materials}
                 </span>
@@ -135,13 +135,15 @@ export default function AppointmentMaterialsOverrideForm({
               </label>
               <div className="flex items-end">
                 <Button
-                  variant="ghost"
                   type="button"
+                  variant="outline"
+                  size="icon"
                   onClick={() => remove(index)}
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-medium uppercase tracking-wide text-ink-secondary hover:bg-canvas"
+                  aria-label="Quitar material"
+                  title="Quitar material"
+                  className="rounded-full"
                 >
-                  <Trash2 className="size-3.5" aria-hidden="true" />
-                  Quitar
+                  <Trash2 aria-hidden="true" />
                 </Button>
               </div>
             </div>

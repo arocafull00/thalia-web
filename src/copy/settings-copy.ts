@@ -32,6 +32,8 @@ export const SETTINGS_COPY = {
     changePassword: "Cambiar contraseña",
     changePasswordLoading: "Enviando...",
     changePasswordHint: "Te enviaremos un email para restablecerla",
+    changePasswordError:
+      "No se pudo enviar el email para cambiar la contraseña. Inténtalo de nuevo.",
     signOut: "Cerrar sesión",
     signOutLoading: "Cerrando sesión...",
     signOutHint: "Salir de la plataforma en este dispositivo",

@@ -1,4 +1,5 @@
 import { DASHBOARD_COPY } from "@/components/dashboard/dashboard-copy";
+import { appointmentStatusLabel } from "@/lib/format";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 type DashboardRecentActivityProps = {
@@ -22,7 +23,7 @@ export default function DashboardRecentActivity({
           {recent.map((appointment) => (
             <div key={appointment.id} className="py-4">
               <p className="text-sm font-medium text-ink">
-                Cita {appointment.status ?? "programada"} -{" "}
+                Cita {appointmentStatusLabel(appointment.status)} -{" "}
                 {appointment.patients?.full_name ?? "Paciente"}
               </p>
               <p className="mt-1 text-xs text-ink-muted">Hoy</p>

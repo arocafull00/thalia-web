@@ -1,25 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useReplaceAppointmentInventoryItems } from "@/lib/hooks/use-appointments";
+import {
+  appointmentMaterialsFormSchema,
+  type AppointmentMaterialsFormValues,
+  type AppointmentMaterialsSubmitValues,
+} from "@/lib/schemas/appointment-materials-schema";
 import { notifySuccess } from "@/lib/sound";
 import type { AppointmentInventoryItemWithInventory } from "@/types/database.types";
-
-const appointmentInventoryLinkSchema = z.object({
-  inventory_item_id: z.string().uuid(),
-  quantity: z.coerce.number().positive(),
-});
-
-const appointmentMaterialsFormSchema = z.object({
-  items: z.array(appointmentInventoryLinkSchema),
-});
-
-export type AppointmentMaterialsFormValues = z.input<
-  typeof appointmentMaterialsFormSchema
->;
 
 function toFormValues(
   items: AppointmentInventoryItemWithInventory[],
@@ -46,7 +37,11 @@ export function useAppointmentMaterialsOverrideDialog(
     setError,
     clearErrors,
     formState: { errors, isSubmitting },
-  } = useForm<AppointmentMaterialsFormValues>({
+  } = useForm<
+    AppointmentMaterialsFormValues,
+    unknown,
+    AppointmentMaterialsSubmitValues
+  >({
     resolver: zodResolver(appointmentMaterialsFormSchema),
     defaultValues: toFormValues(initialItems),
   });
@@ -58,16 +53,10 @@ export function useAppointmentMaterialsOverrideDialog(
   const onSubmit = handleSubmit(async (data) => {
     clearErrors("root");
 
-    const parsed = appointmentMaterialsFormSchema.safeParse(data);
-
-    if (!parsed.success) {
-      return;
-    }
-
     try {
       await mutateAsync({
         appointmentId,
-        items: parsed.data.items,
+        items: data.items,
       });
       notifySuccess(APPOINTMENT_DETAIL_COPY.materialsSuccess);
       onSuccess();

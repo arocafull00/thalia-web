@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointments-columns.tsx": {
-    "mtime": 1784132963.4041162,
-    "ast_hash": "0f75dc46694e9c4167d22b6f1a2fd841",
+    "mtime": 1784137772.5804732,
+    "ast_hash": "b6d2421d69d490a99620cba4acb8c5f3",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointments-table.tsx": {
@@ -1815,8 +1815,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-row.tsx": {
-    "mtime": 1784137125.7567632,
-    "ast_hash": "e79f5145c6ff394ed3dcfa8acd5abfe2",
+    "mtime": 1784137734.8135748,
+    "ast_hash": "b6c3a5d2a237d6692382542cebf079e1",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointments-mobile-list.tsx": {
@@ -2840,8 +2840,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-status-copy.ts": {
-    "mtime": 1784137125.755831,
-    "ast_hash": "a4ced0cf70d5551c7bb59ffc79a6079f",
+    "mtime": 1784137734.815576,
+    "ast_hash": "97554bbb588b28f5dad5ae635b748a24",
     "semantic_hash": ""
   },
   "src/lib/appointment-errors.ts": {
@@ -2862,6 +2862,11 @@
   "supabase/migrations/20260715173301_appointment_stock_error_details.sql": {
     "mtime": 1784136919.929283,
     "ast_hash": "2c6425139283a8c14dc77a7233388d86",
+    "semantic_hash": ""
+  },
+  "src/components/appointments/components/appointment-stock-button.tsx": {
+    "mtime": 1784137734.812574,
+    "ast_hash": "c4f9c5567396b9569f725dc29cc69adb",
     "semantic_hash": ""
   }
 }

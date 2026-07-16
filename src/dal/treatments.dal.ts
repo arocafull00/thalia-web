@@ -21,11 +21,19 @@ export type TreatmentInsert = {
 
 export type TreatmentUpdate = Omit<TreatmentInsert, "clinic_id">;
 
-export async function getTreatments(): Promise<TreatmentWithInventory[]> {
-  const { data, error } = await supabase
+export async function getTreatments(
+  clinicId: string | null,
+): Promise<TreatmentWithInventory[]> {
+  let query = supabase
     .from("treatment")
     .select("*, treatment_inventory_items(id)")
     .order("name");
+
+  if (clinicId) {
+    query = query.eq("clinic_id", clinicId);
+  }
+
+  const { data, error } = await query;
   return unwrapSupabaseList(data, error) as TreatmentWithInventory[];
 }
 

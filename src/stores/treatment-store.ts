@@ -8,6 +8,7 @@ import {
   replaceTreatmentInventoryLinks,
   updateTreatment,
 } from "@/dal/treatments.dal";
+import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
 import {
   emptyQueryEntry,
@@ -68,12 +69,14 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     set({ list: loadingQueryEntry(get().list) });
 
     try {
-      const treatments = await getTreatments();
+      const clinicId = getActiveClinicId();
+      const treatments = await getTreatments(clinicId);
       set({ list: successQueryEntry(treatments) });
     } catch (cause) {
       logger.captureException(cause, {
         store: "treatment-store",
         action: "fetchTreatments",
+        clinicId: getActiveClinicId(),
       });
       set({
         list: errorQueryEntry(

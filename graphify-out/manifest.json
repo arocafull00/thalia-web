@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1783964555.9372666,
-    "ast_hash": "ac355832932aacb03fea2ac93b413bf3",
+    "mtime": 1784239701.000124,
+    "ast_hash": "3e9015aaa3849f87484e632b1bf3b4f3",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -2285,8 +2285,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-image-thumb.tsx": {
-    "mtime": 1783961030.5923007,
-    "ast_hash": "2977dea7685e22162e9aaece3ca0d374",
+    "mtime": 1784239701.003123,
+    "ast_hash": "fb5f73fc9b3c2034655adf434faac7da",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-tab.tsx": {
@@ -2580,8 +2580,8 @@
     "semantic_hash": ""
   },
   "vitest.config.ts": {
-    "mtime": 1783962259.574635,
-    "ast_hash": "cb5a4a7c7fb0f5f751140e7480f5979c",
+    "mtime": 1784239772.1155572,
+    "ast_hash": "57e777020ea1a5fe9726f1a9f04e1771",
     "semantic_hash": ""
   },
   "src/tests/stores/inventory-store.test.ts": {
@@ -2824,11 +2824,6 @@
     "ast_hash": "e24efec5885b1c9277167fe8c60d2b07",
     "semantic_hash": ""
   },
-  "supabase/migrations/012_appointment_integrity_and_stock.sql": {
-    "mtime": 1784133210.2300649,
-    "ast_hash": "c9151b74e34df949b4368246c1b7eb38",
-    "semantic_hash": ""
-  },
   "supabase/migrations/012_inventory_alerts_read_at.sql": {
     "mtime": 1784132978.4660296,
     "ast_hash": "5ceacc3a794e1d3923a8ac43294d4cae",
@@ -2892,6 +2887,66 @@
   "src/lib/schemas/register-schema.ts": {
     "mtime": 1784237798.6868305,
     "ast_hash": "140434c20ce5f27304051e206e3f1418",
+    "semantic_hash": ""
+  },
+  "playwright.config.ts": {
+    "mtime": 1784239815.3519194,
+    "ast_hash": "87f5082adef6fd74b7ddeb5e8abb5cfd",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/appointments.spec.ts": {
+    "mtime": 1784239982.563604,
+    "ast_hash": "e93979e6bf22db5f3b9fd67988a16615",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/auth.setup.ts": {
+    "mtime": 1784239982.5610933,
+    "ast_hash": "37cff2cfad5ffe47b79864d66e279d65",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/auth.spec.ts": {
+    "mtime": 1784239982.5610933,
+    "ast_hash": "54ef6c57653fc7ffb37e397ab16eca6b",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/e2e-constants.ts": {
+    "mtime": 1784239629.3048823,
+    "ast_hash": "1affec0e3c0161a38a87b210f3b68442",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/e2e-helpers.ts": {
+    "mtime": 1784239629.3048823,
+    "ast_hash": "a511d18c78df45bb1f250d5193b8a161",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/gallery.spec.ts": {
+    "mtime": 1784239777.1778002,
+    "ast_hash": "8368716a9f712bcdd0ea4874b55c1780",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/patients.spec.ts": {
+    "mtime": 1784239982.5625982,
+    "ast_hash": "b4eb6f3fb108f77923ab61aeca3d22f9",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/run-with-local-supabase.mjs": {
+    "mtime": 1784239629.3058825,
+    "ast_hash": "3776ff5eb102fb712533309b8c0835f5",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/013_appointment_integrity_and_stock.sql": {
+    "mtime": 1784133210.2300649,
+    "ast_hash": "c9151b74e34df949b4368246c1b7eb38",
+    "semantic_hash": ""
+  },
+  "supabase/seed.sql": {
+    "mtime": 1784239505.50165,
+    "ast_hash": "1c4e8626d7798877d522d9f70f1e2387",
+    "semantic_hash": ""
+  },
+  ".github/workflows/e2e.yml": {
+    "mtime": 1784240003.1193278,
+    "ast_hash": "8a47f9a663866eec4cb6f02859f8a014",
     "semantic_hash": ""
   }
 }

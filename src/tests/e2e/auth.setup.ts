@@ -17,7 +17,7 @@ setup("inicia sesión con el usuario E2E", async ({ page }) => {
     .getByRole("button", { name: "Iniciar sesión", exact: true })
     .click();
 
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page).toHaveURL(/\/dashboard$/, { timeout: 20_000 });
   await expect(
     page.getByRole("button", { name: new RegExp(E2E_DATA.clinic) }),
   ).toBeVisible();

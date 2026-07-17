@@ -2824,11 +2824,6 @@
     "ast_hash": "e24efec5885b1c9277167fe8c60d2b07",
     "semantic_hash": ""
   },
-  "supabase/migrations/012_appointment_integrity_and_stock.sql": {
-    "mtime": 1784133210.2300649,
-    "ast_hash": "c9151b74e34df949b4368246c1b7eb38",
-    "semantic_hash": ""
-  },
   "supabase/migrations/012_inventory_alerts_read_at.sql": {
     "mtime": 1784132978.4660296,
     "ast_hash": "5ceacc3a794e1d3923a8ac43294d4cae",
@@ -2937,6 +2932,11 @@
   "src/tests/e2e/run-with-local-supabase.mjs": {
     "mtime": 1784239629.3058825,
     "ast_hash": "3776ff5eb102fb712533309b8c0835f5",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/013_appointment_integrity_and_stock.sql": {
+    "mtime": 1784133210.2300649,
+    "ast_hash": "c9151b74e34df949b4368246c1b7eb38",
     "semantic_hash": ""
   },
   "supabase/seed.sql": {

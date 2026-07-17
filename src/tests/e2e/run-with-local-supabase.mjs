@@ -1,7 +1,5 @@
 import { spawnSync } from "node:child_process";
 
-import { createClient } from "@supabase/supabase-js";
-
 const e2eUser = {
   id: "00000000-0000-4000-8000-000000000001",
   email: "e2e@landora.test",
@@ -54,49 +52,52 @@ if (supabaseHostname !== "127.0.0.1" && supabaseHostname !== "localhost") {
   process.exit(1);
 }
 
-const adminClient = createClient(apiUrl, secretKey, {
-  auth: {
-    autoRefreshToken: false,
-    detectSessionInUrl: false,
-    persistSession: false,
-  },
-});
-const { error: updateUserError } = await adminClient.auth.admin.updateUserById(
-  e2eUser.id,
-  {
-    email: e2eUser.email,
-    email_confirm: true,
-    password: e2eUser.password,
-  },
-);
+async function requestAuth(pathname, apiKey, options) {
+  const response = await fetch(`${apiUrl}/auth/v1${pathname}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      apikey: apiKey,
+      "Content-Type": "application/json",
+    },
+  });
 
-if (updateUserError) {
-  process.stderr.write(
-    `No se pudo preparar el usuario E2E local: ${updateUserError.message}\n`,
-  );
-  process.exit(1);
+  if (response.ok) {
+    return;
+  }
+
+  const body = await response.json().catch(() => null);
+  const message =
+    body?.message ??
+    body?.msg ??
+    body?.error_description ??
+    body?.error ??
+    `HTTP ${response.status}`;
+
+  throw new Error(message);
 }
 
-const authClient = createClient(apiUrl, publishableKey, {
-  auth: {
-    autoRefreshToken: false,
-    detectSessionInUrl: false,
-    persistSession: false,
-  },
-});
-const { error: signInError } = await authClient.auth.signInWithPassword({
-  email: e2eUser.email,
-  password: e2eUser.password,
-});
-
-if (signInError) {
-  process.stderr.write(
-    `El usuario E2E local no puede iniciar sesión: ${signInError.message}\n`,
-  );
+try {
+  await requestAuth(`/admin/users/${e2eUser.id}`, secretKey, {
+    method: "PUT",
+    body: JSON.stringify({
+      email: e2eUser.email,
+      email_confirm: true,
+      password: e2eUser.password,
+    }),
+  });
+  await requestAuth("/token?grant_type=password", publishableKey, {
+    method: "POST",
+    body: JSON.stringify({
+      email: e2eUser.email,
+      password: e2eUser.password,
+    }),
+  });
+} catch (error) {
+  const message = error instanceof Error ? error.message : String(error);
+  process.stderr.write(`No se pudo preparar el usuario E2E local: ${message}\n`);
   process.exit(1);
 }
-
-await authClient.auth.signOut();
 
 const playwrightResult = spawnSync(
   "pnpm",

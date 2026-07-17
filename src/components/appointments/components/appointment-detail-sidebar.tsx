@@ -1,6 +1,7 @@
 import { Calendar, FileText } from "lucide-react";
 
 import AppointmentDetailCard from "@/components/appointments/components/appointment-detail-card";
+import AppointmentReminderRow from "@/components/appointments/components/appointment-reminder-row";
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import {
@@ -13,14 +14,6 @@ import type { AppointmentWithRelations } from "@/types/database.types";
 type AppointmentDetailSidebarProps = {
   appointment: AppointmentWithRelations;
 };
-
-function reminderLabel(reminderSent: boolean | null) {
-  if (reminderSent) {
-    return APPOINTMENT_DETAIL_COPY.reminderSent;
-  }
-
-  return APPOINTMENT_DETAIL_COPY.reminderScheduled;
-}
 
 export default function AppointmentDetailSidebar({
   appointment,
@@ -71,14 +64,10 @@ export default function AppointmentDetailSidebar({
               </dd>
             </div>
           ) : null}
-          <div className="flex items-start justify-between gap-4 py-3">
-            <dt className="text-sm text-ink-secondary">
-              {APPOINTMENT_DETAIL_COPY.reminder}
-            </dt>
-            <dd className="text-right text-sm font-medium text-ink">
-              {reminderLabel(appointment.reminder_sent)}
-            </dd>
-          </div>
+          <AppointmentReminderRow
+            appointmentId={appointment.id}
+            reminderSent={appointment.reminder_sent}
+          />
         </dl>
       </AppointmentDetailCard>
 

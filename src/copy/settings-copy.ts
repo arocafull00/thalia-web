@@ -7,6 +7,7 @@ export const SETTINGS_COPY = {
     summary: "Resumen",
     account: "Cuenta",
     app: "Aplicación",
+    whatsapp: "WhatsApp",
   },
   actions: {
     call: "Llamar",
@@ -44,5 +45,21 @@ export const SETTINGS_COPY = {
     teamDescription: "Invita y gestiona accesos",
     staff: "Personal",
     staffDescription: "Profesionales y horarios",
+  },
+  whatsapp: {
+    sectionTitle: "Recordatorios WhatsApp",
+    enableLabel: "Activar recordatorios",
+    enableHint: "Envía mensajes automáticos antes de las citas",
+    phoneNumberIdLabel: "Número de envío (Twilio)",
+    phoneNumberIdPlaceholder: "Ej: +14155238886",
+    phoneNumberIdHint:
+      "Número de Twilio con prefijo internacional. En sandbox usa el número del sandbox de Twilio.",
+    reminderHoursLabel: "Enviar recordatorio",
+    reminderHoursHint: "Puedes seleccionar varios momentos",
+    templateLabel: "Mensaje",
+    templateHint:
+      "Variables disponibles: {paciente}, {clinica}, {fecha}, {hora}, {profesional}",
+    saveLabel: "Guardar",
+    savingLabel: "Guardando...",
   },
 } as const;

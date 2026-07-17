@@ -1,96 +1,227 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-Deno.serve(async () => {
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
+
+const QUIET_HOURS_START = 22;
+const QUIET_HOURS_END = 9;
+
+function isQuietHour(): boolean {
+  const hour = new Date().getHours();
+  return hour >= QUIET_HOURS_START || hour < QUIET_HOURS_END;
+}
+
+function buildMessage(
+  template: string,
+  vars: {
+    paciente: string;
+    clinica: string;
+    fecha: string;
+    hora: string;
+    profesional: string;
+  },
+): string {
+  return template
+    .replace("{paciente}", vars.paciente)
+    .replace("{clinica}", vars.clinica)
+    .replace("{fecha}", vars.fecha)
+    .replace("{hora}", vars.hora)
+    .replace("{profesional}", vars.profesional);
+}
+
+async function sendWhatsAppMessage(
+  fromNumber: string,
+  token: string,
+  to: string,
+  message: string,
+): Promise<boolean> {
+  const accountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
+
+  if (!accountSid) {
+    return false;
+  }
+
+  const toFormatted = to.startsWith("whatsapp:") ? to : `whatsapp:${to}`;
+  const fromFormatted = fromNumber.startsWith("whatsapp:")
+    ? fromNumber
+    : `whatsapp:${fromNumber}`;
+
+  const body = new URLSearchParams({
+    From: fromFormatted,
+    To: toFormatted,
+    Body: message,
+  });
+
+  const response = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${btoa(`${accountSid}:${token}`)}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    },
+  );
+
+  return response.ok;
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const whatsappPhoneId = Deno.env.get("WHATSAPP_PHONE_ID");
-  const whatsappToken = Deno.env.get("WHATSAPP_TOKEN");
+  const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
 
-  if (!supabaseUrl || !serviceRoleKey || !whatsappPhoneId || !whatsappToken) {
-    return new Response("Missing configuration", { status: 500 });
+  if (!supabaseUrl || !serviceRoleKey || !twilioAuthToken) {
+    return new Response("Missing configuration", {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const dateStr = tomorrow.toISOString().split("T")[0];
 
-  const { data: appointments, error } = await supabase
-    .from("appointments")
+  let manualAppointmentId: string | null = null;
+  let manualClinicId: string | null = null;
+
+  if (req.method === "POST") {
+    try {
+      const body = await req.json();
+      if (body.manual && body.appointmentId) {
+        manualAppointmentId = body.appointmentId;
+        manualClinicId = body.clinicId ?? null;
+      }
+    } catch {}
+  }
+
+  const { data: clinics, error: clinicsError } = await supabase
+    .from("clinics")
     .select(
-      "*, patients(full_name, phone), employees(full_name), appointment_treatments(treatment(name))",
+      "id, name, address, whatsapp_reminder_enabled, whatsapp_reminder_hours, whatsapp_phone_number_id, whatsapp_message_template",
     )
-    .eq("reminder_sent", false)
-    .eq("status", "scheduled")
-    .gte("starts_at", `${dateStr}T00:00:00`)
-    .lt("starts_at", `${dateStr}T23:59:59`);
+    .eq("whatsapp_reminder_enabled", true)
+    .not("whatsapp_phone_number_id", "is", null);
 
-  if (error) {
-    return new Response(error.message, { status: 500 });
+  if (clinicsError) {
+    return new Response(clinicsError.message, { status: 500 });
   }
 
-  for (const appointment of appointments ?? []) {
-    if (!appointment.patients?.phone) {
-      continue;
-    }
+  const targetClinics = manualClinicId
+    ? (clinics ?? []).filter((c) => c.id === manualClinicId)
+    : (clinics ?? []);
 
-    const treatments =
-      appointment.appointment_treatments
-        ?.map(
-          (item: { treatment: { name: string } | null }) =>
-            item.treatment?.name,
+  let totalSent = 0;
+  let totalFailed = 0;
+
+  for (const clinic of targetClinics) {
+    if (!clinic.whatsapp_phone_number_id) continue;
+
+    const hoursWindows: number[] = manualAppointmentId
+      ? [0]
+      : (clinic.whatsapp_reminder_hours as number[]);
+
+    for (const hoursBeforeTarget of hoursWindows) {
+      if (!manualAppointmentId && isQuietHour()) continue;
+
+      const windowStart = new Date(
+        Date.now() + hoursBeforeTarget * 60 * 60 * 1000,
+      );
+      const windowEnd = new Date(windowStart.getTime() + 30 * 60 * 1000);
+
+      let appointmentsQuery = supabase
+        .from("appointments")
+        .select(
+          "id, starts_at, patients(full_name, phone), employees(full_name)",
         )
-        .filter(Boolean)
-        .join(", ") ?? "";
+        .eq("clinic_id", clinic.id)
+        .in("status", ["scheduled", "confirmed"]);
 
-    const response = await fetch(
-      `https://graph.facebook.com/v18.0/${whatsappPhoneId}/messages`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${whatsappToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: appointment.patients.phone,
-          type: "template",
-          template: {
-            name: "appointment_reminder",
-            language: { code: "es" },
-            components: [
-              {
-                type: "body",
-                parameters: [
-                  { type: "text", text: appointment.patients.full_name },
-                  {
-                    type: "text",
-                    text: new Date(appointment.starts_at).toLocaleTimeString(
-                      "es-ES",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    ),
-                  },
-                  { type: "text", text: treatments },
-                ],
-              },
-            ],
-          },
-        }),
-      },
-    );
+      if (manualAppointmentId) {
+        appointmentsQuery = appointmentsQuery.eq("id", manualAppointmentId);
+      } else {
+        appointmentsQuery = appointmentsQuery
+          .gte("starts_at", windowStart.toISOString())
+          .lt("starts_at", windowEnd.toISOString());
+      }
 
-    if (!response.ok) {
-      continue;
+      const { data: appointments, error: apptError } = await appointmentsQuery;
+
+      if (apptError || !appointments) continue;
+
+      for (const appointment of appointments) {
+        const patient = appointment.patients as {
+          full_name: string;
+          phone: string | null;
+        } | null;
+        const employee = appointment.employees as { full_name: string } | null;
+
+        if (!patient?.phone) continue;
+
+        const { data: existing } = await supabase
+          .from("appointment_reminders")
+          .select("id")
+          .eq("appointment_id", appointment.id)
+          .eq("hours_before", hoursBeforeTarget)
+          .eq("reminder_type", "whatsapp")
+          .eq("status", "sent")
+          .maybeSingle();
+
+        if (existing && !manualAppointmentId) continue;
+
+        const appointmentDate = new Date(appointment.starts_at);
+        const fecha = appointmentDate.toLocaleDateString("es-ES", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+        });
+        const hora = appointmentDate.toLocaleTimeString("es-ES", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const message = buildMessage(clinic.whatsapp_message_template, {
+          paciente: patient.full_name,
+          clinica: clinic.name,
+          fecha,
+          hora,
+          profesional: employee?.full_name ?? "tu profesional",
+        });
+
+        const ok = await sendWhatsAppMessage(
+          clinic.whatsapp_phone_number_id,
+          twilioAuthToken,
+          patient.phone,
+          message,
+        );
+
+        await supabase.from("appointment_reminders").insert({
+          appointment_id: appointment.id,
+          clinic_id: clinic.id,
+          patient_phone: patient.phone,
+          hours_before: hoursBeforeTarget,
+          status: ok ? "sent" : "failed",
+          error_message: ok ? null : "WhatsApp API request failed",
+          reminder_type: "whatsapp",
+        });
+
+        if (ok) {
+          totalSent++;
+        } else {
+          totalFailed++;
+        }
+      }
     }
-
-    await supabase
-      .from("appointments")
-      .update({ reminder_sent: true })
-      .eq("id", appointment.id);
   }
 
-  return new Response("OK");
+  return new Response(
+    JSON.stringify({ sent: totalSent, failed: totalFailed }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+  );
 });

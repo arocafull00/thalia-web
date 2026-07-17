@@ -31,6 +31,12 @@
 .DS_Store
 *.pem
 
+# Claude
+.claude/commands/
+.claude/instructions/
+.claude/settings.json
+CHANGELOG.md
+
 # debug
 npm-debug.log*
 yarn-debug.log*

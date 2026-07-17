@@ -43,8 +43,27 @@ export type Clinic = {
   owner_id: string | null;
   logo_url: string | null;
   specialty: string | null;
+  whatsapp_reminder_enabled: boolean;
+  whatsapp_reminder_hours: number[];
+  whatsapp_phone_number_id: string | null;
+  whatsapp_message_template: string;
   created_at: string | null;
   updated_at: string | null;
+};
+
+export type AppointmentReminderStatus = "sent" | "failed";
+
+export type AppointmentReminder = {
+  id: string;
+  appointment_id: string;
+  clinic_id: string;
+  patient_phone: string;
+  hours_before: number;
+  sent_at: string;
+  status: AppointmentReminderStatus;
+  error_message: string | null;
+  reminder_type: string;
+  created_at: string;
 };
 
 export type ClinicMembership = {

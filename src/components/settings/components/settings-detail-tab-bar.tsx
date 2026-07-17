@@ -9,6 +9,7 @@ const SETTINGS_TAB_ITEMS: ReadonlyArray<{
   { id: "summary", label: SETTINGS_COPY.tabs.summary },
   { id: "account", label: SETTINGS_COPY.tabs.account },
   { id: "app", label: SETTINGS_COPY.tabs.app },
+  { id: "whatsapp", label: SETTINGS_COPY.tabs.whatsapp },
 ];
 
 type SettingsDetailTabBarProps = {

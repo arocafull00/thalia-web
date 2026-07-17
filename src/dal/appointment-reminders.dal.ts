@@ -11,7 +11,7 @@ export async function getRemindersForAppointment(
     .eq("appointment_id", appointmentId)
     .order("sent_at", { ascending: false });
 
-  return unwrapSupabaseList({ data, error });
+  return unwrapSupabaseList(data, error);
 }
 
 export async function sendManualReminder(

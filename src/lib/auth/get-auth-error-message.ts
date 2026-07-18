@@ -40,7 +40,7 @@ export function getAuthErrorMessage(error: unknown) {
     return AUTH_ERROR_COPY.rateLimited;
   }
 
-  if (message.includes("expired")) {
+  if (message.includes("expired") || message.includes("auth session missing")) {
     return AUTH_ERROR_COPY.resetLinkExpired;
   }
 

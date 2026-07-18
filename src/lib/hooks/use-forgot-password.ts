@@ -1,8 +1,16 @@
 "use client";
 
+import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import { supabaseAnonKey, supabaseUrl } from "@/lib/environment";
+
+// createBrowserClient from @supabase/ssr always forces PKCE regardless of options.
+// Use createClient directly so flowType: 'implicit' is actually respected,
+// which makes the reset link work from any browser without a stored code verifier.
+const supabaseImplicit = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { flowType: "implicit" },
+});
 
 export function useForgotPassword() {
   const [email, setEmail] = useState("");
@@ -19,8 +27,8 @@ export function useForgotPassword() {
         ? globalThis.location.origin
         : "";
 
-    await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${origin}/callback?next=/reset-password`,
+    await supabaseImplicit.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${origin}/reset-password`,
     });
 
     setSubmitting(false);

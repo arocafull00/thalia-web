@@ -4,7 +4,6 @@ import SettingsProfileSummary from "@/components/settings/components/settings-pr
 import type { Employee } from "@/types/database.types";
 
 type SettingsProfileSidebarProps = {
-  activeEmployeesCount: number;
   canViewClinicRequests: boolean;
   displayUri: string | null;
   isAdmin: boolean;
@@ -17,7 +16,6 @@ type SettingsProfileSidebarProps = {
 };
 
 export default function SettingsProfileSidebar({
-  activeEmployeesCount,
   canViewClinicRequests,
   displayUri,
   isAdmin,
@@ -43,9 +41,7 @@ export default function SettingsProfileSidebar({
 
       <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
         <SettingsProfileSummary
-          activeEmployeesCount={activeEmployeesCount}
           canViewClinicRequests={canViewClinicRequests}
-          isAdmin={isAdmin}
           pendingRequestsCount={pendingRequestsCount}
         />
       </div>

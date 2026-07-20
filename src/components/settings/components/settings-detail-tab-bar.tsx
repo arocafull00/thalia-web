@@ -6,21 +6,26 @@ const SETTINGS_TAB_ITEMS: ReadonlyArray<{
   id: SettingsTabId;
   label: string;
 }> = [
-  { id: "summary", label: SETTINGS_COPY.tabs.summary },
-  { id: "account", label: SETTINGS_COPY.tabs.account },
-  { id: "app", label: SETTINGS_COPY.tabs.app },
-  { id: "whatsapp", label: SETTINGS_COPY.tabs.whatsapp },
+  { id: "usuario", label: SETTINGS_COPY.tabs.usuario },
+  { id: "clinica", label: SETTINGS_COPY.tabs.clinica },
+  { id: "aplicacion", label: SETTINGS_COPY.tabs.aplicacion },
 ];
 
 type SettingsDetailTabBarProps = {
   activeTab: SettingsTabId;
+  isAdmin: boolean;
   onTabChange: (tabId: SettingsTabId) => void;
 };
 
 export default function SettingsDetailTabBar({
   activeTab,
+  isAdmin,
   onTabChange,
 }: SettingsDetailTabBarProps) {
+  const visibleTabs = SETTINGS_TAB_ITEMS.filter(
+    (tab) => tab.id !== "clinica" || isAdmin,
+  );
+
   return (
     <nav
       role="tablist"
@@ -28,7 +33,7 @@ export default function SettingsDetailTabBar({
       className="shrink-0 border-b border-border-subtle bg-surface"
     >
       <div className="flex gap-2 overflow-x-auto px-4">
-        {SETTINGS_TAB_ITEMS.map((tab) => (
+        {visibleTabs.map((tab) => (
           <SettingsDetailTabButton
             key={tab.id}
             label={tab.label}

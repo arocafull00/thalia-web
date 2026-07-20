@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-export type SettingsTabId = "summary" | "account" | "app" | "whatsapp";
+export type SettingsTabId = "usuario" | "clinica" | "aplicacion";
 
 export function useSettingsTabs() {
-  const [activeTab, setActiveTab] = useState<SettingsTabId>("summary");
+  const [activeTab, setActiveTab] = useState<SettingsTabId>("usuario");
 
   return { activeTab, setActiveTab };
 }

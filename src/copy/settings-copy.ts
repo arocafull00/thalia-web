@@ -4,10 +4,9 @@ export const SETTINGS_COPY = {
     profileError: "No se pudo cargar el perfil.",
   },
   tabs: {
-    summary: "Resumen",
-    account: "Cuenta",
-    app: "Aplicación",
-    whatsapp: "WhatsApp",
+    usuario: "Usuario",
+    clinica: "Clínica",
+    aplicacion: "Aplicación",
   },
   actions: {
     call: "Llamar",
@@ -39,6 +38,14 @@ export const SETTINGS_COPY = {
     signOutLoading: "Cerrando sesión...",
     signOutHint: "Salir de la plataforma en este dispositivo",
   },
+  clinic: {
+    sectionTitle: "Datos de la clínica",
+    name: "Nombre",
+    phone: "Teléfono",
+    address: "Dirección",
+    specialty: "Especialidad",
+    noData: "Sin información",
+  },
   management: {
     sectionTitle: "Gestión",
     team: "Equipo",
@@ -47,10 +54,10 @@ export const SETTINGS_COPY = {
     staffDescription: "Profesionales y horarios",
   },
   whatsapp: {
-    sectionTitle: "Recordatorios WhatsApp",
-    enableLabel: "Activar recordatorios",
-    enableHint: "Envía mensajes automáticos antes de las citas",
-    phoneNumberIdLabel: "Número de envío (Twilio)",
+    sectionTitle: "Servicios de la clínica",
+    enableLabel: "Activar recordatorios automáticos (WhatsApp)",
+    enableHint: "Envía mensajes automáticos via WhatsApp antes de las citas",
+    phoneNumberIdLabel: "Número de envío",
     phoneNumberIdPlaceholder: "Ej: +14155238886",
     phoneNumberIdHint:
       "Número de Twilio con prefijo internacional. En sandbox usa el número del sandbox de Twilio.",

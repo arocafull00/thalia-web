@@ -1,15 +1,18 @@
 "use client";
 
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 
+import ClinicEditDialog from "@/components/settings/components/clinic-edit-dialog";
 import ProfileEditDialog from "@/components/settings/components/profile-edit-dialog";
-import SettingsDetailHeader from "@/components/settings/components/settings-detail-header";
 import SettingsDetailTabBar from "@/components/settings/components/settings-detail-tab-bar";
 import SettingsDetailTabContent from "@/components/settings/components/settings-detail-tab-content";
 import { getSettingsDetailActions } from "@/components/settings/settings-detail-actions";
 import { Notice } from "@/components/ui/primitives/notice";
+import { CLINIC_EDIT_COPY } from "@/copy/clinic-edit-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useSettingsPageActions } from "@/lib/hooks/use-settings-page";
 import { useSettingsTabs } from "@/lib/hooks/use-settings-tabs";
@@ -23,31 +26,49 @@ export default function SettingsPageClient() {
   const displayUri = localAvatarUri ?? resolvedAvatarUrl;
   const {
     activeEmployeesCount,
-    canViewClinicRequests,
     handleAvatarPress,
     handleChangePassword,
     handleSignOut,
     isAdmin,
     passwordMessage,
     passwordSubmitting,
-    pendingClinicRequests,
     signOutSubmitting,
     uploadAvatar,
   } = useSettingsPageActions();
   const { activeTab, setActiveTab } = useSettingsTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [clinicEditDialogOpen, setClinicEditDialogOpen] = useState(false);
+  const {
+    clinic,
+    loading: clinicLoading,
+    refetch: refetchClinic,
+  } = useClinicInfo();
 
   useTopbarActions(
     profile
-      ? {
-          buttons: [],
-          menu: {
-            actions: getSettingsDetailActions(profile, user?.email, {
-              onEdit: () => setEditDialogOpen(true),
-            }),
-            ariaLabel: SETTINGS_COPY.moreActions,
-          },
-        }
+      ? activeTab === "clinica"
+        ? {
+            buttons: [
+              {
+                title: CLINIC_EDIT_COPY.title,
+                icon: Pencil,
+                onClick: () => setClinicEditDialogOpen(true),
+                variant: "solid" as const,
+              },
+            ],
+            menu: { actions: [], ariaLabel: SETTINGS_COPY.moreActions },
+          }
+        : activeTab === "usuario"
+          ? {
+              buttons: [],
+              menu: {
+                actions: getSettingsDetailActions(profile, user?.email, {
+                  onEdit: () => setEditDialogOpen(true),
+                }),
+                ariaLabel: SETTINGS_COPY.moreActions,
+              },
+            }
+          : null
       : null,
   );
 
@@ -61,31 +82,28 @@ export default function SettingsPageClient() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-      <SettingsDetailHeader
-        profile={profile}
-        userEmail={user.email}
-        avatarDisplayUri={displayUri}
-        avatarUploadPending={uploadAvatar.isPending}
-        onAvatarFileSelected={(file) => void handleAvatarPress(file)}
-      />
-
-      <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
+      <div className="flex flex-col gap-6 px-4 pb-8 pt-6 lg:px-8">
         <SettingsDetailTabBar
           activeTab={activeTab}
+          isAdmin={isAdmin}
           onTabChange={setActiveTab}
         />
         <div role="tabpanel">
           <SettingsDetailTabContent
             activeTab={activeTab}
+            profile={profile}
+            userEmail={user.email}
+            avatarDisplayUri={displayUri}
+            avatarUploadPending={uploadAvatar.isPending}
+            onAvatarFileSelected={(file) => void handleAvatarPress(file)}
             activeEmployeesCount={activeEmployeesCount}
-            canViewClinicRequests={canViewClinicRequests}
-            isAdmin={isAdmin}
             onChangePassword={() => void handleChangePassword()}
             onSignOut={() => void handleSignOut()}
             passwordMessage={passwordMessage}
             passwordSubmitting={passwordSubmitting}
-            pendingRequestsCount={pendingClinicRequests.length}
             signOutSubmitting={signOutSubmitting}
+            clinic={clinic}
+            clinicLoading={clinicLoading}
           />
         </div>
       </div>
@@ -95,6 +113,13 @@ export default function SettingsPageClient() {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSuccess={() => {}}
+      />
+
+      <ClinicEditDialog
+        clinic={clinic}
+        open={clinicEditDialogOpen}
+        onOpenChange={setClinicEditDialogOpen}
+        onSuccess={refetchClinic}
       />
     </div>
   );

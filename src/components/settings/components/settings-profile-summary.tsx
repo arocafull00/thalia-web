@@ -2,28 +2,15 @@ import SettingsStatItem from "@/components/settings/components/settings-stat-ite
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 
 type SettingsProfileSummaryProps = {
-  activeEmployeesCount: number;
   canViewClinicRequests: boolean;
-  isAdmin: boolean;
   pendingRequestsCount: number;
 };
 
 export default function SettingsProfileSummary({
-  activeEmployeesCount,
   canViewClinicRequests,
-  isAdmin,
   pendingRequestsCount,
 }: SettingsProfileSummaryProps) {
   const statItems = [
-    ...(isAdmin
-      ? [
-          {
-            label: SETTINGS_COPY.stats.activeEmployees,
-            tone: "default" as const,
-            value: String(activeEmployeesCount),
-          },
-        ]
-      : []),
     ...(canViewClinicRequests
       ? [
           {

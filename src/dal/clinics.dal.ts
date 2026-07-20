@@ -26,3 +26,34 @@ export async function getMemberships(
 
   return (data ?? []) as ClinicMembershipRow[];
 }
+
+export async function getClinicById(clinicId: string) {
+  const { data, error } = await supabase
+    .from("clinics")
+    .select("id, name, address, phone, specialty, logo_url")
+    .eq("id", clinicId)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateClinic(
+  clinicId: string,
+  values: {
+    name: string;
+    phone: string | null;
+    address: string | null;
+    specialty: string | null;
+  },
+) {
+  const { data, error } = await supabase
+    .from("clinics")
+    .update(values)
+    .eq("id", clinicId)
+    .select("id, name, address, phone, specialty, logo_url")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}

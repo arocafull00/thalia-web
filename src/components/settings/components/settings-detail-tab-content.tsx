@@ -1,48 +1,51 @@
 import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
-import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
-import SettingsProfileSummary from "@/components/settings/components/settings-profile-summary";
-import SettingsWhatsAppPanel from "@/components/settings/components/settings-whatsapp-panel";
+import SettingsClinicPanel from "@/components/settings/components/settings-clinic-panel";
+import SettingsUserPanel from "@/components/settings/components/settings-user-panel";
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { SettingsTabId } from "@/lib/hooks/use-settings-tabs";
+import type { Employee } from "@/types/database.types";
 
 type SettingsDetailTabContentProps = {
   activeTab: SettingsTabId;
+  profile: Employee;
+  userEmail: string | undefined;
+  avatarDisplayUri: string | null;
+  avatarUploadPending: boolean;
+  onAvatarFileSelected: (file: File) => void;
   activeEmployeesCount: number;
-  canViewClinicRequests: boolean;
-  isAdmin: boolean;
   onChangePassword: () => void;
   onSignOut: () => void;
   passwordMessage: string | null;
   passwordSubmitting: boolean;
-  pendingRequestsCount: number;
   signOutSubmitting: boolean;
+  clinic: ClinicInfo | null;
+  clinicLoading: boolean;
 };
 
 export default function SettingsDetailTabContent({
   activeTab,
+  profile,
+  userEmail,
+  avatarDisplayUri,
+  avatarUploadPending,
+  onAvatarFileSelected,
   activeEmployeesCount,
-  canViewClinicRequests,
-  isAdmin,
   onChangePassword,
   onSignOut,
   passwordMessage,
   passwordSubmitting,
-  pendingRequestsCount,
   signOutSubmitting,
+  clinic,
+  clinicLoading,
 }: SettingsDetailTabContentProps) {
-  if (activeTab === "summary") {
+  if (activeTab === "usuario") {
     return (
-      <SettingsProfileSummary
-        activeEmployeesCount={activeEmployeesCount}
-        canViewClinicRequests={canViewClinicRequests}
-        isAdmin={isAdmin}
-        pendingRequestsCount={pendingRequestsCount}
-      />
-    );
-  }
-
-  if (activeTab === "account") {
-    return (
-      <SettingsAccountPanel
+      <SettingsUserPanel
+        profile={profile}
+        userEmail={userEmail}
+        avatarDisplayUri={avatarDisplayUri}
+        avatarUploadPending={avatarUploadPending}
+        onAvatarFileSelected={onAvatarFileSelected}
         onChangePassword={onChangePassword}
         onSignOut={onSignOut}
         passwordMessage={passwordMessage}
@@ -52,8 +55,14 @@ export default function SettingsDetailTabContent({
     );
   }
 
-  if (activeTab === "whatsapp") {
-    return <SettingsWhatsAppPanel />;
+  if (activeTab === "clinica") {
+    return (
+      <SettingsClinicPanel
+        clinic={clinic}
+        loading={clinicLoading}
+        activeEmployeesCount={activeEmployeesCount}
+      />
+    );
   }
 
   return <PwaInstallPanel />;

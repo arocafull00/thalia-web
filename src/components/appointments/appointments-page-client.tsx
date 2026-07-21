@@ -81,7 +81,10 @@ export default function AppointmentsPageClient() {
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div
+      data-testid="appointments-page"
+      className="flex min-h-0 flex-1 flex-col"
+    >
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <AppointmentFilters

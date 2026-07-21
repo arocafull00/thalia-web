@@ -10,6 +10,7 @@ test("crea y edita un paciente con el formulario completo", async ({
   const updatedName = `${patientName} Editado`;
 
   await page.goto("/patients");
+  await expect(page.getByTestId("patients-page")).toBeVisible();
   await page
     .locator("header")
     .getByRole("button", { name: "Nuevo paciente", exact: true })
@@ -39,6 +40,7 @@ test("crea y edita un paciente con el formulario completo", async ({
   await expect(patientRow).toBeVisible();
   await patientRow.click();
 
+  await expect(page.getByTestId("patient-detail-page")).toBeVisible();
   await expect(page.getByRole("heading", { name: patientName })).toBeVisible();
   await page
     .getByRole("button", { name: "Editar paciente", exact: true })
@@ -58,6 +60,7 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
   page,
 }) => {
   await page.goto("/patients");
+  await expect(page.getByTestId("patients-page")).toBeVisible();
   const search = page.getByPlaceholder("Buscar pacientes...");
   await search.fill(E2E_DATA.filterPatient);
 
@@ -84,6 +87,7 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
     name: new RegExp(E2E_DATA.patient),
   });
   await basePatientRow.click();
+  await expect(page.getByTestId("patient-detail-page")).toBeVisible();
 
   for (const tabName of [
     "Resumen",

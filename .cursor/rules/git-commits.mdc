@@ -1,0 +1,37 @@
+---
+description: Short, descriptive git commit messages
+alwaysApply: true
+---
+
+# Git commit messages
+
+When creating commits, write messages that are short, descriptive, and in English.
+
+## Format
+
+- One line, ~50 characters max (hard limit: 72)
+- Imperative mood: "add", "fix", "update", "remove" — not "added" or "fixes"
+- Focus on **why**, not a file list
+- Prefer conventional commits when they fit: `feat`, `fix`, `chore`, `refactor`, `docs`
+
+## Examples
+
+```
+# ❌ BAD
+Updated some files and fixed bugs in the patient form and also refactored stuff
+
+# ❌ BAD
+src/components/patients/patient-create-form.tsx: change validation
+
+# ✅ GOOD
+fix: require phone on patient create
+
+# ✅ GOOD
+feat: filter appointments by employee
+```
+
+## Rules
+
+- Never commit unless the user explicitly asks
+- Do not put secrets, `.env`, or credentials in commits
+- Keep the subject line only; skip a long body unless the change needs a brief why

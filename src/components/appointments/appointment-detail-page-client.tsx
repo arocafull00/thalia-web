@@ -163,7 +163,10 @@ export default function AppointmentDetailPageClient({
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <div
+      data-testid="appointment-detail-page"
+      className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+    >
       <AppointmentHeader appointment={appointment} />
 
       <div className="flex flex-col gap-6 px-4 py-8 lg:px-8">

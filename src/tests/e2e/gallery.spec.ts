@@ -31,7 +31,9 @@ async function uploadPatientImage(
 
 test("sube imágenes y abre la comparativa before/after", async ({ page }) => {
   await page.goto("/patients/30000000-0000-4000-8000-000000000001");
+  await expect(page.getByTestId("patient-detail-page")).toBeVisible();
   await page.getByRole("tab", { name: "Galería", exact: true }).click();
+  await expect(page.getByTestId("patient-gallery")).toBeVisible();
 
   await uploadPatientImage(page, "e2e-before.png", "Antes");
   await uploadPatientImage(page, "e2e-after.png", "Después");
@@ -56,9 +58,7 @@ test("sube imágenes y abre la comparativa before/after", async ({ page }) => {
     .getByRole("button", { name: "Comparar seleccionadas", exact: true })
     .click();
 
-  await expect(
-    page.getByText("Comparativa antes y después", { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByTestId("before-after-comparison")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Cerrar comparativa" }),
   ).toBeVisible();

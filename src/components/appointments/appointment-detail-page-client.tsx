@@ -1,9 +1,12 @@
 "use client";
 
 import { BadgeCheck, CheckCircle, Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { getAppointmentDetailMenuActions } from "@/components/appointments/appointment-detail-actions";
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
+import AppointmentDeleteDialog from "@/components/appointments/components/appointment-delete-dialog";
 import AppointmentDetailSidebar from "@/components/appointments/components/appointment-detail-sidebar";
 import AppointmentHeader from "@/components/appointments/components/appointment-header";
 import AppointmentMaterialsSection from "@/components/appointments/components/appointment-materials-section";
@@ -48,6 +51,7 @@ function resolveTotalDurationMinutes(
 export default function AppointmentDetailPageClient({
   appointmentId,
 }: AppointmentDetailPageClientProps) {
+  const router = useRouter();
   const {
     appointment,
     isLoading,
@@ -55,15 +59,30 @@ export default function AppointmentDetailPageClient({
     dialogOpen,
     cancelConfirmOpen,
     cancelError,
+    deleteConfirmOpen,
+    deleteError,
+    restoreStock,
+    deleted,
+    deleting,
     updatingStatus,
     canChangeStatus,
     openEditDialog,
     closeDialog,
     openCancelConfirm,
     closeCancelConfirm,
+    openDeleteConfirm,
+    closeDeleteConfirm,
+    setRestoreStock,
     handleStatusChange,
     confirmCancel,
+    confirmDelete,
   } = useAppointmentDetail(appointmentId);
+
+  useEffect(() => {
+    if (deleted) {
+      router.push("/appointments");
+    }
+  }, [deleted, router]);
 
   const breadcrumbLabel =
     appointment?.patients?.full_name ?? APPOINTMENT_DETAIL_COPY.patient;
@@ -121,6 +140,7 @@ export default function AppointmentDetailPageClient({
                 void handleStatusChange("completed");
               },
               onCancel: openCancelConfirm,
+              onDelete: openDeleteConfirm,
             }),
             ariaLabel: APPOINTMENT_DETAIL_COPY.moreActions,
           },
@@ -212,6 +232,23 @@ export default function AppointmentDetailPageClient({
         }}
         confirmTone="danger"
         errorMessage={cancelError ?? undefined}
+      />
+
+      <AppointmentDeleteDialog
+        open={deleteConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeDeleteConfirm();
+          }
+        }}
+        canRestoreStock={appointment.status === "completed"}
+        restoreStock={restoreStock}
+        onRestoreStockChange={setRestoreStock}
+        isPending={deleting}
+        onConfirm={() => {
+          void confirmDelete();
+        }}
+        errorMessage={deleteError ?? undefined}
       />
     </div>
   );

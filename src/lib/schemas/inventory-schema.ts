@@ -12,7 +12,13 @@ const inventoryFieldsSchema = z.object({
     .min(1, "El nombre es obligatorio.")
     .max(200, "El nombre es demasiado largo."),
   category: nullableTrimmedString(50, "La categoría es demasiado larga."),
-  unit: nullableTrimmedString(50, "La unidad es demasiado larga."),
+  unit: z
+    .union([
+      z.null(),
+      z.literal(""),
+      z.string().trim().max(50, "La unidad es demasiado larga."),
+    ])
+    .transform((value) => (value === "" ? null : value)),
   stock: z.coerce
     .number({ message: "El stock no es válido." })
     .int("El stock debe ser un número entero.")

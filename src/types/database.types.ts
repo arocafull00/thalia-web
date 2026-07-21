@@ -389,7 +389,15 @@ export type Database = {
   public: {
     Tables: Tables;
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      delete_appointment: {
+        Args: {
+          p_appointment_id: string;
+          p_restore_stock?: boolean;
+        };
+        Returns: undefined;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

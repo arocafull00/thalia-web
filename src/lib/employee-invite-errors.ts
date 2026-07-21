@@ -4,7 +4,7 @@ const DEFAULT_EMPLOYEE_INVITE_ERROR =
   "No se pudo enviar la invitación. Inténtalo de nuevo.";
 
 const EMPLOYEE_INVITE_ERROR_MESSAGES: Record<string, string> = {
-  user_not_found: "No existe ningún usuario registrado con ese email.",
+  user_not_found: "No existe un usuario con ese email en el sistema",
   employee_not_found: "No existe ningún usuario registrado con ese email.",
   "user not found": "No existe ningún usuario registrado con ese email.",
   "employee not found": "No existe ningún usuario registrado con ese email.",
@@ -18,16 +18,23 @@ const EMPLOYEE_INVITE_ERROR_MESSAGES: Record<string, string> = {
     "Selecciona una clínica antes de enviar la invitación.",
   email_required: "Introduce el email de la persona que quieres invitar.",
   "email is required": "Introduce el email de la persona que quieres invitar.",
+  invalid_email: "Introduce un email válido.",
+  "invalid email": "Introduce un email válido.",
   invalid_role: "El rol seleccionado no es válido.",
   "invalid role": "El rol seleccionado no es válido.",
-  invitation_already_pending:
-    "Ya existe una invitación pendiente para ese email.",
-  user_already_member: "Esta persona ya pertenece a la clínica.",
+  invitation_already_pending: "Este usuario ya tiene una invitación pendiente",
+  user_already_member: "Este usuario ya pertenece a la clínica",
   "already a member": "Esta persona ya pertenece a la clínica.",
   "already invited": "Ya existe una invitación pendiente para ese email.",
   "duplicate key value": "Ya existe una invitación pendiente para ese email.",
   configuration_error:
     "El servicio de invitaciones no está disponible en este momento.",
+  auth_lookup_failed:
+    "No se pudo comprobar si el usuario existe. Inténtalo de nuevo.",
+  membership_lookup_failed:
+    "No se pudo comprobar la pertenencia a la clínica. Inténtalo de nuevo.",
+  invitation_lookup_failed:
+    "No se pudo comprobar si hay una invitación pendiente. Inténtalo de nuevo.",
   "supabase is not configured":
     "El servicio de invitaciones no está disponible en este momento.",
   invitation_failed: DEFAULT_EMPLOYEE_INVITE_ERROR,

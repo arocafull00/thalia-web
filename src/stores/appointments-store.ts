@@ -3,6 +3,7 @@ import { addMinutes } from "date-fns";
 import { create } from "zustand";
 
 import {
+  deleteAppointment as deleteAppointmentDal,
   deleteAppointmentTreatments,
   getAppointment,
   getAppointmentInventoryItems,
@@ -166,6 +167,8 @@ type AppointmentsStore = {
   rescheduleError: Error | null;
   updating: boolean;
   updateError: Error | null;
+  deleting: boolean;
+  deleteError: Error | null;
   subscribeRealtime: () => void;
   unsubscribeRealtime: () => void;
   fetchAppointments: (params: {
@@ -191,6 +194,7 @@ type AppointmentsStore = {
     startsAt: Date,
     endsAt: Date,
   ) => Promise<Appointment>;
+  deleteAppointment: (id: string, restoreStock: boolean) => Promise<void>;
 };
 
 export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
@@ -208,6 +212,8 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   rescheduleError: null,
   updating: false,
   updateError: null,
+  deleting: false,
+  deleteError: null,
 
   subscribeRealtime: subscribeAppointmentsRealtime,
   unsubscribeRealtime: unsubscribeAppointmentsRealtime,
@@ -532,6 +538,38 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         });
       }
       set({ rescheduling: false, rescheduleError: error });
+      throw error;
+    }
+  },
+
+  deleteAppointment: async (id, restoreStock) => {
+    set({ deleting: true, deleteError: null });
+
+    try {
+      await deleteAppointmentDal(id, restoreStock);
+
+      const nextById = { ...get().byId };
+      delete nextById[id];
+
+      await Promise.all([
+        refreshAllAppointmentEntries(),
+        useDashboardStore.getState().fetchDashboard(),
+      ]);
+
+      if (restoreStock) {
+        void useInventoryStore.getState().fetchInventoryItems();
+      }
+
+      set({ byId: nextById, deleting: false });
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "deleteAppointment",
+        appointmentId: id,
+        restoreStock,
+      });
+      set({ deleting: false, deleteError: error });
       throw error;
     }
   },

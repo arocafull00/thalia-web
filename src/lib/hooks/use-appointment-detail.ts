@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { toast } from "react-toastify";
 
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
@@ -13,6 +14,11 @@ export function useAppointmentDetail(appointmentId: string) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [restoreStock, setRestoreStock] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+  const deleting = useAppointmentsStore((state) => state.deleting);
 
   const openEditDialog = useCallback(() => {
     setDialogOpen(true);
@@ -30,6 +36,17 @@ export function useAppointmentDetail(appointmentId: string) {
   const closeCancelConfirm = useCallback(() => {
     setCancelError(null);
     setCancelConfirmOpen(false);
+  }, []);
+
+  const openDeleteConfirm = useCallback(() => {
+    setDeleteError(null);
+    setRestoreStock(false);
+    setDeleteConfirmOpen(true);
+  }, []);
+
+  const closeDeleteConfirm = useCallback(() => {
+    setDeleteError(null);
+    setDeleteConfirmOpen(false);
   }, []);
 
   const updateStatus = useCallback(
@@ -77,6 +94,26 @@ export function useAppointmentDetail(appointmentId: string) {
     }
   }, [updateStatus]);
 
+  const confirmDelete = useCallback(async () => {
+    if (!appointment) {
+      return;
+    }
+
+    setDeleteError(null);
+
+    try {
+      await useAppointmentsStore
+        .getState()
+        .deleteAppointment(appointment.id, restoreStock);
+      notifySuccess(APPOINTMENT_DETAIL_COPY.deleteSuccess);
+      setDeleteConfirmOpen(false);
+      setDeleted(true);
+    } catch {
+      setDeleteError(APPOINTMENT_DETAIL_COPY.deleteError);
+      toast.error(APPOINTMENT_DETAIL_COPY.deleteError);
+    }
+  }, [appointment, restoreStock]);
+
   const canChangeStatus =
     appointment?.status === "scheduled" ||
     appointment?.status === "confirmed" ||
@@ -89,13 +126,22 @@ export function useAppointmentDetail(appointmentId: string) {
     dialogOpen,
     cancelConfirmOpen,
     cancelError,
+    deleteConfirmOpen,
+    deleteError,
+    restoreStock,
+    deleted,
+    deleting,
     updatingStatus,
     canChangeStatus,
     openEditDialog,
     closeDialog,
     openCancelConfirm,
     closeCancelConfirm,
+    openDeleteConfirm,
+    closeDeleteConfirm,
+    setRestoreStock,
     handleStatusChange,
     confirmCancel,
+    confirmDelete,
   };
 }

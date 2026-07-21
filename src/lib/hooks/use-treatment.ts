@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { isInitialLoading } from "@/stores/query-state";
 import {
   useTreatmentStore,
@@ -16,10 +17,11 @@ export type {
 export function useTreatments() {
   const entry = useTreatmentStore((state) => state.list);
   const fetchTreatments = useTreatmentStore((state) => state.fetchTreatments);
+  const clinicId = useClinicId();
 
   useEffect(() => {
     void fetchTreatments();
-  }, [fetchTreatments]);
+  }, [clinicId, fetchTreatments]);
 
   return {
     data: entry.data ?? undefined,

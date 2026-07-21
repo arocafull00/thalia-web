@@ -52,5 +52,14 @@ export const APPOINTMENT_DETAIL_COPY = {
   confirmCancel: "Confirmar cancelación",
   cancelPending: "Cancelando…",
   cancelDialogCancel: "Volver",
+  delete: "Eliminar cita",
+  deleteTitle: "Eliminar cita",
+  deleteDescription:
+    "¿Está seguro de eliminar esta cita? Esta acción no se puede deshacer.",
+  deleteRestoreStock: "Reponer los materiales descontados del stock",
+  deleteConfirm: "Eliminar definitivamente",
+  deletePending: "Eliminando…",
+  deleteSuccess: "Cita eliminada correctamente.",
+  deleteError: "No se pudo eliminar la cita.",
   moreActions: "Más acciones",
 } as const;

@@ -4,7 +4,8 @@ export const INVENTORY_ITEM_CREATE_COPY = {
   fields: {
     name: "Nombre",
     category: "Categoría",
-    unit: "Unidad",
+    unit: "Unidad de medida",
+    unitPlaceholder: "Ej: ml, unidades, g, comprimidos",
     stock: "Stock inicial",
     minStock: "Stock mínimo",
     unitPrice: "Precio unitario",

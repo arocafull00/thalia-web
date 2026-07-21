@@ -7,6 +7,8 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
+import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useInventoryItemEditDialog } from "@/lib/hooks/use-inventory-item-edit-dialog";
 import type { InventoryItem } from "@/types/database.types";
 
@@ -58,9 +60,12 @@ export default function InventoryItemEditDialog({
             />
           </label>
           <label className="block space-y-1">
-            <span className="text-sm text-ink-secondary">Unidad</span>
+            <span className="text-sm text-ink-secondary">
+              {INVENTORY_ITEM_DETAIL_COPY.fields.unit}
+            </span>
             <input
               {...dialog.register("unit")}
+              placeholder={INVENTORY_ITEM_CREATE_COPY.fields.unitPlaceholder}
               className="w-full rounded-input border border-border bg-surface px-3 py-2 text-sm"
             />
           </label>

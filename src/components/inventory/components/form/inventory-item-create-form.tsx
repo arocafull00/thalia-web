@@ -47,7 +47,11 @@ export default function InventoryItemCreateForm({
           <span className="text-sm text-ink-secondary">
             {INVENTORY_ITEM_CREATE_COPY.fields.unit}
           </span>
-          <input {...register("unit")} className={inputClassName} />
+          <input
+            {...register("unit")}
+            placeholder={INVENTORY_ITEM_CREATE_COPY.fields.unitPlaceholder}
+            className={inputClassName}
+          />
           {errors.unit ? (
             <span className="text-sm text-danger">{errors.unit.message}</span>
           ) : null}

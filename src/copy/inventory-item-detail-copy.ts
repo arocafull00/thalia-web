@@ -12,7 +12,7 @@ export const INVENTORY_ITEM_DETAIL_COPY = {
   },
   fields: {
     category: "Categoría",
-    unit: "Unidad",
+    unit: "Unidad de medida",
     stock: "Stock actual",
     minStock: "Stock mínimo",
     level: "Estado",

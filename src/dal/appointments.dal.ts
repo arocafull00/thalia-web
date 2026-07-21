@@ -195,6 +195,18 @@ export async function deleteAppointmentTreatments(
   if (error) throw error;
 }
 
+export async function deleteAppointment(
+  appointmentId: string,
+  restoreStock: boolean,
+): Promise<void> {
+  const { error } = await supabase.rpc("delete_appointment", {
+    p_appointment_id: appointmentId,
+    p_restore_stock: restoreStock,
+  });
+
+  if (error) throw error;
+}
+
 export async function rescheduleAppointment(
   id: string,
   startsAt: string,

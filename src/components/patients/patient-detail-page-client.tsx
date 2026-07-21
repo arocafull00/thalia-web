@@ -125,7 +125,10 @@ export default function PatientDetailPageClient({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <div
+      data-testid="patient-detail-page"
+      className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+    >
       <PatientDetailHeader
         patient={patient}
         avatarDisplayUri={patientAvatar.avatarDisplayUri}

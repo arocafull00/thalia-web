@@ -26,6 +26,7 @@ export default function BeforeAfterComparison({
   return (
     <AppDialog open={open} onOpenChange={onOpenChange}>
       <AppDialogContent
+        data-testid="before-after-comparison"
         className="inset-0 flex h-dvh max-h-dvh w-full max-w-none translate-none flex-col gap-0 rounded-none border-0 p-0 sm:rounded-none"
         showClose={false}
       >

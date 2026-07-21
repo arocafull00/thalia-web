@@ -163,7 +163,7 @@ export default function PatientGalleryTab({
 
   return (
     <>
-      <div className="space-y-4">
+      <div data-testid="patient-gallery" className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-ink">

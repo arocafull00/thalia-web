@@ -5,6 +5,7 @@ import { getDialogField, selectComboboxOption } from "./e2e-helpers";
 
 test("crea una cita y abre su detalle", async ({ page }) => {
   await page.goto("/appointments");
+  await expect(page.getByTestId("appointments-page")).toBeVisible();
   await page
     .locator("header")
     .getByRole("button", { name: "Nueva cita", exact: true })
@@ -36,6 +37,7 @@ test("crea una cita y abre su detalle", async ({ page }) => {
   await expect(row).toBeVisible();
   await row.click();
 
+  await expect(page.getByTestId("appointment-detail-page")).toBeVisible();
   await expect(
     page.getByRole("link", { name: E2E_DATA.filterPatient, exact: true }),
   ).toBeVisible();

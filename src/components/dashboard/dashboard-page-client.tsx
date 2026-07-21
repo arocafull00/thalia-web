@@ -38,7 +38,7 @@ export default function DashboardPageClient() {
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div data-testid="dashboard-page" className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="space-y-8 p-4 lg:p-8">
           <DashboardHeader

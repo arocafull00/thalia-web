@@ -1,0 +1,5 @@
+ALTER TABLE clinics
+  ADD COLUMN opening_time TIME NOT NULL DEFAULT '09:00',
+  ADD COLUMN closing_time TIME NOT NULL DEFAULT '18:00',
+  ADD COLUMN open_days INT[] NOT NULL DEFAULT '{1,2,3,4,5}',
+  ADD COLUMN timezone TEXT NOT NULL DEFAULT 'Europe/Madrid';

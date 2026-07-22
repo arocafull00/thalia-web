@@ -1,15 +1,17 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { Clock, Pencil } from "lucide-react";
 import { useState } from "react";
 
 import ClinicEditDialog from "@/components/settings/components/clinic-edit-dialog";
+import ClinicHoursDialog from "@/components/settings/components/clinic-hours-dialog";
 import ProfileEditDialog from "@/components/settings/components/profile-edit-dialog";
 import SettingsDetailTabBar from "@/components/settings/components/settings-detail-tab-bar";
 import SettingsDetailTabContent from "@/components/settings/components/settings-detail-tab-content";
 import { getSettingsDetailActions } from "@/components/settings/settings-detail-actions";
 import { Notice } from "@/components/ui/primitives/notice";
 import { CLINIC_EDIT_COPY } from "@/copy/clinic-edit-copy";
+import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
@@ -38,6 +40,7 @@ export default function SettingsPageClient() {
   const { activeTab, setActiveTab } = useSettingsTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [clinicEditDialogOpen, setClinicEditDialogOpen] = useState(false);
+  const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
   const {
     clinic,
     loading: clinicLoading,
@@ -54,6 +57,12 @@ export default function SettingsPageClient() {
                 icon: Pencil,
                 onClick: () => setClinicEditDialogOpen(true),
                 variant: "solid" as const,
+              },
+              {
+                title: CLINIC_HOURS_COPY.title,
+                icon: Clock,
+                onClick: () => setHoursDialogOpen(true),
+                variant: "ghost" as const,
               },
             ],
             menu: { actions: [], ariaLabel: SETTINGS_COPY.moreActions },
@@ -119,6 +128,13 @@ export default function SettingsPageClient() {
         clinic={clinic}
         open={clinicEditDialogOpen}
         onOpenChange={setClinicEditDialogOpen}
+        onSuccess={refetchClinic}
+      />
+
+      <ClinicHoursDialog
+        clinic={clinic}
+        open={hoursDialogOpen}
+        onOpenChange={setHoursDialogOpen}
         onSuccess={refetchClinic}
       />
     </div>

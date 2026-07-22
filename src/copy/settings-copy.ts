@@ -40,6 +40,7 @@ export const SETTINGS_COPY = {
   },
   clinic: {
     sectionTitle: "Datos de la clínica",
+    hours: "Horario laboral",
     name: "Nombre",
     phone: "Teléfono",
     address: "Dirección",

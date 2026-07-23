@@ -72,6 +72,12 @@ export default function AppointmentCreateDialog({
             employeesLoading={dialog.employeesLoading}
             treatments={dialog.treatments}
             treatmentsLoading={dialog.treatmentsLoading}
+            slotsOpen={dialog.slotsOpen}
+            slots={dialog.slots}
+            slotsLoading={dialog.slotsLoading}
+            onOpenSlots={dialog.openSlots}
+            onCloseSlots={dialog.closeSlots}
+            onSelectSlot={dialog.selectSlot}
           />
         </div>
         <AppDialogFooter>

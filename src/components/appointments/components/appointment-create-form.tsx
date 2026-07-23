@@ -5,6 +5,7 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
+import AppointmentSlotPicker from "@/components/appointments/components/appointment-slot-picker";
 import NewAppointmentDatetimeField from "@/components/appointments/new-appointment-datetime-field";
 import AppDialogError from "@/components/ui/app-dialog-error";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
@@ -30,6 +31,12 @@ type AppointmentCreateFormProps = {
   employeesLoading: boolean;
   treatments: Treatment[];
   treatmentsLoading: boolean;
+  slotsOpen: boolean;
+  slots: Date[];
+  slotsLoading: boolean;
+  onOpenSlots: () => void;
+  onCloseSlots: () => void;
+  onSelectSlot: (date: Date) => void;
 };
 
 export default function AppointmentCreateForm({
@@ -45,7 +52,15 @@ export default function AppointmentCreateForm({
   employeesLoading,
   treatments,
   treatmentsLoading,
+  slotsOpen,
+  slots,
+  slotsLoading,
+  onOpenSlots,
+  onCloseSlots,
+  onSelectSlot,
 }: AppointmentCreateFormProps) {
+  const canFindSlots = treatmentIds.length > 0;
+
   const patientOptions = patients.map((patient) => ({
     value: patient.id,
     label: patient.full_name,
@@ -70,6 +85,8 @@ export default function AppointmentCreateForm({
   return (
     <div className="mt-4 space-y-4">
       <AppDialogError message={errors.root?.message} />
+
+      {/* Paciente */}
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.patient}{" "}
@@ -97,6 +114,8 @@ export default function AppointmentCreateForm({
           </span>
         ) : null}
       </label>
+
+      {/* Profesional */}
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.employee}{" "}
@@ -125,28 +144,8 @@ export default function AppointmentCreateForm({
           </span>
         ) : null}
       </label>
-      <label className="block space-y-1.5">
-        <span className="text-sm text-ink-secondary">
-          {APPOINTMENT_CREATE_COPY.fields.startsAt}{" "}
-          <span className="text-danger">
-            {APPOINTMENT_CREATE_COPY.fields.requiredMark}
-          </span>
-        </span>
-        <Controller
-          name="startsAt"
-          control={control}
-          render={({ field }) => (
-            <NewAppointmentDatetimeField
-              value={field.value}
-              onChange={field.onChange}
-              clinic={clinic}
-            />
-          )}
-        />
-        {errors.startsAt ? (
-          <span className="text-sm text-danger">{errors.startsAt.message}</span>
-        ) : null}
-      </label>
+
+      {/* Tratamientos */}
       <fieldset className="space-y-2">
         <legend className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.treatments}
@@ -165,6 +164,53 @@ export default function AppointmentCreateForm({
           </span>
         ) : null}
       </fieldset>
+
+      {/* Fecha y hora */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-ink-secondary">
+            {APPOINTMENT_CREATE_COPY.fields.startsAt}{" "}
+            <span className="text-danger">
+              {APPOINTMENT_CREATE_COPY.fields.requiredMark}
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={onOpenSlots}
+            disabled={!canFindSlots}
+            title={
+              !canFindSlots ? APPOINTMENT_CREATE_COPY.findSlots.hint : undefined
+            }
+            className="text-xs font-medium text-primary hover:text-primary-hover disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            {APPOINTMENT_CREATE_COPY.findSlots.button}
+          </button>
+        </div>
+        <Controller
+          name="startsAt"
+          control={control}
+          render={({ field }) => (
+            <NewAppointmentDatetimeField
+              value={field.value}
+              onChange={field.onChange}
+              clinic={clinic}
+            />
+          )}
+        />
+        {errors.startsAt ? (
+          <span className="text-sm text-danger">{errors.startsAt.message}</span>
+        ) : null}
+        {slotsOpen ? (
+          <AppointmentSlotPicker
+            slots={slots}
+            loading={slotsLoading}
+            onSelect={onSelectSlot}
+            onClose={onCloseSlots}
+          />
+        ) : null}
+      </div>
+
+      {/* Notas */}
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.notes}

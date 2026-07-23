@@ -1,9 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useMemo } from "react";
+import { addDays } from "date-fns";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
+import { getAppointments } from "@/dal/appointments.dal";
+import { findAvailableSlots } from "@/lib/find-slots";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useCreateAppointment,
@@ -88,6 +92,9 @@ export function useAppointmentCreateDialog(
 ) {
   const clinicId = useClinicId();
   const { clinic } = useClinicInfo();
+  const [slotsOpen, setSlotsOpen] = useState(false);
+  const [slots, setSlots] = useState<Date[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
   const { mutate, isPending: isCreating } = useCreateAppointment();
   const { mutateAsync: updateAppointment, isPending: isUpdating } =
     useUpdateAppointment();
@@ -121,7 +128,8 @@ export function useAppointmentCreateDialog(
   }, [appointment, initialPatientId, initialStartsAt, reset]);
 
   const patientId = useWatch({ control, name: "patientId" }) ?? "";
-  const treatmentIds = useWatch({ control, name: "treatmentIds" }) ?? [];
+  const rawTreatmentIds = useWatch({ control, name: "treatmentIds" });
+  const treatmentIds = useMemo(() => rawTreatmentIds ?? [], [rawTreatmentIds]);
 
   const selectedPatient = usePatient(patientId);
 
@@ -154,7 +162,57 @@ export function useAppointmentCreateDialog(
 
   const resetDialog = useCallback(() => {
     reset(createDefaultValues(appointment, initialStartsAt, initialPatientId));
+    setSlotsOpen(false);
+    setSlots([]);
   }, [reset, appointment, initialPatientId, initialStartsAt]);
+
+  const openSlots = useCallback(async () => {
+    if (!clinicId || !clinic) return;
+
+    const totalDuration = (treatments.data ?? [])
+      .filter((t) => treatmentIds.includes(t.id))
+      .reduce((sum, t) => sum + (t.duration_minutes ?? 30), 0);
+
+    const employeeId = getValues("employeeId") || null;
+    const now = new Date();
+
+    setSlotsLoading(true);
+    setSlotsOpen(true);
+    setSlots([]);
+
+    try {
+      const existing = await getAppointments({
+        startIso: now.toISOString(),
+        endIso: addDays(now, 30).toISOString(),
+        clinicId,
+        employeeId,
+      });
+
+      const found = findAvailableSlots({
+        existing,
+        clinic,
+        durationMinutes: totalDuration || 30,
+        from: now,
+      });
+
+      setSlots(found);
+    } catch {
+      toast.error(APPOINTMENT_CREATE_COPY.findSlots.fetchError);
+      setSlotsOpen(false);
+    } finally {
+      setSlotsLoading(false);
+    }
+  }, [clinic, clinicId, getValues, treatmentIds, treatments.data]);
+
+  const closeSlots = useCallback(() => setSlotsOpen(false), []);
+
+  const selectSlot = useCallback(
+    (date: Date) => {
+      setValue("startsAt", date);
+      setSlotsOpen(false);
+    },
+    [setValue],
+  );
 
   const toggleTreatment = useCallback(
     (treatmentId: string) => {
@@ -268,6 +326,12 @@ export function useAppointmentCreateDialog(
     treatments: treatments.data ?? [],
     treatmentsLoading: treatments.isLoading,
     isPending: isCreating || isUpdating || isSubmitting,
+    slotsOpen,
+    slots,
+    slotsLoading,
+    openSlots,
+    closeSlots,
+    selectSlot,
     reset: resetDialog,
     handleSubmit: onSubmit,
     isEditing,

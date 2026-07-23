@@ -28,6 +28,13 @@ export const APPOINTMENT_CREATE_COPY = {
     closedDay: "La clínica no abre ese día.",
     outsideHours: "La cita está fuera del horario de apertura.",
   },
+  findSlots: {
+    button: "Buscar hueco",
+    loading: "Buscando...",
+    noSlots: "No hay huecos disponibles en los próximos 30 días.",
+    hint: "Selecciona un tratamiento para buscar huecos disponibles.",
+    fetchError: "No se pudieron cargar los huecos. Inténtalo de nuevo.",
+  },
   success: "Cita creada correctamente.",
   successEdit: "Cita actualizada correctamente.",
   error: "No se pudo crear la cita.",

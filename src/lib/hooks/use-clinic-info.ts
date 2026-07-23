@@ -8,7 +8,16 @@ import type { Clinic } from "@/types/database.types";
 
 export type ClinicInfo = Pick<
   Clinic,
-  "id" | "name" | "address" | "phone" | "specialty" | "logo_url"
+  | "id"
+  | "name"
+  | "address"
+  | "phone"
+  | "specialty"
+  | "logo_url"
+  | "opening_time"
+  | "closing_time"
+  | "open_days"
+  | "timezone"
 >;
 
 export function useClinicInfo() {

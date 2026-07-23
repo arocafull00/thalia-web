@@ -30,8 +30,30 @@ export async function getMemberships(
 export async function getClinicById(clinicId: string) {
   const { data, error } = await supabase
     .from("clinics")
-    .select("id, name, address, phone, specialty, logo_url")
+    .select(
+      "id, name, address, phone, specialty, logo_url, opening_time, closing_time, open_days, timezone",
+    )
     .eq("id", clinicId)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateClinicHours(
+  clinicId: string,
+  values: {
+    opening_time: string;
+    closing_time: string;
+    open_days: number[];
+    timezone: string;
+  },
+) {
+  const { data, error } = await supabase
+    .from("clinics")
+    .update(values)
+    .eq("id", clinicId)
+    .select("id, opening_time, closing_time, open_days, timezone")
     .single();
 
   if (error) throw new Error(error.message);

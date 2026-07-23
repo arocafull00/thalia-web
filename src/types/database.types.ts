@@ -43,6 +43,10 @@ export type Clinic = {
   owner_id: string | null;
   logo_url: string | null;
   specialty: string | null;
+  opening_time: string;
+  closing_time: string;
+  open_days: number[];
+  timezone: string;
   whatsapp_reminder_enabled: boolean;
   whatsapp_reminder_hours: number[];
   whatsapp_phone_number_id: string | null;

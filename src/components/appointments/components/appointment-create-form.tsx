@@ -99,6 +99,7 @@ export default function AppointmentCreateForm({
           control={control}
           render={({ field }) => (
             <AppSearchableCombobox
+              testId="appointment-patient-combobox"
               value={field.value || null}
               onValueChange={(value) => field.onChange(value ?? "")}
               options={patientOptions}
@@ -128,6 +129,7 @@ export default function AppointmentCreateForm({
           control={control}
           render={({ field }) => (
             <AppSearchableCombobox
+              testId="appointment-employee-combobox"
               value={field.value || null}
               onValueChange={(value) => field.onChange(value ?? "")}
               options={employeeOptions}

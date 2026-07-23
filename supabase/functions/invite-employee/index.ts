@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
   if (existingMembership) {
     return errorResponse(
       "user_already_member",
-      "Este usuario ya pertenece a la clinica",
+      "Este usuario ya pertenece a la clínica",
       409,
     );
   }
@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
   if (pendingInvitation) {
     return errorResponse(
       "invitation_already_pending",
-      "Este usuario ya tiene una invitacion pendiente",
+      "Este usuario ya tiene una invitación pendiente",
       409,
     );
   }
@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
     return errorResponse(
       isDuplicate ? "invitation_already_pending" : "invitation_failed",
       isDuplicate
-        ? "Este usuario ya tiene una invitacion pendiente"
+        ? "Este usuario ya tiene una invitación pendiente"
         : "Invitation failed",
       isDuplicate ? 409 : 500,
     );

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { getDialogField, selectComboboxOption } from "./e2e-helpers";
+import { selectComboboxOption } from "./e2e-helpers";
 
 const tinyPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nWQAAAAASUVORK5CYII=",
@@ -21,7 +21,11 @@ async function uploadPatientImage(
     mimeType: "image/png",
     buffer: tinyPng,
   });
-  await selectComboboxOption(page, getDialogField(dialog, "Fase"), phase);
+  await selectComboboxOption(
+    page,
+    dialog.getByTestId("patient-image-phase-combobox"),
+    phase,
+  );
   await dialog
     .getByRole("button", { name: "Subir imágenes", exact: true })
     .click();

@@ -40,7 +40,10 @@ test("crea y edita un paciente con el formulario completo", async ({
   await expect(patientRow).toBeVisible();
   await patientRow.click();
 
-  await expect(page.getByTestId("patient-detail-page")).toBeVisible();
+  await expect(page).toHaveURL(/\/patients\/[^/]+$/, { timeout: 15_000 });
+  await expect(page.getByTestId("patient-detail-page")).toBeVisible({
+    timeout: 15_000,
+  });
   await expect(page.getByRole("heading", { name: patientName })).toBeVisible();
   await page
     .getByRole("button", { name: "Editar paciente", exact: true })
@@ -67,7 +70,11 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
   await expect(
     page.getByRole("row", { name: new RegExp(E2E_DATA.filterPatient) }),
   ).toBeVisible();
-  await expect(page.getByText(E2E_DATA.patient, { exact: true })).toBeHidden();
+  await expect(
+    page
+      .getByRole("table")
+      .getByRole("row", { name: new RegExp(`^${E2E_DATA.patient}\\b`) }),
+  ).toHaveCount(0);
 
   await page.getByRole("button", { name: "Todos", exact: true }).click();
   await page.getByRole("option", { name: "Inactivos", exact: true }).click();

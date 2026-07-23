@@ -68,6 +68,11 @@ export default function InventoryItemEditDialog({
               placeholder={INVENTORY_ITEM_CREATE_COPY.fields.unitPlaceholder}
               className="w-full rounded-input border border-border bg-surface px-3 py-2 text-sm"
             />
+            {dialog.formState.errors.unit ? (
+              <span className="text-sm text-danger">
+                {dialog.formState.errors.unit.message}
+              </span>
+            ) : null}
           </label>
           <div className="grid grid-cols-3 gap-3">
             <label className="space-y-1">

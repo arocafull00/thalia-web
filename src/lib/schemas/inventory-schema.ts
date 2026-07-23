@@ -16,7 +16,14 @@ const inventoryFieldsSchema = z.object({
     .union([
       z.null(),
       z.literal(""),
-      z.string().trim().max(50, "La unidad es demasiado larga."),
+      z
+        .string()
+        .trim()
+        .max(50, "La unidad es demasiado larga.")
+        .refine(
+          (value) => !/^\d+([.,]\d+)?$/.test(value),
+          "La unidad de medida no puede ser un número.",
+        ),
     ])
     .transform((value) => (value === "" ? null : value)),
   stock: z.coerce

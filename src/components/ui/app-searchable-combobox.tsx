@@ -45,6 +45,7 @@ type AppSearchableComboboxProps = {
   triggerTrailing?: ReactNode;
   className?: string;
   showSearch?: boolean;
+  testId?: string;
 };
 
 const inputTriggerClassName =
@@ -72,6 +73,7 @@ export default function AppSearchableCombobox({
   triggerTrailing,
   className,
   showSearch = true,
+  testId,
 }: AppSearchableComboboxProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [portalContainer, setPortalContainer] = useState<
@@ -175,7 +177,10 @@ export default function AppSearchableCombobox({
         onOpenChange={handleOpenChange}
         disabled={disabled || showInitialLoading}
       >
-        <ComboboxTrigger className={cn(triggerClassName, className)}>
+        <ComboboxTrigger
+          data-testid={testId}
+          className={cn(triggerClassName, className)}
+        >
           <span className="flex min-w-0 flex-1 items-center gap-2 text-left">
             {!selectedOption && triggerLeading ? triggerLeading : null}
             {selectedOption?.leading ?? null}

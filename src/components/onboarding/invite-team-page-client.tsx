@@ -7,9 +7,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
+import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
+import { inviteEmployee } from "@/dal/employees.dal";
 import { captureEvent } from "@/lib/analytics";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
-import { createEmployeeInviteError } from "@/lib/employee-invite-errors";
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import {
@@ -30,6 +32,7 @@ export default function InviteTeamPageClient() {
   const intent = useOnboardingIntentStore((state) => state.intent);
   const clearIntent = useOnboardingIntentStore((state) => state.clearIntent);
   const { href, ready } = usePostAuthRedirect(Boolean(user));
+  const clinicId = useClinicId();
   const [emails, setEmails] = useState([""]);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -103,6 +106,11 @@ export default function InviteTeamPageClient() {
       return;
     }
 
+    if (!clinicId) {
+      setError(EMPLOYEE_INVITE_COPY.validation.clinicRequired);
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -114,16 +122,16 @@ export default function InviteTeamPageClient() {
       const failures: string[] = [];
 
       for (const inviteEmail of normalized) {
-        const { error: invokeError } = await supabase.functions.invoke(
-          "invite-employee",
-          {
-            body: { email: inviteEmail, role: "employee" },
-          },
-        );
-
-        if (invokeError) {
-          const inviteError = await createEmployeeInviteError(invokeError);
-          failures.push(`${inviteEmail}: ${inviteError.message}`);
+        try {
+          await inviteEmployee({
+            email: inviteEmail,
+            role: "employee",
+            clinicId,
+          });
+        } catch (cause) {
+          const message =
+            cause instanceof Error ? cause.message : EMPLOYEE_INVITE_COPY.error;
+          failures.push(`${inviteEmail}: ${message}`);
         }
       }
 

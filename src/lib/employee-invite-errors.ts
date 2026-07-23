@@ -5,12 +5,12 @@ const DEFAULT_EMPLOYEE_INVITE_ERROR =
 
 const EMPLOYEE_INVITE_ERROR_MESSAGES: Record<string, string> = {
   user_not_found: "No existe un usuario con ese email en el sistema",
-  employee_not_found: "No existe ningún usuario registrado con ese email.",
-  "user not found": "No existe ningún usuario registrado con ese email.",
-  "employee not found": "No existe ningún usuario registrado con ese email.",
-  "email not found": "No existe ningún usuario registrado con ese email.",
-  "no user found": "No existe ningún usuario registrado con ese email.",
-  "usuario no encontrado": "No existe ningún usuario registrado con ese email.",
+  employee_not_found: "No existe un usuario con ese email en el sistema",
+  "user not found": "No existe un usuario con ese email en el sistema",
+  "employee not found": "No existe un usuario con ese email en el sistema",
+  "email not found": "No existe un usuario con ese email en el sistema",
+  "no user found": "No existe un usuario con ese email en el sistema",
+  "usuario no encontrado": "No existe un usuario con ese email en el sistema",
   unauthorized: "Tu sesión ha caducado. Vuelve a iniciar sesión.",
   forbidden: "No tienes permisos para invitar personal a esta clínica.",
   clinic_id_required: "Selecciona una clínica antes de enviar la invitación.",
@@ -47,8 +47,7 @@ const EMPLOYEE_INVITE_STATUS_MESSAGES: Record<number, string> = {
   400: "No se pudo procesar la invitación. Revisa los datos introducidos.",
   401: "Tu sesión ha caducado. Vuelve a iniciar sesión.",
   403: "No tienes permisos para invitar personal a esta clínica.",
-  404: "No existe ningún usuario registrado con ese email.",
-  409: "Ya existe una invitación pendiente para ese email.",
+  404: "No existe un usuario con ese email en el sistema",
   429: "Se han enviado demasiadas invitaciones. Inténtalo más tarde.",
   500: "El servicio de invitaciones no está disponible en este momento.",
 };

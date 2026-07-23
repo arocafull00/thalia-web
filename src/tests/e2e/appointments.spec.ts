@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { E2E_DATA } from "./e2e-constants";
-import { getDialogField, selectComboboxOption } from "./e2e-helpers";
+import { selectComboboxOption } from "./e2e-helpers";
 
 test("crea una cita y abre su detalle", async ({ page }) => {
   await page.goto("/appointments");
@@ -14,12 +14,12 @@ test("crea una cita y abre su detalle", async ({ page }) => {
   const dialog = page.getByRole("dialog", { name: "Nueva cita" });
   await selectComboboxOption(
     page,
-    getDialogField(dialog, "Paciente"),
+    dialog.getByTestId("appointment-patient-combobox"),
     E2E_DATA.filterPatient,
   );
   await selectComboboxOption(
     page,
-    getDialogField(dialog, "Profesional"),
+    dialog.getByTestId("appointment-employee-combobox"),
     E2E_DATA.employee,
   );
   await dialog

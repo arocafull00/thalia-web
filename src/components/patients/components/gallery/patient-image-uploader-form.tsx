@@ -142,6 +142,7 @@ export default function PatientImageUploaderForm({
           name="phase"
           render={({ field }) => (
             <AppSearchableCombobox
+              testId="patient-image-phase-combobox"
               value={field.value || null}
               onValueChange={(value) => field.onChange(value ?? "")}
               options={phaseOptions}

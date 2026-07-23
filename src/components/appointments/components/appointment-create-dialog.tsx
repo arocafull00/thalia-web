@@ -63,6 +63,7 @@ export default function AppointmentCreateDialog({
             register={dialog.register}
             control={dialog.control}
             errors={dialog.errors}
+            clinic={dialog.clinic}
             treatmentIds={dialog.treatmentIds}
             onToggleTreatment={dialog.toggleTreatment}
             patients={dialog.patients}

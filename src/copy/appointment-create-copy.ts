@@ -25,6 +25,8 @@ export const APPOINTMENT_CREATE_COPY = {
     patientRequired: "Selecciona un paciente.",
     employeeRequired: "Selecciona un profesional.",
     clinicRequired: "No hay clínica activa.",
+    closedDay: "La clínica no abre ese día.",
+    outsideHours: "La cita está fuera del horario de apertura.",
   },
   success: "Cita creada correctamente.",
   successEdit: "Cita actualizada correctamente.",

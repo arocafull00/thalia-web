@@ -10,6 +10,7 @@ type CalendarToolbarProps = {
   rangeLabel: string;
   viewMode: CalendarViewMode;
   filter: ReactNode;
+  statusBadge?: ReactNode;
   onPrevious: () => void;
   onNext: () => void;
   onToday: () => void;
@@ -21,6 +22,7 @@ export default function CalendarToolbar({
   rangeLabel,
   viewMode,
   filter,
+  statusBadge,
   onPrevious,
   onNext,
   onToday,
@@ -44,6 +46,7 @@ export default function CalendarToolbar({
           >
             {CALENDAR_COPY.toolbar.today}
           </Button>
+          {statusBadge}
         </div>
       </div>
       <div className="flex shrink-0 items-center justify-center gap-2">

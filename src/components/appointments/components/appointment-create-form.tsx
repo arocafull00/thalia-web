@@ -11,6 +11,7 @@ import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSearchableMultiSelect from "@/components/ui/app-searchable-multi-select";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
 import type { AppointmentFormValues } from "@/lib/hooks/use-appointment-create-dialog";
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { Employee, Patient, Treatment } from "@/types/database.types";
 
 const inputClassName =
@@ -20,6 +21,7 @@ type AppointmentCreateFormProps = {
   register: UseFormRegister<AppointmentFormValues>;
   control: Control<AppointmentFormValues>;
   errors: FieldErrors<AppointmentFormValues>;
+  clinic?: ClinicInfo | null;
   treatmentIds: string[];
   onToggleTreatment: (treatmentId: string) => void;
   patients: Patient[];
@@ -34,6 +36,7 @@ export default function AppointmentCreateForm({
   register,
   control,
   errors,
+  clinic,
   treatmentIds,
   onToggleTreatment,
   patients,
@@ -136,6 +139,7 @@ export default function AppointmentCreateForm({
             <NewAppointmentDatetimeField
               value={field.value}
               onChange={field.onChange}
+              clinic={clinic}
             />
           )}
         />

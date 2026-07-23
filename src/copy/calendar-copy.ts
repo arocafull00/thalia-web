@@ -30,6 +30,10 @@ export const CALENDAR_COPY = {
   agenda: {
     empty: "No hay citas este día",
   },
+  clinicStatus: {
+    open: "Abierta",
+    closed: "Cerrada",
+  },
   mobileMonth: {
     appointmentsTitle: (day: string) => `Citas del ${day}`,
     viewDay: "Ver día",

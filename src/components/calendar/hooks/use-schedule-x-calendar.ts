@@ -5,10 +5,12 @@ import {
   createViewMonthGrid,
   createViewWeek,
 } from "@schedule-x/calendar";
+import type { BackgroundEvent } from "@schedule-x/calendar";
 import { createCalendarControlsPlugin } from "@schedule-x/calendar-controls";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
 import { useNextCalendarApp } from "@schedule-x/react";
 import {
+  addDays,
   endOfDay,
   endOfMonth,
   endOfWeek,
@@ -25,6 +27,8 @@ import CalendarEmptyHeader from "@/components/calendar/components/calendar-empty
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { CALENDAR_END_HOUR, CALENDAR_START_HOUR } from "@/lib/calendar-grid";
 import { useAppointments } from "@/lib/hooks/use-appointments";
+import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import {
   appointmentsKey,
   useAppointmentsStore,
@@ -34,6 +38,120 @@ import {
   type CalendarViewMode,
 } from "@/stores/calendar-store";
 import type { AppointmentWithRelations } from "@/types/database.types";
+
+// Preact's CSSProperties lacks an index signature, so we cast to allow CSS custom properties
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const DIMMED_STYLE: any = {
+  background: "var(--color-canvas)",
+  opacity: 0.75,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CLOSED_DAY_STYLE: any = {
+  background: "var(--color-canvas)",
+  "--sx-label": '"Clínica cerrada"',
+};
+
+function isBlockedSlot(
+  dateTime: Temporal.ZonedDateTime,
+  clinic: ClinicInfo,
+): boolean {
+  if (!clinic.open_days.includes(dateTime.dayOfWeek)) return true;
+  const hh = String(dateTime.hour).padStart(2, "0");
+  const mm = String(dateTime.minute).padStart(2, "0");
+  const time = `${hh}:${mm}`;
+  return (
+    time < clinic.opening_time.substring(0, 5) ||
+    time >= clinic.closing_time.substring(0, 5)
+  );
+}
+
+function parseHHMM(time: string): [number, number] {
+  const parts = time.split(":");
+  return [Number(parts[0]), Number(parts[1] ?? 0)];
+}
+
+function buildClinicBackgroundEvents(
+  clinic: ClinicInfo,
+  rangeStart: Date,
+  rangeEnd: Date,
+): BackgroundEvent[] {
+  const tz = clinic.timezone;
+  const [openH, openM] = parseHHMM(clinic.opening_time);
+  const [closeH, closeM] = parseHHMM(clinic.closing_time);
+  const events: BackgroundEvent[] = [];
+
+  let current = startOfDay(rangeStart);
+  while (current <= rangeEnd) {
+    const year = current.getFullYear();
+    const month = current.getMonth() + 1;
+    const day = current.getDate();
+    const jsDay = current.getDay();
+    const isoDay = jsDay === 0 ? 7 : jsDay;
+    const isOpen = clinic.open_days.includes(isoDay);
+
+    if (!isOpen) {
+      // PlainDate: ScheduleX converts to 00:00–23:59 in the time grid (full coverage)
+      // and picks it up as fullDayBackgroundEvent in the month grid
+      events.push({
+        start: Temporal.PlainDate.from({ year, month, day }),
+        end: Temporal.PlainDate.from({ year, month, day }),
+        style: CLOSED_DAY_STYLE,
+      });
+    } else {
+      if (CALENDAR_START_HOUR * 60 < openH * 60 + openM) {
+        events.push({
+          start: Temporal.ZonedDateTime.from({
+            year,
+            month,
+            day,
+            hour: CALENDAR_START_HOUR,
+            minute: 0,
+            second: 0,
+            timeZone: tz,
+          }),
+          end: Temporal.ZonedDateTime.from({
+            year,
+            month,
+            day,
+            hour: openH,
+            minute: openM,
+            second: 0,
+            timeZone: tz,
+          }),
+          style: DIMMED_STYLE,
+        });
+      }
+      if (closeH * 60 + closeM < CALENDAR_END_HOUR * 60) {
+        events.push({
+          start: Temporal.ZonedDateTime.from({
+            year,
+            month,
+            day,
+            hour: closeH,
+            minute: closeM,
+            second: 0,
+            timeZone: tz,
+          }),
+          end: Temporal.ZonedDateTime.from({
+            year,
+            month,
+            day,
+            hour: CALENDAR_END_HOUR,
+            minute: 0,
+            second: 0,
+            timeZone: tz,
+          }),
+          style: DIMMED_STYLE,
+        });
+      }
+    }
+
+    current = addDays(current, 1);
+  }
+
+  return events;
+}
 
 function toPlainDate(date: Date) {
   return Temporal.PlainDate.from({
@@ -114,10 +232,22 @@ export function useScheduleXCalendar(gridHeight: number) {
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
   const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
+  const { clinic } = useClinicInfo();
 
   const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
     viewMode,
     weekAnchor,
+  );
+
+  const rangeStartIso = rangeStart.toISOString();
+  const rangeEndIso = rangeEnd.toISOString();
+
+  const backgroundEvents = useMemo(
+    () =>
+      clinic ? buildClinicBackgroundEvents(clinic, rangeStart, rangeEnd) : [],
+    // rangeStartIso/rangeEndIso are stable string deps for Date objects
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [clinic, rangeStartIso, rangeEndIso],
   );
 
   const appointments = useAppointments(
@@ -143,12 +273,14 @@ export function useScheduleXCalendar(gridHeight: number) {
   const openCreateDialogRef = useRef(openCreateDialog);
   const openEditDialogRef = useRef(openEditDialog);
   const setVisibleRangeRef = useRef(setVisibleRange);
+  const clinicRef = useRef(clinic);
   const syncedWeekAnchorRef = useRef(initialConfig.weekAnchor);
 
   useEffect(() => {
     openCreateDialogRef.current = openCreateDialog;
     openEditDialogRef.current = openEditDialog;
     setVisibleRangeRef.current = setVisibleRange;
+    clinicRef.current = clinic;
   });
 
   function pushVisibleRange() {
@@ -183,6 +315,7 @@ export function useScheduleXCalendar(gridHeight: number) {
       end: `${String(CALENDAR_END_HOUR).padStart(2, "0")}:00`,
     },
     events: initialConfig.events,
+    backgroundEvents,
     plugins: [eventsService, calendarControls],
     skipAnimations: true,
     callbacks: {
@@ -190,10 +323,21 @@ export function useScheduleXCalendar(gridHeight: number) {
         openEditDialogRef.current(String(event.id));
       },
       onClickDateTime: (dateTime) => {
+        const c = clinicRef.current;
+        if (c && isBlockedSlot(dateTime, c)) return;
         openCreateDialogRef.current(zonedDateTimeToDate(dateTime));
       },
       onClickDate: (dateString) => {
-        openCreateDialogRef.current(new Date(dateString));
+        const c = clinicRef.current;
+        // ScheduleX passes a Temporal.PlainDate at runtime despite the string type
+        const plain =
+          typeof dateString === "string"
+            ? Temporal.PlainDate.from(dateString)
+            : (dateString as unknown as Temporal.PlainDate);
+        if (c && !c.open_days.includes(plain.dayOfWeek)) return;
+        openCreateDialogRef.current(
+          new Date(plain.year, plain.month - 1, plain.day),
+        );
       },
       onRangeUpdate: ({ start, end }) => {
         setVisibleRangeRef.current(toDateOnlyIso(start), toDateOnlyIso(end));
@@ -206,6 +350,17 @@ export function useScheduleXCalendar(gridHeight: number) {
 
     eventsService.set(scheduleEvents);
   }, [calendarApp, eventsService, scheduleEvents]);
+
+  useEffect(() => {
+    if (!calendarApp) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const bgSignal = (calendarApp as any).$app?.calendarEvents
+      ?.backgroundEvents;
+    if (!bgSignal) return;
+    // ScheduleX exposes background events as an internal Preact Signal with no public setter
+    // eslint-disable-next-line react-hooks/immutability
+    bgSignal.value = backgroundEvents;
+  }, [calendarApp, backgroundEvents]);
 
   useEffect(() => {
     if (!appointments.error) return;

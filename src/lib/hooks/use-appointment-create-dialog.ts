@@ -9,6 +9,8 @@ import {
   useCreateAppointment,
   useUpdateAppointment,
 } from "@/lib/hooks/use-appointments";
+import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePatient, usePatients } from "@/lib/hooks/use-patients";
 import { useTreatments } from "@/lib/hooks/use-treatment";
@@ -21,6 +23,25 @@ import { notifySuccess } from "@/lib/sound";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 const appointmentFormSchema = appointmentSchema.omit({ clinicId: true });
+
+function jsDateToIsoDay(date: Date): number {
+  const d = date.getDay(); // 0=Sun...6=Sat
+  return d === 0 ? 7 : d; // 1=Mon...7=Sun
+}
+
+function isClinicOpenOnDate(date: Date, clinic: ClinicInfo): boolean {
+  return clinic.open_days.includes(jsDateToIsoDay(date));
+}
+
+function isWithinClinicHours(date: Date, clinic: ClinicInfo): boolean {
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  const time = `${hh}:${mm}`;
+  return (
+    time >= clinic.opening_time.substring(0, 5) &&
+    time < clinic.closing_time.substring(0, 5)
+  );
+}
 
 export type AppointmentFormValues = z.input<typeof appointmentFormSchema>;
 
@@ -66,6 +87,7 @@ export function useAppointmentCreateDialog(
   initialPatientId?: string | null,
 ) {
   const clinicId = useClinicId();
+  const { clinic } = useClinicInfo();
   const { mutate, isPending: isCreating } = useCreateAppointment();
   const { mutateAsync: updateAppointment, isPending: isUpdating } =
     useUpdateAppointment();
@@ -161,6 +183,21 @@ export function useAppointmentCreateDialog(
         return;
       }
 
+      if (clinic) {
+        if (!isClinicOpenOnDate(data.startsAt, clinic)) {
+          setError("root", {
+            message: APPOINTMENT_CREATE_COPY.validation.closedDay,
+          });
+          return;
+        }
+        if (!isWithinClinicHours(data.startsAt, clinic)) {
+          setError("root", {
+            message: APPOINTMENT_CREATE_COPY.validation.outsideHours,
+          });
+          return;
+        }
+      }
+
       if (isEditing && appointment) {
         const parsed = appointmentUpdateSchema.safeParse({
           id: appointment.id,
@@ -221,6 +258,7 @@ export function useAppointmentCreateDialog(
     register,
     control,
     errors,
+    clinic,
     treatmentIds,
     toggleTreatment,
     patients: patientsForPicker,

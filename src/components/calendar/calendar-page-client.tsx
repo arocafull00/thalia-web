@@ -9,6 +9,7 @@ import CalendarFiltersSheet from "@/components/calendar/components/calendar-filt
 import CalendarMobileDayView from "@/components/calendar/components/calendar-mobile-day-view";
 import CalendarMobileMonthView from "@/components/calendar/components/calendar-mobile-month-view";
 import CalendarToolbar from "@/components/calendar/components/calendar-toolbar";
+import ClinicStatusBadge from "@/components/calendar/components/clinic-status-badge";
 import { useCalendarPage } from "@/components/calendar/hooks/use-calendar-page";
 import { useSwipeNavigation } from "@/components/calendar/hooks/use-swipe-navigation";
 import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
@@ -16,6 +17,7 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAppointment } from "@/lib/hooks/use-appointments";
+import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
@@ -47,6 +49,7 @@ export default function CalendarPageClient() {
     onChangeViewMode,
   } = useCalendarPage();
   const editingAppointment = useAppointment(editingAppointmentId ?? "");
+  const { clinic } = useClinicInfo();
   const canRenderAppointmentDialog =
     !editingAppointmentId || Boolean(editingAppointment.data);
 
@@ -95,6 +98,7 @@ export default function CalendarPageClient() {
         rangeLabel={rangeLabel}
         viewMode={viewMode}
         filter={<CalendarEmployeeFilter />}
+        statusBadge={<ClinicStatusBadge clinic={clinic} />}
         onPrevious={onPrevious}
         onNext={onNext}
         onToday={onToday}

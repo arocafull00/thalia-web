@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
+import type { Matcher } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -27,6 +28,9 @@ type AppDateFieldProps = {
   mode?: "date" | "datetime-local";
   minDate?: Date;
   maxDate?: Date;
+  disabledDays?: Matcher | Matcher[];
+  minTime?: string;
+  maxTime?: string;
   roundTimeToMinutes?: number;
 };
 
@@ -36,6 +40,9 @@ export default function AppDateField({
   mode = "date",
   minDate,
   maxDate,
+  disabledDays,
+  minTime,
+  maxTime,
   roundTimeToMinutes,
 }: AppDateFieldProps) {
   const [open, setOpen] = useState(false);
@@ -136,6 +143,11 @@ export default function AppDateField({
           disabled={[
             ...(minDate ? [{ before: minDate }] : []),
             ...(maxDate ? [{ after: maxDate }] : []),
+            ...(disabledDays
+              ? Array.isArray(disabledDays)
+                ? disabledDays
+                : [disabledDays]
+              : []),
           ]}
           className="bg-transparent p-3"
         />
@@ -144,6 +156,8 @@ export default function AppDateField({
             <Input
               type="time"
               value={timeValue}
+              min={minTime}
+              max={maxTime}
               onChange={(event) => handleTimeChange(event.target.value)}
               className="rounded-xl border-border bg-canvas"
             />

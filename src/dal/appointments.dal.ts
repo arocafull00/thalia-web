@@ -207,6 +207,27 @@ export async function deleteAppointment(
   if (error) throw error;
 }
 
+export type FutureAppointmentConflict = {
+  id: string;
+  starts_at: string;
+  patients: { full_name: string } | { full_name: string }[] | null;
+  employees: { full_name: string } | { full_name: string }[] | null;
+};
+
+export async function getFutureAppointments(
+  clinicId: string,
+): Promise<FutureAppointmentConflict[]> {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("appointments")
+    .select("id, starts_at, patients(full_name), employees(full_name)")
+    .eq("clinic_id", clinicId)
+    .in("status", ["scheduled", "confirmed"])
+    .gt("starts_at", now)
+    .order("starts_at");
+  return unwrapSupabaseList(data, error) as FutureAppointmentConflict[];
+}
+
 export async function rescheduleAppointment(
   id: string,
   startsAt: string,

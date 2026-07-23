@@ -267,6 +267,23 @@ body {
   cursor: pointer;
 }
 
+.sx-react-calendar-wrapper .sx__time-grid-background-event::after,
+.sx-react-calendar-wrapper .sx__month-grid-background-event::after {
+  content: var(--sx-label, "");
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

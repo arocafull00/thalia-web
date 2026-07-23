@@ -26,6 +26,20 @@ export const CLINIC_HOURS_COPY = {
     save: "Guardar cambios",
     saving: "Guardando...",
   },
+  conflicts: {
+    title: (count: number) =>
+      count === 1
+        ? "1 cita quedará fuera del nuevo horario"
+        : `${count} citas quedarán fuera del nuevo horario`,
+    description:
+      "Estas citas no encajan con el nuevo horario. Puedes confirmar el cambio igualmente y renegociarlas después.",
+    confirm: "Confirmar cambio",
+    back: "Volver",
+    fetchError:
+      "No se pudieron verificar las citas afectadas. Puedes guardar igualmente.",
+    noPatient: "Paciente desconocido",
+    noEmployee: "Sin profesional",
+  },
   success: "Horario actualizado correctamente.",
   error: "No se pudo actualizar el horario.",
 } as const;

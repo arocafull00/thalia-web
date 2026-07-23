@@ -2895,8 +2895,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/appointments.spec.ts": {
-    "mtime": 1784844213.1456351,
-    "ast_hash": "15dec9ca685b92ecea2074cb13afd0de",
+    "mtime": 1784836985.8875504,
+    "ast_hash": "1f8818998365dca8aef7653699da93cb",
     "semantic_hash": ""
   },
   "src/tests/e2e/auth.setup.ts": {
@@ -2915,8 +2915,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/e2e-helpers.ts": {
-    "mtime": 1784844211.6644988,
-    "ast_hash": "29e99b5e7fb4106de76195c058cb6abb",
+    "mtime": 1784836984.457993,
+    "ast_hash": "3f498e3fc817f142903352db1248b431",
     "semantic_hash": ""
   },
   "src/tests/e2e/gallery.spec.ts": {
@@ -2925,8 +2925,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/patients.spec.ts": {
-    "mtime": 1784844438.940933,
-    "ast_hash": "ee34fdc3e8f5dfe525432d9cc33ec28c",
+    "mtime": 1784841224.2706666,
+    "ast_hash": "f59d9c48efea125ab85a3da8c2df8543",
     "semantic_hash": ""
   },
   "src/tests/e2e/run-with-local-supabase.mjs": {
@@ -6290,8 +6290,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/patient-files.spec.ts": {
-    "mtime": 1784842284.621633,
-    "ast_hash": "8bd9e9a211545cbbd4695a655212240b",
+    "mtime": 1784841224.256752,
+    "ast_hash": "853ace8cbd60511224f6b832d19079fe",
     "semantic_hash": ""
   },
   "src/tests/e2e/treatments.spec.ts": {

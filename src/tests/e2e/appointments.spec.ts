@@ -43,11 +43,12 @@ test("crea una cita y abre su detalle", async ({ page }) => {
   await expect(row).toBeVisible();
   await row.click();
 
-  await expect(page.getByTestId("appointment-detail-page")).toBeVisible();
+  const detail = page.getByTestId("appointment-detail-page");
+  await expect(detail).toBeVisible();
   await expect(
-    page.getByRole("link", { name: E2E_DATA.filterPatient, exact: true }),
+    detail.getByRole("link", { name: E2E_DATA.filterPatient, exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByText(E2E_DATA.treatment, { exact: true }),
+    detail.getByText(E2E_DATA.treatment, { exact: true }),
   ).toBeVisible();
 });

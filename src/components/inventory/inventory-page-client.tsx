@@ -79,11 +79,12 @@ export default function InventoryPageClient() {
 
   useTopbarAction({
     title: "Anadir material",
+    testId: "inventory-create-trigger",
     onClick: () => setDialogOpen(true),
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div data-testid="inventory-page" className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <InventoryFilters
@@ -157,6 +158,7 @@ export default function InventoryPageClient() {
                   : INVENTORY_ITEM_CREATE_COPY.actions.save
               }
               disabled={dialog.isPending}
+              testId="inventory-create-submit"
               onClick={dialog.handleSubmit}
             />
           </AppDialogFooter>

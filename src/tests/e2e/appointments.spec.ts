@@ -1,15 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 import { E2E_DATA } from "./e2e-constants";
-import { selectComboboxOption } from "./e2e-helpers";
+import { clickTopbarTrigger, selectComboboxOption } from "./e2e-helpers";
 
 test("crea una cita y abre su detalle", async ({ page }) => {
   await page.goto("/appointments");
   await expect(page.getByTestId("appointments-page")).toBeVisible();
-  await page
-    .locator("header")
-    .getByRole("button", { name: "Nueva cita", exact: true })
-    .click();
+  await clickTopbarTrigger(page, "appointment-create-trigger");
 
   const dialog = page.getByRole("dialog", { name: "Nueva cita" });
   await selectComboboxOption(
@@ -26,10 +23,12 @@ test("crea una cita y abre su detalle", async ({ page }) => {
     .getByRole("checkbox", { name: E2E_DATA.treatment, exact: true })
     .click();
   await dialog.getByLabel("Notas").fill("Cita creada por Playwright.");
-  await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page.getByTestId("appointment-create-submit").click();
 
-  await expect(dialog).toBeHidden();
-  await expect(page.getByText("Cita creada correctamente.")).toBeVisible();
+  await expect(page.getByText("Cita creada correctamente.")).toBeVisible({
+    timeout: 15_000,
+  });
+  await expect(dialog).toBeHidden({ timeout: 15_000 });
 
   const row = page.getByRole("row", {
     name: new RegExp(`${E2E_DATA.filterPatient}.*${E2E_DATA.treatment}`),

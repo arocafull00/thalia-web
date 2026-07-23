@@ -83,6 +83,7 @@ export default function InventoryItemAdjustStockDialog({
                     INVENTORY_ITEM_DETAIL_COPY.adjustStock.fields.type
                   }
                   showSearch={false}
+                  testId="inventory-movement-type-combobox"
                 />
               )}
             />
@@ -141,6 +142,7 @@ export default function InventoryItemAdjustStockDialog({
                 : INVENTORY_ITEM_DETAIL_COPY.adjustStock.actions.save
             }
             disabled={dialog.isPending}
+            testId="inventory-movement-create-submit"
             onClick={dialog.handleSubmit}
           />
         </AppDialogFooter>

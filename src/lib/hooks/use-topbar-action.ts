@@ -5,6 +5,7 @@ import { useTopbarActionStore } from "@/stores/topbar-action-store";
 
 export type TopbarActionConfig = Omit<TopbarAction, "onClick"> & {
   onClick: () => void;
+  testId?: string;
 };
 
 export function useTopbarAction(config: TopbarActionConfig | null) {
@@ -15,6 +16,7 @@ export function useTopbarAction(config: TopbarActionConfig | null) {
   const title = config?.title;
   const icon = config?.icon;
   const disabled = config?.disabled;
+  const testId = config?.testId;
 
   useEffect(() => {
     if (!title) {
@@ -26,9 +28,10 @@ export function useTopbarAction(config: TopbarActionConfig | null) {
       title,
       icon,
       disabled,
+      testId,
       onClick: () => onClick(),
     });
 
     return () => setAction(null);
-  }, [title, icon, disabled, setAction]);
+  }, [title, icon, disabled, testId, setAction]);
 }

@@ -36,7 +36,10 @@ import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
-import { useTopbarActionStore } from "@/stores/topbar-action-store";
+import {
+  type TopbarAction,
+  useTopbarActionStore,
+} from "@/stores/topbar-action-store";
 
 const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
   "/appointments": APPOINTMENTS_COPY.page.title,
@@ -66,21 +69,24 @@ export default function AppTopbar() {
       (menuAction) => !primaryTitles.has(menuAction.label),
     ) ?? [];
 
-  const allMobileActions = [
+  const allMobileActions: TopbarAction[] = [
     ...(action ? [action] : []),
     ...actions,
-    ...secondaryMenuActions.map((a) => ({
-      title: a.label,
-      icon: a.icon,
-      onClick: a.onClick ?? (() => {}),
+    ...secondaryMenuActions.map((menuAction): TopbarAction => ({
+      title: menuAction.label,
+      icon: menuAction.icon,
+      onClick: menuAction.onClick ?? (() => {}),
       disabled: false,
-      variant: a.variant === "danger" ? ("ghost" as const) : ("ghost" as const),
+      variant: menuAction.variant === "danger" ? "ghost" : "ghost",
     })),
   ];
   const hasMobileActions = allMobileActions.length > 0;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border-subtle bg-surface">
+    <header
+      data-testid="app-topbar"
+      className="sticky top-0 z-40 border-b border-border-subtle bg-surface"
+    >
       <div className="flex flex-wrap items-center gap-x-2 px-6 lg:grid lg:h-12 lg:grid-cols-[1fr_auto_1fr]">
         <div className="order-1 flex h-12 min-w-0 flex-1 items-center gap-2">
           <SidebarTrigger
@@ -160,16 +166,17 @@ export default function AppTopbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {allMobileActions.map((a) => {
-                  const Icon = a.icon ?? Plus;
+                {allMobileActions.map((mobileAction) => {
+                  const Icon = mobileAction.icon ?? Plus;
                   return (
                     <DropdownMenuItem
-                      key={a.title}
-                      onClick={a.onClick}
-                      disabled={a.disabled}
+                      key={mobileAction.title}
+                      onClick={mobileAction.onClick}
+                      disabled={mobileAction.disabled}
+                      data-testid={mobileAction.testId}
                     >
                       <Icon className="size-4 shrink-0" aria-hidden="true" />
-                      {a.title}
+                      {mobileAction.title}
                     </DropdownMenuItem>
                   );
                 })}
@@ -190,6 +197,7 @@ export default function AppTopbar() {
                 icon={topbarAction.icon}
                 disabled={topbarAction.disabled}
                 variant={topbarAction.variant}
+                testId={topbarAction.testId}
                 onClick={topbarAction.onClick}
               />
             ))}
@@ -198,6 +206,7 @@ export default function AppTopbar() {
                 title={action.title}
                 icon={action.icon ?? Plus}
                 disabled={action.disabled}
+                testId={action.testId}
                 onClick={action.onClick}
               />
             ) : null}

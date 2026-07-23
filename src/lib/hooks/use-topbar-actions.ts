@@ -23,7 +23,7 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
     config?.buttons
       .map(
         (button) =>
-          `${button.title}:${button.variant ?? "solid"}:${button.desktopOnly ?? false}`,
+          `${button.title}:${button.variant ?? "solid"}:${button.desktopOnly ?? false}:${button.testId ?? ""}`,
       )
       .join("|") ?? "";
   const menuKey =
@@ -52,6 +52,7 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
         disabled: button.disabled,
         variant: button.variant,
         desktopOnly: button.desktopOnly,
+        testId: button.testId,
         onClick: () => handleButtonClick(index),
       })),
     );

@@ -10,12 +10,14 @@ export function ActionButton({
   onClick,
   disabled,
   variant = "solid",
+  testId,
 }: {
   title: string;
   icon?: LucideIcon;
   onClick?: () => void;
   disabled?: boolean;
   variant?: "solid" | "ghost";
+  testId?: string;
 }) {
   if (variant === "ghost") {
     return (
@@ -25,6 +27,7 @@ export function ActionButton({
         size="sm"
         disabled={disabled}
         onClick={onClick}
+        data-testid={testId}
         className="text-ink-secondary"
       >
         {Icon ? (
@@ -41,6 +44,7 @@ export function ActionButton({
       size="sm"
       disabled={disabled}
       onClick={onClick}
+      data-testid={testId}
       data-cuelume-press=""
     >
       {Icon ? <Icon className="size-3.5 shrink-0" aria-hidden="true" /> : null}

@@ -98,7 +98,11 @@ export default function PatientImageUploaderDialog({
             >
               {PATIENT_GALLERY_COPY.delete.cancel}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              data-testid="patient-gallery-upload-submit"
+            >
               {isPending
                 ? PATIENT_GALLERY_COPY.uploader.pending
                 : PATIENT_GALLERY_COPY.uploader.submit}

@@ -76,6 +76,7 @@ export default function TreatmentDialog({
                 : TREATMENTS_COPY.dialog.save
             }
             disabled={dialog.isPending || (isEdit && treatmentQuery.isLoading)}
+            testId="treatment-create-submit"
             onClick={dialog.handleSubmit}
           />
         </AppDialogFooter>

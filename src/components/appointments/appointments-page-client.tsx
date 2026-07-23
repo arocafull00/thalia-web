@@ -77,6 +77,7 @@ export default function AppointmentsPageClient() {
 
   useTopbarAction({
     title: "Nueva cita",
+    testId: "appointment-create-trigger",
     onClick: () => setDialogOpen(true),
   });
 

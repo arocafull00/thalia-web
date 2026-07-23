@@ -96,7 +96,11 @@ export default function PatientFileUploaderDialog({
             >
               {PATIENT_FILES_COPY.delete.cancel}
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              data-testid="patient-file-upload-submit"
+            >
               {isPending
                 ? PATIENT_FILES_COPY.uploader.pending
                 : PATIENT_FILES_COPY.uploader.submit}

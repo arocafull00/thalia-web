@@ -61,11 +61,12 @@ export default function TreatmentsPageClient() {
 
   useTopbarAction({
     title: TREATMENTS_COPY.page.add,
+    testId: "treatment-create-trigger",
     onClick: page.openCreateDialog,
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div data-testid="treatments-page" className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <TreatmentsFilters

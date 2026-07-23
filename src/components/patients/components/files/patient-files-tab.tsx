@@ -111,6 +111,7 @@ export default function PatientFilesTab({
           <ActionButton
             title={PATIENT_FILES_COPY.actions.upload}
             icon={Upload}
+            testId="patient-file-upload-trigger"
             onClick={onOpenUploader}
           />
         </div>

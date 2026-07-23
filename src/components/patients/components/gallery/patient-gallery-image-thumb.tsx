@@ -56,6 +56,11 @@ export default function PatientGalleryImageThumb({
         <button
           type="button"
           aria-label={`${actionLabel}: ${imageName}`}
+          data-testid={
+            selectionMode
+              ? `patient-gallery-select-${image.id}`
+              : `patient-gallery-view-${image.id}`
+          }
           onClick={handleClick}
           className={`group relative aspect-square w-full cursor-pointer overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isSelected ? "ring-2 ring-primary" : ""}`}
         >

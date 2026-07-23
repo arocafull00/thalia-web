@@ -16,6 +16,7 @@ export type TopbarAction = {
   disabled?: boolean;
   variant?: "solid" | "ghost";
   desktopOnly?: boolean;
+  testId?: string;
 };
 
 export type TopbarMenu = {

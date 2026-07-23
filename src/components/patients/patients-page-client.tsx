@@ -77,6 +77,7 @@ export default function PatientsPageClient() {
 
   useTopbarAction({
     title: "Nuevo paciente",
+    testId: "patient-create-trigger",
     onClick: () => setDialogOpen(true),
   });
 
@@ -145,6 +146,7 @@ export default function PatientsPageClient() {
                   : PATIENT_CREATE_COPY.actions.save
               }
               disabled={dialog.isPending}
+              testId="patient-create-submit"
               onClick={dialog.handleSubmit}
             />
           </AppDialogFooter>

@@ -103,6 +103,7 @@ export default function FinancesPageClient() {
       ? {
           title: FINANCES_COPY.newMovement,
           icon: Plus,
+          testId: "transaction-create-trigger",
           onClick: handleOpenCreateDialog,
         }
       : null,
@@ -117,7 +118,7 @@ export default function FinancesPageClient() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div data-testid="finances-page" className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 items-center justify-center border-b border-border-subtle bg-surface px-4 py-3 lg:px-8 lg:py-4">
         <FinancesMonthSelector />
       </div>
@@ -190,6 +191,7 @@ export default function FinancesPageClient() {
                   : TRANSACTION_CREATE_COPY.actions.save
               }
               disabled={dialog.isPending}
+              testId="transaction-create-submit"
               onClick={dialog.handleSubmit}
             />
           </AppDialogFooter>

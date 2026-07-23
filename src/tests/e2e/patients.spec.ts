@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { E2E_DATA } from "./e2e-constants";
+import { clickTopbarTrigger, selectComboboxOption } from "./e2e-helpers";
 
 test("crea y edita un paciente con el formulario completo", async ({
   page,
@@ -11,10 +12,7 @@ test("crea y edita un paciente con el formulario completo", async ({
 
   await page.goto("/patients");
   await expect(page.getByTestId("patients-page")).toBeVisible();
-  await page
-    .locator("header")
-    .getByRole("button", { name: "Nuevo paciente", exact: true })
-    .click();
+  await clickTopbarTrigger(page, "patient-create-trigger");
 
   const createDialog = page.getByRole("dialog", { name: "Nuevo paciente" });
   await createDialog.getByLabel(/Nombre completo/).fill(patientName);
@@ -28,9 +26,7 @@ test("crea y edita un paciente con el formulario completo", async ({
   await createDialog
     .getByLabel("Notas")
     .fill("Paciente creado por Playwright.");
-  await createDialog
-    .getByRole("button", { name: "Guardar", exact: true })
-    .click();
+  await page.getByTestId("patient-create-submit").click();
 
   await expect(createDialog).toBeHidden();
   await expect(page.getByText("Paciente creado correctamente.")).toBeVisible();
@@ -45,15 +41,11 @@ test("crea y edita un paciente con el formulario completo", async ({
     timeout: 15_000,
   });
   await expect(page.getByRole("heading", { name: patientName })).toBeVisible();
-  await page
-    .getByRole("button", { name: "Editar paciente", exact: true })
-    .click();
+  await clickTopbarTrigger(page, "patient-edit-trigger");
 
   const editDialog = page.getByRole("dialog", { name: "Editar paciente" });
   await editDialog.getByLabel(/Nombre completo/).fill(updatedName);
-  await editDialog
-    .getByRole("button", { name: "Guardar cambios", exact: true })
-    .click();
+  await page.getByTestId("patient-edit-submit").click();
 
   await expect(editDialog).toBeHidden();
   await expect(page.getByRole("heading", { name: updatedName })).toBeVisible();
@@ -76,25 +68,35 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
       .getByRole("row", { name: new RegExp(`^${E2E_DATA.patient}\\b`) }),
   ).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Todos", exact: true }).click();
-  await page.getByRole("option", { name: "Inactivos", exact: true }).click();
+  await selectComboboxOption(
+    page,
+    page.getByTestId("patients-status-combobox"),
+    "Inactivos",
+  );
   await expect(
-    page.getByText("No hay pacientes con ese criterio."),
+    page.getByRole("table").getByText("No hay pacientes con ese criterio."),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Inactivos", exact: true }).click();
-  await page.getByRole("option", { name: "Activos", exact: true }).click();
+  await selectComboboxOption(
+    page,
+    page.getByTestId("patients-status-combobox"),
+    "Activos",
+  );
   const patientRow = page.getByRole("row", {
     name: new RegExp(E2E_DATA.filterPatient),
   });
   await expect(patientRow).toBeVisible();
 
   await search.fill(E2E_DATA.patient);
-  const basePatientRow = page.getByRole("row", {
-    name: new RegExp(E2E_DATA.patient),
-  });
+  const basePatientRow = page
+    .getByRole("table")
+    .getByRole("row", { name: new RegExp(E2E_DATA.patient) });
+  await expect(basePatientRow).toBeVisible({ timeout: 15_000 });
   await basePatientRow.click();
-  await expect(page.getByTestId("patient-detail-page")).toBeVisible();
+  await expect(page).toHaveURL(/\/patients\/[^/]+$/, { timeout: 15_000 });
+  await expect(page.getByTestId("patient-detail-page")).toBeVisible({
+    timeout: 15_000,
+  });
 
   for (const tabName of [
     "Resumen",

@@ -108,6 +108,7 @@ export default function EmployeesPageClient() {
     canManage
       ? {
           title: "Invitar personal",
+          testId: "employee-invite-trigger",
           onClick: () => setDialogOpen(true),
         }
       : null,
@@ -122,7 +123,7 @@ export default function EmployeesPageClient() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div data-testid="employees-page" className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
           <EmployeesFilters
@@ -184,6 +185,7 @@ export default function EmployeesPageClient() {
                   : EMPLOYEE_INVITE_COPY.actions.save
               }
               disabled={dialog.isPending}
+              testId="employee-invite-submit"
               onClick={dialog.handleSubmit}
             />
           </AppDialogFooter>

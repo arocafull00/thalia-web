@@ -192,6 +192,7 @@ export default function PatientGalleryTab({
             <ActionButton
               title={PATIENT_GALLERY_COPY.actions.upload}
               icon={Upload}
+              testId="patient-gallery-upload-trigger"
               onClick={onOpenUploader}
             />
             {selectionMode ? (
@@ -200,6 +201,7 @@ export default function PatientGalleryTab({
                   title={PATIENT_GALLERY_COPY.actions.compare}
                   icon={Columns2}
                   disabled={selectedImageIds.length !== 2}
+                  testId="patient-gallery-compare-trigger"
                   onClick={() => setComparisonOpen(true)}
                 />
                 <ActionButton
@@ -213,6 +215,7 @@ export default function PatientGalleryTab({
                 title={PATIENT_GALLERY_COPY.actions.beforeAfter}
                 icon={Columns2}
                 variant="ghost"
+                testId="patient-gallery-before-after-trigger"
                 onClick={() => setSelectionMode(true)}
               />
             )}

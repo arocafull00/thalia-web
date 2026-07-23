@@ -82,6 +82,7 @@ export default function PatientEditDialog({
                 : PATIENT_EDIT_COPY.actions.save
             }
             disabled={dialog.isPending}
+            testId="patient-edit-submit"
             onClick={dialog.handleSubmit}
           />
         </AppDialogFooter>

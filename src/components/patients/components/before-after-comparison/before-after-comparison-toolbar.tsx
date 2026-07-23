@@ -74,6 +74,7 @@ export default function BeforeAfterComparisonToolbar({
           onClick={onClose}
           className="rounded-full"
           aria-label={PATIENT_GALLERY_COPY.beforeAfter.close}
+          data-testid="patient-gallery-comparison-close"
         >
           <X className="size-4" aria-hidden="true" />
         </Button>

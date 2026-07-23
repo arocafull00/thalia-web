@@ -35,6 +35,7 @@ export default function PatientsFilters({
     >
       <div className="w-40 min-w-0">
         <AppSearchableCombobox
+          testId="patients-status-combobox"
           value={status || null}
           onValueChange={(value) => onStatusChange(value ?? "")}
           options={statusOptions}

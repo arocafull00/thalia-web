@@ -66,6 +66,7 @@ export default function InventoryDetailPageClient({
             {
               title: INVENTORY_ITEM_DETAIL_COPY.actions.adjustStock,
               icon: TrendingUp,
+              testId: "inventory-movement-create-trigger",
               onClick: () => setAdjustDialogOpen(true),
             },
           ],
@@ -110,7 +111,10 @@ export default function InventoryDetailPageClient({
   const movements = movementsQuery.data ?? [];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <div
+      data-testid="inventory-detail-page"
+      className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+    >
       <InventoryDetailHeader item={item} />
 
       <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">

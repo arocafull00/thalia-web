@@ -85,6 +85,7 @@ export default function PatientDetailPageClient({
             {
               title: PATIENT_DETAIL_COPY.actions.edit,
               icon: Pencil,
+              testId: "patient-edit-trigger",
               onClick: () => setEditDialogOpen(true),
             },
           ],

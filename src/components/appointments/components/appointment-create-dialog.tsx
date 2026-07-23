@@ -106,6 +106,7 @@ export default function AppointmentCreateDialog({
                 : APPOINTMENT_CREATE_COPY.actions.save
             }
             disabled={dialog.isPending}
+            testId="appointment-create-submit"
             onClick={dialog.handleSubmit}
           />
         </AppDialogFooter>

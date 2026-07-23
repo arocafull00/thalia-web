@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { E2E_DATA, E2E_TINY_PNG } from "./e2e-constants";
+import { selectComboboxOption } from "./e2e-helpers";
 
 test("sube un archivo al paciente seed", async ({ page }) => {
   const fileName = `e2e-file-${Date.now()}.png`;
@@ -16,6 +17,11 @@ test("sube un archivo al paciente seed", async ({ page }) => {
     mimeType: "image/png",
     buffer: E2E_TINY_PNG,
   });
+  await selectComboboxOption(
+    page,
+    dialog.getByRole("combobox", { name: /Categoría/ }),
+    "Otro",
+  );
   await page.getByTestId("patient-file-upload-submit").click();
 
   await expect(

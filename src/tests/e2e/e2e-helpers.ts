@@ -8,6 +8,22 @@ export async function clickTopbarTrigger(page: Page, testId: string) {
   await topbarTrigger(page, testId).click();
 }
 
+export async function expectSearchParam(
+  page: Page,
+  key: string,
+  value: string,
+) {
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get(key))
+    .toBe(value);
+}
+
+export async function clickPatientTableRow(page: Page, name: string | RegExp) {
+  const row = page.getByRole("table").getByRole("row", { name });
+  await expect(row).toBeVisible();
+  await Promise.all([page.waitForURL(/\/patients\/[^/?#]+/), row.click()]);
+}
+
 export async function selectComboboxOption(
   page: Page,
   trigger: Locator,
@@ -32,5 +48,13 @@ export async function selectFirstAvailableAppointmentSlot(dialog: Locator) {
 
   const slotButton = dialog.locator("ul li button").first();
   await expect(slotButton).toBeVisible({ timeout: 15_000 });
+  const label = (await slotButton.innerText()).trim();
+  const timeMatch = label.match(/(\d{1,2}:\d{2})$/);
+
+  if (!timeMatch) {
+    throw new Error(`Unexpected appointment slot label: ${label}`);
+  }
+
   await slotButton.click();
+  return timeMatch[1];
 }

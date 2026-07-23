@@ -1530,8 +1530,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1784836466.2732072,
-    "ast_hash": "022890778cefb16faff36bc20e635cfd",
+    "mtime": 1784836984.4557214,
+    "ast_hash": "105f48b9ea6ae1e8ca4fc569ad1186ad",
     "semantic_hash": ""
   },
   "src/copy/register-copy.ts": {
@@ -2895,8 +2895,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/appointments.spec.ts": {
-    "mtime": 1784835940.2896688,
-    "ast_hash": "b8d6d5941f1593b1b3c0bb731af53876",
+    "mtime": 1784836985.8875504,
+    "ast_hash": "1f8818998365dca8aef7653699da93cb",
     "semantic_hash": ""
   },
   "src/tests/e2e/auth.setup.ts": {
@@ -2915,8 +2915,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/e2e-helpers.ts": {
-    "mtime": 1784834818.4619699,
-    "ast_hash": "4c1ddb5ec73e30e4a32d8b0ae6ef12a8",
+    "mtime": 1784836984.457993,
+    "ast_hash": "3f498e3fc817f142903352db1248b431",
     "semantic_hash": ""
   },
   "src/tests/e2e/gallery.spec.ts": {
@@ -2925,8 +2925,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/patients.spec.ts": {
-    "mtime": 1784835938.881894,
-    "ast_hash": "904afdbb359762a95088aa08738b65fd",
+    "mtime": 1784836987.25722,
+    "ast_hash": "f25f17c20d9a0933ee332828f90d909a",
     "semantic_hash": ""
   },
   "src/tests/e2e/run-with-local-supabase.mjs": {
@@ -6280,18 +6280,18 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/employees.spec.ts": {
-    "mtime": 1784835927.7456012,
-    "ast_hash": "f36d8d9e85cbafe316d3ae25a774adf1",
+    "mtime": 1784836984.8491733,
+    "ast_hash": "7b7718ecd417bb626d8d92b8713bac1f",
     "semantic_hash": ""
   },
   "src/tests/e2e/finances.spec.ts": {
-    "mtime": 1784835926.0263321,
-    "ast_hash": "1ed65b17a208e6ae85fe65d8aa73261b",
+    "mtime": 1784836984.9449563,
+    "ast_hash": "29121ceaa9d0cfde06234710c14fe1a1",
     "semantic_hash": ""
   },
   "src/tests/e2e/inventory.spec.ts": {
-    "mtime": 1784835924.877408,
-    "ast_hash": "6658cca7673c51358a88b8c46eb71c35",
+    "mtime": 1784836986.3656957,
+    "ast_hash": "15acbacc5dffe82759bfb57aa8273090",
     "semantic_hash": ""
   },
   "src/tests/e2e/patient-files.spec.ts": {
@@ -6300,8 +6300,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/treatments.spec.ts": {
-    "mtime": 1784835927.3082626,
-    "ast_hash": "5d0cbf40c6b3360b3c79a6add449a444",
+    "mtime": 1784836985.3074358,
+    "ast_hash": "7c0eeab4f440f2276855b394a124f037",
     "semantic_hash": ""
   }
 }

@@ -1,7 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 import { E2E_DATA } from "./e2e-constants";
-import { clickTopbarTrigger, selectComboboxOption } from "./e2e-helpers";
+import {
+  clickPatientTableRow,
+  clickTopbarTrigger,
+  expectSearchParam,
+  selectComboboxOption,
+} from "./e2e-helpers";
 
 test("crea y edita un paciente con el formulario completo", async ({
   page,
@@ -32,11 +37,8 @@ test("crea y edita un paciente con el formulario completo", async ({
   await expect(page.getByText("Paciente creado correctamente.")).toBeVisible();
 
   await page.getByPlaceholder("Buscar pacientes...").fill(patientName);
-  const patientRow = page.getByRole("row", { name: new RegExp(patientName) });
-  await expect(patientRow).toBeVisible();
-  await patientRow.click();
-
-  await expect(page).toHaveURL(/\/patients\/[^/]+$/, { timeout: 15_000 });
+  await expectSearchParam(page, "q", patientName);
+  await clickPatientTableRow(page, new RegExp(patientName));
   await expect(page.getByTestId("patient-detail-page")).toBeVisible({
     timeout: 15_000,
   });
@@ -58,7 +60,7 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
   await expect(page.getByTestId("patients-page")).toBeVisible();
   const search = page.getByPlaceholder("Buscar pacientes...");
   await search.fill(E2E_DATA.filterPatient);
-
+  await expectSearchParam(page, "q", E2E_DATA.filterPatient);
   await expect(
     page.getByRole("row", { name: new RegExp(E2E_DATA.filterPatient) }),
   ).toBeVisible();
@@ -73,6 +75,7 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
     page.getByTestId("patients-status-combobox"),
     "Inactivos",
   );
+  await expectSearchParam(page, "status", "inactive");
   await expect(
     page.getByRole("table").getByText("No hay pacientes con ese criterio."),
   ).toBeVisible();
@@ -82,18 +85,20 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
     page.getByTestId("patients-status-combobox"),
     "Activos",
   );
+  await expectSearchParam(page, "status", "active");
   const patientRow = page.getByRole("row", {
     name: new RegExp(E2E_DATA.filterPatient),
   });
   await expect(patientRow).toBeVisible();
 
   await search.fill(E2E_DATA.patient);
-  const basePatientRow = page
-    .getByRole("table")
-    .getByRole("row", { name: new RegExp(E2E_DATA.patient) });
-  await expect(basePatientRow).toBeVisible({ timeout: 15_000 });
-  await basePatientRow.click();
-  await expect(page).toHaveURL(/\/patients\/[^/]+$/, { timeout: 15_000 });
+  await expectSearchParam(page, "q", E2E_DATA.patient);
+  await expect(
+    page
+      .getByRole("table")
+      .getByRole("row", { name: new RegExp(E2E_DATA.patient) }),
+  ).toBeVisible({ timeout: 15_000 });
+  await clickPatientTableRow(page, new RegExp(E2E_DATA.patient));
   await expect(page.getByTestId("patient-detail-page")).toBeVisible({
     timeout: 15_000,
   });

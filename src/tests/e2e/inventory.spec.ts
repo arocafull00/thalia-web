@@ -1,7 +1,11 @@
 import { expect, test } from "@playwright/test";
 
 import { E2E_DATA } from "./e2e-constants";
-import { clickTopbarTrigger, selectComboboxOption } from "./e2e-helpers";
+import {
+  clickTopbarMenuAction,
+  clickTopbarTrigger,
+  selectComboboxOption,
+} from "./e2e-helpers";
 
 test("crea un material en inventario", async ({ page }) => {
   const suffix = Date.now();
@@ -55,4 +59,26 @@ test("registra un movimiento de entrada en el detalle", async ({ page }) => {
   const movementEntry = page.locator("li").filter({ hasText: notes });
   await expect(movementEntry.getByText("+5 unidad")).toBeVisible();
   await expect(movementEntry.getByText(notes)).toBeVisible();
+});
+
+test("edita un material del inventario", async ({ page }) => {
+  const newMinStock = String((Date.now() % 90) + 5);
+
+  await page.goto(`/inventory/${E2E_DATA.inventoryItemId}`);
+  await expect(page.getByTestId("inventory-detail-page")).toBeVisible();
+
+  await clickTopbarMenuAction(page, "Editar material");
+
+  const dialog = page.getByRole("dialog", { name: "Editar material" });
+  await expect(dialog).toBeVisible();
+
+  const minStockInput = dialog.getByLabel("Stock mínimo");
+  await minStockInput.clear();
+  await minStockInput.fill(newMinStock);
+  await page.getByTestId("inventory-edit-submit").click();
+
+  await expect(
+    page.getByText("Material actualizado correctamente."),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(dialog).toBeHidden({ timeout: 15_000 });
 });

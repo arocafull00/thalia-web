@@ -113,6 +113,7 @@ export default function InventoryItemEditDialog({
           <ActionButton
             title={dialog.isPending ? "Guardando..." : "Guardar"}
             disabled={dialog.isPending}
+            testId="inventory-edit-submit"
             onClick={dialog.handleSubmit}
           />
         </AppDialogFooter>

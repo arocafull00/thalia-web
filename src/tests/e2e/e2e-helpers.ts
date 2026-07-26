@@ -41,6 +41,17 @@ export async function selectComboboxOption(
   await popup.getByRole("option", { name: option, exact: true }).click();
 }
 
+export async function clickTopbarMenuAction(page: Page, label: string) {
+  const topbar = page.getByTestId("app-topbar");
+  const directBtn = topbar.getByRole("button", { name: label, exact: true });
+  if (await directBtn.isVisible()) {
+    await directBtn.click();
+    return;
+  }
+  await topbar.getByRole("button", { name: "Más acciones" }).click();
+  await page.getByRole("menuitem", { name: label, exact: true }).click();
+}
+
 export async function selectFirstAvailableAppointmentSlot(dialog: Locator) {
   await dialog
     .getByRole("button", { name: "Buscar hueco", exact: true })

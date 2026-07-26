@@ -105,6 +105,7 @@ export default function AppointmentDetailPageClient({
               title: APPOINTMENT_DETAIL_COPY.edit,
               icon: Pencil,
               onClick: openEditDialog,
+              testId: "appointment-edit-trigger",
             },
             ...(canChangeStatus
               ? [

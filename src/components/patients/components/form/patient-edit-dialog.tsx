@@ -39,11 +39,12 @@ export default function PatientEditDialog({
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-    }
-
     onOpenChange(nextOpen);
+  };
+
+  const handleCancel = () => {
+    dialog.reset();
+    onOpenChange(false);
   };
 
   return (
@@ -70,7 +71,7 @@ export default function PatientEditDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={() => handleOpenChange(false)}
+            onClick={handleCancel}
             className="rounded-button px-3 py-1.5 text-sm"
           >
             {PATIENT_EDIT_COPY.actions.cancel}

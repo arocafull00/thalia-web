@@ -31,11 +31,12 @@ export default function InventoryItemEditDialog({
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-    }
-
     onOpenChange(nextOpen);
+  };
+
+  const handleCancel = () => {
+    dialog.reset();
+    onOpenChange(false);
   };
 
   return (
@@ -103,11 +104,7 @@ export default function InventoryItemEditDialog({
           </div>
         </div>
         <AppDialogFooter errorMessage={dialog.formState.errors.root?.message}>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
           <ActionButton

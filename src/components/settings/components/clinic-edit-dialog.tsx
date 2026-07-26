@@ -32,8 +32,12 @@ export default function ClinicEditDialog({
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) dialog.reset();
     onOpenChange(nextOpen);
+  };
+
+  const handleCancel = () => {
+    dialog.reset();
+    onOpenChange(false);
   };
 
   return (
@@ -52,7 +56,7 @@ export default function ClinicEditDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={() => handleOpenChange(false)}
+            onClick={handleCancel}
             className="rounded-button px-3 py-1.5 text-sm"
           >
             {CLINIC_EDIT_COPY.actions.cancel}

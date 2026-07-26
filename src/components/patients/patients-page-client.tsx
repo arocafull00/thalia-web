@@ -63,11 +63,12 @@ export default function PatientsPageClient() {
     !patients.isLoading && !patients.error && !hasActiveFilters && !hasPatients;
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-    }
-
     setDialogOpen(nextOpen);
+  };
+
+  const handleCancelCreate = () => {
+    dialog.reset();
+    setDialogOpen(false);
   };
 
   const handleOpenFiltersSheet = () => {
@@ -134,7 +135,7 @@ export default function PatientsPageClient() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => handleDialogOpenChange(false)}
+              onClick={handleCancelCreate}
               className="rounded-button px-3 py-1.5 text-sm"
             >
               {PATIENT_CREATE_COPY.actions.cancel}

@@ -1,24 +1,17 @@
 import { describe, expect, it } from "vitest";
 
 import { findAvailableSlots } from "@/lib/find-slots";
-
-// Minimal shape — only the fields find-slots.ts reads at runtime
-type TestClinic = {
-  open_days: number[];
-  opening_time: string;
-  closing_time: string;
-  [key: string]: unknown;
-};
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 
 // 2026-01-05 is a Monday
 const MON = (h = 0, m = 0) => new Date(2026, 0, 5, h, m, 0, 0);
 const FRI = (h = 0, m = 0) => new Date(2026, 0, 9, h, m, 0, 0);
 
-const CLINIC: TestClinic = {
+const CLINIC = {
   open_days: [1, 2, 3, 4, 5], // Mon–Fri
   opening_time: "09:00",
   closing_time: "18:00",
-};
+} as unknown as ClinicInfo;
 
 describe("findAvailableSlots", () => {
   it("returns up to maxSlots slots by default (5)", () => {
@@ -157,7 +150,7 @@ describe("findAvailableSlots", () => {
   });
 
   it("returns empty array when clinic has no open days", () => {
-    const closedClinic: TestClinic = { ...CLINIC, open_days: [] };
+    const closedClinic = { ...CLINIC, open_days: [] } as unknown as ClinicInfo;
     const slots = findAvailableSlots({
       existing: [],
       clinic: closedClinic,

@@ -26,11 +26,14 @@ function roundUpToStep(date: Date, stepMinutes: number): Date {
   return new Date(Math.ceil(ms / stepMs) * stepMs);
 }
 
-function nextOpenDayOpening(from: Date, clinic: ClinicInfo): Date {
+function nextOpenDayOpening(from: Date, clinic: ClinicInfo): Date | null {
+  if (clinic.open_days.length === 0) return null;
   const [openH, openM] = parseHHMM(clinic.opening_time);
   let day = startOfDay(addDays(from, 1));
+  let guard = 0;
   while (!clinic.open_days.includes(getISODay(day))) {
     day = addDays(day, 1);
+    if (++guard > 7) return null;
   }
   return addMinutes(startOfDay(day), toMinutes(openH, openM));
 }
@@ -57,7 +60,9 @@ export function findAvailableSlots(params: {
     const isoDay = getISODay(current);
 
     if (!clinic.open_days.includes(isoDay)) {
-      current = nextOpenDayOpening(current, clinic);
+      const next = nextOpenDayOpening(current, clinic);
+      if (!next) break;
+      current = next;
       continue;
     }
 
@@ -69,7 +74,9 @@ export function findAvailableSlots(params: {
     }
 
     if (slotTotal + duration > closeTotal) {
-      current = nextOpenDayOpening(current, clinic);
+      const next = nextOpenDayOpening(current, clinic);
+      if (!next) break;
+      current = next;
       continue;
     }
 

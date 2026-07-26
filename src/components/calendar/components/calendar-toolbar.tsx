@@ -60,7 +60,10 @@ export default function CalendarToolbar({
         >
           <ChevronLeft size={16} strokeWidth={1.5} />
         </Button>
-        <span className="w-36 truncate text-center text-sm text-ink-secondary sm:w-52">
+        <span
+          data-testid="calendar-range-label"
+          className="w-36 truncate text-center text-sm text-ink-secondary sm:w-52"
+        >
           {rangeLabel}
         </span>
         <Button

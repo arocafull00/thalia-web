@@ -89,11 +89,15 @@ export default function CalendarPageClient() {
 
   useTopbarAction({
     title: CALENDAR_COPY.toolbar.newAppointment,
+    testId: "calendar-create-trigger",
     onClick: () => openCreateDialog(),
   });
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
+    <div
+      data-testid="calendar-page"
+      className="flex h-dvh flex-col overflow-hidden"
+    >
       <CalendarToolbar
         rangeLabel={rangeLabel}
         viewMode={viewMode}

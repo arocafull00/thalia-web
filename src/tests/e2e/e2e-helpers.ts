@@ -21,7 +21,19 @@ export async function expectSearchParam(
 export async function clickPatientTableRow(page: Page, name: string | RegExp) {
   const row = page.getByRole("table").getByRole("row", { name });
   await expect(row).toBeVisible();
-  await Promise.all([page.waitForURL(/\/patients\/[^/?#]+/), row.click()]);
+  await row.click();
+  await expect(
+    page.getByRole("dialog", { name: "Editar paciente" }),
+  ).toBeVisible();
+}
+
+export async function openPatientDetailFromEditDialog(page: Page) {
+  const editDialog = page.getByRole("dialog", { name: "Editar paciente" });
+  await expect(editDialog).toBeVisible();
+  await editDialog
+    .getByRole("button", { name: "Ver detalle", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/patients\/[^/?#]+/);
 }
 
 export async function selectComboboxOption(

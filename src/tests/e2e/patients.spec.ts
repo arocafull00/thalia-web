@@ -5,6 +5,7 @@ import {
   clickPatientTableRow,
   clickTopbarTrigger,
   expectSearchParam,
+  openPatientDetailFromEditDialog,
   selectComboboxOption,
 } from "./e2e-helpers";
 
@@ -39,18 +40,21 @@ test("crea y edita un paciente con el formulario completo", async ({
   await page.getByPlaceholder("Buscar pacientes...").fill(patientName);
   await expectSearchParam(page, "q", patientName);
   await clickPatientTableRow(page, new RegExp(patientName));
-  await expect(page.getByTestId("patient-detail-page")).toBeVisible({
-    timeout: 15_000,
-  });
-  await expect(page.getByRole("heading", { name: patientName })).toBeVisible();
-  await clickTopbarTrigger(page, "patient-edit-trigger");
 
   const editDialog = page.getByRole("dialog", { name: "Editar paciente" });
   await editDialog.getByLabel(/Nombre completo/).fill(updatedName);
   await page.getByTestId("patient-edit-submit").click();
 
   await expect(editDialog).toBeHidden();
-  await expect(page.getByRole("heading", { name: updatedName })).toBeVisible();
+  await expect(
+    page.getByText("Paciente actualizado correctamente."),
+  ).toBeVisible();
+
+  await page.getByPlaceholder("Buscar pacientes...").fill(updatedName);
+  await expectSearchParam(page, "q", updatedName);
+  await expect(
+    page.getByRole("table").getByRole("row", { name: new RegExp(updatedName) }),
+  ).toBeVisible();
 });
 
 test("busca, filtra y navega por las pestañas del paciente", async ({
@@ -99,6 +103,7 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
       .getByRole("row", { name: new RegExp(E2E_DATA.patient) }),
   ).toBeVisible({ timeout: 15_000 });
   await clickPatientTableRow(page, new RegExp(E2E_DATA.patient));
+  await openPatientDetailFromEditDialog(page);
   await expect(page.getByTestId("patient-detail-page")).toBeVisible({
     timeout: 15_000,
   });

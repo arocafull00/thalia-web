@@ -14,6 +14,7 @@ import {
   endOfDay,
   endOfMonth,
   endOfWeek,
+  format,
   startOfDay,
   startOfMonth,
   startOfWeek,
@@ -23,9 +24,25 @@ import { toast } from "react-toastify";
 import { Temporal } from "temporal-polyfill";
 import "temporal-polyfill/global";
 
+import {
+  calendarWeekUiRefs,
+  updateCalendarWeekUiRefs,
+} from "@/components/calendar/calendar-week-ui-refs";
 import CalendarEmptyHeader from "@/components/calendar/components/calendar-empty-header";
+import CalendarTimeGridEvent from "@/components/calendar/components/calendar-time-grid-event";
+import CalendarWeekGridDate from "@/components/calendar/components/calendar-week-grid-date";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
-import { CALENDAR_END_HOUR, CALENDAR_START_HOUR } from "@/lib/calendar-grid";
+import { computeDayStatsForRange } from "@/lib/calendar-day-stats";
+import {
+  CALENDAR_END_HOUR,
+  CALENDAR_START_HOUR,
+  getWeekDays,
+} from "@/lib/calendar-grid";
+import { isOverlapGroupEventId } from "@/lib/calendar-overlap-groups";
+import {
+  buildIndividualScheduleEvents,
+  buildWeekScheduleEvents,
+} from "@/lib/calendar-week-events";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
@@ -163,12 +180,6 @@ function toPlainDate(date: Date) {
   });
 }
 
-function toZonedDateTime(iso: string) {
-  return Temporal.Instant.from(iso).toZonedDateTimeISO(
-    Temporal.Now.timeZoneId(),
-  );
-}
-
 function zonedDateTimeToDate(dateTime: Temporal.ZonedDateTime) {
   return new Date(dateTime.epochMilliseconds);
 }
@@ -191,19 +202,18 @@ function getRangeForViewMode(viewMode: CalendarViewMode, anchor: Date) {
   };
 }
 
-function buildScheduleEvents(
+function buildScheduleEventsForViewMode(
   data: AppointmentWithRelations[] | null | undefined,
+  viewMode: CalendarViewMode,
 ) {
-  return (data ?? []).map((appointment) => ({
-    id: appointment.id,
-    title: `${appointment.patients?.full_name ?? CALENDAR_COPY.event.defaultPatient} · ${
-      appointment.appointment_treatments[0]?.treatment?.name ??
-      CALENDAR_COPY.event.defaultTreatment
-    }`,
-    start: toZonedDateTime(appointment.starts_at),
-    end: toZonedDateTime(appointment.ends_at),
-    calendarId: appointment.employee_id,
-  }));
+  if (viewMode === "week") {
+    return buildWeekScheduleEvents(data);
+  }
+
+  return {
+    events: buildIndividualScheduleEvents(data),
+    groupAppointmentsById: new Map<string, AppointmentWithRelations[]>(),
+  };
 }
 
 function getInitialCalendarConfig() {
@@ -219,9 +229,11 @@ function getInitialCalendarConfig() {
   );
   const entry = useAppointmentsStore.getState().byRange[key];
 
+  const scheduleResult = buildScheduleEventsForViewMode(entry?.data, viewMode);
+
   return {
     selectedDate: toPlainDate(weekAnchor),
-    events: buildScheduleEvents(entry?.data),
+    events: scheduleResult.events,
     weekAnchor: toPlainDate(weekAnchor).toString(),
     viewMode,
   };
@@ -294,16 +306,41 @@ export function useScheduleXCalendar(gridHeight: number) {
   const monthView = useState(() => createViewMonthGrid())[0];
   const customComponents = useState(() => ({
     headerContent: CalendarEmptyHeader,
+    timeGridEvent: CalendarTimeGridEvent,
+    weekGridDate: CalendarWeekGridDate,
   }))[0];
   const [initialConfig] = useState(getInitialCalendarConfig);
 
-  const scheduleEvents = useMemo(
-    () => buildScheduleEvents(appointments.data),
-    [appointments.data],
+  const scheduleResult = useMemo(
+    () => buildScheduleEventsForViewMode(appointments.data, viewMode),
+    [appointments.data, viewMode],
   );
+
+  const scheduleEvents = scheduleResult.events;
+
+  const appointmentsById = useMemo(() => {
+    const byId = new Map<string, AppointmentWithRelations>();
+    for (const appointment of appointments.data ?? []) {
+      byId.set(appointment.id, appointment);
+    }
+    return byId;
+  }, [appointments.data]);
+
+  const dayStatsByKey = useMemo(() => {
+    if (viewMode !== "week") {
+      return new Map();
+    }
+
+    const dayKeys = getWeekDays(weekAnchor).map((day) =>
+      format(day, "yyyy-MM-dd"),
+    );
+
+    return computeDayStatsForRange(appointments.data ?? [], clinic, dayKeys);
+  }, [appointments.data, clinic, viewMode, weekAnchor]);
 
   const openCreateDialogRef = useRef(openCreateDialog);
   const openEditDialogRef = useRef(openEditDialog);
+  const openGroupSheetRef = useRef(calendarWeekUiRefs.openGroupSheet);
   const setVisibleRangeRef = useRef(setVisibleRange);
   const clinicRef = useRef(clinic);
   const syncedWeekAnchorRef = useRef(initialConfig.weekAnchor);
@@ -311,9 +348,18 @@ export function useScheduleXCalendar(gridHeight: number) {
   useEffect(() => {
     openCreateDialogRef.current = openCreateDialog;
     openEditDialogRef.current = openEditDialog;
+    openGroupSheetRef.current = calendarWeekUiRefs.openGroupSheet;
     setVisibleRangeRef.current = setVisibleRange;
     clinicRef.current = clinic;
   });
+
+  useEffect(() => {
+    updateCalendarWeekUiRefs({
+      groupAppointmentsById: scheduleResult.groupAppointmentsById,
+      appointmentsById,
+      dayStatsByKey,
+    });
+  }, [appointmentsById, dayStatsByKey, scheduleResult.groupAppointmentsById]);
 
   function pushVisibleRange() {
     const range = calendarControls.getRange();
@@ -353,7 +399,12 @@ export function useScheduleXCalendar(gridHeight: number) {
     skipAnimations: true,
     callbacks: {
       onEventClick: (event) => {
-        openEditDialogRef.current(String(event.id));
+        const eventId = String(event.id);
+        if (isOverlapGroupEventId(eventId)) {
+          openGroupSheetRef.current(eventId);
+          return;
+        }
+        openEditDialogRef.current(eventId);
       },
       onClickDateTime: (dateTime) => {
         const c = clinicRef.current;

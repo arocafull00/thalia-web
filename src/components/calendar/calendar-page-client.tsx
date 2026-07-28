@@ -1,13 +1,22 @@
 "use client";
 
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import CalendarEmployeeFilter from "@/components/calendar/calendar-employee-filter";
+import {
+  calendarWeekUiRefs,
+  updateCalendarWeekUiRefs,
+} from "@/components/calendar/calendar-week-ui-refs";
 import CalendarFiltersSheet from "@/components/calendar/components/calendar-filters-sheet";
 import CalendarMobileDayView from "@/components/calendar/components/calendar-mobile-day-view";
 import CalendarMobileMonthView from "@/components/calendar/components/calendar-mobile-month-view";
+import CalendarOverlapGroupSheet, {
+  type CalendarOverlapGroupSheetState,
+} from "@/components/calendar/components/calendar-overlap-group-sheet";
 import CalendarToolbar from "@/components/calendar/components/calendar-toolbar";
 import ClinicStatusBadge from "@/components/calendar/components/clinic-status-badge";
 import { useCalendarPage } from "@/components/calendar/hooks/use-calendar-page";
@@ -27,14 +36,26 @@ const CALENDAR_FILTER_DEFAULTS = {
   viewMode: "week" as const,
 };
 
+const CLOSED_GROUP_SHEET: CalendarOverlapGroupSheetState = {
+  open: false,
+  title: "",
+  subtitle: "",
+  appointments: [],
+};
+
 export default function CalendarPageClient() {
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
+  const [groupSheet, setGroupSheet] =
+    useState<CalendarOverlapGroupSheetState>(CLOSED_GROUP_SHEET);
   const isMobile = useIsMobile();
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
   const employeeId = useCalendarStore((state) => state.employeeId);
   const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
+  const setWeekAnchor = useCalendarStore((state) => state.setWeekAnchor);
+  const setViewMode = useCalendarStore((state) => state.setViewMode);
+  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const {
     rangeLabel,
     viewMode,
@@ -52,6 +73,55 @@ export default function CalendarPageClient() {
   const { clinic } = useClinicInfo();
   const canRenderAppointmentDialog =
     !editingAppointmentId || Boolean(editingAppointment.data);
+
+  const handleOpenGroupSheet = useCallback((groupId: string) => {
+    const appointments = calendarWeekUiRefs.groupAppointmentsById.get(groupId);
+    if (!appointments || appointments.length === 0) {
+      return;
+    }
+
+    const sortedAppointments = [...appointments].sort(
+      (left, right) =>
+        new Date(left.starts_at).getTime() -
+        new Date(right.starts_at).getTime(),
+    );
+    const firstAppointment = sortedAppointments[0]!;
+    const dayLabel = format(new Date(firstAppointment.starts_at), "EEEE d", {
+      locale: es,
+    });
+    const timeLabel = format(new Date(firstAppointment.starts_at), "HH:mm");
+    const capitalizedDay = dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1);
+
+    setGroupSheet({
+      open: true,
+      title: `${capitalizedDay} · ${timeLabel}`,
+      subtitle: CALENDAR_COPY.week.groupSubtitle(sortedAppointments.length),
+      appointments: sortedAppointments,
+    });
+  }, []);
+
+  const handleNavigateToDay = useCallback(
+    (date: Date) => {
+      setWeekAnchor(date);
+      setViewMode("day");
+    },
+    [setWeekAnchor, setViewMode],
+  );
+
+  useEffect(() => {
+    updateCalendarWeekUiRefs({
+      openGroupSheet: handleOpenGroupSheet,
+      navigateToDay: handleNavigateToDay,
+    });
+  }, [handleNavigateToDay, handleOpenGroupSheet]);
+
+  const handleSelectGroupAppointment = useCallback(
+    (appointmentId: string) => {
+      setGroupSheet(CLOSED_GROUP_SHEET);
+      openEditDialog(appointmentId);
+    },
+    [openEditDialog],
+  );
 
   useSwipeNavigation(calendarWrapperRef, {
     enabled: isMobile,
@@ -146,6 +216,15 @@ export default function CalendarPageClient() {
         onClear={handleClearFilters}
         onDismiss={() => setSheetOpen(false)}
         onToday={onToday}
+      />
+      <CalendarOverlapGroupSheet
+        state={groupSheet}
+        onOpenChange={(open) => {
+          if (!open) {
+            setGroupSheet(CLOSED_GROUP_SHEET);
+          }
+        }}
+        onSelectAppointment={handleSelectGroupAppointment}
       />
       <MobileFab
         label={CALENDAR_COPY.toolbar.newAppointment}

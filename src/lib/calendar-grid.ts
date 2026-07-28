@@ -22,6 +22,9 @@ export const SLOT_MINUTES = 30;
 export const SLOT_HEIGHT = 28;
 export const HOUR_HEIGHT = SLOT_HEIGHT * 2;
 export const DAY_HEADER_HEIGHT = 56;
+export const MIN_HOUR_HEIGHT = 72;
+export const MIN_WEEK_GRID_HEIGHT =
+  (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * MIN_HOUR_HEIGHT;
 export const TIME_COLUMN_WIDTH = 60;
 export const DAY_COLUMN_MIN_WIDTH = 120;
 export const TOTAL_SLOTS =
@@ -173,54 +176,4 @@ export function formatDayHeader(day: Date): {
     dayNumber: format(day, "d"),
     isToday: isToday(day),
   };
-}
-
-export type AppointmentColumnLayout = {
-  appointmentId: string;
-  columnIndex: number;
-  columnCount: number;
-};
-
-export function layoutOverlappingAppointments<
-  T extends { id: string; starts_at: string; ends_at: string },
->(appointments: T[]): Map<string, AppointmentColumnLayout> {
-  const sorted = [...appointments].sort(
-    (left, right) =>
-      new Date(left.starts_at).getTime() - new Date(right.starts_at).getTime(),
-  );
-  const layout = new Map<string, AppointmentColumnLayout>();
-
-  type ActiveEntry = { id: string; end: number; columnIndex: number };
-  let active: ActiveEntry[] = [];
-
-  for (const appointment of sorted) {
-    const start = new Date(appointment.starts_at).getTime();
-    const end = new Date(appointment.ends_at).getTime();
-    active = active.filter((entry) => entry.end > start);
-
-    const usedColumns = new Set(active.map((entry) => entry.columnIndex));
-    let columnIndex = 0;
-
-    while (usedColumns.has(columnIndex)) {
-      columnIndex += 1;
-    }
-
-    active.push({ id: appointment.id, end, columnIndex });
-    const columnCount =
-      Math.max(...active.map((entry) => entry.columnIndex), columnIndex) + 1;
-
-    for (const entry of active) {
-      const current = layout.get(entry.id);
-
-      if (!current || columnCount > current.columnCount) {
-        layout.set(entry.id, {
-          appointmentId: entry.id,
-          columnIndex: entry.columnIndex,
-          columnCount,
-        });
-      }
-    }
-  }
-
-  return layout;
 }

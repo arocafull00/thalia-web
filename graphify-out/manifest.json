@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/calendar-page-client.tsx": {
-    "mtime": 1785253345.092993,
-    "ast_hash": "07db50b604926d98d8c126775378afab",
+    "mtime": 1785255251.5624175,
+    "ast_hash": "be90d46e1bb82a87264e361fa8f25df2",
     "semantic_hash": ""
   },
   "src/components/calendar/components/calendar-empty-header.tsx": {
@@ -250,13 +250,13 @@
     "semantic_hash": ""
   },
   "src/components/calendar/hooks/use-schedule-x-calendar.ts": {
-    "mtime": 1785254573.5795946,
-    "ast_hash": "c4f49d2a58df8fa4b0c2f638b2c5e6d5",
+    "mtime": 1785255382.4304662,
+    "ast_hash": "0fdd491b8a1264db812d095fabee7175",
     "semantic_hash": ""
   },
   "src/components/calendar/schedule-x-calendar.tsx": {
-    "mtime": 1783534749.2171054,
-    "ast_hash": "cf527944a22d320c648e6260aa495a8f",
+    "mtime": 1785256382.436452,
+    "ast_hash": "7d3f15f10b59a445fa636387ecd98557",
     "semantic_hash": ""
   },
   "src/components/dashboard/dashboard-page-client.tsx": {
@@ -580,8 +580,8 @@
     "semantic_hash": ""
   },
   "src/copy/calendar-copy.ts": {
-    "mtime": 1785253033.6079817,
-    "ast_hash": "f3a5802398b86c43488ea318df45ba2e",
+    "mtime": 1785255226.605657,
+    "ast_hash": "af165959f40cd3ee52a30efdc069b349",
     "semantic_hash": ""
   },
   "src/copy/combobox-copy.ts": {
@@ -595,8 +595,8 @@
     "semantic_hash": ""
   },
   "src/copy/employee-edit-copy.ts": {
-    "mtime": 1785254573.6065986,
-    "ast_hash": "93902ab380662a2f8f15b1b1158d62a2",
+    "mtime": 1785254791.4804568,
+    "ast_hash": "0ded8c69f19633eaeb37988e1f033ff5",
     "semantic_hash": ""
   },
   "src/copy/employee-invite-copy.ts": {
@@ -675,8 +675,8 @@
     "semantic_hash": ""
   },
   "src/lib/calendar-grid.ts": {
-    "mtime": 1783533090.7930925,
-    "ast_hash": "073b139d14d614a1d805b2b687caeac5",
+    "mtime": 1785256325.8424296,
+    "ast_hash": "9e9d8d56fc08c1be967667ad315f16b8",
     "semantic_hash": ""
   },
   "src/lib/clinic-requests.ts": {
@@ -745,8 +745,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-employee-edit-dialog.ts": {
-    "mtime": 1785254573.616944,
-    "ast_hash": "707fb1f5c5d73c749a88b6c48ff228c7",
+    "mtime": 1785254791.5175104,
+    "ast_hash": "390631e61027a1f177cb2ef14efe893a",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-employee-invite-dialog.ts": {
@@ -830,8 +830,8 @@
     "semantic_hash": ""
   },
   "src/lib/inventory-stock.ts": {
-    "mtime": 1785254573.6207416,
-    "ast_hash": "b0d67e80158e8bd979be9f93d5ebdd48",
+    "mtime": 1785254791.5434504,
+    "ast_hash": "0916f0ca1260432ae2bcd24482f01be7",
     "semantic_hash": ""
   },
   "src/lib/invite-team-emails.ts": {
@@ -1465,8 +1465,8 @@
     "semantic_hash": ""
   },
   "src/lib/table-mobile-columns.tsx": {
-    "mtime": 1785254573.6264865,
-    "ast_hash": "3addacffc6e6c3d5aa77b1cc8154dd7a",
+    "mtime": 1785254791.5931811,
+    "ast_hash": "34e1d7dbcb3f03dce9846041815dd534",
     "semantic_hash": ""
   },
   "src/components/ui/app-bottom-nav-item.tsx": {
@@ -1555,18 +1555,18 @@
     "semantic_hash": ""
   },
   "src/components/inventory/inventory-detail-page-client.tsx": {
-    "mtime": 1785254573.5881162,
-    "ast_hash": "c9d43beea2b404f47b632e5cff27c742",
+    "mtime": 1785254791.4659426,
+    "ast_hash": "0cc7cfaea69af23b5c3a356a573a3e48",
     "semantic_hash": ""
   },
   "src/copy/inventory-item-detail-copy.ts": {
-    "mtime": 1785254573.6115625,
-    "ast_hash": "8ec9b770808bcf1cd4e6aa09eabf6152",
+    "mtime": 1785254791.491967,
+    "ast_hash": "616ccd29763117cbd1f7ed74f704dc73",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-inventory-adjust-stock-dialog.ts": {
-    "mtime": 1785254573.618954,
-    "ast_hash": "551ad1792d91564607ae3fbbadc952bc",
+    "mtime": 1785254791.532931,
+    "ast_hash": "268014c909457556235e58cf58d9ff42",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-date-range.tsx": {
@@ -2145,8 +2145,8 @@
     "semantic_hash": ""
   },
   "src/components/inventory/components/form/inventory-item-adjust-stock-dialog.tsx": {
-    "mtime": 1785254573.5861146,
-    "ast_hash": "47ad3501fd1a8e26ccb1712e5a8ff09d",
+    "mtime": 1785254791.4489162,
+    "ast_hash": "1a8dc74a8d9bbb295024f5fcbaab30fc",
     "semantic_hash": ""
   },
   "src/components/inventory/components/form/inventory-item-create-form.tsx": {
@@ -2485,8 +2485,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/form/employee-edit-form.tsx": {
-    "mtime": 1785254573.5821166,
-    "ast_hash": "bc04e1ff2580376b168b341ce22cf69f",
+    "mtime": 1785254791.3972187,
+    "ast_hash": "ca0cbf9425413ddfe0b54d64f2c22bed",
     "semantic_hash": ""
   },
   "src/components/employees/components/form/employee-invite-form.tsx": {
@@ -2510,8 +2510,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/list/employees-columns.tsx": {
-    "mtime": 1785254573.5851152,
-    "ast_hash": "79edb6b243d82c1fe4c2d7ba33942531",
+    "mtime": 1785254791.4177768,
+    "ast_hash": "ac08753cc318bf3e2240a630469e2422",
     "semantic_hash": ""
   },
   "src/components/employees/components/list/employees-filters-sheet.tsx": {
@@ -2880,8 +2880,8 @@
     "semantic_hash": ""
   },
   "src/lib/schemas/inventory-adjust-stock-schema.ts": {
-    "mtime": 1785254573.6225283,
-    "ast_hash": "bb08946bee0ee22da45549094a7d6fbc",
+    "mtime": 1785254791.5660503,
+    "ast_hash": "1f7ae3aa875266580db8446f7b2c840d",
     "semantic_hash": ""
   },
   "src/lib/schemas/register-schema.ts": {
@@ -6300,13 +6300,13 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/form/employee-color-field.tsx": {
-    "mtime": 1785253423.0395944,
-    "ast_hash": "12b44143a9281e4e6d9b67944a858951",
+    "mtime": 1785254791.37265,
+    "ast_hash": "ff85c9cb2ff5d043a536661c78390d93",
     "semantic_hash": ""
   },
   "src/components/inventory/components/form/inventory-adjust-stock-preview.tsx": {
-    "mtime": 1785253714.241088,
-    "ast_hash": "6f6af38d776438d2e37da4496068020e",
+    "mtime": 1785254791.4313955,
+    "ast_hash": "71421f2b985a522a86db9499d9df1eca",
     "semantic_hash": ""
   },
   "src/tests/e2e/calendar.spec.ts": {
@@ -6315,8 +6315,8 @@
     "semantic_hash": ""
   },
   "src/tests/unit/calendar-grid.test.ts": {
-    "mtime": 1785253345.112233,
-    "ast_hash": "289c4840ab911e41bfbcffe971f492a7",
+    "mtime": 1785255262.0767097,
+    "ast_hash": "bf648d06535269b8aee138d3b690ec3a",
     "semantic_hash": ""
   },
   "src/tests/unit/find-slots.test.ts": {
@@ -6325,8 +6325,8 @@
     "semantic_hash": ""
   },
   "src/lib/schedule-x-employee-calendars.ts": {
-    "mtime": 1785254175.0092351,
-    "ast_hash": "b47309200f6672e9cc57b7717d698a29",
+    "mtime": 1785255883.1764295,
+    "ast_hash": "4772e9193877b20e5d22fc0c0c093781",
     "semantic_hash": ""
   },
   "src/components/ui/app-sidebar-nav-section.tsx": {
@@ -6337,6 +6337,56 @@
   "src/copy/app-sidebar-copy.ts": {
     "mtime": 1785254594.4350972,
     "ast_hash": "8337b0b49c600ca357ebdffc7e46c545",
+    "semantic_hash": ""
+  },
+  "src/components/calendar/calendar-week-ui-refs.ts": {
+    "mtime": 1785255226.1300576,
+    "ast_hash": "45e40783de8c472f373925a0f50a23ec",
+    "semantic_hash": ""
+  },
+  "src/components/calendar/components/calendar-overlap-group-row.tsx": {
+    "mtime": 1785255210.6027677,
+    "ast_hash": "bfb3b953ab5a853dcaecca3f58183f2c",
+    "semantic_hash": ""
+  },
+  "src/components/calendar/components/calendar-overlap-group-sheet.tsx": {
+    "mtime": 1785255213.0972297,
+    "ast_hash": "af0df91908517a5c697340d6014d476a",
+    "semantic_hash": ""
+  },
+  "src/components/calendar/components/calendar-time-grid-event.tsx": {
+    "mtime": 1785256837.2165716,
+    "ast_hash": "1b8ea04a620d707c5d4d9034a05e0ba2",
+    "semantic_hash": ""
+  },
+  "src/components/calendar/components/calendar-week-grid-date.tsx": {
+    "mtime": 1785255892.9699862,
+    "ast_hash": "927214ce5deaeecf8bc9108dc92d2c72",
+    "semantic_hash": ""
+  },
+  "src/lib/calendar-day-stats.ts": {
+    "mtime": 1785255196.5836253,
+    "ast_hash": "5705d7bcae01e7c2e1eb042c8ff6e1ac",
+    "semantic_hash": ""
+  },
+  "src/lib/calendar-overlap-groups.ts": {
+    "mtime": 1785256639.7324328,
+    "ast_hash": "36f1cb95e5eeedaece169668e9cd11d1",
+    "semantic_hash": ""
+  },
+  "src/lib/calendar-week-events.ts": {
+    "mtime": 1785255199.1021376,
+    "ast_hash": "04d85628858ccbf110ff1fc80136dfae",
+    "semantic_hash": ""
+  },
+  "src/tests/unit/calendar-overlap-groups.test.ts": {
+    "mtime": 1785255883.5632384,
+    "ast_hash": "317722072481b86c9d9c29d32ea1bab0",
+    "semantic_hash": ""
+  },
+  "src/components/calendar/components/calendar-overlap-group-event.tsx": {
+    "mtime": 1785256837.861553,
+    "ast_hash": "c3b64838d44d71d4aab3ff37c3958f47",
     "semantic_hash": ""
   }
 }

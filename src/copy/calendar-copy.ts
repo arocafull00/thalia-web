@@ -39,4 +39,16 @@ export const CALENDAR_COPY = {
     viewDay: "Ver día",
     empty: "No hay citas aún",
   },
+  week: {
+    closedDay: "Cerrado",
+    daySummary: (count: number, occupancyPercent: number) =>
+      `${count} citas · ${occupancyPercent}%`,
+    groupTitle: (startTime: string, count: number) =>
+      `${startTime} · ${count} citas simultáneas`,
+    groupSubtitle: (count: number) => `${count} citas simultáneas`,
+    sheetAppointmentsLabel: "Citas",
+    sheetProfessionalsLabel: "Profesionales",
+    sheetSlotsLabel: "Huecos",
+    sheetSectionTitle: "Citas de la franja",
+  },
 } as const;

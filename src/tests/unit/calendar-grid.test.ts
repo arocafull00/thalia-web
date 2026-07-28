@@ -15,7 +15,6 @@ import {
   getWeekDays,
   getWeekRange,
   isDayInWeek,
-  layoutOverlappingAppointments,
   minutesToOffset,
   slotFromY,
 } from "@/lib/calendar-grid";
@@ -237,48 +236,5 @@ describe("formatDayHeader", () => {
   it("returns the correct day number", () => {
     const { dayNumber } = formatDayHeader(WED);
     expect(dayNumber).toBe("7");
-  });
-});
-
-describe("layoutOverlappingAppointments", () => {
-  it("non-overlapping appointments each get columnCount=1", () => {
-    const appts = [
-      {
-        id: "a",
-        starts_at: "2026-01-05T09:00:00",
-        ends_at: "2026-01-05T10:00:00",
-      },
-      {
-        id: "b",
-        starts_at: "2026-01-05T11:00:00",
-        ends_at: "2026-01-05T12:00:00",
-      },
-    ];
-    const layout = layoutOverlappingAppointments(appts);
-    expect(layout.get("a")!.columnCount).toBe(1);
-    expect(layout.get("b")!.columnCount).toBe(1);
-  });
-
-  it("two overlapping appointments get columnCount=2 and distinct column indices", () => {
-    const appts = [
-      {
-        id: "a",
-        starts_at: "2026-01-05T09:00:00",
-        ends_at: "2026-01-05T10:30:00",
-      },
-      {
-        id: "b",
-        starts_at: "2026-01-05T09:30:00",
-        ends_at: "2026-01-05T11:00:00",
-      },
-    ];
-    const layout = layoutOverlappingAppointments(appts);
-    expect(layout.get("a")!.columnCount).toBe(2);
-    expect(layout.get("b")!.columnCount).toBe(2);
-    expect(layout.get("a")!.columnIndex).not.toBe(layout.get("b")!.columnIndex);
-  });
-
-  it("returns empty map for empty input", () => {
-    expect(layoutOverlappingAppointments([])).toEqual(new Map());
   });
 });

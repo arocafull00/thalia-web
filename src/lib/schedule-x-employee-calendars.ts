@@ -54,7 +54,22 @@ function toCalendarEntry(employee: EmployeeCalendarSource): CalendarType {
 export function buildEmployeeCalendars(
   employees: EmployeeCalendarSource[],
 ): Record<string, CalendarType> {
-  const calendars: Record<string, CalendarType> = {};
+  const calendars: Record<string, CalendarType> = {
+    "overlap-group": {
+      label: "Grupo",
+      colorName: "overlapgroup",
+      lightColors: {
+        main: "#3D8FA0",
+        container: "#F2F8FA",
+        onContainer: "#1F2933",
+      },
+      darkColors: {
+        main: "#3D8FA0",
+        container: "#2A3238",
+        onContainer: "#F7F9FA",
+      },
+    },
+  };
 
   for (const employee of employees) {
     calendars[employee.id] = toCalendarEntry(employee);

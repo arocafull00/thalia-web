@@ -5,6 +5,7 @@ export const PATIENT_EDIT_COPY = {
     cancel: "Cancelar",
     save: "Guardar cambios",
     saving: "Guardando...",
+    viewDetail: "Ver detalle",
   },
   success: "Paciente actualizado correctamente.",
   error: "No se pudo actualizar el paciente.",

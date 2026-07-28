@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 import LoginFormPanel from "@/components/auth/login/components/login-form-panel";
 import { useLogin } from "@/components/auth/login/hooks/use-login";
+import { RedirectScreen } from "@/components/loader/redirect-screen";
 
 export default function LoginPageClient() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function LoginPageClient() {
   }, [redirectHref, router]);
 
   if (redirectHref) {
-    return null;
+    return <RedirectScreen />;
   }
 
   return (

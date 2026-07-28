@@ -7,10 +7,12 @@ import type { Transaction } from "@/types/database.types";
 
 type TransactionsTableProps = {
   transactions: Transaction[];
+  onRowClick: (id: string) => void;
 };
 
 export default function TransactionsTable({
   transactions,
+  onRowClick,
 }: TransactionsTableProps) {
   return (
     <DataTable
@@ -18,6 +20,7 @@ export default function TransactionsTable({
       data={transactions}
       enableSorting
       mobileColumns={transactionsMobileColumns}
+      onRowClick={(transaction) => onRowClick(transaction.id)}
     />
   );
 }

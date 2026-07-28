@@ -13,6 +13,7 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import { useAppointment } from "@/lib/hooks/use-appointments";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -32,6 +33,9 @@ const APPOINTMENT_FILTER_DEFAULTS = {
 export default function AppointmentsPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingAppointmentId, setEditingAppointmentId] = useState<
+    string | null
+  >(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { filters, setFilter, setFilters } = useUrlFilters(
@@ -55,6 +59,27 @@ export default function AppointmentsPageClient() {
 
   const { appointments, flatAppointments, showEmptyState } =
     useAppointmentsPage(pageFilters);
+  const editingAppointment = useAppointment(editingAppointmentId ?? "");
+  const canRenderAppointmentDialog =
+    !editingAppointmentId || Boolean(editingAppointment.data);
+
+  const handleDialogOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      setEditingAppointmentId(null);
+    }
+
+    setDialogOpen(open);
+  }, []);
+
+  const handleOpenCreateDialog = useCallback(() => {
+    setEditingAppointmentId(null);
+    setDialogOpen(true);
+  }, []);
+
+  const handleRowClick = useCallback((id: string) => {
+    setEditingAppointmentId(id);
+    setDialogOpen(true);
+  }, []);
 
   const handleStatusChange = useCallback(
     async (id: string, status: AppointmentStatus) => {
@@ -78,7 +103,7 @@ export default function AppointmentsPageClient() {
   useTopbarAction({
     title: "Nueva cita",
     testId: "appointment-create-trigger",
-    onClick: () => setDialogOpen(true),
+    onClick: handleOpenCreateDialog,
   });
 
   return (
@@ -115,13 +140,27 @@ export default function AppointmentsPageClient() {
           {!showEmptyState && !appointments.isLoading ? (
             <AppointmentsTable
               appointments={flatAppointments}
-              onRowClick={(id) => router.push(`/appointments/${id}`)}
+              onRowClick={handleRowClick}
               onStatusChange={handleStatusChange}
             />
           ) : null}
         </div>
       </div>
-      <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      {canRenderAppointmentDialog ? (
+        <AppointmentCreateDialog
+          open={dialogOpen}
+          onOpenChange={handleDialogOpenChange}
+          appointment={editingAppointment.data ?? null}
+          onViewDetail={
+            editingAppointmentId
+              ? () => {
+                  handleDialogOpenChange(false);
+                  router.push(`/appointments/${editingAppointmentId}`);
+                }
+              : undefined
+          }
+        />
+      ) : null}
       <AppointmentFiltersSheet
         key={sheetKey}
         open={sheetOpen}
@@ -130,7 +169,7 @@ export default function AppointmentsPageClient() {
         onClear={() => setFilters(APPOINTMENT_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
       />
-      <MobileFab label="Nueva cita" onClick={() => setDialogOpen(true)} />
+      <MobileFab label="Nueva cita" onClick={handleOpenCreateDialog} />
     </div>
   );
 }

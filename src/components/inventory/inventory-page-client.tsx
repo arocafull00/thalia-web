@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import InventoryItemCreateForm from "@/components/inventory/components/form/inventory-item-create-form";
+import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
 import InventoryFilters from "@/components/inventory/components/list/inventory-filters";
 import InventoryFiltersSheet from "@/components/inventory/components/list/inventory-filters-sheet";
 import InventoryTable from "@/components/inventory/components/list/inventory-table";
@@ -33,6 +34,8 @@ const INVENTORY_FILTER_DEFAULTS = { category: "", q: "", stock: "" };
 export default function InventoryPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { filters, setFilter, setFilters } = useUrlFilters(
@@ -56,6 +59,11 @@ export default function InventoryPageClient() {
   const { categories, filteredItems, inventory, summary } =
     useInventoryPage(pageFilters);
 
+  const editingItem = useMemo(
+    () => filteredItems.find((item) => item.id === editingItemId),
+    [editingItemId, filteredItems],
+  );
+
   const categoryOptions = useMemo(
     () =>
       categories
@@ -75,6 +83,19 @@ export default function InventoryPageClient() {
   const handleOpenFiltersSheet = () => {
     setSheetKey((key) => key + 1);
     setSheetOpen(true);
+  };
+
+  const handleEditDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setEditingItemId(null);
+    }
+
+    setEditDialogOpen(nextOpen);
+  };
+
+  const handleRowClick = (id: string) => {
+    setEditingItemId(id);
+    setEditDialogOpen(true);
   };
 
   useTopbarAction({
@@ -121,10 +142,7 @@ export default function InventoryPageClient() {
             <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
           ) : null}
           {!inventory.isLoading ? (
-            <InventoryTable
-              items={filteredItems}
-              onRowClick={(id) => router.push(`/inventory/${id}`)}
-            />
+            <InventoryTable items={filteredItems} onRowClick={handleRowClick} />
           ) : null}
         </div>
       </div>
@@ -164,6 +182,18 @@ export default function InventoryPageClient() {
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      {editingItem ? (
+        <InventoryItemEditDialog
+          item={editingItem}
+          open={editDialogOpen}
+          onOpenChange={handleEditDialogOpenChange}
+          onSuccess={() => {}}
+          onViewDetail={() => {
+            handleEditDialogOpenChange(false);
+            router.push(`/inventory/${editingItem.id}`);
+          }}
+        />
+      ) : null}
       <InventoryFiltersSheet
         key={sheetKey}
         open={sheetOpen}

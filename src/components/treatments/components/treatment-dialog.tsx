@@ -15,12 +15,14 @@ type TreatmentDialogProps = {
   open: boolean;
   treatmentId: string | null;
   onOpenChange: (open: boolean) => void;
+  onViewDetail?: () => void;
 };
 
 export default function TreatmentDialog({
   open,
   treatmentId,
   onOpenChange,
+  onViewDetail,
 }: TreatmentDialogProps) {
   const treatmentQuery = useTreatment(treatmentId ?? "");
   const treatment =
@@ -61,6 +63,16 @@ export default function TreatmentDialog({
           )}
         </div>
         <AppDialogFooter>
+          {isEdit && onViewDetail ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onViewDetail}
+              className="mr-auto rounded-button px-3 py-1.5 text-sm"
+            >
+              {TREATMENTS_COPY.dialog.viewDetail}
+            </Button>
+          ) : null}
           <Button
             type="button"
             variant="outline"

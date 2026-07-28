@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import { BootLoadingScreen } from "@/components/loader/boot-loading-screen";
+import { RedirectScreen } from "@/components/loader/redirect-screen";
 import AppShell from "@/components/ui/app-shell";
-import { Notice } from "@/components/ui/primitives/notice";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { initSounds } from "@/lib/sound";
@@ -72,19 +73,17 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 
   if (loading || (user && !clinicId && clinicLoading)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface text-ink-secondary">
-        Cargando...
-      </div>
+      <BootLoadingScreen authLoading={loading} clinicLoading={clinicLoading} />
     );
   }
 
   if (!user || !clinicId) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface p-6">
-        <Notice message="Redirigiendo..." />
-      </div>
-    );
+    return <RedirectScreen />;
   }
 
-  return <AppShell>{children}</AppShell>;
+  return (
+    <div className="animate-in fade-in-0 duration-500">
+      <AppShell>{children}</AppShell>
+    </div>
+  );
 }

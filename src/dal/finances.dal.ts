@@ -13,6 +13,14 @@ export type TransactionInsert = {
   created_by: string;
 };
 
+export type TransactionUpdate = {
+  type: TransactionType;
+  category: string | null;
+  amount: number;
+  description: string | null;
+  date: string;
+};
+
 export async function getTransactions(
   from: string,
   to: string,
@@ -39,6 +47,19 @@ export async function insertTransaction(
   const { data, error } = await supabase
     .from("transactions")
     .insert(input)
+    .select("*")
+    .single();
+  return unwrapSupabase(data, error) as Transaction;
+}
+
+export async function updateTransaction(
+  id: string,
+  input: TransactionUpdate,
+): Promise<Transaction> {
+  const { data, error } = await supabase
+    .from("transactions")
+    .update(input)
+    .eq("id", id)
     .select("*")
     .single();
   return unwrapSupabase(data, error) as Transaction;

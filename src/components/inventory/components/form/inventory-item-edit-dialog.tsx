@@ -17,6 +17,7 @@ type InventoryItemEditDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  onViewDetail?: () => void;
 };
 
 export default function InventoryItemEditDialog({
@@ -24,6 +25,7 @@ export default function InventoryItemEditDialog({
   open,
   onOpenChange,
   onSuccess,
+  onViewDetail,
 }: InventoryItemEditDialogProps) {
   const dialog = useInventoryItemEditDialog(item, () => {
     onOpenChange(false);
@@ -104,6 +106,16 @@ export default function InventoryItemEditDialog({
           </div>
         </div>
         <AppDialogFooter errorMessage={dialog.formState.errors.root?.message}>
+          {onViewDetail ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onViewDetail}
+              className="mr-auto rounded-button px-3 py-1.5 text-sm"
+            >
+              {INVENTORY_ITEM_DETAIL_COPY.actions.viewDetail}
+            </Button>
+          ) : null}
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>

@@ -22,6 +22,7 @@ type PatientEditDialogProps = {
   onAvatarFileSelected: (file: File) => void;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  onViewDetail?: () => void;
 };
 
 export default function PatientEditDialog({
@@ -32,6 +33,7 @@ export default function PatientEditDialog({
   onAvatarFileSelected,
   onOpenChange,
   onSuccess,
+  onViewDetail,
 }: PatientEditDialogProps) {
   const dialog = usePatientEditDialog(patient, () => {
     onOpenChange(false);
@@ -68,6 +70,16 @@ export default function PatientEditDialog({
           />
         </div>
         <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+          {onViewDetail ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onViewDetail}
+              className="mr-auto rounded-button px-3 py-1.5 text-sm"
+            >
+              {PATIENT_EDIT_COPY.actions.viewDetail}
+            </Button>
+          ) : null}
           <Button
             type="button"
             variant="outline"

@@ -29,7 +29,10 @@ export default function AppointmentsTable({
   return (
     <>
       <div className="md:hidden">
-        <AppointmentsMobileList appointments={appointments} />
+        <AppointmentsMobileList
+          appointments={appointments}
+          onRowClick={onRowClick}
+        />
       </div>
       <div className="hidden md:block">
         <DataTable

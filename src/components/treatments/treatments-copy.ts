@@ -21,6 +21,7 @@ export const TREATMENTS_COPY = {
     cancel: "Cancelar",
     save: "Guardar",
     saving: "Guardando…",
+    viewDetail: "Ver detalle",
     successCreate: "Tratamiento creado.",
     successUpdate: "Tratamiento actualizado.",
     error: "No se pudo guardar el tratamiento.",

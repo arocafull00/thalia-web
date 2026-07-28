@@ -23,6 +23,7 @@ export const EMPLOYEE_EDIT_COPY = {
     cancel: "Cancelar",
     save: "Guardar cambios",
     saving: "Guardando...",
+    viewDetail: "Ver detalle",
   },
   success: "Empleado actualizado correctamente.",
   error: "No se pudo actualizar el empleado.",

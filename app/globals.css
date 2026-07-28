@@ -170,6 +170,13 @@
   --animate-sheet-out: sheetOut 0.2s ease-in;
   --animate-sheet-in-left: sheetInLeft 0.3s ease-out;
   --animate-sheet-out-left: sheetOutLeft 0.2s ease-in;
+  --animate-boot-orbit: bootOrbitSpin 2.2s linear infinite;
+  --animate-boot-orbit-slow: bootOrbitSpin 10s linear infinite;
+  --animate-boot-breathe: bootBreathe 2.8s ease-in-out infinite;
+  --animate-boot-pulse: bootPulse 1.6s ease-in-out infinite;
+  --animate-boot-progress: bootProgress 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-boot-travel: bootTravel 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-boot-reveal-check: bootRevealCheck 2.6s ease-in-out infinite;
 }
 
 @keyframes overlayIn {
@@ -218,6 +225,95 @@
   }
   to {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes bootOrbitSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bootBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes bootPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes bootProgress {
+  0% {
+    width: 10%;
+    transform: translateX(-100%);
+  }
+  55% {
+    width: 72%;
+    transform: translateX(0);
+  }
+  100% {
+    width: 100%;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bootTravel {
+  0% {
+    left: 42px;
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    left: 137px;
+    opacity: 0;
+    transform: scale(0.75);
+  }
+}
+
+@keyframes bootRevealCheck {
+  0%,
+  55% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  70%,
+  92% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-motion,
+  .loader-motion::before,
+  .loader-motion::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
   }
 }
 

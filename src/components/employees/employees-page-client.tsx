@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeInviteForm from "@/components/employees/components/form/employee-invite-form";
 import EmployeesFilters from "@/components/employees/components/list/employees-filters";
 import EmployeesFiltersSheet from "@/components/employees/components/list/employees-filters-sheet";
@@ -34,6 +35,10 @@ const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "" };
 export default function EmployeesPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingEmployeeId, setEditingEmployeeId] = useState<string | null>(
+    null,
+  );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { profile } = useAuth();
@@ -81,6 +86,12 @@ export default function EmployeesPageClient() {
     });
   }, [employeeData, filters.role, filters.status, searchQuery]);
 
+  const editingEmployee = useMemo(
+    () =>
+      filteredEmployees.find((employee) => employee.id === editingEmployeeId),
+    [editingEmployeeId, filteredEmployees],
+  );
+
   const hasEmployees = employeeData.length > 0;
   const hasActiveFilters = Boolean(
     searchQuery.trim() || filters.role || filters.status,
@@ -102,6 +113,19 @@ export default function EmployeesPageClient() {
   const handleOpenFiltersSheet = () => {
     setSheetKey((key) => key + 1);
     setSheetOpen(true);
+  };
+
+  const handleEditDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setEditingEmployeeId(null);
+    }
+
+    setEditDialogOpen(nextOpen);
+  };
+
+  const handleRowClick = (id: string) => {
+    setEditingEmployeeId(id);
+    setEditDialogOpen(true);
   };
 
   useTopbarAction(
@@ -149,7 +173,7 @@ export default function EmployeesPageClient() {
           {!showEmptyState && !employees.isLoading ? (
             <EmployeesTable
               employees={filteredEmployees}
-              onRowClick={(id) => router.push(`/employees/${id}`)}
+              onRowClick={handleRowClick}
             />
           ) : null}
         </div>
@@ -191,6 +215,18 @@ export default function EmployeesPageClient() {
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      {editingEmployee ? (
+        <EmployeeEditDialog
+          employee={editingEmployee}
+          open={editDialogOpen}
+          onOpenChange={handleEditDialogOpenChange}
+          onSuccess={() => {}}
+          onViewDetail={() => {
+            handleEditDialogOpenChange(false);
+            router.push(`/employees/${editingEmployee.id}`);
+          }}
+        />
+      ) : null}
       <EmployeesFiltersSheet
         key={sheetKey}
         open={sheetOpen}

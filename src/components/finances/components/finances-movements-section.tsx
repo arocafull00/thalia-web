@@ -16,6 +16,7 @@ type FinancesMovementsSectionProps = {
   error: Error | null | undefined;
   hasMore: boolean;
   onLoadMore: () => void;
+  onRowClick: (id: string) => void;
 };
 
 export default function FinancesMovementsSection({
@@ -26,6 +27,7 @@ export default function FinancesMovementsSection({
   error,
   hasMore,
   onLoadMore,
+  onRowClick,
 }: FinancesMovementsSectionProps) {
   return (
     <div className="border-t border-border-subtle pt-6">
@@ -40,7 +42,12 @@ export default function FinancesMovementsSection({
         {error ? (
           <Notice tone="danger" message={FINANCES_COPY.errors.transactions} />
         ) : null}
-        {!isLoading ? <TransactionsTable transactions={transactions} /> : null}
+        {!isLoading ? (
+          <TransactionsTable
+            transactions={transactions}
+            onRowClick={onRowClick}
+          />
+        ) : null}
         {hasMore ? (
           <div className="mt-4 flex justify-center">
             <Button

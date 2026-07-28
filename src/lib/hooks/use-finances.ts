@@ -7,11 +7,12 @@ import {
   transactionsToCsv,
   useFinancesStore,
   type TransactionInput,
+  type TransactionUpdatePayload,
 } from "@/stores/finances-store";
 import { isInitialLoading } from "@/stores/query-state";
 import type { TransactionType } from "@/types/database.types";
 
-export type { TransactionInput };
+export type { TransactionInput, TransactionUpdatePayload };
 export { transactionsToCsv };
 
 export function useTransactions(month: Date, type: TransactionType | "all") {
@@ -73,6 +74,33 @@ export function useCreateTransaction() {
         );
     },
     [createTransaction],
+  );
+
+  return { mutate, isPending, error };
+}
+
+export function useUpdateTransaction() {
+  const updateTransaction = useFinancesStore(
+    (state) => state.updateTransaction,
+  );
+  const isPending = useFinancesStore((state) => state.creating);
+  const error = useFinancesStore((state) => state.createError);
+
+  const mutate = useCallback(
+    (
+      id: string,
+      input: TransactionUpdatePayload,
+      options?: { onSuccess?: () => void; onError?: (error: Error) => void },
+    ) => {
+      updateTransaction(id, input)
+        .then(() => options?.onSuccess?.())
+        .catch((cause) =>
+          options?.onError?.(
+            cause instanceof Error ? cause : new Error(String(cause)),
+          ),
+        );
+    },
+    [updateTransaction],
   );
 
   return { mutate, isPending, error };

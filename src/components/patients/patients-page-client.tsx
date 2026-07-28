@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import PatientCreateForm from "@/components/patients/components/form/patient-create-form";
+import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
 import PatientsFilters from "@/components/patients/components/list/patients-filters";
 import PatientsFiltersSheet from "@/components/patients/components/list/patients-filters-sheet";
 import PatientsTable from "@/components/patients/components/list/patients-table";
@@ -22,6 +23,7 @@ import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
+import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
 import { usePatients } from "@/lib/hooks/use-patients";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -32,6 +34,8 @@ const PATIENT_FILTER_DEFAULTS = { q: "", status: "" };
 export default function PatientsPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { filters, setFilter, setFilters } = useUrlFilters(
@@ -57,6 +61,12 @@ export default function PatientsPageClient() {
     return patientData;
   }, [filters.status, patientData]);
 
+  const editingPatient = useMemo(
+    () => filteredPatients.find((patient) => patient.id === editingPatientId),
+    [editingPatientId, filteredPatients],
+  );
+  const editingPatientAvatar = usePatientAvatar(editingPatient);
+
   const hasPatients = patientData.length > 0;
   const hasActiveFilters = Boolean(searchQuery.trim() || filters.status);
   const showEmptyState =
@@ -74,6 +84,19 @@ export default function PatientsPageClient() {
   const handleOpenFiltersSheet = () => {
     setSheetKey((key) => key + 1);
     setSheetOpen(true);
+  };
+
+  const handleEditDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setEditingPatientId(null);
+    }
+
+    setEditDialogOpen(nextOpen);
+  };
+
+  const handleRowClick = (id: string) => {
+    setEditingPatientId(id);
+    setEditDialogOpen(true);
   };
 
   useTopbarAction({
@@ -107,7 +130,7 @@ export default function PatientsPageClient() {
           {!showEmptyState && !patients.isLoading ? (
             <PatientsTable
               patients={filteredPatients}
-              onRowClick={(id) => router.push(`/patients/${id}`)}
+              onRowClick={handleRowClick}
             />
           ) : null}
         </div>
@@ -153,6 +176,21 @@ export default function PatientsPageClient() {
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      {editingPatient ? (
+        <PatientEditDialog
+          patient={editingPatient}
+          open={editDialogOpen}
+          avatarDisplayUri={editingPatientAvatar.avatarDisplayUri}
+          avatarUploadPending={editingPatientAvatar.avatarUploadPending}
+          onAvatarFileSelected={editingPatientAvatar.onAvatarFileSelected}
+          onOpenChange={handleEditDialogOpenChange}
+          onSuccess={() => {}}
+          onViewDetail={() => {
+            handleEditDialogOpenChange(false);
+            router.push(`/patients/${editingPatient.id}`);
+          }}
+        />
+      ) : null}
       <PatientsFiltersSheet
         key={sheetKey}
         open={sheetOpen}

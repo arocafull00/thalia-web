@@ -87,7 +87,7 @@ export default function TreatmentsPageClient() {
           {!treatments.isLoading && !treatments.error ? (
             <TreatmentsTable
               treatments={filteredTreatments}
-              onRowClick={(id) => router.push(`/treatments/${id}`)}
+              onRowClick={page.openEditDialog}
             />
           ) : null}
         </div>
@@ -100,6 +100,14 @@ export default function TreatmentsPageClient() {
             page.closeDialog();
           }
         }}
+        onViewDetail={
+          page.selectedTreatmentId
+            ? () => {
+                page.closeDialog();
+                router.push(`/treatments/${page.selectedTreatmentId}`);
+              }
+            : undefined
+        }
       />
       {showCategoryFilter ? (
         <TreatmentsFiltersSheet

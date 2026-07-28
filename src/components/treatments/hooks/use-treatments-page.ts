@@ -11,6 +11,11 @@ export function useTreatmentsPage() {
     setDialogOpen(true);
   }, []);
 
+  const openEditDialog = useCallback((id: string) => {
+    setSelectedTreatmentId(id);
+    setDialogOpen(true);
+  }, []);
+
   const closeDialog = useCallback(() => {
     setDialogOpen(false);
     setSelectedTreatmentId(null);
@@ -20,6 +25,7 @@ export function useTreatmentsPage() {
     dialogOpen,
     selectedTreatmentId,
     openCreateDialog,
+    openEditDialog,
     closeDialog,
   };
 }

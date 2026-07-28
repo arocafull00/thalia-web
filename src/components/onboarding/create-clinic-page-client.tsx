@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { BootLoadingScreen } from "@/components/loader/boot-loading-screen";
+import { RedirectScreen } from "@/components/loader/redirect-screen";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
@@ -50,8 +52,13 @@ export default function CreateClinicPageClient() {
     }
   }, [loading, user, ready, href, router]);
 
-  if (loading || !user) return null;
-  if (ready && href && href !== "/create-clinic") return null;
+  if (loading || !user) {
+    return <BootLoadingScreen authLoading={loading} clinicLoading={false} />;
+  }
+
+  if (ready && href && href !== "/create-clinic") {
+    return <RedirectScreen />;
+  }
 
   const handleContinue = async () => {
     const clinicValues = { clinicName, address, clinicPhone };

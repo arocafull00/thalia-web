@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { BootLoadingScreen } from "@/components/loader/boot-loading-screen";
+import { RedirectScreen } from "@/components/loader/redirect-screen";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
@@ -38,14 +40,18 @@ export default function InviteTeamPageClient() {
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  if (!loading && !user) {
-    router.replace("/login");
-    return null;
+  if (loading) {
+    return <BootLoadingScreen authLoading={loading} clinicLoading={false} />;
   }
 
-  if (!loading && user && intent !== "owner" && !hasPendingTeamInvites(user)) {
+  if (!user) {
+    router.replace("/login");
+    return <RedirectScreen />;
+  }
+
+  if (user && intent !== "owner" && !hasPendingTeamInvites(user)) {
     router.replace("/dashboard");
-    return null;
+    return <RedirectScreen />;
   }
 
   if (
@@ -56,7 +62,7 @@ export default function InviteTeamPageClient() {
     !hasPendingTeamInvites(user)
   ) {
     router.replace(href);
-    return null;
+    return <RedirectScreen />;
   }
 
   const finishInvites = async (skipped: boolean) => {

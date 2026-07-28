@@ -19,6 +19,7 @@ type EmployeeEditDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  onViewDetail?: () => void;
 };
 
 export default function EmployeeEditDialog({
@@ -26,6 +27,7 @@ export default function EmployeeEditDialog({
   open,
   onOpenChange,
   onSuccess,
+  onViewDetail,
 }: EmployeeEditDialogProps) {
   const dialog = useEmployeeEditDialog(employee, () => {
     onOpenChange(false);
@@ -58,6 +60,16 @@ export default function EmployeeEditDialog({
           />
         </div>
         <AppDialogFooter errorMessage={dialog.errors.root?.message}>
+          {onViewDetail ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onViewDetail}
+              className="mr-auto rounded-button px-3 py-1.5 text-sm"
+            >
+              {EMPLOYEE_EDIT_COPY.actions.viewDetail}
+            </Button>
+          ) : null}
           <Button
             type="button"
             variant="outline"

@@ -8,10 +8,12 @@ import type { AppointmentWithRelations } from "@/types/database.types";
 
 type AppointmentsMobileListProps = {
   appointments: AppointmentWithRelations[];
+  onRowClick: (id: string) => void;
 };
 
 export default function AppointmentsMobileList({
   appointments,
+  onRowClick,
 }: AppointmentsMobileListProps) {
   const agendaAppointments = useMemo(
     () => toAgendaAppointments(appointments),
@@ -21,7 +23,11 @@ export default function AppointmentsMobileList({
   return (
     <div className="divide-y divide-border-subtle">
       {agendaAppointments.map((appointment) => (
-        <AppointmentRow key={appointment.id} appointment={appointment} />
+        <AppointmentRow
+          key={appointment.id}
+          appointment={appointment}
+          onClick={() => onRowClick(appointment.id)}
+        />
       ))}
     </div>
   );

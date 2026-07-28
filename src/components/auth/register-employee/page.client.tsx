@@ -5,6 +5,8 @@ import { useEffect } from "react";
 
 import RegisterEmployeeForm from "@/components/auth/register-employee/components/register-employee-form";
 import { useRegisterEmployee } from "@/components/auth/register-employee/hooks/use-register-employee";
+import { BootLoadingScreen } from "@/components/loader/boot-loading-screen";
+import { RedirectScreen } from "@/components/loader/redirect-screen";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
@@ -34,15 +36,11 @@ export default function RegisterEmployeePageClient() {
   }, [redirectHref, router]);
 
   if (redirectHref) {
-    return null;
+    return <RedirectScreen />;
   }
 
-  if (isRedirecting || (hasSession && redirectHref)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-canvas">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
-      </div>
-    );
+  if (isRedirecting) {
+    return <BootLoadingScreen authLoading clinicLoading={false} />;
   }
 
   return (

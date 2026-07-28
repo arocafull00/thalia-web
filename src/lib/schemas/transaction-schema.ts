@@ -25,4 +25,7 @@ export const transactionSchema = transactionFieldsSchema.extend({
   created_by: uuidSchema("El usuario no es válido."),
 });
 
+export const transactionUpdateSchema = transactionFieldsSchema;
+
 export type TransactionSchemaInput = z.infer<typeof transactionSchema>;
+export type TransactionUpdateInput = z.infer<typeof transactionUpdateSchema>;

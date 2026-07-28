@@ -1,5 +1,6 @@
 export const TRANSACTION_CREATE_COPY = {
   title: "Nuevo movimiento",
+  titleEdit: "Editar movimiento",
   description: "Registra un ingreso o gasto de la clínica.",
   fields: {
     type: "Tipo",
@@ -22,4 +23,6 @@ export const TRANSACTION_CREATE_COPY = {
   },
   success: "Movimiento creado correctamente.",
   error: "No se pudo crear el movimiento.",
+  successEdit: "Movimiento actualizado correctamente.",
+  errorEdit: "No se pudo actualizar el movimiento.",
 } as const;

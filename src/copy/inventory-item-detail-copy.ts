@@ -36,6 +36,7 @@ export const INVENTORY_ITEM_DETAIL_COPY = {
     adjustStock: "Ajustar stock",
     edit: "Editar material",
     delete: "Eliminar material",
+    viewDetail: "Ver detalle",
     comingSoon: "Próximamente",
   },
   adjustStock: {

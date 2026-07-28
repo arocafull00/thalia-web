@@ -35,6 +35,9 @@ const FINANCES_FILTER_DEFAULTS = { category: "", q: "" };
 
 export default function FinancesPageClient() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingTransactionId, setEditingTransactionId] = useState<
+    string | null
+  >(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const setTab = useFinancesUiStore((state) => state.setTab);
@@ -67,8 +70,18 @@ export default function FinancesPageClient() {
     visibleTransactions,
   } = useFinancesPage(pageFilters);
 
-  const dialog = useTransactionCreateDialog(fabType, () =>
-    setDialogOpen(false),
+  const editingTransaction = useMemo(
+    () =>
+      visibleTransactions.find(
+        (transaction) => transaction.id === editingTransactionId,
+      ) ?? null,
+    [editingTransactionId, visibleTransactions],
+  );
+
+  const dialog = useTransactionCreateDialog(
+    fabType,
+    () => setDialogOpen(false),
+    editingTransaction,
   );
 
   const comboboxCategoryOptions = useMemo(
@@ -83,13 +96,20 @@ export default function FinancesPageClient() {
   const handleDialogOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       dialog.reset();
+      setEditingTransactionId(null);
     }
 
     setDialogOpen(nextOpen);
   };
 
   const handleOpenCreateDialog = () => {
+    setEditingTransactionId(null);
     dialog.prepare(fabType);
+    setDialogOpen(true);
+  };
+
+  const handleRowClick = (id: string) => {
+    setEditingTransactionId(id);
     setDialogOpen(true);
   };
 
@@ -156,6 +176,7 @@ export default function FinancesPageClient() {
             error={transactions.error}
             hasMore={hasMore}
             onLoadMore={loadMore}
+            onRowClick={handleRowClick}
           />
         </div>
       </div>
@@ -163,7 +184,11 @@ export default function FinancesPageClient() {
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>
-            <AppDialogTitle>{TRANSACTION_CREATE_COPY.title}</AppDialogTitle>
+            <AppDialogTitle>
+              {dialog.isEditing
+                ? TRANSACTION_CREATE_COPY.titleEdit
+                : TRANSACTION_CREATE_COPY.title}
+            </AppDialogTitle>
             <AppDialogDescription>
               {TRANSACTION_CREATE_COPY.description}
             </AppDialogDescription>

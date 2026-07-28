@@ -1,7 +1,11 @@
 import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { create } from "zustand";
 
-import { getTransactions, insertTransaction } from "@/dal/finances.dal";
+import {
+  getTransactions,
+  insertTransaction,
+  updateTransaction as updateTransactionDal,
+} from "@/dal/finances.dal";
 import { logger } from "@/lib/logger";
 import {
   errorQueryEntry,
@@ -20,6 +24,14 @@ export type TransactionInput = {
   description: string | null;
   date: string;
   created_by: string;
+};
+
+export type TransactionUpdatePayload = {
+  type: TransactionType;
+  category: string | null;
+  amount: number;
+  description: string | null;
+  date: string;
 };
 
 export type FinancialSummary = {
@@ -41,6 +53,24 @@ function summaryKey(month: Date) {
   return format(month, "yyyy-MM");
 }
 
+async function refreshFinancesCaches(get: () => FinancesStore) {
+  const transactionKeys = Object.keys(get().transactionsByKey);
+  await Promise.all(
+    transactionKeys.map((key) => {
+      const [from, , type] = key.split(":");
+      const month = new Date(from);
+      return get().fetchTransactions(month, type as TransactionType | "all");
+    }),
+  );
+
+  const summaryKeys = Object.keys(get().summaryByKey);
+  await Promise.all(
+    summaryKeys.map((key) =>
+      get().fetchFinancialSummary(new Date(`${key}-01`)),
+    ),
+  );
+}
+
 type FinancesStore = {
   transactionsByKey: Record<string, QueryEntry<Transaction[]>>;
   summaryByKey: Record<string, QueryEntry<FinancialSummary>>;
@@ -52,6 +82,10 @@ type FinancesStore = {
   ) => Promise<void>;
   fetchFinancialSummary: (month: Date) => Promise<void>;
   createTransaction: (input: TransactionInput) => Promise<Transaction>;
+  updateTransaction: (
+    id: string,
+    input: TransactionUpdatePayload,
+  ) => Promise<Transaction>;
 };
 
 export const useFinancesStore = create<FinancesStore>((set, get) => ({
@@ -189,25 +223,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
 
     try {
       const transaction = await insertTransaction(input);
-
-      const transactionKeys = Object.keys(get().transactionsByKey);
-      await Promise.all(
-        transactionKeys.map((key) => {
-          const [from, , type] = key.split(":");
-          const month = new Date(from);
-          return get().fetchTransactions(
-            month,
-            type as TransactionType | "all",
-          );
-        }),
-      );
-
-      const summaryKeys = Object.keys(get().summaryByKey);
-      await Promise.all(
-        summaryKeys.map((key) =>
-          get().fetchFinancialSummary(new Date(`${key}-01`)),
-        ),
-      );
+      await refreshFinancesCaches(get);
 
       set({ creating: false });
       return transaction;
@@ -217,6 +233,27 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         store: "finances-store",
         action: "createTransaction",
         clinicId: input.clinic_id,
+      });
+      set({ creating: false, createError: error });
+      throw error;
+    }
+  },
+
+  updateTransaction: async (id, input) => {
+    set({ creating: true, createError: null });
+
+    try {
+      const transaction = await updateTransactionDal(id, input);
+      await refreshFinancesCaches(get);
+
+      set({ creating: false });
+      return transaction;
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "finances-store",
+        action: "updateTransaction",
+        transactionId: id,
       });
       set({ creating: false, createError: error });
       throw error;

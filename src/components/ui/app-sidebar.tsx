@@ -3,13 +3,12 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-import AppSidebarNavItem from "@/components/ui/app-sidebar-nav-item";
+import AppSidebarNavSection from "@/components/ui/app-sidebar-nav-section";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
 import SidebarProfileFooter from "@/components/ui/sidebar-profile-footer";
@@ -17,7 +16,7 @@ import { useAppNavItems } from "@/lib/hooks/use-app-nav-items";
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { items } = useAppNavItems();
+  const { sections } = useAppNavItems();
   const { isMobile, setOpenMobile } = useSidebar();
 
   useEffect(() => {
@@ -54,22 +53,15 @@ export default function AppSidebar() {
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="px-3 py-4">
-        <SidebarMenu className="gap-1">
-          {items.map((item) => {
-            const active =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
-
-            return (
-              <AppSidebarNavItem
-                key={item.href}
-                item={item}
-                active={active}
-                onNavigate={closeMobileSidebar}
-              />
-            );
-          })}
-        </SidebarMenu>
+      <SidebarContent className="flex flex-col gap-6 px-3 py-4">
+        {sections.map((section) => (
+          <AppSidebarNavSection
+            key={section.id}
+            section={section}
+            pathname={pathname}
+            onNavigate={closeMobileSidebar}
+          />
+        ))}
       </SidebarContent>
       <SidebarFooter className="border-t border-border-subtle p-0">
         <SidebarProfileFooter />

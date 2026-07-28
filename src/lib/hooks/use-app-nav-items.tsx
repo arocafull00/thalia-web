@@ -5,6 +5,7 @@ import {
   Clock,
   Euro,
   LayoutGrid,
+  Megaphone,
   Package,
   Stethoscope,
   Settings,
@@ -13,61 +14,94 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
+import {
+  APP_SIDEBAR_COPY,
+  type AppNavSectionId,
+} from "@/copy/app-sidebar-copy";
 import { useShellStore } from "@/stores/shell-store";
 
 export type AppNavItem = {
   href: string;
   label: string;
   icon: ReactNode;
+  section: AppNavSectionId;
   visible: boolean;
   primaryMobile: boolean;
 };
+
+export type AppNavSection = {
+  id: AppNavSectionId;
+  label: string;
+  items: AppNavItem[];
+};
+
+const NAV_SECTION_ORDER: AppNavSectionId[] = [
+  "general",
+  "clinic",
+  "business",
+  "configuration",
+];
 
 const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
   {
     href: "/dashboard",
     label: "Inicio",
     icon: <LayoutGrid size={18} strokeWidth={1.5} />,
+    section: "general",
   },
   {
     href: "/calendar",
     label: "Agenda",
     icon: <Calendar size={18} strokeWidth={1.5} />,
+    section: "clinic",
   },
   {
     href: "/appointments",
     label: "Citas",
     icon: <Clock size={18} strokeWidth={1.5} />,
+    section: "clinic",
   },
   {
     href: "/patients",
     label: "Pacientes",
     icon: <Users size={18} strokeWidth={1.5} />,
+    section: "clinic",
   },
   {
     href: "/treatments",
     label: "Tratamientos",
     icon: <Stethoscope size={18} strokeWidth={1.5} />,
+    section: "clinic",
   },
   {
     href: "/inventory",
     label: "Inventario",
     icon: <Package size={18} strokeWidth={1.5} />,
+    section: "business",
   },
   {
     href: "/finances",
     label: "Finanzas",
     icon: <Euro size={18} strokeWidth={1.5} />,
+    section: "business",
+  },
+  {
+    href: "/marketing",
+    label: "Marketing",
+    icon: <Megaphone size={18} strokeWidth={1.5} />,
+    section: "business",
   },
   {
     href: "/employees",
     label: "Personal",
     icon: <UserPlus size={18} strokeWidth={1.5} />,
+    section: "business",
   },
   {
     href: "/settings",
     label: "Ajustes",
     icon: <Settings size={18} strokeWidth={1.5} />,
+    section: "configuration",
   },
 ];
 
@@ -110,9 +144,15 @@ export function useAppNavItems() {
   const secondaryMobileItems = visibleItems.filter(
     (item) => !item.primaryMobile,
   );
+  const sections: AppNavSection[] = NAV_SECTION_ORDER.map((id) => ({
+    id,
+    label: APP_SIDEBAR_COPY.sections[id],
+    items: visibleItems.filter((item) => item.section === id),
+  })).filter((section) => section.items.length > 0);
 
   return {
     items: visibleItems,
+    sections,
     primaryMobileItems,
     secondaryMobileItems,
   };

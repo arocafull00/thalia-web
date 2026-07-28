@@ -29,8 +29,8 @@ export default function OwnerConfirmationStep({
           {copy.subtitle}
         </p>
       </div>
-      <div className="divide-y divide-border-subtle rounded-2xl border border-border">
-        <section className="p-5">
+      <div className="divide-y divide-border-subtle border-y border-border-subtle">
+        <section className="py-5">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm font-medium text-ink">
               <UserRound className="size-4 text-primary" aria-hidden="true" />
@@ -61,7 +61,7 @@ export default function OwnerConfirmationStep({
             </div>
           </dl>
         </section>
-        <section className="p-5">
+        <section className="py-5">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm font-medium text-ink">
               <Building2 className="size-4 text-primary" aria-hidden="true" />

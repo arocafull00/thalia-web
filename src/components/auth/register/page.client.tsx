@@ -25,24 +25,26 @@ export default function RegisterPageClient() {
   }
 
   return (
-    <section className="flex min-h-screen flex-1 flex-col items-center justify-center bg-surface px-6 py-10">
-      <div className="w-full max-w-[440px]">
-        {step === "employee-email" ? (
-          <RegisterEmployeeEmail
-            emailRegister={emailRegister}
-            emailError={emailError}
-            error={error}
-            submitting={submitting}
-            onSubmit={handleEmployeeEmailSubmit}
-            onBack={handleBack}
-          />
-        ) : (
-          <RegisterTypePicker
-            onPickOwner={handlePickOwner}
-            onPickEmployee={handlePickEmployee}
-            onSignOut={handleSignOut}
-          />
-        )}
+    <section className="flex min-h-screen flex-1 flex-col bg-surface">
+      <div className="flex flex-1 items-center justify-center px-6 py-10 lg:px-8">
+        <div className="w-full max-w-110">
+          {step === "employee-email" ? (
+            <RegisterEmployeeEmail
+              emailRegister={emailRegister}
+              emailError={emailError}
+              error={error}
+              submitting={submitting}
+              onSubmit={handleEmployeeEmailSubmit}
+              onBack={handleBack}
+            />
+          ) : (
+            <RegisterTypePicker
+              onPickOwner={handlePickOwner}
+              onPickEmployee={handlePickEmployee}
+              onSignOut={handleSignOut}
+            />
+          )}
+        </div>
       </div>
     </section>
   );

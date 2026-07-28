@@ -1505,18 +1505,18 @@
     "semantic_hash": ""
   },
   "src/components/auth/register/components/register-employee-email.tsx": {
-    "mtime": 1784237797.3952072,
-    "ast_hash": "9709711e5a33789181fb0bcdd4d40a7a",
+    "mtime": 1785261850.1373668,
+    "ast_hash": "d94e591da64a25bec523b095e13958d2",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/register-type-picker.tsx": {
-    "mtime": 1784039283.750117,
-    "ast_hash": "d59f8220dc98e8023db96ac021243a40",
+    "mtime": 1785261856.5028245,
+    "ast_hash": "6da65a8e7a41e96e748891d53c5d5864",
     "semantic_hash": ""
   },
   "src/components/auth/register/page.client.tsx": {
-    "mtime": 1785261520.2504268,
-    "ast_hash": "2fa32b6fb601dd8a04fc2d4cb9eb1385",
+    "mtime": 1785261905.0271254,
+    "ast_hash": "413d49d39b92d549e3785501e843a8a8",
     "semantic_hash": ""
   },
   "src/components/onboarding/invite-page-client.tsx": {
@@ -6405,117 +6405,117 @@
     "semantic_hash": ""
   },
   ".github/vercel/playwright-deployment-check.json": {
-    "mtime": 1785260651.6533494,
+    "mtime": 1785261520.130279,
     "ast_hash": "5134d4d501c556d5029cfe73d34e9249",
     "semantic_hash": ""
   },
   "src/components/loader/boot-loading-screen.tsx": {
-    "mtime": 1785260496.8564363,
-    "ast_hash": "2b07409a0f3e4679b1d8e0b1be708238",
+    "mtime": 1785261520.2624938,
+    "ast_hash": "eda0b75e0a66b61f2980877f3c066d31",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-orbital-visual.tsx": {
-    "mtime": 1785260496.8639703,
-    "ast_hash": "6bf62e12796cdfa4e727c2c664d62d3e",
+    "mtime": 1785261520.2640028,
+    "ast_hash": "451ddc210ca67214220122d3e298ee19",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-progress-bar.tsx": {
-    "mtime": 1785260496.8711016,
-    "ast_hash": "a47304821f15948d6994f866b3c1624e",
+    "mtime": 1785261520.2650146,
+    "ast_hash": "049c1b5c668cb08cb8fab89717d13137",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-redirect-visual.tsx": {
-    "mtime": 1785260497.171393,
-    "ast_hash": "c7779c576a3e5e16cd64b43a8fc47eee",
+    "mtime": 1785261520.2690215,
+    "ast_hash": "906384f956d28d572dd9c5a532724ccc",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-status-list.tsx": {
-    "mtime": 1785260497.2225194,
-    "ast_hash": "48df981d624813adebd78ea9de62d079",
+    "mtime": 1785261520.2690215,
+    "ast_hash": "08fdd6d5e5f5d44390f43381da9c0b9d",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-status-row.tsx": {
-    "mtime": 1785260497.2488542,
-    "ast_hash": "cf448862411950d9fd2e3c7cb4d02b6c",
+    "mtime": 1785261520.2700222,
+    "ast_hash": "795dc664fff7b599397a15fabf60269f",
     "semantic_hash": ""
   },
   "src/components/loader/hooks/use-boot-loading-phase.ts": {
-    "mtime": 1785260497.2647283,
-    "ast_hash": "d63130de4f3083612ef16a79da66ed32",
+    "mtime": 1785261520.2710218,
+    "ast_hash": "f1d3a007b70b4909c34e4dfa3b2ea1bb",
     "semantic_hash": ""
   },
   "src/components/loader/loader-screen-shell.tsx": {
-    "mtime": 1785260497.2771862,
-    "ast_hash": "b48aaf877cb1671ba7c39af9ae923fdf",
+    "mtime": 1785261520.273528,
+    "ast_hash": "fd9314504b7aba10fc52e460d71e7338",
     "semantic_hash": ""
   },
   "src/components/loader/redirect-screen.tsx": {
-    "mtime": 1785260497.2917387,
-    "ast_hash": "1b3a817bb0ec9354dd4dda1f38776ff9",
+    "mtime": 1785261520.273528,
+    "ast_hash": "a7d2706935eb7e89422fe50075423187",
     "semantic_hash": ""
   },
   "src/copy/loader-copy.ts": {
-    "mtime": 1785260497.5753522,
-    "ast_hash": "eb6a5fb99f2d24e206af5380081cb01c",
+    "mtime": 1785261520.2956278,
+    "ast_hash": "97080a4db088228ee4c94e1f59cf512a",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-redirect-check-badge.tsx": {
-    "mtime": 1785260496.8973012,
-    "ast_hash": "ee1a97bcbc33ae18ad418d0136b11a30",
+    "mtime": 1785261520.267023,
+    "ast_hash": "ae256cc42c84cf1ef87516a277ef38d5",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-account-step.tsx": {
-    "mtime": 1785260735.9837992,
-    "ast_hash": "25cde19c0e709a69229e94e7eefd42e7",
+    "mtime": 1785261520.2423997,
+    "ast_hash": "8e7d78c03e3841ead282b783882e2414",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-clinic-step.tsx": {
-    "mtime": 1785260735.9843073,
-    "ast_hash": "5739a5c3d3e52dcd3f57c3380f16fc3e",
+    "mtime": 1785261520.2434006,
+    "ast_hash": "c2faad7081276cb0ab1ec526242ddd31",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-confirmation-step.tsx": {
-    "mtime": 1785260735.9888198,
-    "ast_hash": "ecc94da8404d18a5bed4bc011efe2348",
+    "mtime": 1785261865.4732177,
+    "ast_hash": "cabc55e1a2224b00ae92dce3d0f69769",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-registration-progress.tsx": {
-    "mtime": 1785260735.9828022,
-    "ast_hash": "288a47c8bbee49208f8668da3af683f1",
+    "mtime": 1785261520.245922,
+    "ast_hash": "8cf4e466eab83fc76af0ba6277775a7e",
     "semantic_hash": ""
   },
   "src/components/auth/register/hooks/use-owner-registration.ts": {
-    "mtime": 1785260900.0632193,
-    "ast_hash": "84a75c9de94e2568da2c5671a33d9369",
+    "mtime": 1785261520.2479215,
+    "ast_hash": "1ce888dede4dfdd8a8807c48ccbd5dd2",
     "semantic_hash": ""
   },
   "src/components/auth/register/owner-registration-page.client.tsx": {
-    "mtime": 1785260802.955881,
-    "ast_hash": "26930d866cf6f54ba9abb25da43cdb78",
+    "mtime": 1785261905.0397148,
+    "ast_hash": "71f9176b66c73a43f2321b0c14ae8006",
     "semantic_hash": ""
   },
   "src/copy/register-owner-copy.ts": {
-    "mtime": 1785260735.960011,
-    "ast_hash": "f914061fa387465e63c2d9d4f0ecf0ec",
+    "mtime": 1785261520.297141,
+    "ast_hash": "7fa31fb3ea9a67990c11d201fdec3bde",
     "semantic_hash": ""
   },
   "src/components/onboarding/create-clinic/components/create-clinic-form.tsx": {
-    "mtime": 1785261256.4945965,
+    "mtime": 1785261520.27605,
     "ast_hash": "c9e57ecf1ad2531dda283a86b8d8d64f",
     "semantic_hash": ""
   },
   "src/components/onboarding/create-clinic/hooks/use-create-clinic.ts": {
-    "mtime": 1785261248.2879746,
-    "ast_hash": "d8c50829c818d2da86f940bf4965b51d",
+    "mtime": 1785261520.2780485,
+    "ast_hash": "71af0fcc65beb43cb7ad348ac9d3e2bd",
     "semantic_hash": ""
   },
   "src/components/onboarding/create-clinic/page.client.tsx": {
-    "mtime": 1785261257.1578615,
-    "ast_hash": "9c381e5dad4f74c93790f966e0e2efc1",
+    "mtime": 1785261520.2790494,
+    "ast_hash": "0f751290c61ca21d0ec60a3edf281b5d",
     "semantic_hash": ""
   },
   "src/copy/create-clinic-copy.ts": {
-    "mtime": 1785261237.3178623,
+    "mtime": 1785261520.2926102,
     "ast_hash": "162b92b40ac590246595f1e1584a6634",
     "semantic_hash": ""
   }

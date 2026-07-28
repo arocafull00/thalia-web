@@ -57,7 +57,7 @@ export default function RegisterEmployeeEmail({
       <div className="flex items-center justify-between gap-3">
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           disabled={submitting}
           onClick={onBack}
           className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"

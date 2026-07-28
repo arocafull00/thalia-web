@@ -1510,13 +1510,13 @@
     "semantic_hash": ""
   },
   "src/components/auth/register/components/register-type-picker.tsx": {
-    "mtime": 1785261856.5028245,
-    "ast_hash": "6da65a8e7a41e96e748891d53c5d5864",
+    "mtime": 1785261958.4404955,
+    "ast_hash": "eb6de4d6341b301394f3c620349b0f40",
     "semantic_hash": ""
   },
   "src/components/auth/register/page.client.tsx": {
-    "mtime": 1785261905.0271254,
-    "ast_hash": "413d49d39b92d549e3785501e843a8a8",
+    "mtime": 1785261958.47543,
+    "ast_hash": "f81a5dec7d90c25517214c55d40ac388",
     "semantic_hash": ""
   },
   "src/components/onboarding/invite-page-client.tsx": {
@@ -6475,8 +6475,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-confirmation-step.tsx": {
-    "mtime": 1785261865.4732177,
-    "ast_hash": "cabc55e1a2224b00ae92dce3d0f69769",
+    "mtime": 1785261958.398786,
+    "ast_hash": "fb93c4127325d05bec3c9ffb9a03847e",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-registration-progress.tsx": {
@@ -6490,8 +6490,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register/owner-registration-page.client.tsx": {
-    "mtime": 1785261905.0397148,
-    "ast_hash": "71f9176b66c73a43f2321b0c14ae8006",
+    "mtime": 1785261958.4684207,
+    "ast_hash": "c975e89e0236382e8d9e292a2d069d9d",
     "semantic_hash": ""
   },
   "src/copy/register-owner-copy.ts": {

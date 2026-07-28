@@ -65,7 +65,7 @@ export default function RegisterTypePicker({
       <div className="flex justify-center">
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           onClick={onSignOut}
           className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
         >

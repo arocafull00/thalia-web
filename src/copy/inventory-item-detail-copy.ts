@@ -40,7 +40,7 @@ export const INVENTORY_ITEM_DETAIL_COPY = {
   },
   adjustStock: {
     title: "Ajustar stock",
-    description: "Registra una entrada, salida o ajuste de inventario.",
+    description: "Registra una entrada o salida de inventario.",
     fields: {
       type: "Tipo de movimiento",
       quantity: "Cantidad",
@@ -49,17 +49,21 @@ export const INVENTORY_ITEM_DETAIL_COPY = {
     types: {
       in: "Entrada",
       out: "Salida",
-      adjustment: "Ajuste",
     },
     actions: {
       cancel: "Cancelar",
       save: "Registrar",
       saving: "Registrando...",
     },
+    preview: {
+      currentStock: "Stock actual",
+      resultingStock: "Stock resultante",
+    },
     validation: {
       employeeRequired: "No hay empleado activo.",
       quantityInvalid: "La cantidad debe ser un número válido.",
       quantityPositive: "La cantidad debe ser mayor que cero.",
+      insufficientStock: "No hay stock suficiente para esta salida.",
     },
     success: "Movimiento registrado correctamente.",
     error: "No se pudo registrar el movimiento.",

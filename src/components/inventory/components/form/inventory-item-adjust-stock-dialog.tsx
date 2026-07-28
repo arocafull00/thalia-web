@@ -2,6 +2,7 @@
 
 import { Controller } from "react-hook-form";
 
+import InventoryAdjustStockPreview from "@/components/inventory/components/form/inventory-adjust-stock-preview";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useInventoryAdjustStockDialog } from "@/lib/hooks/use-inventory-adjust-stock-dialog";
+import type { InventoryItem } from "@/types/database.types";
 
 const movementTypeOptions = [
   {
@@ -23,26 +25,22 @@ const movementTypeOptions = [
     value: "out",
     label: INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.out,
   },
-  {
-    value: "adjustment",
-    label: INVENTORY_ITEM_DETAIL_COPY.adjustStock.types.adjustment,
-  },
 ];
 
 type InventoryItemAdjustStockDialogProps = {
-  itemId: string;
+  item: Pick<InventoryItem, "id" | "stock" | "unit">;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 };
 
 export default function InventoryItemAdjustStockDialog({
-  itemId,
+  item,
   open,
   onOpenChange,
   onSuccess,
 }: InventoryItemAdjustStockDialogProps) {
-  const dialog = useInventoryAdjustStockDialog(itemId, () => {
+  const dialog = useInventoryAdjustStockDialog(item, () => {
     onOpenChange(false);
     onSuccess();
   });
@@ -67,7 +65,10 @@ export default function InventoryItemAdjustStockDialog({
           </AppDialogDescription>
         </AppDialogHeader>
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-1">
-          <label className="block space-y-1.5">
+          <label
+            className="block space-y-1.5"
+            htmlFor="inventory-movement-type"
+          >
             <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
               {INVENTORY_ITEM_DETAIL_COPY.adjustStock.fields.type}
             </span>
@@ -93,11 +94,15 @@ export default function InventoryItemAdjustStockDialog({
               </p>
             ) : null}
           </label>
-          <label className="block space-y-1.5">
+          <label
+            className="block space-y-1.5"
+            htmlFor="inventory-movement-quantity"
+          >
             <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
               {INVENTORY_ITEM_DETAIL_COPY.adjustStock.fields.quantity}
             </span>
             <input
+              id="inventory-movement-quantity"
               type="number"
               min="1"
               step="1"
@@ -110,11 +115,21 @@ export default function InventoryItemAdjustStockDialog({
               </p>
             ) : null}
           </label>
-          <label className="block space-y-1.5">
+          <InventoryAdjustStockPreview
+            currentStock={dialog.currentStock}
+            resultingStock={dialog.resultingStock}
+            unit={dialog.unit}
+            movementType={dialog.movementType}
+          />
+          <label
+            className="block space-y-1.5"
+            htmlFor="inventory-movement-notes"
+          >
             <span className="text-xs font-medium uppercase tracking-wide text-ink-muted">
               {INVENTORY_ITEM_DETAIL_COPY.adjustStock.fields.notes}
             </span>
             <textarea
+              id="inventory-movement-notes"
               rows={3}
               {...dialog.register("notes")}
               className="w-full rounded-xl border border-border bg-canvas px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-primary"

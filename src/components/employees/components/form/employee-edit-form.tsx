@@ -5,6 +5,7 @@ import {
   type UseFormRegister,
 } from "react-hook-form";
 
+import EmployeeColorField from "@/components/employees/components/form/employee-color-field";
 import { EMPLOYEE_EDIT_COPY } from "@/copy/employee-edit-copy";
 import type { EmployeeEditFormValues } from "@/lib/hooks/use-employee-edit-dialog";
 import type { EmployeeRole } from "@/types/database.types";
@@ -98,6 +99,7 @@ export default function EmployeeEditForm({
           ) : null}
         </label>
       </div>
+      <EmployeeColorField control={control} />
     </div>
   );
 }

@@ -1,4 +1,18 @@
+import type { InventoryMovementType } from "@/types/database.types";
+
 export type InventoryStockLevel = "critical" | "low" | "optimal";
+
+export function applyInventoryMovementToStock(
+  currentStock: number,
+  type: InventoryMovementType,
+  quantity: number,
+): number {
+  if (type === "out") {
+    return currentStock - quantity;
+  }
+
+  return currentStock + quantity;
+}
 
 export function getInventoryStockLevel(
   stock: number,

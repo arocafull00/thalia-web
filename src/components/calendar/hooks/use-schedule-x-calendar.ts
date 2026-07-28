@@ -29,6 +29,8 @@ import { CALENDAR_END_HOUR, CALENDAR_START_HOUR } from "@/lib/calendar-grid";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
+import { useEmployees } from "@/lib/hooks/use-employees";
+import { buildEmployeeCalendars } from "@/lib/schedule-x-employee-calendars";
 import {
   appointmentsKey,
   useAppointmentsStore,
@@ -254,6 +256,36 @@ export function useScheduleXCalendar(gridHeight: number) {
     { start: rangeStart, end: rangeEnd },
     employeeId,
   );
+  const employees = useEmployees();
+
+  const employeeCalendars = useMemo(() => {
+    const byId = new Map<
+      string,
+      { id: string; full_name: string; color: string | null }
+    >();
+
+    for (const employee of employees.data ?? []) {
+      byId.set(employee.id, employee);
+    }
+
+    for (const appointment of appointments.data ?? []) {
+      if (!appointment.employees) {
+        continue;
+      }
+
+      if (byId.has(appointment.employee_id)) {
+        continue;
+      }
+
+      byId.set(appointment.employee_id, {
+        id: appointment.employee_id,
+        full_name: appointment.employees.full_name,
+        color: appointment.employees.color,
+      });
+    }
+
+    return buildEmployeeCalendars([...byId.values()]);
+  }, [appointments.data, employees.data]);
 
   const eventsService = useState(() => createEventsServicePlugin())[0];
   const calendarControls = useState(() => createCalendarControlsPlugin())[0];
@@ -315,6 +347,7 @@ export function useScheduleXCalendar(gridHeight: number) {
       end: `${String(CALENDAR_END_HOUR).padStart(2, "0")}:00`,
     },
     events: initialConfig.events,
+    calendars: {},
     backgroundEvents,
     plugins: [eventsService, calendarControls],
     skipAnimations: true,
@@ -350,6 +383,16 @@ export function useScheduleXCalendar(gridHeight: number) {
 
     eventsService.set(scheduleEvents);
   }, [calendarApp, eventsService, scheduleEvents]);
+
+  useEffect(() => {
+    if (!calendarApp) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const calendarsSignal = (calendarApp as any).$app?.config?.calendars;
+    if (!calendarsSignal) return;
+    // ScheduleX exposes calendars as an internal Preact Signal with no public setter
+    // eslint-disable-next-line react-hooks/immutability
+    calendarsSignal.value = employeeCalendars;
+  }, [calendarApp, employeeCalendars]);
 
   useEffect(() => {
     if (!calendarApp) return;

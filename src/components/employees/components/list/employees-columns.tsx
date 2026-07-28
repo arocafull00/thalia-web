@@ -13,9 +13,20 @@ export const employeesColumns: ColumnDef<Employee>[] = [
       <SortableTableHead column={column} title="Profesional" />
     ),
     cell: ({ row }) => (
-      <span className="truncate font-medium text-ink">
-        {row.getValue("full_name")}
-      </span>
+      <div className="flex items-center gap-3">
+        <span
+          className={`inline-block size-3.5 shrink-0 rounded-full border border-border ${row.original.color ? "" : "bg-border"}`}
+          style={
+            row.original.color
+              ? { backgroundColor: row.original.color }
+              : undefined
+          }
+          aria-hidden="true"
+        />
+        <span className="truncate font-medium text-ink">
+          {row.getValue("full_name")}
+        </span>
+      </div>
     ),
   },
   {

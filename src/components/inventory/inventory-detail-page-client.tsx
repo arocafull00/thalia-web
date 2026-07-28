@@ -134,7 +134,7 @@ export default function InventoryDetailPageClient({
       </div>
 
       <InventoryItemAdjustStockDialog
-        itemId={item.id}
+        item={item}
         open={adjustDialogOpen}
         onOpenChange={setAdjustDialogOpen}
         onSuccess={refetch}

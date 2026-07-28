@@ -267,6 +267,17 @@ body {
   cursor: pointer;
 }
 
+.sx-react-calendar-wrapper .sx__time-grid-event,
+.sx-react-calendar-wrapper .sx__month-grid-event,
+.sx-react-calendar-wrapper .sx__month-agenda-event {
+  border-inline-start-width: 4px;
+  border-inline-start-style: solid;
+}
+
+.sx-react-calendar-wrapper .sx__time-grid-event-inner {
+  color: var(--color-ink);
+}
+
 .sx-react-calendar-wrapper .sx__time-grid-background-event::after,
 .sx-react-calendar-wrapper .sx__month-grid-background-event::after {
   content: var(--sx-label, "");

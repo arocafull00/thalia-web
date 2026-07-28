@@ -24,6 +24,13 @@ const employeeEditFormSchema = z.object({
   }),
   specialty: nullableTrimmedString(100, "La especialidad es demasiado larga."),
   phone: nullableSpanishPhone(),
+  color: z
+    .union([
+      z.string().regex(/^#[0-9a-fA-F]{6}$/, "Color inválido"),
+      z.literal(""),
+      z.null(),
+    ])
+    .transform((value) => (value === "" ? null : value)),
 });
 
 export type EmployeeEditFormValues = z.input<typeof employeeEditFormSchema>;
@@ -34,6 +41,7 @@ function toFormValues(employee: Employee): EmployeeEditFormValues {
     role: employee.role,
     specialty: employee.specialty ?? "",
     phone: employee.phone ?? "",
+    color: employee.color,
   };
 }
 
@@ -78,6 +86,7 @@ export function useEmployeeEditDialog(
           role: parsed.data.role as EmployeeRole,
           specialty: parsed.data.specialty,
           phone: parsed.data.phone,
+          color: parsed.data.color,
         },
       },
       {

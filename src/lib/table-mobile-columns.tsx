@@ -60,7 +60,16 @@ export const employeesMobileColumns: MobileCardColumn<Employee>[] = [
     label: "Profesional",
     priority: "primary",
     render: (employee) => (
-      <span className="font-medium text-ink">{employee.full_name}</span>
+      <div className="flex items-center gap-2">
+        <span
+          className={`inline-block size-3.5 shrink-0 rounded-full border border-border ${employee.color ? "" : "bg-border"}`}
+          style={
+            employee.color ? { backgroundColor: employee.color } : undefined
+          }
+          aria-hidden="true"
+        />
+        <span className="font-medium text-ink">{employee.full_name}</span>
+      </div>
     ),
   },
   {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { CREATE_CLINIC_COPY } from "@/copy/create-clinic-copy";
 import { REGISTER_COPY } from "@/copy/register-copy";
 import { REGISTER_EMPLOYEE_FORM_COPY } from "@/copy/register-employee-copy";
 import { REGISTER_OWNER_COPY } from "@/copy/register-owner-copy";
@@ -106,9 +107,20 @@ export const ownerRegistrationSchema = z
     }
   });
 
+export const createClinicSchema = z.object({
+  clinicName: z
+    .string()
+    .trim()
+    .min(1, CREATE_CLINIC_COPY.errors.clinicNameRequired),
+  address: z.string().trim(),
+  clinicPhone: z.string().trim(),
+});
+
 export type RegisterInvitationEmailFormValues = z.input<
   typeof registerInvitationEmailSchema
 >;
+
+export type CreateClinicFormValues = z.input<typeof createClinicSchema>;
 
 export type RegisterEmployeeFormValues = z.input<typeof registerEmployeeSchema>;
 

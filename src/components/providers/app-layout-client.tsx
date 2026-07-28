@@ -8,6 +8,7 @@ import { RedirectScreen } from "@/components/loader/redirect-screen";
 import AppShell from "@/components/ui/app-shell";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { hasRegistrationProfile } from "@/lib/registration-metadata";
 import { initSounds } from "@/lib/sound";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useShellStore } from "@/stores/shell-store";
@@ -58,7 +59,8 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     }
 
     if (!clinicId && !clinicLoading) {
-      router.replace("/register");
+      const profileComplete = hasRegistrationProfile(user);
+      router.replace(profileComplete ? "/create-clinic" : "/register-employee");
     }
   }, [clinicId, clinicLoading, loading, router, user]);
 

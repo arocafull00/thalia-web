@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 
 export const EMPLOYEE_REGISTRATION_STEP_COUNT = 1;
+export const OWNER_REGISTRATION_STEP_COUNT = 3;
 
 export function hasRegistrationProfile(user: User | null): boolean {
   if (!user) {

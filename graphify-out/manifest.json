@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "app/(onboarding)/create-clinic/page.tsx": {
-    "mtime": 1783534903.192168,
-    "ast_hash": "1280f275b54288af558ef3c8d5959508",
+    "mtime": 1785261257.221116,
+    "ast_hash": "b8c9c8e76b56f6bf8d735a71e37f8c66",
     "semantic_hash": ""
   },
   "app/(onboarding)/invite-team/page.tsx": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register-employee/hooks/use-register-employee.ts": {
-    "mtime": 1785257032.4349656,
-    "ast_hash": "390a3f64626a909f096f9404ecff44f0",
+    "mtime": 1785260900.1455853,
+    "ast_hash": "6f43d5cbd1414336dc68987226d1006d",
     "semantic_hash": ""
   },
   "src/components/auth/register-employee/page.client.tsx": {
@@ -309,14 +309,9 @@
     "ast_hash": "3c6a138f598e8c7b98509c0ba9230c4d",
     "semantic_hash": ""
   },
-  "src/components/onboarding/create-clinic-page-client.tsx": {
-    "mtime": 1785260497.3531682,
-    "ast_hash": "969750502ee779c283d1c38454cfe10d",
-    "semantic_hash": ""
-  },
   "src/components/onboarding/invite-team-page-client.tsx": {
-    "mtime": 1785260497.3944302,
-    "ast_hash": "153c9c3e36ab8b1c0a87cda01bf7de39",
+    "mtime": 1785260859.23025,
+    "ast_hash": "1090791152ee5d0112f690c703e818f4",
     "semantic_hash": ""
   },
   "src/components/onboarding/onboarding-intro-pager.tsx": {
@@ -335,8 +330,8 @@
     "semantic_hash": ""
   },
   "src/components/providers/app-layout-client.tsx": {
-    "mtime": 1785260497.4523728,
-    "ast_hash": "ae4e349357fea1b754e9902c43f93181",
+    "mtime": 1785261274.921083,
+    "ast_hash": "e2d21a574102844380c3c4f3df3dd5c3",
     "semantic_hash": ""
   },
   "src/components/providers/auth-provider.tsx": {
@@ -845,8 +840,8 @@
     "semantic_hash": ""
   },
   "src/lib/navigation/resolve-post-auth-route.ts": {
-    "mtime": 1783846581.3988981,
-    "ast_hash": "f3c2a1c0217a8e3942eeb1abd5d64209",
+    "mtime": 1785261269.0081677,
+    "ast_hash": "0c8ca18f4efd8903328f06bd68b1fa73",
     "semantic_hash": ""
   },
   "src/lib/navigation/wait-for-auth-session.ts": {
@@ -875,8 +870,8 @@
     "semantic_hash": ""
   },
   "src/lib/registration-metadata.ts": {
-    "mtime": 1782923893.903926,
-    "ast_hash": "5958f08d952f7c87b4bd80095cfe0ae2",
+    "mtime": 1785261237.3780751,
+    "ast_hash": "6acf2e76c086282ff6e94f951e047968",
     "semantic_hash": ""
   },
   "src/lib/schemas/appointment-schema.ts": {
@@ -1520,8 +1515,8 @@
     "semantic_hash": ""
   },
   "src/components/auth/register/page.client.tsx": {
-    "mtime": 1784237797.4017162,
-    "ast_hash": "9230e33f4041aa36d9b645460b60621d",
+    "mtime": 1785260823.8623085,
+    "ast_hash": "1c516a753386db88d8f58575b1602cd5",
     "semantic_hash": ""
   },
   "src/components/onboarding/invite-page-client.tsx": {
@@ -1545,8 +1540,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-register-type.ts": {
-    "mtime": 1784237798.6858296,
-    "ast_hash": "d4728f5d8bf5379ae574e65d59f08ad3",
+    "mtime": 1785260900.099856,
+    "ast_hash": "f31f352315beb49b00c662c0fbd03a77",
     "semantic_hash": ""
   },
   "app/(app)/inventory/[id]/page.tsx": {
@@ -2885,8 +2880,8 @@
     "semantic_hash": ""
   },
   "src/lib/schemas/register-schema.ts": {
-    "mtime": 1784237798.6868305,
-    "ast_hash": "140434c20ce5f27304051e206e3f1418",
+    "mtime": 1785261237.7538972,
+    "ast_hash": "1b4dc856e03085813b3a474ef049bb3d",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -2940,8 +2935,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/e2e.yml": {
-    "mtime": 1785259364.7654552,
-    "ast_hash": "a94ec3c866ed6adfca881d86bc1370f4",
+    "mtime": 1785260682.4951692,
+    "ast_hash": "239d8f1f5e8d34e59502d92e1ba5c08b",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/app/(app)/appointments/[id]/page.tsx": {
@@ -6410,8 +6405,8 @@
     "semantic_hash": ""
   },
   ".github/vercel/playwright-deployment-check.json": {
-    "mtime": 1785259304.530428,
-    "ast_hash": "50cc8f2cdf028563d2a6993d21224c40",
+    "mtime": 1785260651.6533494,
+    "ast_hash": "5134d4d501c556d5029cfe73d34e9249",
     "semantic_hash": ""
   },
   "src/components/loader/boot-loading-screen.tsx": {
@@ -6467,6 +6462,61 @@
   "src/components/loader/components/loader-redirect-check-badge.tsx": {
     "mtime": 1785260496.8973012,
     "ast_hash": "ee1a97bcbc33ae18ad418d0136b11a30",
+    "semantic_hash": ""
+  },
+  "src/components/auth/register/components/owner-account-step.tsx": {
+    "mtime": 1785260735.9837992,
+    "ast_hash": "25cde19c0e709a69229e94e7eefd42e7",
+    "semantic_hash": ""
+  },
+  "src/components/auth/register/components/owner-clinic-step.tsx": {
+    "mtime": 1785260735.9843073,
+    "ast_hash": "5739a5c3d3e52dcd3f57c3380f16fc3e",
+    "semantic_hash": ""
+  },
+  "src/components/auth/register/components/owner-confirmation-step.tsx": {
+    "mtime": 1785260735.9888198,
+    "ast_hash": "ecc94da8404d18a5bed4bc011efe2348",
+    "semantic_hash": ""
+  },
+  "src/components/auth/register/components/owner-registration-progress.tsx": {
+    "mtime": 1785260735.9828022,
+    "ast_hash": "288a47c8bbee49208f8668da3af683f1",
+    "semantic_hash": ""
+  },
+  "src/components/auth/register/hooks/use-owner-registration.ts": {
+    "mtime": 1785260900.0632193,
+    "ast_hash": "84a75c9de94e2568da2c5671a33d9369",
+    "semantic_hash": ""
+  },
+  "src/components/auth/register/owner-registration-page.client.tsx": {
+    "mtime": 1785260802.955881,
+    "ast_hash": "26930d866cf6f54ba9abb25da43cdb78",
+    "semantic_hash": ""
+  },
+  "src/copy/register-owner-copy.ts": {
+    "mtime": 1785260735.960011,
+    "ast_hash": "f914061fa387465e63c2d9d4f0ecf0ec",
+    "semantic_hash": ""
+  },
+  "src/components/onboarding/create-clinic/components/create-clinic-form.tsx": {
+    "mtime": 1785261256.4945965,
+    "ast_hash": "c9e57ecf1ad2531dda283a86b8d8d64f",
+    "semantic_hash": ""
+  },
+  "src/components/onboarding/create-clinic/hooks/use-create-clinic.ts": {
+    "mtime": 1785261248.2879746,
+    "ast_hash": "d8c50829c818d2da86f940bf4965b51d",
+    "semantic_hash": ""
+  },
+  "src/components/onboarding/create-clinic/page.client.tsx": {
+    "mtime": 1785261257.1578615,
+    "ast_hash": "9c381e5dad4f74c93790f966e0e2efc1",
+    "semantic_hash": ""
+  },
+  "src/copy/create-clinic-copy.ts": {
+    "mtime": 1785261237.3178623,
+    "ast_hash": "162b92b40ac590246595f1e1584a6634",
     "semantic_hash": ""
   }
 }

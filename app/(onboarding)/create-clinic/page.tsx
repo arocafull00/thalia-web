@@ -1,5 +1,11 @@
-import { redirect } from "next/navigation";
+import LoginHeroPanel from "@/components/auth/login/components/login-hero-panel";
+import CreateClinicPageClient from "@/components/onboarding/create-clinic/page.client";
 
 export default function CreateClinicPage() {
-  redirect("/register");
+  return (
+    <div className="flex min-h-screen bg-canvas">
+      <CreateClinicPageClient />
+      <LoginHeroPanel />
+    </div>
+  );
 }

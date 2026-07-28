@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppDialog from "@/components/ui/app-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -46,6 +47,7 @@ const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
   "/employees": EMPLOYEES_COPY.page.title,
   "/finances": FINANCES_COPY.title,
   "/inventory": INVENTORY_COPY.page.title,
+  "/marketing": MARKETING_COPY.page.title,
   "/patients": PATIENTS_COPY.page.title,
   "/settings": SETTINGS_COPY.page.title,
   "/treatments": TREATMENTS_COPY.page.title,

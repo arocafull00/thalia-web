@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test("protege las rutas privadas y permite cerrar sesión", async ({ page }) => {
-  await expect(false).toBe(true);
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/dashboard$/);
 

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 
 import { REGISTER_COPY } from "@/copy/register-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { isOwnerRegistration } from "@/lib/registration-metadata";
 import {
   registerInvitationEmailSchema,
   type RegisterInvitationEmailFormValues,
@@ -15,15 +16,17 @@ import { supabase } from "@/lib/supabase";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
-type RegisterStep = "pick" | "employee-email";
+type RegisterStep = "pick" | "employee-email" | "owner";
 
 export function useRegisterType() {
   const router = useRouter();
   const { signOut, user } = useAuth();
+  const intent = useOnboardingIntentStore((state) => state.intent);
   const setIntent = useOnboardingIntentStore((state) => state.setIntent);
+  const clearIntent = useOnboardingIntentStore((state) => state.clearIntent);
   const setToken = usePendingInviteStore((state) => state.setToken);
 
-  const [step, setStep] = useState<RegisterStep>("pick");
+  const [selectedStep, setSelectedStep] = useState<RegisterStep>("pick");
   const {
     register,
     handleSubmit,
@@ -35,19 +38,28 @@ export function useRegisterType() {
     defaultValues: { email: "" },
   });
 
+  const shouldResumeOwner = intent === "owner" || isOwnerRegistration(user);
+  const step =
+    selectedStep === "pick" && shouldResumeOwner ? "owner" : selectedStep;
+
   const handlePickOwner = () => {
     setIntent("owner");
-    router.push("/register-employee");
+    setSelectedStep("owner");
   };
 
   const handlePickEmployee = () => {
-    setStep("employee-email");
+    setSelectedStep("employee-email");
   };
 
   const handleBack = () => {
     usePendingInviteStore.getState().clearToken();
-    setStep("pick");
+    setSelectedStep("pick");
     reset();
+  };
+
+  const handleOwnerExit = () => {
+    clearIntent();
+    setSelectedStep("pick");
   };
 
   const handleEmployeeEmailSubmit = handleSubmit(async ({ email }) => {
@@ -83,6 +95,7 @@ export function useRegisterType() {
 
   const handleSignOut = () => {
     usePendingInviteStore.getState().clearToken();
+    clearIntent();
     if (user) {
       void signOut();
     } else {
@@ -100,6 +113,7 @@ export function useRegisterType() {
     handlePickEmployee,
     handleBack,
     handleEmployeeEmailSubmit,
+    handleOwnerExit,
     handleSignOut,
   };
 }

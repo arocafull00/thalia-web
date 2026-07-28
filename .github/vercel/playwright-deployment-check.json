@@ -1,11 +1,11 @@
 {
-  "name": "Playwright",
+  "name": "Vercel - thalia-web: Playwright",
   "requires": "deployment-url",
   "blocks": "deployment-alias",
   "targets": ["production", "preview"],
   "source": {
     "kind": "github",
-    "externalCheckName": "Playwright",
+    "externalCheckName": "Vercel - thalia-web: Playwright",
     "provider": "github"
   }
 }

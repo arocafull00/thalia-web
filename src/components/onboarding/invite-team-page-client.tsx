@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,10 +20,7 @@ import {
   validateInviteEmails,
 } from "@/lib/invite-team-emails";
 import { navigateAfterAuth } from "@/lib/navigation/navigate-after-auth";
-import {
-  hasPendingTeamInvites,
-  OWNER_REGISTRATION_STEP_COUNT,
-} from "@/lib/registration-metadata";
+import { hasPendingTeamInvites } from "@/lib/registration-metadata";
 import { supabase } from "@/lib/supabase";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 
@@ -166,18 +162,11 @@ export default function InviteTeamPageClient() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-canvas p-8">
       <div className="w-full max-w-xl space-y-6 rounded-3xl border border-border bg-surface p-10 shadow-sm">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-medium text-ink">
-              Invita a tu equipo
-            </h1>
-            <p className="mt-1 text-sm text-ink-secondary">
-              Añade los correos de quienes trabajarán contigo.
-            </p>
-          </div>
-          <span className="text-xs uppercase tracking-wide text-ink-muted">
-            Paso 3 de {OWNER_REGISTRATION_STEP_COUNT}
-          </span>
+        <div>
+          <h1 className="text-2xl font-medium text-ink">Invita a tu equipo</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
+            Añade los correos de quienes trabajarán contigo.
+          </p>
         </div>
         <div className="space-y-3">
           {emails.map((entry, index) => (
@@ -223,12 +212,6 @@ export default function InviteTeamPageClient() {
         {error ? <Notice tone="danger" message={error} /> : null}
         {notice ? <Notice message={notice} /> : null}
         <div className="flex justify-end gap-3">
-          <Link
-            href="/create-clinic"
-            className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-wide"
-          >
-            Atrás
-          </Link>
           <Button
             type="button"
             variant="ghost"

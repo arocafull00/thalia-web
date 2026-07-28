@@ -2,6 +2,7 @@
 
 import RegisterEmployeeEmail from "@/components/auth/register/components/register-employee-email";
 import RegisterTypePicker from "@/components/auth/register/components/register-type-picker";
+import OwnerRegistrationPageClient from "@/components/auth/register/owner-registration-page.client";
 import { useRegisterType } from "@/lib/hooks/use-register-type";
 
 export default function RegisterPageClient() {
@@ -15,8 +16,13 @@ export default function RegisterPageClient() {
     handlePickEmployee,
     handleBack,
     handleEmployeeEmailSubmit,
+    handleOwnerExit,
     handleSignOut,
   } = useRegisterType();
+
+  if (step === "owner") {
+    return <OwnerRegistrationPageClient onExit={handleOwnerExit} />;
+  }
 
   return (
     <section className="flex min-h-screen flex-1 flex-col items-center justify-center bg-surface px-6 py-10">

@@ -12,11 +12,12 @@ concurrency:
 
 permissions:
   contents: read
+  statuses: write
 
 jobs:
   playwright:
     # Vercel Deployment Check contract (team lonia-s-projects / project thalia-web):
-    # externalCheckName must stay "Playwright". Renaming requires updating Deployment Checks in Vercel.
+    # status name must stay "Vercel - thalia-web: Playwright". Renaming requires updating Deployment Checks in Vercel.
     # Apply: vercel project checks add thalia-web -S lonia-s-projects --file .github/vercel/playwright-deployment-check.json
     name: Playwright
     runs-on: ubuntu-latest
@@ -29,6 +30,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: notify vercel
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: "Vercel - thalia-web: Playwright"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

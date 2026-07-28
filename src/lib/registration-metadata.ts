@@ -1,6 +1,5 @@
 import type { User } from "@supabase/supabase-js";
 
-export const OWNER_REGISTRATION_STEP_COUNT = 3;
 export const EMPLOYEE_REGISTRATION_STEP_COUNT = 1;
 
 export function hasRegistrationProfile(user: User | null): boolean {
@@ -40,5 +39,12 @@ export function buildOwnerProfileMetadata(fullName: string) {
     full_name: fullName.trim(),
     registration_profile_complete: true,
     intended_operational_role: "admin",
+  };
+}
+
+export function buildEmployeeProfileMetadata(fullName: string) {
+  return {
+    full_name: fullName.trim(),
+    registration_profile_complete: true,
   };
 }

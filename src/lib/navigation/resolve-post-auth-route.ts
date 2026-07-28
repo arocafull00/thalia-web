@@ -111,15 +111,7 @@ export function resolvePostAuthRoute(
     }
 
     if (input.onboardingIntent === "owner" || isOwnerRegistration(input.user)) {
-      if (!hasRegistrationProfile(input.user)) {
-        return { href: "/register-employee" };
-      }
-
-      if (input.onboardingIntent === "owner") {
-        return { href: "/create-clinic" };
-      }
-
-      return { href: "/no-membership" };
+      return { href: "/register" };
     }
 
     return { href: "/no-membership" };

@@ -10,9 +10,8 @@ import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import {
-  buildOwnerProfileMetadata,
+  buildEmployeeProfileMetadata,
   EMPLOYEE_REGISTRATION_STEP_COUNT,
-  OWNER_REGISTRATION_STEP_COUNT,
 } from "@/lib/registration-metadata";
 import {
   registerEmployeeSchema,
@@ -20,10 +19,7 @@ import {
 } from "@/lib/schemas/register-schema";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
-import {
-  useOnboardingIntentStore,
-  type OnboardingIntent,
-} from "@/stores/onboarding-intent-store";
+import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
 function createDefaultValues(
@@ -55,18 +51,13 @@ export function useRegisterEmployee() {
     typeof user?.user_metadata.full_name === "string"
       ? user.user_metadata.full_name
       : "";
-  const resolvedIntent: OnboardingIntent = intent ?? "owner";
-  const isOwner = resolvedIntent === "owner";
-  const employeeViaEmail =
-    resolvedIntent === "employee" && Boolean(invitationEmail);
-  const stepTotal = isOwner
-    ? OWNER_REGISTRATION_STEP_COUNT
-    : employeeViaEmail
-      ? 2
-      : EMPLOYEE_REGISTRATION_STEP_COUNT;
+  const isEmployeeRegistration =
+    intent === "employee" || Boolean(pendingToken) || Boolean(invitationEmail);
+  const employeeViaEmail = Boolean(invitationEmail);
+  const stepTotal = employeeViaEmail ? 2 : EMPLOYEE_REGISTRATION_STEP_COUNT;
   const currentStep = employeeViaEmail ? 2 : 1;
   const hasSession = Boolean(user);
-  const copy = getRegisterCopy(resolvedIntent, hasSession);
+  const copy = getRegisterCopy("employee", hasSession);
 
   const {
     register,
@@ -93,14 +84,17 @@ export function useRegisterEmployee() {
   const shouldRedirect = Boolean(
     user && ready && href && href !== "/register-employee",
   );
-  const redirectHref = shouldRedirect ? href : null;
+  const redirectHref = !isEmployeeRegistration
+    ? "/register"
+    : shouldRedirect
+      ? href
+      : null;
   const isRedirecting =
-    shouldRedirect ||
-    Boolean(user && resolvedIntent === "employee" && pendingToken);
+    shouldRedirect || Boolean(user && isEmployeeRegistration && pendingToken);
 
   const handleContinue = handleSubmit(async (data) => {
     try {
-      setIntent(resolvedIntent);
+      setIntent("employee");
 
       if (!hasSession) {
         await signUp(data.email, data.password, {
@@ -110,7 +104,7 @@ export function useRegisterEmployee() {
       }
 
       const { error: updateError } = await supabase.auth.updateUser({
-        data: buildOwnerProfileMetadata(data.fullName),
+        data: buildEmployeeProfileMetadata(data.fullName),
       });
 
       if (updateError) {
@@ -129,12 +123,7 @@ export function useRegisterEmployee() {
         }
       }
 
-      if (resolvedIntent === "owner") {
-        router.push("/create-clinic");
-        return;
-      }
-
-      if (resolvedIntent === "employee" && pendingToken) {
+      if (pendingToken) {
         router.push(`/invite/${pendingToken}`);
       }
     } catch (cause) {

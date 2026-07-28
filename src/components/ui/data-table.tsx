@@ -102,12 +102,15 @@ export function DataTable<TData, TValue>({
         </div>
       ) : null}
       <div className={mobileColumns ? "hidden md:block" : undefined}>
-        <Table>
+        <Table className="border-separate border-spacing-0">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-4 pb-3 pt-1">
+                  <TableHead
+                    key={header.id}
+                    className="border-y border-primary-light bg-primary-subtle px-4 first:rounded-l-[10px] first:border-l last:rounded-r-[10px] last:border-r"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -119,7 +122,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="[&_tr>td]:border-b [&_tr>td]:border-border-subtle [&_tr:last-child>td]:border-0">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

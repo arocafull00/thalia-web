@@ -103,11 +103,12 @@ export default function EmployeesPageClient() {
     !hasEmployees;
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-    }
-
     setDialogOpen(nextOpen);
+  };
+
+  const handleCancelInvite = () => {
+    dialog.reset();
+    setDialogOpen(false);
   };
 
   const handleOpenFiltersSheet = () => {
@@ -116,10 +117,6 @@ export default function EmployeesPageClient() {
   };
 
   const handleEditDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      setEditingEmployeeId(null);
-    }
-
     setEditDialogOpen(nextOpen);
   };
 
@@ -197,7 +194,7 @@ export default function EmployeesPageClient() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => handleDialogOpenChange(false)}
+              onClick={handleCancelInvite}
               className="rounded-button px-3 py-1.5 text-sm"
             >
               {EMPLOYEE_INVITE_COPY.actions.cancel}

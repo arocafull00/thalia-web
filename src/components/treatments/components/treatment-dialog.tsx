@@ -31,11 +31,12 @@ export default function TreatmentDialog({
   const isEdit = Boolean(treatmentId);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-    }
-
     onOpenChange(nextOpen);
+  };
+
+  const handleCancel = () => {
+    dialog.reset();
+    onOpenChange(false);
   };
 
   return (
@@ -76,7 +77,7 @@ export default function TreatmentDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={() => handleOpenChange(false)}
+            onClick={handleCancel}
             className="rounded-button px-3 py-1.5 text-sm"
           >
             {TREATMENTS_COPY.dialog.cancel}

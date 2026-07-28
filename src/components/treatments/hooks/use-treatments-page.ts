@@ -18,7 +18,6 @@ export function useTreatmentsPage() {
 
   const closeDialog = useCallback(() => {
     setDialogOpen(false);
-    setSelectedTreatmentId(null);
   }, []);
 
   return {

@@ -87,10 +87,6 @@ export default function PatientsPageClient() {
   };
 
   const handleEditDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      setEditingPatientId(null);
-    }
-
     setEditDialogOpen(nextOpen);
   };
 

@@ -94,17 +94,22 @@ export default function FinancesPageClient() {
   );
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-      setEditingTransactionId(null);
-    }
-
     setDialogOpen(nextOpen);
+  };
+
+  const handleCancel = () => {
+    dialog.reset();
+    setEditingTransactionId(null);
+    setDialogOpen(false);
   };
 
   const handleOpenCreateDialog = () => {
     setEditingTransactionId(null);
-    dialog.prepare(fabType);
+
+    if (!dialog.isDirty) {
+      dialog.prepare(fabType);
+    }
+
     setDialogOpen(true);
   };
 
@@ -204,7 +209,7 @@ export default function FinancesPageClient() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => handleDialogOpenChange(false)}
+              onClick={handleCancel}
               className="rounded-button px-3 py-1.5 text-sm"
             >
               {TRANSACTION_CREATE_COPY.actions.cancel}

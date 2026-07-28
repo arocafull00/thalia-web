@@ -64,10 +64,6 @@ export default function AppointmentsPageClient() {
     !editingAppointmentId || Boolean(editingAppointment.data);
 
   const handleDialogOpenChange = useCallback((open: boolean) => {
-    if (!open) {
-      setEditingAppointmentId(null);
-    }
-
     setDialogOpen(open);
   }, []);
 

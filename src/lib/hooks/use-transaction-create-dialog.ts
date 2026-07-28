@@ -74,7 +74,7 @@ export function useTransactionCreateDialog(
     reset,
     setError,
     clearErrors,
-    formState: { errors, isSubmitting },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: createDefaultValues(initialType, transaction),
@@ -170,6 +170,7 @@ export function useTransactionCreateDialog(
     register,
     control,
     errors,
+    isDirty,
     isEditing,
     isPending: isCreating || isUpdating || isSubmitting,
     prepare,

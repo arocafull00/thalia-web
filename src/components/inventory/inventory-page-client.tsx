@@ -73,11 +73,12 @@ export default function InventoryPageClient() {
   );
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      dialog.reset();
-    }
-
     setDialogOpen(nextOpen);
+  };
+
+  const handleCancelCreate = () => {
+    dialog.reset();
+    setDialogOpen(false);
   };
 
   const handleOpenFiltersSheet = () => {
@@ -86,10 +87,6 @@ export default function InventoryPageClient() {
   };
 
   const handleEditDialogOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      setEditingItemId(null);
-    }
-
     setEditDialogOpen(nextOpen);
   };
 
@@ -164,7 +161,7 @@ export default function InventoryPageClient() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => handleDialogOpenChange(false)}
+              onClick={handleCancelCreate}
               className="rounded-button px-3 py-1.5 text-sm"
             >
               {INVENTORY_ITEM_CREATE_COPY.actions.cancel}

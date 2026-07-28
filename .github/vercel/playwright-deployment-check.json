@@ -1,0 +1,11 @@
+{
+  "name": "Playwright",
+  "requires": "deployment-url",
+  "blocks": "deployment-alias",
+  "targets": ["production", "preview"],
+  "source": {
+    "kind": "github",
+    "externalCheckName": "Playwright",
+    "provider": "github"
+  }
+}

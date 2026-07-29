@@ -36,8 +36,11 @@ export default function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="offcanvas" className="border-border bg-canvas">
-      <SidebarHeader className="border-b border-border-subtle px-4 py-4">
+    <Sidebar
+      collapsible="offcanvas"
+      className="sidebar-grid border-border bg-canvas"
+    >
+      <SidebarHeader className="border-border-subtle px-4 py-4">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -63,7 +66,7 @@ export default function AppSidebar() {
           />
         ))}
       </SidebarContent>
-      <SidebarFooter className="border-t border-border-subtle p-0">
+      <SidebarFooter className="border-border-subtle p-0">
         <SidebarProfileFooter />
       </SidebarFooter>
     </Sidebar>

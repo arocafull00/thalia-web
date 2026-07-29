@@ -23,7 +23,7 @@ export default function PasswordInput({
   const visibilityLabel = visible ? "Ocultar contraseña" : "Mostrar contraseña";
 
   return (
-    <InputGroup className="h-10 rounded-xl border-border/60 bg-surface">
+    <InputGroup className="h-10 rounded-xl border-border-field bg-surface">
       <InputGroupAddon>
         <Lock aria-hidden="true" />
       </InputGroupAddon>

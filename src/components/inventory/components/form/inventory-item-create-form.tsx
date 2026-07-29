@@ -5,7 +5,7 @@ import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import type { InventoryFormValues } from "@/lib/hooks/use-inventory-item-create-dialog";
 
 const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type InventoryItemCreateFormProps = {
   register: UseFormRegister<InventoryFormValues>;

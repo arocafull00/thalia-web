@@ -29,7 +29,7 @@ import { MAX_FILE_SIZE_BYTES } from "@/lib/patient-file-storage";
 import PatientFileUploaderDropzoneFileItem from "./patient-file-uploader-dropzone-file-item";
 
 const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 type PatientFileUploaderFormProps = {
   register: UseFormRegister<PatientFileFormValues>;

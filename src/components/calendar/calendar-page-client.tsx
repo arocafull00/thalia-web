@@ -71,8 +71,8 @@ export default function CalendarPageClient() {
   } = useCalendarPage();
   const editingAppointment = useAppointment(editingAppointmentId ?? "");
   const { clinic } = useClinicInfo();
-  const canRenderAppointmentDialog =
-    !editingAppointmentId || Boolean(editingAppointment.data);
+  const isLoadingAppointment =
+    Boolean(editingAppointmentId) && !editingAppointment.data;
 
   const handleOpenGroupSheet = useCallback((groupId: string) => {
     const appointments = calendarWeekUiRefs.groupAppointmentsById.get(groupId);
@@ -188,26 +188,25 @@ export default function CalendarPageClient() {
           <ScheduleXCalendar />
         )}
       </div>
-      {canRenderAppointmentDialog ? (
-        <AppointmentCreateDialog
-          open={dialogOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              closeDialog();
-            }
-          }}
-          appointment={editingAppointment.data ?? null}
-          initialStartsAt={createStartsAt}
-          onViewDetail={
-            editingAppointmentId
-              ? () => {
-                  closeDialog();
-                  router.push(`/appointments/${editingAppointmentId}`);
-                }
-              : undefined
+      <AppointmentCreateDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeDialog();
           }
-        />
-      ) : null}
+        }}
+        appointment={editingAppointment.data ?? null}
+        loading={isLoadingAppointment}
+        initialStartsAt={createStartsAt}
+        onViewDetail={
+          editingAppointmentId
+            ? () => {
+                closeDialog();
+                router.push(`/appointments/${editingAppointmentId}`);
+              }
+            : undefined
+        }
+      />
       <CalendarFiltersSheet
         key={sheetKey}
         open={sheetOpen}

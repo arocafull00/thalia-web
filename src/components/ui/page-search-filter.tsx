@@ -44,7 +44,7 @@ export default function PageSearchFilter({
         onChange={(event) => handleInputChange(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full rounded-full border border-border bg-surface py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
+        className="w-full rounded-full border border-border-field bg-surface py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
       />
       {inputValue ? (
         <Button

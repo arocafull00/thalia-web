@@ -17,6 +17,9 @@ export const LOADER_COPY = {
       pending: "Después",
     },
   },
+  loading: {
+    label: "Cargando…",
+  },
   redirect: {
     eyebrow: "Un momento",
     title: "Redirigiendo",

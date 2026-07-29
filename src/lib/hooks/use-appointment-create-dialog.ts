@@ -5,6 +5,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import type { z } from "zod";
 
+import type { AppointmentPatientOption } from "@/components/appointments/components/appointment-create-form";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
 import { getAppointments } from "@/dal/appointments.dal";
 import { findAvailableSlots } from "@/lib/find-slots";
@@ -16,7 +17,7 @@ import {
 import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useEmployees } from "@/lib/hooks/use-employees";
-import { usePatient, usePatients } from "@/lib/hooks/use-patients";
+import { usePatients } from "@/lib/hooks/use-patients";
 import { useTreatments } from "@/lib/hooks/use-treatment";
 import {
   appointmentSchema,
@@ -131,9 +132,9 @@ export function useAppointmentCreateDialog(
   const rawTreatmentIds = useWatch({ control, name: "treatmentIds" });
   const treatmentIds = useMemo(() => rawTreatmentIds ?? [], [rawTreatmentIds]);
 
-  const selectedPatient = usePatient(patientId);
+  const appointmentPatient = appointment?.patients ?? null;
 
-  const patientsForPicker = useMemo(() => {
+  const patientsForPicker = useMemo<AppointmentPatientOption[]>(() => {
     const list = patients.data ?? [];
 
     if (!patientId) {
@@ -144,12 +145,13 @@ export function useAppointmentCreateDialog(
       return list;
     }
 
-    if (selectedPatient.data) {
-      return [selectedPatient.data, ...list];
+    // El paciente de la cita ya viene embebido: no hace falta pedirlo aparte.
+    if (appointmentPatient && appointmentPatient.id === patientId) {
+      return [appointmentPatient, ...list];
     }
 
     return list;
-  }, [patientId, patients.data, selectedPatient.data]);
+  }, [appointmentPatient, patientId, patients.data]);
 
   const patientsInitialLoading =
     patients.isLoading && patients.data === undefined;

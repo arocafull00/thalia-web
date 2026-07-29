@@ -71,7 +71,7 @@ export default function InvitePageClient({ token }: Props) {
             <select
               value={employeeRole}
               onChange={(e) => setEmployeeRole(e.target.value as EmployeeRole)}
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
+              className="w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2"
             >
               {EMPLOYEE_ROLE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>

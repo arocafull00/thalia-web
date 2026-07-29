@@ -11,7 +11,7 @@ import type { EmployeeFormValues } from "@/lib/hooks/use-employee-invite-dialog"
 import type { ClinicMembershipInvitationRole } from "@/types/database.types";
 
 const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 const roleOptions: ClinicMembershipInvitationRole[] = [
   "admin",

@@ -1,3 +1,4 @@
+import { LoaderInline } from "@/components/loader/components/loader-inline";
 import TreatmentForm from "@/components/treatments/components/treatment-form";
 import { useTreatmentDialog } from "@/components/treatments/hooks/use-treatment-dialog";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
@@ -55,7 +56,9 @@ export default function TreatmentDialog({
           </AppDialogDescription>
         </AppDialogHeader>
         <div className="min-h-0 flex-1 overflow-y-auto px-1">
-          {isEdit && treatmentQuery.isLoading ? null : (
+          {isEdit && treatmentQuery.isLoading ? (
+            <LoaderInline />
+          ) : (
             <TreatmentForm
               register={dialog.register}
               control={dialog.control}

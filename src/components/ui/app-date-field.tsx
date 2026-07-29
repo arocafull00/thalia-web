@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/popover";
 
 const fieldClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm text-ink outline-none ring-primary focus:ring-2";
 
 function pad(value: number) {
   return String(value).padStart(2, "0");

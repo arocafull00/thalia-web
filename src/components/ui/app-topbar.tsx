@@ -85,10 +85,7 @@ export default function AppTopbar() {
   const hasMobileActions = allMobileActions.length > 0;
 
   return (
-    <header
-      data-testid="app-topbar"
-      className="sticky top-0 z-40 border-b border-border-subtle bg-surface"
-    >
+    <header data-testid="app-topbar" className="sticky top-0 z-40 mb-6">
       <div className="flex flex-wrap items-center gap-x-2 px-6 lg:grid lg:h-12 lg:grid-cols-[1fr_auto_1fr]">
         <div className="order-1 flex h-12 min-w-0 flex-1 items-center gap-2">
           <SidebarTrigger

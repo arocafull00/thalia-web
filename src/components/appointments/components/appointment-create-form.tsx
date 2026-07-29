@@ -16,7 +16,11 @@ import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { Employee, Patient, Treatment } from "@/types/database.types";
 
 const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+
+/** El selector de paciente solo necesita id y nombre, así que acepta tanto un
+ * paciente completo como el que viene embebido en la cita. */
+export type AppointmentPatientOption = Pick<Patient, "id" | "full_name">;
 
 type AppointmentCreateFormProps = {
   register: UseFormRegister<AppointmentFormValues>;
@@ -25,7 +29,7 @@ type AppointmentCreateFormProps = {
   clinic?: ClinicInfo | null;
   treatmentIds: string[];
   onToggleTreatment: (treatmentId: string) => void;
-  patients: Patient[];
+  patients: AppointmentPatientOption[];
   patientsLoading: boolean;
   employees: Employee[];
   employeesLoading: boolean;

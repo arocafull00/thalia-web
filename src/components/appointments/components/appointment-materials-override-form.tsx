@@ -14,7 +14,7 @@ import { useInventoryItems } from "@/lib/hooks/use-inventory";
 import type { AppointmentMaterialsFormValues } from "@/lib/schemas/appointment-materials-schema";
 
 const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 function hasInsufficientStock(
   stock: number | null | undefined,

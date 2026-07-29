@@ -13,7 +13,6 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
-import { useAppointment } from "@/lib/hooks/use-appointments";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -59,9 +58,16 @@ export default function AppointmentsPageClient() {
 
   const { appointments, flatAppointments, showEmptyState } =
     useAppointmentsPage(pageFilters);
-  const editingAppointment = useAppointment(editingAppointmentId ?? "");
-  const canRenderAppointmentDialog =
-    !editingAppointmentId || Boolean(editingAppointment.data);
+
+  // La fila del listado ya trae la cita completa (APPOINTMENT_LIST_SELECT),
+  // así que el diálogo abre con el dato en mano y sin petición adicional.
+  const editingAppointment = useMemo(
+    () =>
+      flatAppointments.find(
+        (appointment) => appointment.id === editingAppointmentId,
+      ) ?? null,
+    [editingAppointmentId, flatAppointments],
+  );
 
   const handleDialogOpenChange = useCallback((open: boolean) => {
     setDialogOpen(open);
@@ -142,21 +148,19 @@ export default function AppointmentsPageClient() {
           ) : null}
         </div>
       </div>
-      {canRenderAppointmentDialog ? (
-        <AppointmentCreateDialog
-          open={dialogOpen}
-          onOpenChange={handleDialogOpenChange}
-          appointment={editingAppointment.data ?? null}
-          onViewDetail={
-            editingAppointmentId
-              ? () => {
-                  handleDialogOpenChange(false);
-                  router.push(`/appointments/${editingAppointmentId}`);
-                }
-              : undefined
-          }
-        />
-      ) : null}
+      <AppointmentCreateDialog
+        open={dialogOpen}
+        onOpenChange={handleDialogOpenChange}
+        appointment={editingAppointment}
+        onViewDetail={
+          editingAppointmentId
+            ? () => {
+                handleDialogOpenChange(false);
+                router.push(`/appointments/${editingAppointmentId}`);
+              }
+            : undefined
+        }
+      />
       <AppointmentFiltersSheet
         key={sheetKey}
         open={sheetOpen}

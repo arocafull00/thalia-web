@@ -29,7 +29,7 @@ import PatientImageTreatmentSelect from "./patient-image-treatment-select";
 import PatientImageUploaderDropzoneFileItem from "./patient-image-uploader-dropzone-file-item";
 
 const inputClassName =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+  "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
 const phaseOptions = [
   { label: PATIENT_GALLERY_COPY.phases.antes, value: "antes" },

@@ -55,7 +55,7 @@ export default function AppSearchableMultiSelect({
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder={searchPlaceholder}
-        className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none ring-primary focus:ring-2"
+        className="w-full rounded-xl border border-border-field bg-surface px-3 py-2 text-sm outline-none ring-primary focus:ring-2"
       />
       <div className="h-32 space-y-1 overflow-y-auto rounded-xl border border-border-subtle p-2">
         {filteredOptions.length === 0 ? (

@@ -88,7 +88,7 @@ export default function AppSearchBarInput({
         }}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full rounded-full border border-border bg-canvas py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
+        className="w-full rounded-full border border-border-field bg-canvas py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
       />
       {inputValue ? (
         <Button

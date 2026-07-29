@@ -49,10 +49,10 @@ type AppSearchableComboboxProps = {
 };
 
 const inputTriggerClassName =
-  "flex w-full items-center justify-between gap-2 rounded-input border border-border/60 bg-surface px-3 py-2 text-sm outline-none focus-visible:border-primary disabled:opacity-[var(--disabled-opacity)] [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
+  "flex w-full items-center justify-between gap-2 rounded-input border border-border-field bg-surface px-3 py-2 text-sm outline-none focus-visible:border-primary disabled:opacity-[var(--disabled-opacity)] [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
 
 const pillTriggerClassName =
-  "inline-flex w-full items-center justify-between gap-2 rounded-full border border-border/60 bg-surface px-3 py-1.5 text-sm text-ink-secondary disabled:opacity-[var(--disabled-opacity)] [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
+  "inline-flex w-full items-center justify-between gap-2 rounded-full border border-border-field bg-surface px-3 py-1.5 text-sm text-ink-secondary disabled:opacity-[var(--disabled-opacity)] [&_[data-slot=combobox-trigger-icon]]:text-ink-muted";
 
 const popupClassName =
   "pointer-events-auto z-100 min-w-64 rounded-[14px] border border-border/60 bg-surface p-2 shadow-float ring-0";
@@ -204,7 +204,7 @@ export default function AppSearchableCombobox({
             <ComboboxInput
               showTrigger={false}
               placeholder={searchPlaceholder}
-              className="mb-2 w-full rounded-input border border-border/60 bg-surface shadow-none focus-within:border-primary"
+              className="mb-2 w-full rounded-input border border-border-field bg-surface shadow-none focus-within:border-primary"
             />
           ) : null}
           {allowClear && clearLabel ? (

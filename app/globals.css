@@ -19,7 +19,6 @@
   --border-strong: #D8DEE3;
   --border-subtle: #F0F3F5;
   --border-highlight: #f6f7f8;
-  /* Borde de los campos de formulario (inputs, textareas, selectores). */
   --border-field: var(--border-strong);
   --on-primary: #FFFFFF;
   --success: #E8F5EF;

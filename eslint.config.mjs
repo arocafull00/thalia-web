@@ -75,6 +75,14 @@ const eslintConfig = defineConfig([
       "react/no-multi-comp": "off",
     },
   },
+  {
+    // Edge functions (Deno): console.log es su mecanismo de logging, lo captura
+    // Supabase. La regla no-console apunta a código de navegador.
+    files: ["supabase/functions/**/*.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",
@@ -84,6 +92,12 @@ const eslintConfig = defineConfig([
     ".vercel/**",
     "certificates/**",
     ".agents/**",
+    // Artefactos generados: bundles minificados que disparaban cientos de
+    // errores falsos y dejaban `pnpm lint` inservible tras correr los E2E o
+    // `supabase functions serve`.
+    "playwright-report/**",
+    "test-results/**",
+    "supabase/.temp/**",
   ]),
 ]);
 

@@ -17,15 +17,18 @@ test("navega a la semana siguiente y vuelve", async ({ page }) => {
   });
 
   const rangeLabel = page.getByTestId("calendar-range-label");
-  const initialLabel = await rangeLabel.textContent();
+  // El elemento existe antes de tener texto: sin esperar a que se rellene,
+  // initialLabel se guardaba como "" y la comparación final nunca cuadraba.
+  await expect(rangeLabel).not.toBeEmpty();
+  const initialLabel = (await rangeLabel.textContent())?.trim() ?? "";
 
+  // toHaveText reintenta; textContent() lee una sola vez y puede adelantarse
+  // al repintado tras el clic.
   await page.getByRole("button", { name: "Período siguiente" }).click();
-  const nextLabel = await rangeLabel.textContent();
-  expect(nextLabel).not.toBe(initialLabel);
+  await expect(rangeLabel).not.toHaveText(initialLabel);
 
   await page.getByRole("button", { name: "Período anterior" }).click();
-  const backLabel = await rangeLabel.textContent();
-  expect(backLabel).toBe(initialLabel);
+  await expect(rangeLabel).toHaveText(initialLabel);
 });
 
 test("botón Hoy vuelve a la semana actual", async ({ page }) => {
@@ -35,16 +38,17 @@ test("botón Hoy vuelve a la semana actual", async ({ page }) => {
   });
 
   const rangeLabel = page.getByTestId("calendar-range-label");
-  const currentLabel = await rangeLabel.textContent();
+  await expect(rangeLabel).not.toBeEmpty();
+  const currentLabel = (await rangeLabel.textContent())?.trim() ?? "";
 
   // Navigate forward two weeks
   await page.getByRole("button", { name: "Período siguiente" }).click();
   await page.getByRole("button", { name: "Período siguiente" }).click();
-  expect(await rangeLabel.textContent()).not.toBe(currentLabel);
+  await expect(rangeLabel).not.toHaveText(currentLabel);
 
   // Return to today
   await page.getByRole("button", { name: "Hoy" }).click();
-  expect(await rangeLabel.textContent()).toBe(currentLabel);
+  await expect(rangeLabel).toHaveText(currentLabel);
 });
 
 test("abre el dialog de nueva cita desde el topbar", async ({ page }) => {

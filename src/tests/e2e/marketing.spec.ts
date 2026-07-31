@@ -4,9 +4,11 @@ import { E2E_TINY_PNG } from "./e2e-constants";
 import { clickTopbarTrigger } from "./e2e-helpers";
 
 /**
- * El runner de E2E levanta Supabase pero no `supabase functions serve`, así que
- * el envío real solo se puede probar si alguien las está sirviendo aparte. El
- * test se salta en vez de fallar cuando no están.
+ * Comprueba que el edge runtime de Supabase responde antes de probar el envío,
+ * y de paso lo calienta: la primera invocación descarga supabase-js desde
+ * esm.sh, así que hacerlo aquí evita que ese coste caiga dentro del test.
+ *
+ * Si no responde, el test se salta en lugar de fallar.
  */
 async function edgeFunctionsAvailable(): Promise<boolean> {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,10 +22,22 @@ async function edgeFunctionsAvailable(): Promise<boolean> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
-      signal: AbortSignal.timeout(3000),
+      // Margen amplio a propósito: en frío la función tarda en arrancar, y con
+      // un timeout corto la sonda fallaría y el test se saltaría en silencio,
+      // que es peor que tardar unos segundos de más.
+      signal: AbortSignal.timeout(60_000),
     });
-    // Sin campaignId responde 400: basta con que conteste.
-    return response.status > 0;
+
+    // No vale con que conteste algo: cuando Supabase corre pero nadie sirve las
+    // functions, Kong responde igualmente (404/503) y el test se ejecutaría
+    // para acabar fallando. La firma de que la función está viva es su propio
+    // 400 por falta de campaignId.
+    if (response.status !== 400) {
+      return false;
+    }
+
+    const payload = await response.json().catch(() => null);
+    return typeof payload?.error === "string";
   } catch {
     return false;
   }
@@ -189,8 +203,13 @@ test("abre el detalle de una campaña y confirma a cuántos se enviará", async 
 test("envía la campaña y la marca como enviada", async ({ page }) => {
   test.skip(
     !(await edgeFunctionsAvailable()),
-    "Requiere `supabase functions serve` en marcha.",
+    "Requiere el edge runtime de Supabase en marcha.",
   );
+
+  // La edge function importa supabase-js desde esm.sh en tiempo de ejecución.
+  // En un runner limpio, la primera invocación descarga ese módulo por red y el
+  // arranque en frío se come los 30 s por defecto del test.
+  test.slow();
 
   const suffix = Date.now();
   const title = `E2E Envio ${suffix}`;

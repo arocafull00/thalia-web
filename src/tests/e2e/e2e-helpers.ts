@@ -56,11 +56,20 @@ export async function selectComboboxOption(
 export async function clickTopbarMenuAction(page: Page, label: string) {
   const topbar = page.getByTestId("app-topbar");
   const directBtn = topbar.getByRole("button", { name: label, exact: true });
+  const moreBtn = topbar.getByRole("button", { name: "Más acciones" });
+
+  // Las acciones del topbar se registran en un efecto tras montar la página, así
+  // que al llegar aquí puede no haber todavía ningún botón. Un `isVisible()` de
+  // un solo intento devuelve false, el helper cae al menú "Más acciones" y se
+  // queda esperando por uno que en esta página no existe.
+  await expect(directBtn.or(moreBtn).first()).toBeVisible({ timeout: 15_000 });
+
   if (await directBtn.isVisible()) {
     await directBtn.click();
     return;
   }
-  await topbar.getByRole("button", { name: "Más acciones" }).click();
+
+  await moreBtn.click();
   await page.getByRole("menuitem", { name: label, exact: true }).click();
 }
 

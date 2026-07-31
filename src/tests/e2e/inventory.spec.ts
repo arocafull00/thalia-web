@@ -37,7 +37,12 @@ test("registra un movimiento de entrada en el detalle", async ({ page }) => {
   const notes = `Entrada registrada por Playwright ${Date.now()}.`;
 
   await page.goto(`/inventory/${E2E_DATA.inventoryItemId}`);
-  await expect(page.getByTestId("inventory-detail-page")).toBeVisible();
+  // La ruta de detalle es un server component que resuelve el material y sus
+  // movimientos antes de renderizar; los 5 s por defecto se quedan cortos en
+  // un runner frío.
+  await expect(page.getByTestId("inventory-detail-page")).toBeVisible({
+    timeout: 15_000,
+  });
   await clickTopbarTrigger(page, "inventory-movement-create-trigger");
 
   const dialog = page.getByRole("dialog", { name: "Ajustar stock" });
@@ -65,7 +70,12 @@ test("edita un material del inventario", async ({ page }) => {
   const newMinStock = String((Date.now() % 90) + 5);
 
   await page.goto(`/inventory/${E2E_DATA.inventoryItemId}`);
-  await expect(page.getByTestId("inventory-detail-page")).toBeVisible();
+  // La ruta de detalle es un server component que resuelve el material y sus
+  // movimientos antes de renderizar; los 5 s por defecto se quedan cortos en
+  // un runner frío.
+  await expect(page.getByTestId("inventory-detail-page")).toBeVisible({
+    timeout: 15_000,
+  });
 
   await clickTopbarMenuAction(page, "Editar material");
 

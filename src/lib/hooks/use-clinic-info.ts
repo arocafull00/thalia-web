@@ -20,20 +20,39 @@ export type ClinicInfo = Pick<
   | "timezone"
 >;
 
-export function useClinicInfo() {
+export function useClinicInfo(initialClinic?: ClinicInfo | null) {
   const activeClinicId = useClinicStore((s) => s.activeClinicId);
-  const [clinic, setClinic] = useState<ClinicInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [clinic, setClinic] = useState<ClinicInfo | null>(
+    initialClinic ?? null,
+  );
+  const [loading, setLoading] = useState(!initialClinic);
   const [version, setVersion] = useState(0);
+  const initialClinicMatches = initialClinic?.id === activeClinicId;
+  const resolvedClinic =
+    clinic?.id === activeClinicId
+      ? clinic
+      : initialClinicMatches
+        ? initialClinic
+        : null;
 
   useEffect(() => {
-    if (!activeClinicId) return;
+    if (!activeClinicId) {
+      return;
+    }
+
+    if (initialClinicMatches && version === 0) {
+      return;
+    }
 
     void getClinicById(activeClinicId).then((data) => {
       setClinic(data);
       setLoading(false);
     });
-  }, [activeClinicId, version]);
+  }, [activeClinicId, initialClinicMatches, version]);
 
-  return { clinic, loading, refetch: () => setVersion((v) => v + 1) };
+  return {
+    clinic: resolvedClinic,
+    loading: Boolean(activeClinicId && !resolvedClinic) || loading,
+    refetch: () => setVersion((v) => v + 1),
+  };
 }

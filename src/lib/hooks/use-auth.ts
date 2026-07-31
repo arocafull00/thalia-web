@@ -1,13 +1,15 @@
 import { useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
 
+import { useServerBootstrap } from "@/components/providers/store-hydrator";
 import { useAuthStore, type UpdateProfileInput } from "@/stores/auth-store";
 
 export function useAuth() {
-  return useAuthStore(
+  const bootstrap = useServerBootstrap();
+  const auth = useAuthStore(
     useShallow((state) => ({
       session: state.session,
-      user: state.session?.user ?? null,
+      initialized: state.initialized,
       profile: state.profile,
       loading: state.loading,
       signIn: state.signIn,
@@ -17,6 +19,20 @@ export function useAuth() {
       refreshProfile: state.refreshProfile,
     })),
   );
+
+  const sessionUser = auth.session?.user ?? null;
+  const canUseBootstrap = Boolean(
+    bootstrap?.user &&
+    (!auth.initialized || sessionUser?.id === bootstrap.user.id),
+  );
+
+  return {
+    ...auth,
+    user: sessionUser ?? (canUseBootstrap ? (bootstrap?.user ?? null) : null),
+    profile:
+      auth.profile ?? (canUseBootstrap ? (bootstrap?.profile ?? null) : null),
+    loading: auth.loading && !canUseBootstrap,
+  };
 }
 
 export function useUpdateProfile() {

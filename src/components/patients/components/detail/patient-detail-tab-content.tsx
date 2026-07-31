@@ -28,14 +28,7 @@ export default function PatientDetailTabContent({
   onOpenFilesUploader,
 }: PatientDetailTabContentProps) {
   if (activeTab === "summary") {
-    return (
-      <PatientSummaryTab
-        patient={patient}
-        appointments={appointments}
-        isLoading={isLoading}
-        error={error}
-      />
-    );
+    return <PatientSummaryTab patient={patient} appointments={appointments} />;
   }
 
   if (activeTab === "clinical-history") {

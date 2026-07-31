@@ -2,14 +2,18 @@ import { useMemo } from "react";
 
 import { useFilterPills } from "@/lib/hooks/use-filter-pills";
 import { useTreatments } from "@/lib/hooks/use-treatment";
+import type { TreatmentWithInventory } from "@/types/database.types";
 
 type TreatmentCatalogFilters = {
   category: string;
   search: string;
 };
 
-export function useTreatmentCatalog(filters: TreatmentCatalogFilters) {
-  const treatments = useTreatments();
+export function useTreatmentCatalog(
+  filters: TreatmentCatalogFilters,
+  initialTreatments?: TreatmentWithInventory[],
+) {
+  const treatments = useTreatments(initialTreatments);
   const items = useMemo(() => treatments.data ?? [], [treatments.data]);
   const categories = useFilterPills(items);
 

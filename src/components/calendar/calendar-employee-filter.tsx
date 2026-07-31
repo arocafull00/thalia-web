@@ -7,11 +7,18 @@ import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { useCalendarStore } from "@/stores/calendar-store";
+import type { Employee } from "@/types/database.types";
 
-export default function CalendarEmployeeFilter() {
+type CalendarEmployeeFilterProps = {
+  initialEmployees?: Employee[];
+};
+
+export default function CalendarEmployeeFilter({
+  initialEmployees,
+}: CalendarEmployeeFilterProps) {
   const employeeId = useCalendarStore((state) => state.employeeId);
   const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
-  const employees = useEmployees();
+  const employees = useEmployees(initialEmployees);
 
   const activeEmployees = useMemo(
     () =>

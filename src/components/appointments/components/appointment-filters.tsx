@@ -11,10 +11,12 @@ import AppointmentEmployeeFilter from "@/components/appointments/components/appo
 import AppointmentStatusFilter from "@/components/appointments/components/appointment-status-filter";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import type { Employee } from "@/types/database.types";
 
 type AppointmentFiltersProps = {
   employeeId: string;
   from: string;
+  initialEmployees?: Employee[];
   search: string;
   status: string;
   to: string;
@@ -29,6 +31,7 @@ type AppointmentFiltersProps = {
 export default function AppointmentFilters({
   employeeId,
   from,
+  initialEmployees,
   search,
   status,
   to,
@@ -54,6 +57,7 @@ export default function AppointmentFilters({
       <div className="w-40 min-w-0 shrink-0">
         <AppointmentEmployeeFilter
           employeeId={employeeId}
+          initialEmployees={initialEmployees}
           onEmployeeIdChange={onEmployeeIdChange}
         />
       </div>

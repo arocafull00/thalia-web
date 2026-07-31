@@ -2,9 +2,14 @@ import { useCallback, useState } from "react";
 
 import { useTreatment } from "@/lib/hooks/use-treatment";
 import { useTreatmentStore } from "@/stores/treatment-store";
+import type { TreatmentWithInventory } from "@/types/database.types";
 
-export function useTreatmentDetail(treatmentId: string) {
-  const { data: treatment, isLoading, error } = useTreatment(treatmentId);
+export function useTreatmentDetail(
+  treatmentOrId: TreatmentWithInventory | string,
+) {
+  const treatmentId =
+    typeof treatmentOrId === "string" ? treatmentOrId : treatmentOrId.id;
+  const { data: treatment, isLoading, error } = useTreatment(treatmentOrId);
   const fetchTreatment = useTreatmentStore((state) => state.fetchTreatment);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

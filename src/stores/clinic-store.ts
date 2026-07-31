@@ -2,20 +2,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { getMemberships } from "@/dal/clinics.dal";
+import { writeActiveClinicCookie } from "@/lib/active-clinic-cookie";
 import { createWebPersistStorage } from "@/lib/web-storage";
+import type { ClinicMembershipView } from "@/types/clinic-membership";
 import type {
   ClinicMembershipRole,
   ClinicMembershipStatus,
 } from "@/types/database.types";
-
-export type ClinicMembershipView = {
-  id: string;
-  clinicId: string;
-  clinicName: string;
-  clinicLogoUrl: string | null;
-  role: ClinicMembershipRole;
-  status: ClinicMembershipStatus;
-};
 
 type ClinicStore = {
   memberships: ClinicMembershipView[];
@@ -70,6 +63,7 @@ export const useClinicStore = create<ClinicStore>()(
               : (memberships[0]?.clinicId ?? null);
 
           set({ memberships, activeClinicId: validActive, loading: false });
+          writeActiveClinicCookie(validActive);
           return memberships;
         } catch {
           set({ loading: false });
@@ -79,10 +73,12 @@ export const useClinicStore = create<ClinicStore>()(
 
       setActiveClinic: (clinicId) => {
         set({ activeClinicId: clinicId });
+        writeActiveClinicCookie(clinicId);
       },
 
       clearClinicState: () => {
         set({ memberships: [], activeClinicId: null, loading: false });
+        writeActiveClinicCookie(null);
       },
 
       getActiveMembership: () => {

@@ -23,6 +23,7 @@ export type UpdateProfileInput = {
 
 type AuthStore = {
   session: Session | null;
+  initialized: boolean;
   profile: Employee | null;
   loading: boolean;
   updating: boolean;
@@ -46,6 +47,7 @@ type AuthStore = {
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   session: null,
+  initialized: false,
   profile: null,
   loading: true,
   updating: false,
@@ -53,7 +55,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   uploadingAvatar: false,
   uploadAvatarError: null,
 
-  setSession: (session) => set({ session }),
+  setSession: (session) => set({ session, initialized: true }),
 
   setLoading: (loading) => set({ loading }),
 
@@ -181,7 +183,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
 
     useClinicStore.getState().clearClinicState();
-    set({ session: null, profile: null, loading: false });
+    set({ session: null, initialized: true, profile: null, loading: false });
     captureEvent("logout");
   },
 }));

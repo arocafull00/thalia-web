@@ -26,10 +26,11 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAppointment } from "@/lib/hooks/use-appointments";
-import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
+import { useClinicInfo, type ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
+import type { Employee } from "@/types/database.types";
 
 const CALENDAR_FILTER_DEFAULTS = {
   employeeId: null,
@@ -43,7 +44,15 @@ const CLOSED_GROUP_SHEET: CalendarOverlapGroupSheetState = {
   appointments: [],
 };
 
-export default function CalendarPageClient() {
+type CalendarPageClientProps = {
+  initialClinic?: ClinicInfo | null;
+  initialEmployees?: Employee[];
+};
+
+export default function CalendarPageClient({
+  initialClinic = null,
+  initialEmployees,
+}: CalendarPageClientProps) {
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
@@ -70,7 +79,7 @@ export default function CalendarPageClient() {
     onChangeViewMode,
   } = useCalendarPage();
   const editingAppointment = useAppointment(editingAppointmentId ?? "");
-  const { clinic } = useClinicInfo();
+  const { clinic } = useClinicInfo(initialClinic);
   const isLoadingAppointment =
     Boolean(editingAppointmentId) && !editingAppointment.data;
 
@@ -171,7 +180,7 @@ export default function CalendarPageClient() {
       <CalendarToolbar
         rangeLabel={rangeLabel}
         viewMode={viewMode}
-        filter={<CalendarEmployeeFilter />}
+        filter={<CalendarEmployeeFilter initialEmployees={initialEmployees} />}
         statusBadge={<ClinicStatusBadge clinic={clinic} />}
         onPrevious={onPrevious}
         onNext={onNext}

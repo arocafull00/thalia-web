@@ -1,4 +1,4 @@
-import { APPOINTMENT_LIST_SELECT } from "@/dal/appointments.dal";
+import { APPOINTMENT_LIST_SELECT } from "@/dal/selects";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabaseList } from "@/lib/supabase-query";
 import type { AppointmentWithRelations } from "@/types/database.types";

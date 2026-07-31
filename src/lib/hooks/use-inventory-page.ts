@@ -7,6 +7,7 @@ import {
   inventoryStockSummaryCounts,
   type InventoryStockLevel,
 } from "@/lib/inventory-stock";
+import type { InventoryItem } from "@/types/database.types";
 
 type InventoryPageFilters = {
   category: string;
@@ -26,8 +27,11 @@ function resolveStockLevel(stockParam: string): InventoryStockLevel | "" {
   return "";
 }
 
-export function useInventoryPage(filters: InventoryPageFilters) {
-  const inventory = useInventoryItems();
+export function useInventoryPage(
+  filters: InventoryPageFilters,
+  initialItems?: InventoryItem[],
+) {
+  const inventory = useInventoryItems(initialItems);
   const items = useMemo(() => inventory.data ?? [], [inventory.data]);
   const summary = useMemo(() => inventoryStockSummaryCounts(items), [items]);
   const categories = useFilterPills(items);

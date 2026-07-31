@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 
 import type { FinancesTabValue } from "@/components/finances/finances-tab-bar";
+import { parseFinancesMonthParam } from "@/lib/finances-summary";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFinancialSummary, useTransactions } from "@/lib/hooks/use-finances";
-import { useFinancesUiStore } from "@/stores/finances-ui-store";
-import type { TransactionType } from "@/types/database.types";
+import { useServerSeed } from "@/lib/hooks/use-server-seed";
+import type { FinancialSummary } from "@/stores/finances-store";
+import { summaryKey, transactionsKey } from "@/stores/finances-store";
+import type { Transaction, TransactionType } from "@/types/database.types";
 
 const PAGE_SIZE = 20;
 
@@ -19,15 +22,46 @@ function transactionTypeForTab(tab: FinancesTabValue): TransactionType | "all" {
 type FinancesPageFilters = {
   category: string;
   search: string;
+  month: string;
+  tab: FinancesTabValue;
 };
 
-export function useFinancesPage(filters: FinancesPageFilters) {
+type FinancesPageSeed = {
+  initialTransactions?: Transaction[];
+  initialTransactionsKey?: string;
+  initialSummary?: FinancialSummary;
+  initialSummaryKey?: string;
+};
+
+export function useFinancesPage(
+  filters: FinancesPageFilters,
+  seed?: FinancesPageSeed,
+) {
   const { profile } = useAuth();
-  const month = useFinancesUiStore((state) => state.month);
-  const tab = useFinancesUiStore((state) => state.tab);
+  const month = useMemo(
+    () => parseFinancesMonthParam(filters.month),
+    [filters.month],
+  );
+  const tab = filters.tab;
   const transactionType = transactionTypeForTab(tab);
-  const transactions = useTransactions(month, transactionType);
-  const summary = useFinancialSummary(month);
+  const transactionsKeyValue = transactionsKey(month, transactionType);
+  const summaryKeyValue = summaryKey(month);
+  const seededTransactions = useServerSeed(
+    transactionsKeyValue,
+    seed?.initialTransactionsKey ?? "",
+    seed?.initialTransactions,
+  );
+  const seededSummary = useServerSeed(
+    summaryKeyValue,
+    seed?.initialSummaryKey ?? "",
+    seed?.initialSummary,
+  );
+  const transactions = useTransactions(
+    month,
+    transactionType,
+    seededTransactions,
+  );
+  const summary = useFinancialSummary(month, seededSummary);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filteredTransactions = useMemo(() => {

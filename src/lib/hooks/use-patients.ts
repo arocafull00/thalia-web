@@ -2,65 +2,104 @@ import { useCallback, useEffect } from "react";
 
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
+  useClinicServerSeed,
+  useServerSeed,
+} from "@/lib/hooks/use-server-seed";
+import {
   patientsListKey,
   usePatientsStore,
   type PatientFormInput,
 } from "@/stores/patients-store";
 import { isInitialLoading } from "@/stores/query-state";
+import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
 export type { PatientFormInput };
 
-export function usePatients(search: string) {
+export function usePatients(search: string, initialData?: Patient[]) {
   const key = patientsListKey(search);
   const entry = usePatientsStore((state) => state.listBySearch[key]);
   const fetchPatients = usePatientsStore((state) => state.fetchPatients);
   const clinicId = useClinicId();
+  const seededData = useClinicServerSeed(clinicId, initialData);
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchPatients(search);
-  }, [clinicId, fetchPatients, search]);
+  }, [clinicId, fetchPatients, hasClientData, search, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data ?? undefined,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
-export function usePatient(patientId: string) {
+export function usePatient(patientOrId: Patient | string) {
+  const patientId =
+    typeof patientOrId === "string" ? patientOrId : patientOrId.id;
+  const initialData = typeof patientOrId === "string" ? undefined : patientOrId;
   const entry = usePatientsStore((state) => state.byId[patientId]);
   const fetchPatient = usePatientsStore((state) => state.fetchPatient);
+  const seededData = useServerSeed(
+    patientId,
+    initialData?.id ?? "",
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (!patientId.trim()) {
+    if (!patientId.trim() || (seededData !== undefined && !hasClientData)) {
       return;
     }
 
     void fetchPatient(patientId);
-  }, [fetchPatient, patientId]);
+  }, [fetchPatient, hasClientData, patientId, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
-export function usePatientAppointments(patientId: string) {
+export function usePatientAppointments(
+  patientId: string,
+  initialData?: AppointmentWithRelations[],
+) {
   const entry = usePatientsStore(
     (state) => state.appointmentsByPatientId[patientId],
   );
   const fetchPatientAppointments = usePatientsStore(
     (state) => state.fetchPatientAppointments,
   );
+  const seededData = useServerSeed(
+    patientId,
+    initialData === undefined ? "" : patientId,
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchPatientAppointments(patientId);
-  }, [fetchPatientAppointments, patientId]);
+  }, [fetchPatientAppointments, hasClientData, patientId, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data ?? undefined,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }

@@ -24,6 +24,17 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         return;
       }
 
+      const authState = useAuthStore.getState();
+      const clinicState = useClinicStore.getState();
+
+      if (
+        authState.profile?.id === data.session.user.id &&
+        clinicState.memberships.length > 0
+      ) {
+        setLoading(false);
+        return;
+      }
+
       await useClinicStore.getState().fetchMemberships(data.session.user.id);
       await refreshProfile();
       setLoading(false);

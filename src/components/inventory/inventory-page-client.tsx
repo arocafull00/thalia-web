@@ -28,10 +28,17 @@ import { useInventoryItemCreateDialog } from "@/lib/hooks/use-inventory-item-cre
 import { useInventoryPage } from "@/lib/hooks/use-inventory-page";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import type { InventoryItem } from "@/types/database.types";
 
 const INVENTORY_FILTER_DEFAULTS = { category: "", q: "", stock: "" };
 
-export default function InventoryPageClient() {
+type InventoryPageClientProps = {
+  initialItems: InventoryItem[];
+};
+
+export default function InventoryPageClient({
+  initialItems,
+}: InventoryPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -56,8 +63,10 @@ export default function InventoryPageClient() {
     [filters.category, filters.stock, searchQuery],
   );
 
-  const { categories, filteredItems, inventory, summary } =
-    useInventoryPage(pageFilters);
+  const { categories, filteredItems, inventory, summary } = useInventoryPage(
+    pageFilters,
+    initialItems,
+  );
 
   const editingItem = useMemo(
     () => filteredItems.find((item) => item.id === editingItemId),

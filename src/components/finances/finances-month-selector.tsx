@@ -1,23 +1,28 @@
 "use client";
 
-import { addMonths, format } from "date-fns";
+import { addMonths, format, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useFinancesUiStore } from "@/stores/finances-ui-store";
+import { formatFinancesMonthParam } from "@/lib/finances-summary";
 
-export default function FinancesMonthSelector() {
-  const month = useFinancesUiStore((state) => state.month);
-  const setMonth = useFinancesUiStore((state) => state.setMonth);
+type FinancesMonthSelectorProps = {
+  month: Date;
+  onMonthChange: (month: Date) => void;
+};
 
+export default function FinancesMonthSelector({
+  month,
+  onMonthChange,
+}: FinancesMonthSelectorProps) {
   const monthLabel = format(month, "MMMM yyyy", { locale: es }).replace(
     /^\w/,
     (c) => c.toUpperCase(),
   );
 
-  const handlePrev = () => setMonth(addMonths(month, -1));
-  const handleNext = () => setMonth(addMonths(month, 1));
+  const handlePrev = () => onMonthChange(addMonths(month, -1));
+  const handleNext = () => onMonthChange(addMonths(month, 1));
 
   return (
     <div className="flex items-center gap-1">
@@ -44,4 +49,16 @@ export default function FinancesMonthSelector() {
       </Button>
     </div>
   );
+}
+
+export function parseFinancesMonthValue(value: string) {
+  if (!value) {
+    return new Date();
+  }
+
+  return parse(`${value}-01`, "yyyy-MM-dd", new Date());
+}
+
+export function financesMonthToParam(month: Date) {
+  return formatFinancesMonthParam(month);
 }

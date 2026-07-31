@@ -5,8 +5,8 @@ import {
   hasRegistrationProfile,
   isOwnerRegistration,
 } from "@/lib/registration-metadata";
-import type { ClinicMembershipView } from "@/stores/clinic-store";
 import type { OnboardingIntent } from "@/stores/onboarding-intent-store";
+import type { ClinicMembershipView } from "@/types/clinic-membership";
 
 export type PostAuthRouteInput = {
   pendingInviteToken: string | null;

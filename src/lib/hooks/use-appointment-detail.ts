@@ -6,10 +6,19 @@ import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useAppointment } from "@/lib/hooks/use-appointments";
 import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
-import type { AppointmentStatus } from "@/types/database.types";
+import type {
+  AppointmentStatus,
+  AppointmentWithRelations,
+} from "@/types/database.types";
 
-export function useAppointmentDetail(appointmentId: string) {
-  const { data: appointment, isLoading, error } = useAppointment(appointmentId);
+export function useAppointmentDetail(
+  appointmentOrId: AppointmentWithRelations | string,
+) {
+  const {
+    data: appointment,
+    isLoading,
+    error,
+  } = useAppointment(appointmentOrId);
   const updatingStatus = useAppointmentsStore((state) => state.updatingStatus);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);

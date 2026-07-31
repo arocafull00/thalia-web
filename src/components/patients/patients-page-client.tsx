@@ -28,10 +28,19 @@ import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
 import { usePatients } from "@/lib/hooks/use-patients";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import type { Patient } from "@/types/database.types";
 
 const PATIENT_FILTER_DEFAULTS = { q: "", status: "" };
 
-export default function PatientsPageClient() {
+type PatientsPageClientProps = {
+  initialPatients: Patient[];
+  initialSearch: string;
+};
+
+export default function PatientsPageClient({
+  initialPatients,
+  initialSearch,
+}: PatientsPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -45,7 +54,10 @@ export default function PatientsPageClient() {
     filters.q,
     setFilter,
   );
-  const patients = usePatients(searchQuery);
+  const patients = usePatients(
+    searchQuery,
+    searchQuery === initialSearch ? initialPatients : undefined,
+  );
   const dialog = usePatientCreateDialog(() => setDialogOpen(false));
   const patientData = useMemo(() => patients.data ?? [], [patients.data]);
 

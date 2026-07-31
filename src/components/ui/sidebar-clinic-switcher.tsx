@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { SIDEBAR_COPY } from "@/copy/sidebar-copy";
-import type { ClinicMembershipView } from "@/stores/clinic-store";
+import type { ClinicMembershipView } from "@/types/clinic-membership";
 
 type SidebarClinicSwitcherProps = {
   clinicName: string;

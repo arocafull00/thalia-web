@@ -24,6 +24,17 @@ export function unwrapSupabase<T>(
   return data;
 }
 
+export function unwrapSupabaseNullable<T>(
+  data: T | null,
+  error: SupabaseQueryError | null,
+): T | null {
+  if (error) {
+    throw toSupabaseQueryError(error);
+  }
+
+  return data;
+}
+
 export function unwrapSupabaseList<T>(
   data: T[] | null,
   error: SupabaseQueryError | null,

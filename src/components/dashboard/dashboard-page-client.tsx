@@ -12,10 +12,17 @@ import { toAgendaAppointments } from "@/lib/calendar-agenda";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDashboard } from "@/lib/hooks/use-dashboard";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import type { DashboardData } from "@/stores/dashboard-store";
 
-export default function DashboardPageClient() {
+type DashboardPageClientProps = {
+  initialData: DashboardData;
+};
+
+export default function DashboardPageClient({
+  initialData,
+}: DashboardPageClientProps) {
   const { profile } = useAuth();
-  const { data, isLoading, error } = useDashboard();
+  const { data, isLoading, error } = useDashboard(initialData);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const appointments = useMemo(
@@ -49,7 +56,7 @@ export default function DashboardPageClient() {
           <div className="grid gap-8 xl:grid-cols-[1.8fr_1fr]">
             <DashboardAgenda
               appointments={agendaAppointments}
-              isLoading={isLoading}
+              isLoading={isLoading && !data}
               error={error}
             />
             <DashboardRecentActivity appointments={appointments} />

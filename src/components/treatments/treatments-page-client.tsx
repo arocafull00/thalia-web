@@ -17,10 +17,17 @@ import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import type { TreatmentWithInventory } from "@/types/database.types";
 
 const TREATMENT_FILTER_DEFAULTS = { category: "", q: "" };
 
-export default function TreatmentsPageClient() {
+type TreatmentsPageClientProps = {
+  initialTreatments: TreatmentWithInventory[];
+};
+
+export default function TreatmentsPageClient({
+  initialTreatments,
+}: TreatmentsPageClientProps) {
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
@@ -42,7 +49,7 @@ export default function TreatmentsPageClient() {
   );
 
   const { categories, category, filteredTreatments, treatments } =
-    useTreatmentCatalog(pageFilters);
+    useTreatmentCatalog(pageFilters, initialTreatments);
 
   const categoryOptions = useMemo(
     () =>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 
 import EmployeeDetailHeader from "@/components/employees/components/detail/employee-detail-header";
@@ -14,6 +14,10 @@ import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
+import type {
+  EmployeeAppointmentRow,
+  EmployeeAppointmentStats,
+} from "@/dal/employees.dal";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useEmployeeDetailTabs } from "@/lib/hooks/use-employee-detail-tabs";
@@ -25,19 +29,29 @@ import {
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { useEmployeesStore } from "@/stores/employees-store";
+import type { Employee } from "@/types/database.types";
 
 type EmployeeDetailPageClientProps = {
-  employeeId: string;
+  employee?: Employee;
+  initialStats?: EmployeeAppointmentStats;
+  initialAppointments?: EmployeeAppointmentRow[];
 };
 
 export default function EmployeeDetailPageClient({
-  employeeId,
+  employee: serverEmployee,
+  initialStats,
+  initialAppointments,
 }: EmployeeDetailPageClientProps) {
+  const { id: routeEmployeeId } = useParams<{ id: string }>();
+  const employeeId = serverEmployee?.id ?? routeEmployeeId;
   const { profile, loading: authLoading } = useAuth();
   const { platformRole, loading: clinicLoading } = useActiveClinic();
-  const employeeQuery = useEmployee(employeeId);
-  const statsQuery = useEmployeeAppointmentStats(employeeId);
-  const appointmentsQuery = useEmployeeAppointments(employeeId);
+  const employeeQuery = useEmployee(serverEmployee ?? employeeId);
+  const statsQuery = useEmployeeAppointmentStats(employeeId, initialStats);
+  const appointmentsQuery = useEmployeeAppointments(
+    employeeId,
+    initialAppointments,
+  );
   const fetchEmployee = useEmployeesStore((state) => state.fetchEmployee);
   const fetchEmployeeStats = useEmployeesStore(
     (state) => state.fetchEmployeeStats,
@@ -93,7 +107,7 @@ export default function EmployeeDetailPageClient({
       : null,
   );
 
-  if (authLoading || clinicLoading || employeeQuery.isLoading) {
+  if ((authLoading || clinicLoading || employeeQuery.isLoading) && !employee) {
     return (
       <div className="p-8" aria-busy="true">
         <SkeletonList />

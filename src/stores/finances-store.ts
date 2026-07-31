@@ -6,6 +6,7 @@ import {
   insertTransaction,
   updateTransaction as updateTransactionDal,
 } from "@/dal/finances.dal";
+import { buildFinancialSummary } from "@/lib/finances-summary";
 import { logger } from "@/lib/logger";
 import {
   errorQueryEntry,
@@ -154,45 +155,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         getTransactions(currentFrom, currentTo, "all"),
         getTransactions(previousFrom, previousTo, "all"),
       ]);
-      const income = current
-        .filter((transaction) => transaction.type === "income")
-        .reduce((total, transaction) => total + transaction.amount, 0);
-      const expenses = current
-        .filter((transaction) => transaction.type === "expense")
-        .reduce((total, transaction) => total + transaction.amount, 0);
-      const previousNet = previousTransactions.reduce((total, transaction) => {
-        return (
-          total +
-          (transaction.type === "income"
-            ? transaction.amount
-            : -transaction.amount)
-        );
-      }, 0);
-      const net = income - expenses;
-
-      const summary: FinancialSummary = {
-        income,
-        expenses,
-        net,
-        previousNet,
-        difference: net - previousNet,
-        weekly: [0, 1, 2, 3, 4].map((week) => {
-          const weekTransactions = current.filter((transaction) => {
-            const day = Number(transaction.date?.slice(8, 10) ?? 1);
-            return Math.floor((day - 1) / 7) === week;
-          });
-
-          return {
-            week: week + 1,
-            income: weekTransactions
-              .filter((transaction) => transaction.type === "income")
-              .reduce((total, transaction) => total + transaction.amount, 0),
-            expenses: weekTransactions
-              .filter((transaction) => transaction.type === "expense")
-              .reduce((total, transaction) => total + transaction.amount, 0),
-          };
-        }),
-      };
+      const summary = buildFinancialSummary(current, previousTransactions);
 
       set({
         summaryByKey: {

@@ -6,17 +6,20 @@ import { useMemo } from "react";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { useEmployees } from "@/lib/hooks/use-employees";
+import type { Employee } from "@/types/database.types";
 
 type AppointmentEmployeeFilterProps = {
   employeeId: string;
+  initialEmployees?: Employee[];
   onEmployeeIdChange: (value: string) => void;
 };
 
 export default function AppointmentEmployeeFilter({
   employeeId,
+  initialEmployees,
   onEmployeeIdChange,
 }: AppointmentEmployeeFilterProps) {
-  const employees = useEmployees();
+  const employees = useEmployees(initialEmployees);
 
   const activeEmployees = useMemo(
     () =>

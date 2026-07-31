@@ -7,6 +7,12 @@ import {
   parseAppointmentDateParam,
 } from "@/components/appointments/components/appointment-date-range";
 import { useAppointments } from "@/lib/hooks/use-appointments";
+import { useServerSeed } from "@/lib/hooks/use-server-seed";
+import { appointmentsKey } from "@/stores/appointments-store";
+import type {
+  AppointmentWithRelations,
+  Employee,
+} from "@/types/database.types";
 
 type AppointmentPageFilters = {
   employeeId: string;
@@ -16,8 +22,33 @@ type AppointmentPageFilters = {
   to: string;
 };
 
-export function useAppointmentsPage(filters: AppointmentPageFilters) {
-  const defaults = useMemo(() => getDefaultAppointmentDateRange(), []);
+type AppointmentsPageSeed = {
+  initialAppointments?: AppointmentWithRelations[];
+  initialAppointmentsKey?: string;
+  initialEmployees?: Employee[];
+  initialRange?: {
+    employeeId: string;
+    from: string;
+    to: string;
+  };
+};
+
+export function useAppointmentsPage(
+  filters: AppointmentPageFilters,
+  seed?: AppointmentsPageSeed,
+) {
+  const defaults = (() => {
+    if (seed?.initialRange?.from && seed.initialRange.to) {
+      const fallback = getDefaultAppointmentDateRange();
+
+      return {
+        from: parseAppointmentDateParam(seed.initialRange.from, fallback.from),
+        to: parseAppointmentDateParam(seed.initialRange.to, fallback.to),
+      };
+    }
+
+    return getDefaultAppointmentDateRange();
+  })();
 
   const rangeStart = useMemo(
     () => startOfDay(parseAppointmentDateParam(filters.from, defaults.from)),
@@ -30,9 +61,20 @@ export function useAppointmentsPage(filters: AppointmentPageFilters) {
   );
 
   const employeeId = filters.employeeId || null;
+  const appointmentsKeyValue = appointmentsKey(
+    rangeStart.toISOString(),
+    rangeEnd.toISOString(),
+    employeeId,
+  );
+  const seededAppointments = useServerSeed(
+    appointmentsKeyValue,
+    seed?.initialAppointmentsKey ?? "",
+    seed?.initialAppointments,
+  );
   const appointments = useAppointments(
     { end: rangeEnd, start: rangeStart },
     employeeId,
+    seededAppointments,
   );
 
   const groupedAppointments = useMemo(() => {
@@ -95,6 +137,7 @@ export function useAppointmentsPage(filters: AppointmentPageFilters) {
     flatAppointments,
     groupedAppointments,
     hasResults,
+    initialEmployees: seed?.initialEmployees,
     listData,
     rangeEnd,
     rangeStart,

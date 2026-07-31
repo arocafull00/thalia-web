@@ -10,7 +10,10 @@ import FinancesMovementsSection from "@/components/finances/components/finances-
 import FinancesSummaryMetrics from "@/components/finances/components/finances-summary-metrics";
 import FinancesWeeklyBreakdown from "@/components/finances/components/finances-weekly-breakdown";
 import TransactionCreateForm from "@/components/finances/components/transaction-create-form";
-import FinancesMonthSelector from "@/components/finances/finances-month-selector";
+import FinancesMonthSelector, {
+  financesMonthToParam,
+} from "@/components/finances/finances-month-selector";
+import type { FinancesTabValue } from "@/components/finances/finances-tab-bar";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -24,26 +27,48 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
+import { parseFinancesMonthParam } from "@/lib/finances-summary";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import { useFinancesUiStore } from "@/stores/finances-ui-store";
+import type { FinancialSummary } from "@/stores/finances-store";
+import type { Transaction } from "@/types/database.types";
 
-const FINANCES_FILTER_DEFAULTS = { category: "", q: "" };
+type FinancesPageClientProps = {
+  initialMonth: string;
+  initialTab: FinancesTabValue;
+  initialTransactions: Transaction[];
+  initialTransactionsKey: string;
+  initialSummary?: FinancialSummary;
+  initialSummaryKey: string;
+};
 
-export default function FinancesPageClient() {
+export default function FinancesPageClient({
+  initialMonth,
+  initialTab,
+  initialTransactions,
+  initialTransactionsKey,
+  initialSummary,
+  initialSummaryKey,
+}: FinancesPageClientProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTransactionId, setEditingTransactionId] = useState<
     string | null
   >(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
-  const setTab = useFinancesUiStore((state) => state.setTab);
-  const { filters, setFilter, setFilters } = useUrlFilters(
-    FINANCES_FILTER_DEFAULTS,
+  const filterDefaults = useMemo(
+    () => ({
+      category: "",
+      month: initialMonth,
+      q: "",
+      tab: initialTab,
+    }),
+    [initialMonth, initialTab],
   );
+  const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
     setFilter,
@@ -52,9 +77,11 @@ export default function FinancesPageClient() {
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
+      month: filters.month,
       search: searchQuery,
+      tab: filters.tab as FinancesTabValue,
     }),
-    [filters.category, searchQuery],
+    [filters.category, filters.month, filters.tab, searchQuery],
   );
 
   const {
@@ -68,7 +95,12 @@ export default function FinancesPageClient() {
     tab,
     transactions,
     visibleTransactions,
-  } = useFinancesPage(pageFilters);
+  } = useFinancesPage(pageFilters, {
+    initialSummary,
+    initialSummaryKey,
+    initialTransactions,
+    initialTransactionsKey,
+  });
 
   const editingTransaction = useMemo(
     () =>
@@ -123,6 +155,14 @@ export default function FinancesPageClient() {
     setSheetOpen(true);
   };
 
+  const handleMonthChange = (nextMonth: Date) => {
+    setFilter("month", financesMonthToParam(nextMonth));
+  };
+
+  const handleTabChange = (nextTab: FinancesTabValue) => {
+    setFilter("tab", nextTab);
+  };
+
   useTopbarAction(
     isAdmin
       ? {
@@ -145,7 +185,10 @@ export default function FinancesPageClient() {
   return (
     <div data-testid="finances-page" className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 items-center justify-center border-b border-border-subtle bg-surface px-4 py-3 lg:px-8 lg:py-4">
-        <FinancesMonthSelector />
+        <FinancesMonthSelector
+          month={parseFinancesMonthParam(filters.month)}
+          onMonthChange={handleMonthChange}
+        />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <PageStickyFiltersSection>
@@ -175,9 +218,9 @@ export default function FinancesPageClient() {
 
           <FinancesMovementsSection
             tab={tab}
-            onTabChange={setTab}
+            onTabChange={handleTabChange}
             transactions={visibleTransactions}
-            isLoading={transactions.isLoading}
+            isLoading={transactions.isLoading && !transactions.data}
             error={transactions.error}
             hasMore={hasMore}
             onLoadMore={loadMore}
@@ -233,7 +276,12 @@ export default function FinancesPageClient() {
         filters={filters}
         categoryOptions={comboboxCategoryOptions}
         onApply={(updates) => setFilters(updates)}
-        onClear={() => setFilters(FINANCES_FILTER_DEFAULTS)}
+        onClear={() =>
+          setFilters({
+            category: "",
+            q: "",
+          })
+        }
         onDismiss={() => setSheetOpen(false)}
       />
       <MobileFab

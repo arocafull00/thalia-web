@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 
 import InventoryDetailHeader from "@/components/inventory/components/detail/inventory-detail-header";
@@ -22,16 +22,24 @@ import { useInventoryDetailTabs } from "@/lib/hooks/use-inventory-detail-tabs";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { useInventoryStore } from "@/stores/inventory-store";
+import type {
+  InventoryItem,
+  InventoryMovementWithEmployee,
+} from "@/types/database.types";
 
 type InventoryDetailPageClientProps = {
-  itemId: string;
+  item?: InventoryItem;
+  initialMovements?: InventoryMovementWithEmployee[];
 };
 
 export default function InventoryDetailPageClient({
-  itemId,
+  item: serverItem,
+  initialMovements,
 }: InventoryDetailPageClientProps) {
-  const itemQuery = useInventoryItem(itemId);
-  const movementsQuery = useInventoryMovements(itemId);
+  const { id: routeItemId } = useParams<{ id: string }>();
+  const itemId = serverItem?.id ?? routeItemId;
+  const itemQuery = useInventoryItem(serverItem ?? itemId);
+  const movementsQuery = useInventoryMovements(itemId, initialMovements);
   const fetchInventoryItem = useInventoryStore(
     (state) => state.fetchInventoryItem,
   );

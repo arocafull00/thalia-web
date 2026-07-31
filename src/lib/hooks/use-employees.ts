@@ -1,6 +1,14 @@
 import { useCallback, useEffect } from "react";
 
+import type {
+  EmployeeAppointmentRow,
+  EmployeeAppointmentStats,
+} from "@/dal/employees.dal";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import {
+  useClinicServerSeed,
+  useServerSeed,
+} from "@/lib/hooks/use-server-seed";
 import {
   useEmployeesStore,
   type CreateEmployeeInput,
@@ -10,72 +18,126 @@ import type { Employee } from "@/types/database.types";
 
 export type { CreateEmployeeInput };
 
-export function useEmployees() {
+export function useEmployees(initialData?: Employee[]) {
   const entry = useEmployeesStore((state) => state.list);
   const fetchEmployees = useEmployeesStore((state) => state.fetchEmployees);
   const clinicId = useClinicId();
+  const seededData = useClinicServerSeed(clinicId, initialData);
+  const hasClientData = entry.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchEmployees();
-  }, [clinicId, fetchEmployees]);
+  }, [clinicId, fetchEmployees, hasClientData, seededData]);
+
+  const data = entry.data ?? seededData;
 
   return {
-    data: entry.data ?? undefined,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry.error,
     refresh: fetchEmployees,
   };
 }
 
-export function useEmployee(employeeId: string) {
+export function useEmployee(employeeOrId: Employee | string) {
+  const employeeId =
+    typeof employeeOrId === "string" ? employeeOrId : employeeOrId.id;
+  const initialData =
+    typeof employeeOrId === "string" ? undefined : employeeOrId;
   const entry = useEmployeesStore((state) => state.byId[employeeId]);
   const fetchEmployee = useEmployeesStore((state) => state.fetchEmployee);
+  const seededData = useServerSeed(
+    employeeId,
+    initialData?.id ?? "",
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchEmployee(employeeId);
-  }, [employeeId, fetchEmployee]);
+  }, [employeeId, fetchEmployee, hasClientData, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
-export function useEmployeeAppointmentStats(employeeId: string) {
+export function useEmployeeAppointmentStats(
+  employeeId: string,
+  initialData?: EmployeeAppointmentStats,
+) {
   const entry = useEmployeesStore(
     (state) => state.statsByEmployeeId[employeeId],
   );
   const fetchEmployeeStats = useEmployeesStore(
     (state) => state.fetchEmployeeStats,
   );
+  const seededData = useServerSeed(
+    employeeId,
+    initialData === undefined ? "" : employeeId,
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchEmployeeStats(employeeId);
-  }, [employeeId, fetchEmployeeStats]);
+  }, [employeeId, fetchEmployeeStats, hasClientData, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
-export function useEmployeeAppointments(employeeId: string) {
+export function useEmployeeAppointments(
+  employeeId: string,
+  initialData?: EmployeeAppointmentRow[],
+) {
   const entry = useEmployeesStore(
     (state) => state.appointmentsByEmployeeId[employeeId],
   );
   const fetchEmployeeAppointments = useEmployeesStore(
     (state) => state.fetchEmployeeAppointments,
   );
+  const seededData = useServerSeed(
+    employeeId,
+    initialData === undefined ? "" : employeeId,
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchEmployeeAppointments(employeeId);
-  }, [employeeId, fetchEmployeeAppointments]);
+  }, [employeeId, fetchEmployeeAppointments, hasClientData, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }

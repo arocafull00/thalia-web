@@ -1,7 +1,7 @@
 "use client";
 
 import { BadgeCheck, CheckCircle, Pencil } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { getAppointmentDetailMenuActions } from "@/components/appointments/appointment-detail-actions";
@@ -19,9 +19,10 @@ import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { useAppointmentDetail } from "@/lib/hooks/use-appointment-detail";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
+import type { AppointmentWithRelations } from "@/types/database.types";
 
 type AppointmentDetailPageClientProps = {
-  appointmentId: string;
+  appointment?: AppointmentWithRelations;
 };
 
 function resolveTotalDurationMinutes(
@@ -49,9 +50,10 @@ function resolveTotalDurationMinutes(
 }
 
 export default function AppointmentDetailPageClient({
-  appointmentId,
+  appointment: serverAppointment,
 }: AppointmentDetailPageClientProps) {
   const router = useRouter();
+  const { id: routeAppointmentId } = useParams<{ id: string }>();
   const {
     appointment,
     isLoading,
@@ -76,7 +78,7 @@ export default function AppointmentDetailPageClient({
     handleStatusChange,
     confirmCancel,
     confirmDelete,
-  } = useAppointmentDetail(appointmentId);
+  } = useAppointmentDetail(serverAppointment ?? routeAppointmentId);
 
   useEffect(() => {
     if (deleted) {

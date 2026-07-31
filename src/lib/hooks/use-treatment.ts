@@ -1,12 +1,17 @@
 import { useCallback, useEffect } from "react";
 
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import {
+  useClinicServerSeed,
+  useServerSeed,
+} from "@/lib/hooks/use-server-seed";
 import { isInitialLoading } from "@/stores/query-state";
 import {
   useTreatmentStore,
   type TreatmentInput,
   type TreatmentUpdateInput,
 } from "@/stores/treatment-store";
+import type { TreatmentWithInventory } from "@/types/database.types";
 
 export type {
   TreatmentInventoryLinkInput,
@@ -14,37 +19,57 @@ export type {
   TreatmentUpdateInput,
 } from "@/stores/treatment-store";
 
-export function useTreatments() {
+export function useTreatments(initialData?: TreatmentWithInventory[]) {
   const entry = useTreatmentStore((state) => state.list);
   const fetchTreatments = useTreatmentStore((state) => state.fetchTreatments);
   const clinicId = useClinicId();
+  const seededData = useClinicServerSeed(clinicId, initialData);
+  const hasClientData = entry.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchTreatments();
-  }, [clinicId, fetchTreatments]);
+  }, [clinicId, fetchTreatments, hasClientData, seededData]);
+
+  const data = entry.data ?? seededData;
 
   return {
-    data: entry.data ?? undefined,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry.error,
   };
 }
 
-export function useTreatment(treatmentId: string) {
+export function useTreatment(treatmentOrId: TreatmentWithInventory | string) {
+  const treatmentId =
+    typeof treatmentOrId === "string" ? treatmentOrId : treatmentOrId.id;
+  const initialData =
+    typeof treatmentOrId === "string" ? undefined : treatmentOrId;
   const entry = useTreatmentStore((state) => state.byId[treatmentId]);
   const fetchTreatment = useTreatmentStore((state) => state.fetchTreatment);
+  const seededData = useServerSeed(
+    treatmentId,
+    initialData?.id ?? "",
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (!treatmentId) {
+    if (!treatmentId || (seededData !== undefined && !hasClientData)) {
       return;
     }
 
     void fetchTreatment(treatmentId);
-  }, [fetchTreatment, treatmentId]);
+  }, [fetchTreatment, hasClientData, seededData, treatmentId]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }

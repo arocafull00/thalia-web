@@ -12,6 +12,7 @@ import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { useEmployees } from "@/lib/hooks/use-employees";
+import type { Employee } from "@/types/database.types";
 
 type AppointmentFilters = {
   employeeId: string;
@@ -23,6 +24,7 @@ type AppointmentFilters = {
 type AppointmentFiltersSheetProps = {
   open: boolean;
   filters: AppointmentFilters;
+  initialEmployees?: Employee[];
   onApply: (updates: AppointmentFilters) => void;
   onClear: () => void;
   onDismiss: () => void;
@@ -31,11 +33,12 @@ type AppointmentFiltersSheetProps = {
 export default function AppointmentFiltersSheet({
   open,
   filters,
+  initialEmployees,
   onApply,
   onClear,
   onDismiss,
 }: AppointmentFiltersSheetProps) {
-  const employees = useEmployees();
+  const employees = useEmployees(initialEmployees);
   const [pending, setPending] = useState<AppointmentFilters>(filters);
 
   const activeEmployees = useMemo(

@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil } from "lucide-react";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 
 import TreatmentDeleteConfirmDialog from "@/components/treatments/components/treatment-delete-confirm-dialog";
 import TreatmentDetailHeader from "@/components/treatments/components/treatment-detail-header";
@@ -16,15 +16,17 @@ import { TREATMENT_DETAIL_COPY } from "@/copy/treatment-detail-copy";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { useTreatmentDetail } from "@/lib/hooks/use-treatment-detail";
+import type { TreatmentWithInventory } from "@/types/database.types";
 
 type TreatmentDetailPageClientProps = {
-  treatmentId: string;
+  treatment?: TreatmentWithInventory;
 };
 
 export default function TreatmentDetailPageClient({
-  treatmentId,
+  treatment: serverTreatment,
 }: TreatmentDetailPageClientProps) {
   const router = useRouter();
+  const { id: routeTreatmentId } = useParams<{ id: string }>();
   const {
     treatment,
     isLoading,
@@ -36,7 +38,7 @@ export default function TreatmentDetailPageClient({
     openDeleteDialog,
     closeDeleteDialog,
     refetch,
-  } = useTreatmentDetail(treatmentId);
+  } = useTreatmentDetail(serverTreatment ?? routeTreatmentId);
 
   useTopbarBreadcrumb(
     treatment
@@ -104,7 +106,7 @@ export default function TreatmentDetailPageClient({
 
       <TreatmentDialog
         open={editDialogOpen}
-        treatmentId={treatmentId}
+        treatmentId={treatment.id}
         onOpenChange={(open) => {
           if (!open) {
             closeEditDialog();

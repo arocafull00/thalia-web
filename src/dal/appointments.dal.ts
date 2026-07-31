@@ -1,3 +1,7 @@
+import {
+  APPOINTMENT_DETAIL_SELECT,
+  APPOINTMENT_LIST_SELECT,
+} from "@/dal/selects";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type {
@@ -7,18 +11,14 @@ import type {
   AppointmentWithRelations,
 } from "@/types/database.types";
 
+export { APPOINTMENT_LIST_SELECT } from "@/dal/selects";
+
 export type EffectiveAppointmentMaterial = {
   inventory_item_id: string;
   quantity: number;
   name: string;
   unit: string | null;
 };
-
-export const APPOINTMENT_LIST_SELECT =
-  "*, patients(id, full_name, phone), employees(id, full_name, color), appointment_inventory_items(*, inventory_items(id, name, unit, stock)), appointment_treatments(*, treatment(id, name, color, price, duration_minutes, treatment_inventory_items(*, inventory_items(id, name, unit, stock))))";
-
-const appointmentDetailSelect =
-  "*, patients(id, full_name, phone, avatar_url), employees(id, full_name, color, specialty, role, avatar_url), appointment_treatments(*, treatment(id, name, color, price, duration_minutes))";
 
 const appointmentInventorySelect = "*, inventory_items(id, name, unit)";
 
@@ -85,7 +85,7 @@ export async function getAppointment(
 ): Promise<AppointmentWithRelations> {
   const { data, error } = await supabase
     .from("appointments")
-    .select(appointmentDetailSelect)
+    .select(APPOINTMENT_DETAIL_SELECT)
     .eq("id", appointmentId)
     .single();
   return unwrapSupabase(data, error) as AppointmentWithRelations;

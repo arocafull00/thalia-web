@@ -1,9 +1,7 @@
+import { TREATMENT_DETAIL_SELECT } from "@/dal/selects";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type { Treatment, TreatmentWithInventory } from "@/types/database.types";
-
-const treatmentDetailSelect =
-  "*, treatment_inventory_items(*, inventory_items(id, name, unit))";
 
 export type TreatmentInventoryLinkInsert = {
   inventory_item_id: string;
@@ -42,7 +40,7 @@ export async function getTreatment(
 ): Promise<TreatmentWithInventory> {
   const { data, error } = await supabase
     .from("treatment")
-    .select(treatmentDetailSelect)
+    .select(TREATMENT_DETAIL_SELECT)
     .eq("id", treatmentId)
     .single();
   return unwrapSupabase(data, error) as TreatmentWithInventory;

@@ -3,6 +3,10 @@ import { useCallback, useEffect } from "react";
 
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
+  useClinicServerSeed,
+  useServerSeed,
+} from "@/lib/hooks/use-server-seed";
+import {
   appointmentsKey,
   useAppointmentsStore,
   type AppointmentFormInput,
@@ -10,6 +14,7 @@ import {
   type AppointmentUpdateInput,
 } from "@/stores/appointments-store";
 import { isInitialLoading } from "@/stores/query-state";
+import type { AppointmentWithRelations } from "@/types/database.types";
 
 export type {
   AppointmentFormInput,
@@ -20,6 +25,7 @@ export type {
 export function useAppointments(
   dateOrRange: Date | { start: Date; end: Date },
   employeeId: string | null,
+  initialData?: AppointmentWithRelations[],
 ) {
   const rangeStart =
     dateOrRange instanceof Date ? startOfDay(dateOrRange) : dateOrRange.start;
@@ -46,39 +52,69 @@ export function useAppointments(
   }, [subscribeRealtime, unsubscribeRealtime]);
 
   const clinicId = useClinicId();
+  const seededData = useClinicServerSeed(clinicId, initialData);
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
+    if (seededData !== undefined && !hasClientData) {
+      return;
+    }
+
     void fetchAppointments({
       start: new Date(start),
       end: new Date(end),
       employeeId,
     });
-  }, [clinicId, employeeId, end, fetchAppointments, start]);
+  }, [
+    clinicId,
+    employeeId,
+    end,
+    fetchAppointments,
+    hasClientData,
+    seededData,
+    start,
+  ]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }
 
-export function useAppointment(appointmentId: string) {
+export function useAppointment(
+  appointmentOrId: AppointmentWithRelations | string,
+) {
+  const appointmentId =
+    typeof appointmentOrId === "string" ? appointmentOrId : appointmentOrId.id;
+  const initialData =
+    typeof appointmentOrId === "string" ? undefined : appointmentOrId;
   const entry = useAppointmentsStore((state) => state.byId[appointmentId]);
   const fetchAppointment = useAppointmentsStore(
     (state) => state.fetchAppointment,
   );
+  const seededData = useServerSeed(
+    appointmentId,
+    initialData?.id ?? "",
+    initialData,
+  );
+  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (!appointmentId) {
+    if (!appointmentId || (seededData !== undefined && !hasClientData)) {
       return;
     }
 
     void fetchAppointment(appointmentId);
-  }, [appointmentId, fetchAppointment]);
+  }, [appointmentId, fetchAppointment, hasClientData, seededData]);
+
+  const data = entry?.data ?? seededData;
 
   return {
-    data: entry?.data,
-    isLoading: isInitialLoading(entry),
+    data,
+    isLoading: data == null && isInitialLoading(entry),
     error: entry?.error,
   };
 }

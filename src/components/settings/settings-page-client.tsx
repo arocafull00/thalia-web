@@ -14,14 +14,23 @@ import { CLINIC_EDIT_COPY } from "@/copy/clinic-edit-copy";
 import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
+import { useClinicInfo, type ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useSettingsPageActions } from "@/lib/hooks/use-settings-page";
 import { useSettingsTabs } from "@/lib/hooks/use-settings-tabs";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
+import type { Employee } from "@/types/database.types";
 
-export default function SettingsPageClient() {
+type SettingsPageClientProps = {
+  initialClinic?: ClinicInfo | null;
+  initialEmployees?: Employee[];
+};
+
+export default function SettingsPageClient({
+  initialClinic = null,
+  initialEmployees,
+}: SettingsPageClientProps) {
   const { profile, user } = useAuth();
   const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
@@ -36,7 +45,7 @@ export default function SettingsPageClient() {
     passwordSubmitting,
     signOutSubmitting,
     uploadAvatar,
-  } = useSettingsPageActions();
+  } = useSettingsPageActions(initialEmployees);
   const { activeTab, setActiveTab } = useSettingsTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [clinicEditDialogOpen, setClinicEditDialogOpen] = useState(false);
@@ -45,7 +54,7 @@ export default function SettingsPageClient() {
     clinic,
     loading: clinicLoading,
     refetch: refetchClinic,
-  } = useClinicInfo();
+  } = useClinicInfo(initialClinic);
 
   useTopbarActions(
     profile

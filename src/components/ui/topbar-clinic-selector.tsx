@@ -1,13 +1,16 @@
 "use client";
 
 import { Building2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { clinicMembershipRoleLabel } from "@/lib/format";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
+import { resetClinicQueryData } from "@/stores/reset-clinic-query-data";
 
 export default function TopbarClinicSelector() {
+  const router = useRouter();
   const { platformRole, memberships, membership, setActiveClinic } =
     useActiveClinic();
 
@@ -35,7 +38,13 @@ export default function TopbarClinicSelector() {
     <AppSearchableCombobox
       value={membership?.clinicId ?? null}
       onValueChange={(value) => {
-        if (value) setActiveClinic(value);
+        if (!value) {
+          return;
+        }
+
+        setActiveClinic(value);
+        resetClinicQueryData();
+        router.refresh();
       }}
       options={clinicOptions}
       showSearch={false}

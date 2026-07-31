@@ -29,10 +29,17 @@ import { useEmployees } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import type { Employee } from "@/types/database.types";
 
 const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "" };
 
-export default function EmployeesPageClient() {
+type EmployeesPageClientProps = {
+  initialEmployees: Employee[];
+};
+
+export default function EmployeesPageClient({
+  initialEmployees,
+}: EmployeesPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -43,7 +50,7 @@ export default function EmployeesPageClient() {
   const [sheetKey, setSheetKey] = useState(0);
   const { profile } = useAuth();
   const { platformRole } = useActiveClinic();
-  const employees = useEmployees();
+  const employees = useEmployees(initialEmployees);
   const { filters, setFilter, setFilters } = useUrlFilters(
     EMPLOYEE_FILTER_DEFAULTS,
   );

@@ -1,10 +1,8 @@
-import { useMemo } from "react";
+"use client";
+
+import { useMemo, useState } from "react";
 
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
-import {
-  usePatientAppointments,
-  useUpcomingPatientAppointments,
-} from "@/lib/hooks/use-patients";
 import { derivePatientDetailStats } from "@/lib/patient-detail-stats";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
@@ -15,21 +13,26 @@ import PatientClinicalNotesPanel from "./patient-clinical-notes-panel";
 type PatientSummaryTabProps = {
   patient: Patient;
   appointments: AppointmentWithRelations[];
-  isLoading: boolean;
-  error: Error | null | undefined;
 };
 
-export default function PatientSummaryTab({ patient }: PatientSummaryTabProps) {
-  const appointmentsQuery = usePatientAppointments(patient.id);
-  const upcomingQuery = useUpcomingPatientAppointments(patient.id);
-
-  const appointments = useMemo(
-    () => appointmentsQuery.data ?? [],
-    [appointmentsQuery.data],
-  );
+export default function PatientSummaryTab({
+  patient,
+  appointments,
+}: PatientSummaryTabProps) {
+  const [referenceTime] = useState(Date.now);
   const upcomingAppointments = useMemo(
-    () => upcomingQuery.data ?? [],
-    [upcomingQuery.data],
+    () =>
+      appointments
+        .filter(
+          (appointment) =>
+            new Date(appointment.starts_at).getTime() > referenceTime,
+        )
+        .toSorted(
+          (left, right) =>
+            new Date(left.starts_at).getTime() -
+            new Date(right.starts_at).getTime(),
+        ),
+    [appointments, referenceTime],
   );
   const stats = useMemo(
     () =>

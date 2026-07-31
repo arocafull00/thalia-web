@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentFilters from "@/components/appointments/components/appointment-filters";
@@ -19,17 +19,29 @@ import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
-import type { AppointmentStatus } from "@/types/database.types";
+import type {
+  AppointmentStatus,
+  AppointmentWithRelations,
+  Employee,
+} from "@/types/database.types";
 
-const APPOINTMENT_FILTER_DEFAULTS = {
-  employeeId: "",
-  from: "",
-  q: "",
-  status: "",
-  to: "",
+type AppointmentsPageClientProps = {
+  initialAppointments: AppointmentWithRelations[];
+  initialAppointmentsKey: string;
+  initialEmployees: Employee[];
+  initialRange: {
+    employeeId: string;
+    from: string;
+    to: string;
+  };
 };
 
-export default function AppointmentsPageClient() {
+export default function AppointmentsPageClient({
+  initialAppointments,
+  initialAppointmentsKey,
+  initialEmployees,
+  initialRange,
+}: AppointmentsPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAppointmentId, setEditingAppointmentId] = useState<
@@ -37,9 +49,17 @@ export default function AppointmentsPageClient() {
   >(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
-  const { filters, setFilter, setFilters } = useUrlFilters(
-    APPOINTMENT_FILTER_DEFAULTS,
+  const filterDefaults = useMemo(
+    () => ({
+      employeeId: initialRange.employeeId,
+      from: initialRange.from,
+      q: "",
+      status: "",
+      to: initialRange.to,
+    }),
+    [initialRange.employeeId, initialRange.from, initialRange.to],
   );
+  const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
     setFilter,
@@ -57,10 +77,13 @@ export default function AppointmentsPageClient() {
   );
 
   const { appointments, flatAppointments, showEmptyState } =
-    useAppointmentsPage(pageFilters);
+    useAppointmentsPage(pageFilters, {
+      initialAppointments,
+      initialAppointmentsKey,
+      initialEmployees,
+      initialRange,
+    });
 
-  // La fila del listado ya trae la cita completa (APPOINTMENT_LIST_SELECT),
-  // así que el diálogo abre con el dato en mano y sin petición adicional.
   const editingAppointment = useMemo(
     () =>
       flatAppointments.find(
@@ -69,33 +92,28 @@ export default function AppointmentsPageClient() {
     [editingAppointmentId, flatAppointments],
   );
 
-  const handleDialogOpenChange = useCallback((open: boolean) => {
+  const handleDialogOpenChange = (open: boolean) => {
     setDialogOpen(open);
-  }, []);
+  };
 
-  const handleOpenCreateDialog = useCallback(() => {
+  const handleOpenCreateDialog = () => {
     setEditingAppointmentId(null);
     setDialogOpen(true);
-  }, []);
+  };
 
-  const handleRowClick = useCallback((id: string) => {
+  const handleRowClick = (id: string) => {
     setEditingAppointmentId(id);
     setDialogOpen(true);
-  }, []);
+  };
 
-  const handleStatusChange = useCallback(
-    async (id: string, status: AppointmentStatus) => {
-      try {
-        await useAppointmentsStore
-          .getState()
-          .updateAppointmentStatus(id, status);
-        notifySuccess("Estado de la cita actualizado.");
-      } catch (cause) {
-        notifyAppointmentStatusError(cause);
-      }
-    },
-    [],
-  );
+  const handleStatusChange = async (id: string, status: AppointmentStatus) => {
+    try {
+      await useAppointmentsStore.getState().updateAppointmentStatus(id, status);
+      notifySuccess("Estado de la cita actualizado.");
+    } catch (cause) {
+      notifyAppointmentStatusError(cause);
+    }
+  };
 
   const handleOpenFiltersSheet = () => {
     setSheetKey((key) => key + 1);
@@ -118,6 +136,7 @@ export default function AppointmentsPageClient() {
           <AppointmentFilters
             employeeId={filters.employeeId}
             from={filters.from}
+            initialEmployees={initialEmployees}
             search={searchQuery}
             status={filters.status}
             to={filters.to}
@@ -130,7 +149,9 @@ export default function AppointmentsPageClient() {
           />
         </PageStickyFiltersSection>
         <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {appointments.isLoading ? <SkeletonList /> : null}
+          {appointments.isLoading && !appointments.data ? (
+            <SkeletonList />
+          ) : null}
           {appointments.error ? (
             <Notice tone="danger" message={APPOINTMENTS_COPY.page.loadError} />
           ) : null}
@@ -139,7 +160,7 @@ export default function AppointmentsPageClient() {
               {APPOINTMENTS_COPY.page.empty}
             </div>
           ) : null}
-          {!showEmptyState && !appointments.isLoading ? (
+          {!showEmptyState && appointments.data ? (
             <AppointmentsTable
               appointments={flatAppointments}
               onRowClick={handleRowClick}
@@ -165,8 +186,9 @@ export default function AppointmentsPageClient() {
         key={sheetKey}
         open={sheetOpen}
         filters={filters}
+        initialEmployees={initialEmployees}
         onApply={(updates) => setFilters(updates)}
-        onClear={() => setFilters(APPOINTMENT_FILTER_DEFAULTS)}
+        onClear={() => setFilters(filterDefaults)}
         onDismiss={() => setSheetOpen(false)}
       />
       <MobileFab label="Nueva cita" onClick={handleOpenCreateDialog} />

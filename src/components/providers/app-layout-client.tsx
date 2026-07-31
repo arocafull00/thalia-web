@@ -73,13 +73,21 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     });
   }, [canManageClinic, platformRole, setNavVisibility]);
 
-  if (loading || (user && !clinicId && clinicLoading)) {
+  const awaitingClientAuth = loading;
+
+  if (awaitingClientAuth) {
     return (
       <BootLoadingScreen authLoading={loading} clinicLoading={clinicLoading} />
     );
   }
 
-  if (!user || !clinicId) {
+  const clientReady = !loading && !clinicLoading;
+
+  if (clientReady && (!user || !clinicId)) {
+    return <RedirectScreen />;
+  }
+
+  if (!user) {
     return <RedirectScreen />;
   }
 

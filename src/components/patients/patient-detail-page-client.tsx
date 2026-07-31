@@ -1,6 +1,7 @@
 "use client";
 
 import { Pencil } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
@@ -25,16 +26,24 @@ import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { usePatientFilesStore } from "@/stores/patient-files-store";
 import { usePatientImagesStore } from "@/stores/patient-images-store";
 import { usePatientsStore } from "@/stores/patients-store";
+import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
 type PatientDetailPageClientProps = {
-  patientId: string;
+  patient?: Patient;
+  initialAppointments?: AppointmentWithRelations[];
 };
 
 export default function PatientDetailPageClient({
-  patientId,
+  patient: serverPatient,
+  initialAppointments,
 }: PatientDetailPageClientProps) {
-  const patientQuery = usePatient(patientId);
-  const appointmentsQuery = usePatientAppointments(patientId);
+  const { id: routePatientId } = useParams<{ id: string }>();
+  const patientId = serverPatient?.id ?? routePatientId;
+  const patientQuery = usePatient(serverPatient ?? patientId);
+  const appointmentsQuery = usePatientAppointments(
+    patientId,
+    initialAppointments,
+  );
   const fetchPatient = usePatientsStore((state) => state.fetchPatient);
   const fetchPatientAppointments = usePatientsStore(
     (state) => state.fetchPatientAppointments,
@@ -101,7 +110,7 @@ export default function PatientDetailPageClient({
       : null,
   );
 
-  if (patientQuery.isLoading) {
+  if (patientQuery.isLoading && !patient) {
     return (
       <div className="p-8" aria-busy="true">
         <SkeletonList />

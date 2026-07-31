@@ -1,10 +1,18 @@
 import { useShallow } from "zustand/react/shallow";
 
+import { useServerBootstrap } from "@/components/providers/store-hydrator";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicStore } from "@/stores/clinic-store";
 
 export function useActiveClinic() {
-  const profile = useAuthStore((state) => state.profile);
+  const bootstrap = useServerBootstrap();
+  const { profile, initialized, sessionUserId } = useAuthStore(
+    useShallow((state) => ({
+      profile: state.profile,
+      initialized: state.initialized,
+      sessionUserId: state.session?.user.id ?? null,
+    })),
+  );
   const { memberships, activeClinicId, loading, setActiveClinic } =
     useClinicStore(
       useShallow((state) => ({
@@ -15,9 +23,25 @@ export function useActiveClinic() {
       })),
     );
 
+  const canUseBootstrap = Boolean(
+    bootstrap?.user && (!initialized || sessionUserId === bootstrap.user.id),
+  );
+  const resolvedProfile =
+    profile ?? (canUseBootstrap ? (bootstrap?.profile ?? null) : null);
+  const resolvedMemberships =
+    memberships.length > 0
+      ? memberships
+      : canUseBootstrap
+        ? (bootstrap?.memberships ?? [])
+        : [];
+  const resolvedActiveClinicId =
+    activeClinicId ??
+    (canUseBootstrap ? (bootstrap?.activeClinicId ?? null) : null);
   const membership =
-    memberships.find((item) => item.clinicId === activeClinicId) ?? null;
-  const clinicId = activeClinicId ?? profile?.clinic_id ?? null;
+    resolvedMemberships.find(
+      (item) => item.clinicId === resolvedActiveClinicId,
+    ) ?? null;
+  const clinicId = resolvedActiveClinicId ?? resolvedProfile?.clinic_id ?? null;
 
   return {
     clinicId,
@@ -25,8 +49,8 @@ export function useActiveClinic() {
     clinicLogoUrl: membership?.clinicLogoUrl ?? null,
     membership,
     platformRole: membership?.role ?? null,
-    memberships,
-    loading,
+    memberships: resolvedMemberships,
+    loading: loading && !canUseBootstrap,
     setActiveClinic,
   };
 }

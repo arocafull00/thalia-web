@@ -1,0 +1,9 @@
+[0:a][1:a][2:a][3:a]amix=inputs=4:normalize=0,volume=0.16,lowpass=f=1400,afade=t=in:st=0:d=0.7,afade=t=out:st=6.7:d=0.8[c1];
+[4:a][5:a][6:a][7:a]amix=inputs=4:normalize=0,volume=0.16,lowpass=f=1400,afade=t=in:st=0:d=0.7,afade=t=out:st=6.7:d=0.8[c2];
+[8:a][9:a][10:a][11:a]amix=inputs=4:normalize=0,volume=0.17,lowpass=f=1500,afade=t=in:st=0:d=0.7,afade=t=out:st=6.7:d=0.8[c3];
+[12:a][13:a][14:a][15:a]amix=inputs=4:normalize=0,volume=0.18,lowpass=f=1600,afade=t=in:st=0:d=0.6,afade=t=out:st=3.8:d=0.7[c4];
+[16:a][17:a][18:a][19:a]amix=inputs=4:normalize=0,volume=0.19,lowpass=f=1700,afade=t=in:st=0:d=0.5,afade=t=out:st=2.2:d=0.8[c5];
+[c1][c2][c3][c4][c5]concat=n=5:v=0:a=1[bed];
+[20:a][21:a][22:a][23:a][24:a][25:a][26:a][27:a][28:a][29:a]concat=n=10:v=0:a=1,volume=0.055,highpass=f=300,lowpass=f=2400,afade=t=in:st=0:d=0.8,afade=t=out:st=28.3:d=1.7[melody];
+[30:a]volume=0.045,lowpass=f=180[drone];
+[bed][melody][drone]amix=inputs=3:normalize=0,aecho=0.8:0.35:650|1150:0.18|0.10,alimiter=limit=0.82,afade=t=in:st=0:d=0.5,afade=t=out:st=28.2:d=1.8,pan=stereo|c0=c0|c1=c0[out]

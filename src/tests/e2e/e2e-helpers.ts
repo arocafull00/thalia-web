@@ -14,7 +14,9 @@ export async function expectSearchParam(
   value: string,
 ) {
   await expect
-    .poll(() => new URL(page.url()).searchParams.get(key))
+    .poll(() => new URL(page.url()).searchParams.get(key), {
+      timeout: 15_000,
+    })
     .toBe(value);
 }
 
@@ -56,11 +58,15 @@ export async function selectComboboxOption(
 export async function clickTopbarMenuAction(page: Page, label: string) {
   const topbar = page.getByTestId("app-topbar");
   const directBtn = topbar.getByRole("button", { name: label, exact: true });
+  const menuBtn = topbar.getByRole("button", { name: "Más acciones" });
+  await expect(directBtn.or(menuBtn)).toBeVisible();
+
   if (await directBtn.isVisible()) {
     await directBtn.click();
     return;
   }
-  await topbar.getByRole("button", { name: "Más acciones" }).click();
+
+  await menuBtn.click();
   await page.getByRole("menuitem", { name: label, exact: true }).click();
 }
 

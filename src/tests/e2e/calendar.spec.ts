@@ -17,15 +17,14 @@ test("navega a la semana siguiente y vuelve", async ({ page }) => {
   });
 
   const rangeLabel = page.getByTestId("calendar-range-label");
-  const initialLabel = await rangeLabel.textContent();
+  await expect(rangeLabel).toContainText(/\S/);
+  const initialLabel = await rangeLabel.innerText();
 
   await page.getByRole("button", { name: "Período siguiente" }).click();
-  const nextLabel = await rangeLabel.textContent();
-  expect(nextLabel).not.toBe(initialLabel);
+  await expect(rangeLabel).not.toHaveText(initialLabel);
 
   await page.getByRole("button", { name: "Período anterior" }).click();
-  const backLabel = await rangeLabel.textContent();
-  expect(backLabel).toBe(initialLabel);
+  await expect(rangeLabel).toHaveText(initialLabel);
 });
 
 test("botón Hoy vuelve a la semana actual", async ({ page }) => {
@@ -35,16 +34,17 @@ test("botón Hoy vuelve a la semana actual", async ({ page }) => {
   });
 
   const rangeLabel = page.getByTestId("calendar-range-label");
-  const currentLabel = await rangeLabel.textContent();
+  await expect(rangeLabel).toContainText(/\S/);
+  const currentLabel = await rangeLabel.innerText();
 
   // Navigate forward two weeks
   await page.getByRole("button", { name: "Período siguiente" }).click();
   await page.getByRole("button", { name: "Período siguiente" }).click();
-  expect(await rangeLabel.textContent()).not.toBe(currentLabel);
+  await expect(rangeLabel).not.toHaveText(currentLabel);
 
   // Return to today
   await page.getByRole("button", { name: "Hoy" }).click();
-  expect(await rangeLabel.textContent()).toBe(currentLabel);
+  await expect(rangeLabel).toHaveText(currentLabel);
 });
 
 test("abre el dialog de nueva cita desde el topbar", async ({ page }) => {

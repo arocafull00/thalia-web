@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "preferences": {
+    "destination": {
+      "value": "website-youtube",
+      "confirmed_in": [
+        "thalia-product-promo"
+      ],
+      "updated_at": "2026-07-31T14:43:12.398Z"
+    },
+    "aspect": {
+      "value": "1920x1080",
+      "confirmed_in": [
+        "thalia-product-promo"
+      ],
+      "updated_at": "2026-07-31T14:43:12.681Z"
+    },
+    "language": {
+      "value": "es",
+      "confirmed_in": [
+        "thalia-product-promo"
+      ],
+      "updated_at": "2026-07-31T14:43:12.938Z"
+    },
+    "flow": {
+      "value": "automation",
+      "confirmed_in": [
+        "thalia-product-promo"
+      ],
+      "updated_at": "2026-07-31T14:43:13.211Z"
+    },
+    "storyboard": {
+      "value": "yes",
+      "confirmed_in": [
+        "thalia-product-promo"
+      ],
+      "updated_at": "2026-07-31T14:43:13.466Z"
+    },
+    "style_preset.product-launch-video": {
+      "value": "blue-professional",
+      "confirmed_in": [
+        "thalia-product-promo"
+      ],
+      "updated_at": "2026-07-31T14:51:07.808Z"
+    }
+  },
+  "sightings": {}
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es"><head></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Geist"; src: local("Geist"); }
+        #root { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box; background: #ffffff; color: #1f2933; font-family: Geist, Arial, sans-serif; }
+        * { box-sizing: border-box; }
+        .stage { position: absolute; inset: 0; padding: 70px 96px 62px; }
+        .header { display: flex; align-items: flex-end; justify-content: space-between; }
+        .eyebrow { color: #378090; font-size: 18px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+        h1 { margin: 12px 0 0; font-size: 80px; line-height: 1; letter-spacing: -.055em; }
+        .descriptor { width: 600px; color: #2e7a8c; font-size: 23px; line-height: 1.4; text-align: right; }
+        .journey { display: grid; grid-template-columns: 1fr 68px 1fr 68px 1fr; gap: 22px; width: 1500px; margin: 96px auto 0; align-items: center; }
+        .flow-card { min-height: 450px; padding: 38px; border: 2px solid rgba(61,143,160,.2); border-radius: 16px; background: rgba(61,143,160,.04); }
+        .card-icon { display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: rgba(61,143,160,.15); color: #3d8fa0; }
+        .card-icon svg { width: 38px; height: 38px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+        .flow-arrow { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #3d8fa0; color: #ffffff; font-size: 30px; font-weight: 700; }
+        .step { margin-top: 30px; color: #3d8fa0; font-size: 15px; font-weight: 680; letter-spacing: .1em; }
+        .card-title { margin-top: 34px; font-size: 35px; font-weight: 690; line-height: 1.1; }
+        .card-copy { margin-top: 22px; color: #2e7a8c; font-size: 21px; line-height: 1.42; }
+        .status { display: inline-block; margin-top: 34px; padding: 11px 17px; border-radius: 999px; background: rgba(61,143,160,.15); color: #2e7a8c; font-size: 17px; font-weight: 620; }
+        .count { position: absolute; left: 96px; bottom: 38px; color: #2e7a8c; font-size: 15px; letter-spacing: .1em; }
+        .progress { position: absolute; left: 0; bottom: 0; width: 75%; height: 4px; background: #3d8fa0; }
+      </style>
+      <div data-hf-id="hf-rimz" id="root" data-composition-id="03-todo-conectado" data-start="0" data-width="1920" data-height="1080" data-duration="5.4">
+        <section data-hf-id="hf-yjqf" id="scene-03-layout" class="stage clip" data-start="0" data-duration="5.4" data-track-index="1">
+          <div data-hf-id="hf-4y7z" class="header"><div data-hf-id="hf-yeow"><div data-hf-id="hf-v7tv" class="eyebrow">Thalia · Flujo automático</div><h1 data-hf-id="hf-y8ay">Todo conectado.</h1></div><div data-hf-id="hf-k63d" class="descriptor">Asignas la cita una vez. Thalia enlaza el tratamiento y descuenta el material utilizado.</div></div>
+          <div data-hf-id="hf-wsus" class="journey">
+            <div data-hf-id="hf-1vjr" class="flow-card"><div data-hf-id="hf-gpfw" class="card-icon"><svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><circle data-hf-id="hf-jnj3" cx="12" cy="8" r="4" /><path data-hf-id="hf-8iu3" d="M4 21a8 8 0 0 1 16 0" /><path data-hf-id="hf-oxeh" d="M18 5h4M20 3v4" /></svg></div><div data-hf-id="hf-4ej4" class="step">01 · PACIENTE Y CITA</div><div data-hf-id="hf-9pnx" class="card-title">Una ficha, todo el contexto</div><div data-hf-id="hf-5n0f" class="card-copy">La cita queda vinculada al paciente y a su historial clínico.</div></div>
+            <div data-hf-id="hf-gmsy" class="flow-arrow">→</div>
+            <div data-hf-id="hf-60uc" class="flow-card"><div data-hf-id="hf-88o4" class="card-icon"><svg data-hf-id="hf-svtx" viewBox="0 0 24 24"><path data-hf-id="hf-qxwz" d="M9 3h6l1 4 4 2v6l-4 2-1 4H9l-1-4-4-2V9l4-2 1-4Z" /><circle data-hf-id="hf-2731" cx="12" cy="12" r="3" /></svg></div><div data-hf-id="hf-ulnr" class="step">02 · TRATAMIENTO</div><div data-hf-id="hf-ei38" class="card-title">Tratamiento conectado</div><div data-hf-id="hf-szvh" class="card-copy">Thalia asocia automáticamente servicios y materiales utilizados.</div><div data-hf-id="hf-yhw5" class="status">Sin tareas duplicadas</div></div>
+            <div data-hf-id="hf-ialy" class="flow-arrow">→</div>
+            <div data-hf-id="hf-22dq" class="flow-card"><div data-hf-id="hf-71r1" class="card-icon"><svg data-hf-id="hf-u2r0" viewBox="0 0 24 24"><path data-hf-id="hf-vewh" d="m12 3 8 4-8 4-8-4 8-4Z" /><path data-hf-id="hf-k37m" d="m4 7 8 4 8-4v10l-8 4-8-4V7Z" /><path data-hf-id="hf-npmx" d="M12 11v10" /></svg></div><div data-hf-id="hf-20gq" class="step">03 · STOCK ACTUALIZADO</div><div data-hf-id="hf-kdtb" class="card-title">Inventario al día</div><div data-hf-id="hf-csik" class="card-copy">El consumo se descuenta al completar la cita, sin ajustes manuales.</div></div>
+          </div>
+          <div data-hf-id="hf-kxzy" class="count">06 / 08</div><div data-hf-id="hf-31j5" class="progress"></div>
+        </section>
+        <script>
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo(".eyebrow", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.32, ease: "power4.out" }, 0.06);
+          tl.fromTo("h1", { opacity: 0, y: 54 }, { opacity: 1, y: 0, duration: 0.48, ease: "power4.out" }, 0.15);
+          tl.fromTo(".descriptor", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.4);
+          tl.fromTo(".flow-card:nth-of-type(1)", { opacity: 0, x: -110, scale: 0.9 }, { opacity: 1, x: 0, scale: 1, duration: 0.58, ease: "power3.out" }, 0.62);
+          tl.fromTo(".flow-arrow:nth-of-type(2)", { opacity: 0, scaleX: 0, transformOrigin: "left center" }, { opacity: 1, scaleX: 1, duration: 0.34, ease: "power3.out" }, 1.18);
+          tl.fromTo(".flow-card:nth-of-type(3)", { opacity: 0, y: 72, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.58, ease: "power3.out" }, 1.42);
+          tl.fromTo(".flow-arrow:nth-of-type(4)", { opacity: 0, scaleX: 0, transformOrigin: "left center" }, { opacity: 1, scaleX: 1, duration: 0.34, ease: "power3.out" }, 2.02);
+          tl.fromTo(".flow-card:nth-of-type(5)", { opacity: 0, x: 110, scale: 0.9 }, { opacity: 1, x: 0, scale: 1, duration: 0.58, ease: "power3.out" }, 2.28);
+          tl.fromTo(".card-icon", { scale: 0.72 }, { scale: 1, duration: 0.44, stagger: 0.82, ease: "back.out(1.5)" }, 0.8);
+          tl.fromTo(".status", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.36, ease: "power3.out" }, 2.08);
+          tl.fromTo(".progress", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 4.5, ease: "none" }, 0.2);
+          tl.to({}, { duration: 5 }, 0);
+          window.__timelines["03-todo-conectado"] = tl;
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

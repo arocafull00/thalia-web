@@ -31,6 +31,7 @@ import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
 import { TopbarSecondaryAction } from "@/components/ui/topbar-secondary-action";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
+import { FILES_COPY } from "@/copy/files-copy";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
@@ -45,6 +46,7 @@ import {
 const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
   "/appointments": APPOINTMENTS_COPY.page.title,
   "/employees": EMPLOYEES_COPY.page.title,
+  "/files": FILES_COPY.page.title,
   "/finances": FINANCES_COPY.title,
   "/inventory": INVENTORY_COPY.page.title,
   "/marketing": MARKETING_COPY.page.title,

@@ -6,11 +6,13 @@ import {
 } from "react-hook-form";
 
 import AppointmentSlotPicker from "@/components/appointments/components/appointment-slot-picker";
+import AppointmentSlotSearchControls from "@/components/appointments/components/appointment-slot-search-controls";
 import NewAppointmentDatetimeField from "@/components/appointments/new-appointment-datetime-field";
 import AppDialogError from "@/components/ui/app-dialog-error";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSearchableMultiSelect from "@/components/ui/app-searchable-multi-select";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
+import type { SlotSearchMode } from "@/lib/find-slots";
 import type { AppointmentFormValues } from "@/lib/hooks/use-appointment-create-dialog";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { Employee, Patient, Treatment } from "@/types/database.types";
@@ -38,6 +40,8 @@ type AppointmentCreateFormProps = {
   slotsOpen: boolean;
   slots: Date[];
   slotsLoading: boolean;
+  slotSearchMode: SlotSearchMode;
+  onSlotSearchModeChange: (mode: SlotSearchMode) => void;
   onOpenSlots: () => void;
   onCloseSlots: () => void;
   onSelectSlot: (date: Date) => void;
@@ -59,6 +63,8 @@ export default function AppointmentCreateForm({
   slotsOpen,
   slots,
   slotsLoading,
+  slotSearchMode,
+  onSlotSearchModeChange,
   onOpenSlots,
   onCloseSlots,
   onSelectSlot,
@@ -173,25 +179,12 @@ export default function AppointmentCreateForm({
 
       {/* Fecha y hora */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-ink-secondary">
-            {APPOINTMENT_CREATE_COPY.fields.startsAt}{" "}
-            <span className="text-danger">
-              {APPOINTMENT_CREATE_COPY.fields.requiredMark}
-            </span>
+        <span className="text-sm text-ink-secondary">
+          {APPOINTMENT_CREATE_COPY.fields.startsAt}{" "}
+          <span className="text-danger">
+            {APPOINTMENT_CREATE_COPY.fields.requiredMark}
           </span>
-          <button
-            type="button"
-            onClick={onOpenSlots}
-            disabled={!canFindSlots}
-            title={
-              !canFindSlots ? APPOINTMENT_CREATE_COPY.findSlots.hint : undefined
-            }
-            className="text-xs font-medium text-primary hover:text-primary-hover disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            {APPOINTMENT_CREATE_COPY.findSlots.button}
-          </button>
-        </div>
+        </span>
         <Controller
           name="startsAt"
           control={control}
@@ -206,6 +199,13 @@ export default function AppointmentCreateForm({
         {errors.startsAt ? (
           <span className="text-sm text-danger">{errors.startsAt.message}</span>
         ) : null}
+        <AppointmentSlotSearchControls
+          mode={slotSearchMode}
+          disabled={!canFindSlots}
+          loading={slotsLoading}
+          onModeChange={onSlotSearchModeChange}
+          onSearch={onOpenSlots}
+        />
         {slotsOpen ? (
           <AppointmentSlotPicker
             slots={slots}

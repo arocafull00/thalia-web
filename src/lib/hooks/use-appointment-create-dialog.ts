@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDays } from "date-fns";
+import { startOfDay } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -8,7 +8,11 @@ import type { z } from "zod";
 import type { AppointmentPatientOption } from "@/components/appointments/components/appointment-create-form";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
 import { getAppointments } from "@/dal/appointments.dal";
-import { findAvailableSlots } from "@/lib/find-slots";
+import {
+  findAvailableSlots,
+  getSlotSearchRange,
+  type SlotSearchMode,
+} from "@/lib/find-slots";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useCreateAppointment,
@@ -19,6 +23,7 @@ import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePatients } from "@/lib/hooks/use-patients";
 import { useTreatments } from "@/lib/hooks/use-treatment";
+import { logger } from "@/lib/logger";
 import {
   appointmentSchema,
   appointmentUpdateSchema,
@@ -96,6 +101,7 @@ export function useAppointmentCreateDialog(
   const [slotsOpen, setSlotsOpen] = useState(false);
   const [slots, setSlots] = useState<Date[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotSearchMode, setSlotSearchMode] = useState<SlotSearchMode>("asap");
   const { mutate, isPending: isCreating } = useCreateAppointment();
   const { mutateAsync: updateAppointment, isPending: isUpdating } =
     useUpdateAppointment();
@@ -166,7 +172,14 @@ export function useAppointmentCreateDialog(
     reset(createDefaultValues(appointment, initialStartsAt, initialPatientId));
     setSlotsOpen(false);
     setSlots([]);
+    setSlotSearchMode("asap");
   }, [reset, appointment, initialPatientId, initialStartsAt]);
+
+  const changeSlotSearchMode = useCallback((mode: SlotSearchMode) => {
+    setSlotSearchMode(mode);
+    setSlotsOpen(false);
+    setSlots([]);
+  }, []);
 
   const openSlots = useCallback(async () => {
     if (!clinicId || !clinic) return;
@@ -177,6 +190,10 @@ export function useAppointmentCreateDialog(
 
     const employeeId = getValues("employeeId") || null;
     const now = new Date();
+    const searchRange = getSlotSearchRange({
+      from: now,
+      searchMode: slotSearchMode,
+    });
 
     setSlotsLoading(true);
     setSlotsOpen(true);
@@ -184,8 +201,8 @@ export function useAppointmentCreateDialog(
 
     try {
       const existing = await getAppointments({
-        startIso: now.toISOString(),
-        endIso: addDays(now, 30).toISOString(),
+        startIso: startOfDay(searchRange.from).toISOString(),
+        endIso: searchRange.to.toISOString(),
         clinicId,
         employeeId,
       });
@@ -195,16 +212,31 @@ export function useAppointmentCreateDialog(
         clinic,
         durationMinutes: totalDuration || 30,
         from: now,
+        searchMode: slotSearchMode,
       });
 
       setSlots(found);
-    } catch {
+    } catch (cause) {
+      logger.captureException(cause, {
+        hook: "use-appointment-create-dialog",
+        action: "findAvailableSlots",
+        clinicId,
+        employeeId,
+        slotSearchMode,
+      });
       toast.error(APPOINTMENT_CREATE_COPY.findSlots.fetchError);
       setSlotsOpen(false);
     } finally {
       setSlotsLoading(false);
     }
-  }, [clinic, clinicId, getValues, treatmentIds, treatments.data]);
+  }, [
+    clinic,
+    clinicId,
+    getValues,
+    slotSearchMode,
+    treatmentIds,
+    treatments.data,
+  ]);
 
   const closeSlots = useCallback(() => setSlotsOpen(false), []);
 
@@ -331,6 +363,8 @@ export function useAppointmentCreateDialog(
     slotsOpen,
     slots,
     slotsLoading,
+    slotSearchMode,
+    changeSlotSearchMode,
     openSlots,
     closeSlots,
     selectSlot,

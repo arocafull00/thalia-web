@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import AppSidebarNavPending from "@/components/ui/app-sidebar-nav-pending";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { AppNavItem } from "@/lib/hooks/use-app-nav-items";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ export default function AppSidebarNavItem({
         >
           {item.icon}
           <span>{item.label}</span>
+          <AppSidebarNavPending />
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

@@ -141,6 +141,10 @@ export type PatientImage = {
   created_at: string | null;
 };
 
+export type PatientImageWithPatient = PatientImage & {
+  patients: Pick<Patient, "id" | "full_name"> | null;
+};
+
 export type PatientImageInsert = {
   patient_id: string;
   clinic_id: string;
@@ -192,6 +196,10 @@ export type PatientFileInsert = {
 };
 
 export type PatientFileUpdate = Pick<PatientFile, "category" | "notes">;
+
+export type PatientFileWithPatient = PatientFile & {
+  patients: Pick<Patient, "id" | "full_name" | "avatar_url"> | null;
+};
 
 export type Treatment = {
   id: string;

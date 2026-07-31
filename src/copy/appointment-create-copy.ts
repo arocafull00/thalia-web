@@ -31,7 +31,14 @@ export const APPOINTMENT_CREATE_COPY = {
   findSlots: {
     button: "Buscar hueco",
     loading: "Buscando...",
-    noSlots: "No hay huecos disponibles en los próximos 30 días.",
+    modeLabel: "Cuándo buscar",
+    modes: {
+      asap: "Cuanto antes",
+      nextWeek: "La semana que viene",
+      anytime: "En cualquier momento",
+    },
+    resultsTitle: "Huecos disponibles",
+    noSlots: "No hay huecos disponibles en los 30 días de búsqueda.",
     hint: "Selecciona un tratamiento para buscar huecos disponibles.",
     fetchError: "No se pudieron cargar los huecos. Inténtalo de nuevo.",
   },

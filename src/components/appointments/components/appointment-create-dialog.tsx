@@ -84,6 +84,8 @@ export default function AppointmentCreateDialog({
               slotsOpen={dialog.slotsOpen}
               slots={dialog.slots}
               slotsLoading={dialog.slotsLoading}
+              slotSearchMode={dialog.slotSearchMode}
+              onSlotSearchModeChange={dialog.changeSlotSearchMode}
               onOpenSlots={dialog.openSlots}
               onCloseSlots={dialog.closeSlots}
               onSelectSlot={dialog.selectSlot}

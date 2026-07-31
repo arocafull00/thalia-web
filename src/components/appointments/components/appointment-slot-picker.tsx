@@ -52,7 +52,7 @@ export default function AppointmentSlotPicker({
     <div className="rounded-xl border border-border bg-surface">
       <div className="flex items-center justify-between border-b border-border-subtle px-3 py-2">
         <span className="text-xs font-medium text-ink-secondary">
-          {APPOINTMENT_CREATE_COPY.findSlots.button}
+          {APPOINTMENT_CREATE_COPY.findSlots.resultsTitle}
         </span>
         <button
           type="button"
@@ -74,7 +74,7 @@ export default function AppointmentSlotPicker({
           {APPOINTMENT_CREATE_COPY.findSlots.noSlots}
         </p>
       ) : (
-        <ul>
+        <ul className="max-h-72 overflow-y-auto">
           {slots.map((slot, i) => (
             <li key={slot.toISOString()}>
               <button

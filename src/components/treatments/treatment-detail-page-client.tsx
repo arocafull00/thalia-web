@@ -8,6 +8,7 @@ import TreatmentDetailHeader from "@/components/treatments/components/treatment-
 import TreatmentDetailInfoSection from "@/components/treatments/components/treatment-detail-info-section";
 import TreatmentDetailInventorySection from "@/components/treatments/components/treatment-detail-inventory-section";
 import TreatmentDialog from "@/components/treatments/components/treatment-dialog";
+import TreatmentImagesSection from "@/components/treatments/components/treatment-images-section";
 import { getTreatmentDetailActions } from "@/components/treatments/treatment-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
@@ -102,6 +103,7 @@ export default function TreatmentDetailPageClient({
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">
         <TreatmentDetailInfoSection treatment={treatment} />
         <TreatmentDetailInventorySection treatment={treatment} />
+        <TreatmentImagesSection treatmentId={treatment.id} />
       </div>
 
       <TreatmentDialog

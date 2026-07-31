@@ -37,6 +37,7 @@ import {
   CALENDAR_END_HOUR,
   CALENDAR_START_HOUR,
   getWeekDays,
+  roundToNearestSlot,
 } from "@/lib/calendar-grid";
 import { isOverlapGroupEventId } from "@/lib/calendar-overlap-groups";
 import {
@@ -409,7 +410,9 @@ export function useScheduleXCalendar(gridHeight: number) {
       onClickDateTime: (dateTime) => {
         const c = clinicRef.current;
         if (c && isBlockedSlot(dateTime, c)) return;
-        openCreateDialogRef.current(zonedDateTimeToDate(dateTime));
+        openCreateDialogRef.current(
+          roundToNearestSlot(zonedDateTimeToDate(dateTime)),
+        );
       },
       onClickDate: (dateString) => {
         const c = clinicRef.current;

@@ -92,6 +92,15 @@ export function getDayEnd(date: Date): Date {
   return setMinutes(setHours(startOfDay(date), CALENDAR_END_HOUR), 0);
 }
 
+export function roundToNearestSlot(date: Date): Date {
+  const roundedDate = new Date(date);
+  const roundedMinutes =
+    Math.round(roundedDate.getMinutes() / SLOT_MINUTES) * SLOT_MINUTES;
+
+  roundedDate.setMinutes(roundedMinutes, 0, 0);
+  return roundedDate;
+}
+
 export function minutesToOffset(minutesFromStart: number): number {
   return (minutesFromStart / SLOT_MINUTES) * SLOT_HEIGHT;
 }

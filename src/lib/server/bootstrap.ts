@@ -26,7 +26,17 @@ export type AppBootstrap = {
   activeClinicTimezone: string | null;
 };
 
-async function readActiveClinicCookie(): Promise<string | null> {
+export type ActiveClinicBootstrap = Pick<
+  AppBootstrap,
+  "activeClinicId" | "activeClinicTimezone"
+>;
+
+type ServerIdentity = {
+  userId: string;
+  user: User;
+};
+
+const readActiveClinicCookie = cache(async (): Promise<string | null> => {
   const cookieStore = await cookies();
   const value = cookieStore.get(ACTIVE_CLINIC_COOKIE_NAME)?.value;
 
@@ -35,7 +45,34 @@ async function readActiveClinicCookie(): Promise<string | null> {
   }
 
   return decodeURIComponent(value);
-}
+});
+
+const getServerIdentity = cache(async (): Promise<ServerIdentity | null> => {
+  const supabase = await createClient();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const userId = claimsData?.claims?.sub;
+
+  if (typeof userId !== "string") {
+    return null;
+  }
+
+  const { data: sessionData } = await supabase.auth.getSession();
+
+  if (sessionData.session?.user.id === userId) {
+    return { userId, user: sessionData.session.user };
+  }
+
+  const { data: userData } = await supabase.auth.getUser();
+
+  if (userData.user?.id !== userId) {
+    return null;
+  }
+
+  return { userId, user: userData.user };
+});
+
+const getCachedEmployee = cache((userId: string) => getEmployee(userId));
+const getCachedMemberships = cache((userId: string) => getMemberships(userId));
 
 function mapMembershipRow(row: ClinicMembershipRow): ClinicMembershipView {
   const clinicRaw = row.clinics;
@@ -92,13 +129,59 @@ function resolveActiveClinicTimezone(
   return clinic?.timezone ?? null;
 }
 
-export const getAppBootstrap = cache(async (): Promise<AppBootstrap> => {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  const user = data.user;
-  const userId = user?.id ?? null;
+function resolveActiveClinicBootstrap(
+  cookieClinicId: string | null,
+  membershipRows: ClinicMembershipRow[],
+  profile: Employee | null,
+): ActiveClinicBootstrap {
+  const memberships = membershipRows.map(mapMembershipRow);
+  const activeClinicId = resolveActiveClinicId(
+    cookieClinicId,
+    memberships,
+    profile,
+  );
 
-  if (!userId) {
+  return {
+    activeClinicId,
+    activeClinicTimezone: resolveActiveClinicTimezone(
+      activeClinicId,
+      membershipRows,
+    ),
+  };
+}
+
+export const getActiveClinicBootstrap = cache(
+  async (): Promise<ActiveClinicBootstrap> => {
+    const identity = await getServerIdentity();
+
+    if (!identity) {
+      return {
+        activeClinicId: null,
+        activeClinicTimezone: null,
+      };
+    }
+
+    const [cookieClinicId, membershipRows] = await Promise.all([
+      readActiveClinicCookie(),
+      getCachedMemberships(identity.userId),
+    ]);
+    const profile =
+      membershipRows.length === 0
+        ? await getCachedEmployee(identity.userId)
+        : null;
+
+    return resolveActiveClinicBootstrap(
+      cookieClinicId,
+      membershipRows,
+      profile,
+    );
+  },
+);
+
+export const getAppBootstrap = cache(async (): Promise<AppBootstrap> => {
+  const identity = await getServerIdentity();
+
+  if (!identity) {
     return {
       user: null,
       profile: null,
@@ -108,24 +191,21 @@ export const getAppBootstrap = cache(async (): Promise<AppBootstrap> => {
     };
   }
 
-  const [profile, membershipRows] = await Promise.all([
-    getEmployee(userId),
-    getMemberships(userId),
+  const [profile, membershipRows, cookieClinicId] = await Promise.all([
+    getCachedEmployee(identity.userId),
+    getCachedMemberships(identity.userId),
+    readActiveClinicCookie(),
   ]);
 
   const memberships = membershipRows.map(mapMembershipRow);
-  const activeClinicId = resolveActiveClinicId(
-    await readActiveClinicCookie(),
-    memberships,
-    profile,
-  );
-  const activeClinicTimezone = resolveActiveClinicTimezone(
-    activeClinicId,
+  const { activeClinicId, activeClinicTimezone } = resolveActiveClinicBootstrap(
+    cookieClinicId,
     membershipRows,
+    profile,
   );
 
   return {
-    user,
+    user: identity.user,
     profile,
     memberships,
     activeClinicId,

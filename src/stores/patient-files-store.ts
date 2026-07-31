@@ -3,10 +3,14 @@ import { create } from "zustand";
 import {
   createPatientFile,
   deletePatientFileRecord,
+  getGlobalPatientFiles,
   getPatientFiles,
   updatePatientFile as updatePatientFileDal,
+  type GlobalPatientFilesParams,
+  type PaginatedPatientFiles,
 } from "@/dal/patient-files.dal";
 import { getPatient } from "@/dal/patients.dal";
+import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
 import {
   buildPatientFileKey,
@@ -45,6 +49,7 @@ type UploadPatientFilesInput = {
 
 type PatientFilesStore = {
   filesByPatientId: Record<string, QueryEntry<PatientFile[]>>;
+  globalFilesByQuery: Record<string, QueryEntry<PaginatedPatientFiles>>;
   uploading: boolean;
   uploadProgress: number;
   uploadCurrentFile: number;
@@ -56,6 +61,9 @@ type PatientFilesStore = {
   deleteError: Error | null;
   deleteConfirm: PatientFileDeleteConfirmState | null;
   fetchPatientFiles: (patientId: string) => Promise<void>;
+  fetchGlobalPatientFiles: (
+    params: Omit<GlobalPatientFilesParams, "clinicId">,
+  ) => Promise<void>;
   uploadPatientFile: (input: UploadPatientFileInput) => Promise<PatientFile>;
   uploadPatientFiles: (
     input: UploadPatientFilesInput,
@@ -69,6 +77,13 @@ type PatientFilesStore = {
   openDeleteConfirm: (file: PatientFile, onSuccess?: () => void) => void;
   closeDeleteConfirm: () => void;
 };
+
+export function globalPatientFilesKey(
+  clinicId: string,
+  params: Omit<GlobalPatientFilesParams, "clinicId">,
+) {
+  return JSON.stringify({ clinicId, ...params });
+}
 
 async function assertPatientBelongsToClinic(
   patientId: string,
@@ -142,6 +157,7 @@ async function uploadSinglePatientFile(
 
 export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   filesByPatientId: {},
+  globalFilesByQuery: {},
   uploading: false,
   uploadProgress: 0,
   uploadCurrentFile: 0,
@@ -184,6 +200,48 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
             cause instanceof Error ? cause : new Error(String(cause)),
             previous,
           ),
+        },
+      });
+    }
+  },
+
+  fetchGlobalPatientFiles: async (params) => {
+    const clinicId = getActiveClinicId();
+
+    if (!clinicId) {
+      return;
+    }
+
+    const key = globalPatientFilesKey(clinicId, params);
+    const previous = get().globalFilesByQuery[key];
+
+    set({
+      globalFilesByQuery: {
+        ...get().globalFilesByQuery,
+        [key]: loadingQueryEntry(previous),
+      },
+    });
+
+    try {
+      const page = await getGlobalPatientFiles({ clinicId, ...params });
+      set({
+        globalFilesByQuery: {
+          ...get().globalFilesByQuery,
+          [key]: successQueryEntry(page),
+        },
+      });
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "patient-files-store",
+        action: "fetchGlobalPatientFiles",
+        clinicId,
+        page: params.page,
+      });
+      set({
+        globalFilesByQuery: {
+          ...get().globalFilesByQuery,
+          [key]: errorQueryEntry(error, previous),
         },
       });
     }
@@ -293,7 +351,20 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
     try {
       const updated = await updatePatientFileDal(fileId, data);
       await get().fetchPatientFiles(patientId);
-      set({ updatingId: null });
+      const globalFilesByQuery = Object.fromEntries(
+        Object.entries(get().globalFilesByQuery).map(([key, entry]) => [
+          key,
+          entry.data
+            ? successQueryEntry({
+                ...entry.data,
+                files: entry.data.files.map((file) =>
+                  file.id === fileId ? { ...file, ...updated } : file,
+                ),
+              })
+            : entry,
+        ]),
+      );
+      set({ updatingId: null, globalFilesByQuery });
       return updated;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
@@ -342,7 +413,32 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
     }
 
     await get().fetchPatientFiles(patientId);
-    set({ deletingId: null });
+    const globalFilesByQuery = Object.fromEntries(
+      Object.entries(get().globalFilesByQuery).map(([key, entry]) => {
+        if (!entry.data) {
+          return [key, entry];
+        }
+
+        const includesFile = entry.data.files.some(
+          (candidate) => candidate.id === file.id,
+        );
+
+        if (!includesFile) {
+          return [key, entry];
+        }
+
+        return [
+          key,
+          successQueryEntry({
+            files: entry.data.files.filter(
+              (candidate) => candidate.id !== file.id,
+            ),
+            total: Math.max(0, entry.data.total - 1),
+          }),
+        ];
+      }),
+    );
+    set({ deletingId: null, globalFilesByQuery });
   },
 
   openDeleteConfirm: (file, onSuccess) =>

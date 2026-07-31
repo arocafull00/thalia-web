@@ -14,14 +14,52 @@ const CLINIC = {
 } as unknown as ClinicInfo;
 
 describe("findAvailableSlots", () => {
-  it("returns up to maxSlots slots by default (5)", () => {
+  it("returns the five earliest slots in asap mode", () => {
     const slots = findAvailableSlots({
       existing: [],
       clinic: CLINIC,
       durationMinutes: 30,
       from: MON(9, 0),
+      searchMode: "asap",
     });
     expect(slots).toHaveLength(5);
+    expect(slots[0]).toEqual(MON(9, 30));
+    expect(slots[4]).toEqual(MON(11, 30));
+  });
+
+  it("starts next-week mode on the following Monday", () => {
+    const slots = findAvailableSlots({
+      existing: [],
+      clinic: CLINIC,
+      durationMinutes: 30,
+      from: MON(9, 0),
+      searchMode: "next-week",
+      maxSlots: 1,
+    });
+
+    expect(slots).toHaveLength(1);
+    expect(slots[0]).toEqual(new Date(2026, 0, 12, 9, 0, 0, 0));
+  });
+
+  it("distributes anytime results across the full 30-day range", () => {
+    const slots = findAvailableSlots({
+      existing: [],
+      clinic: CLINIC,
+      durationMinutes: 30,
+      from: MON(9, 0),
+      searchMode: "anytime",
+    });
+    const days = new Set(
+      slots.map(
+        (slot) => `${slot.getFullYear()}-${slot.getMonth()}-${slot.getDate()}`,
+      ),
+    );
+    const spanDays =
+      (slots.at(-1)!.getTime() - slots[0].getTime()) / (24 * 60 * 60 * 1000);
+
+    expect(slots).toHaveLength(12);
+    expect(days.size).toBe(12);
+    expect(spanDays).toBeGreaterThanOrEqual(20);
   });
 
   it("respects maxSlots parameter", () => {

@@ -14,21 +14,9 @@ import {
   getPatientFileCategoryLabel,
   PATIENT_FILES_COPY,
 } from "@/copy/patient-files-copy";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatFileSize } from "@/lib/format";
 import { isPatientFileViewable } from "@/lib/patient-file-storage";
 import type { PatientFile } from "@/types/database.types";
-
-function formatFileSize(bytes: number) {
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  }
-
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  }
-
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 type PatientFileRowProps = {
   file: PatientFile;

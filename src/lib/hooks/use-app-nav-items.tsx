@@ -4,6 +4,7 @@ import {
   Calendar,
   Clock,
   Euro,
+  FolderOpen,
   LayoutGrid,
   Megaphone,
   Package,
@@ -72,6 +73,12 @@ const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
     label: "Tratamientos",
     icon: <Stethoscope size={18} strokeWidth={1.5} />,
     section: "clinic",
+  },
+  {
+    href: "/files",
+    label: "Archivos",
+    icon: <FolderOpen size={18} strokeWidth={1.5} />,
+    section: "business",
   },
   {
     href: "/inventory",

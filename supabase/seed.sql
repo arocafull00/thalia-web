@@ -230,3 +230,154 @@ VALUES (
   '40000000-0000-4000-8000-000000000001',
   75.00
 );
+
+-- ---------------------------------------------------------------------------
+-- Datos de marketing (issue #31)
+-- ---------------------------------------------------------------------------
+-- Los pacientes base y de filtro se quedan con marketing_opt_in = false a
+-- propósito: sirven de caso negativo. Estos cuatro cubren cada filtro de
+-- campaign_segment_patients, incluidas las dos exclusiones obligatorias.
+
+INSERT INTO public.patients (
+  id,
+  clinic_id,
+  full_name,
+  dni,
+  birth_date,
+  phone,
+  email,
+  notes,
+  marketing_opt_in
+)
+VALUES
+  -- Reciente y fiel: 2 visitas completadas, la última hace 1 mes.
+  (
+    '30000000-0000-4000-8000-000000000010',
+    '10000000-0000-4000-8000-000000000001',
+    'E2E Marketing Reciente',
+    '10000010A',
+    '1995-03-10',
+    '+34610000010',
+    'marketing-reciente@landora.test',
+    'Opt-in, 2 visitas, la última hace 1 mes.',
+    true
+  ),
+  -- Inactivo: 1 visita completada hace 8 meses. Objetivo de reactivación.
+  (
+    '30000000-0000-4000-8000-000000000011',
+    '10000000-0000-4000-8000-000000000001',
+    'E2E Marketing Inactivo',
+    '10000011B',
+    '1970-11-02',
+    '+34610000011',
+    'marketing-inactivo@landora.test',
+    'Opt-in, 1 visita hace 8 meses.',
+    true
+  ),
+  -- Opt-in pero SIN teléfono: debe quedar excluido siempre.
+  (
+    '30000000-0000-4000-8000-000000000012',
+    '10000000-0000-4000-8000-000000000001',
+    'E2E Marketing Sin Telefono',
+    '10000012C',
+    '1985-07-07',
+    NULL,
+    'marketing-sin-telefono@landora.test',
+    'Opt-in pero sin teléfono: nunca debe recibir nada.',
+    true
+  ),
+  -- Con teléfono y visitas, pero SIN consentimiento: excluido siempre.
+  (
+    '30000000-0000-4000-8000-000000000013',
+    '10000000-0000-4000-8000-000000000001',
+    'E2E Marketing Sin Consentimiento',
+    '10000013D',
+    '1992-02-20',
+    '+34610000013',
+    'marketing-sin-consentimiento@landora.test',
+    'Sin opt-in: nunca debe recibir nada aunque cumpla el resto.',
+    false
+  );
+
+INSERT INTO public.appointments (
+  id,
+  clinic_id,
+  patient_id,
+  employee_id,
+  starts_at,
+  ends_at,
+  status,
+  notes
+)
+VALUES
+  (
+    '70000000-0000-4000-8000-000000000010',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000010',
+    '00000000-0000-4000-8000-000000000001',
+    now() - interval '1 month',
+    now() - interval '1 month' + interval '30 minutes',
+    'completed',
+    'Visita reciente completada.'
+  ),
+  (
+    '70000000-0000-4000-8000-000000000011',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000010',
+    '00000000-0000-4000-8000-000000000001',
+    now() - interval '5 months',
+    now() - interval '5 months' + interval '30 minutes',
+    'completed',
+    'Segunda visita completada.'
+  ),
+  (
+    '70000000-0000-4000-8000-000000000012',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000011',
+    '00000000-0000-4000-8000-000000000001',
+    now() - interval '8 months',
+    now() - interval '8 months' + interval '30 minutes',
+    'completed',
+    'Única visita, hace 8 meses.'
+  ),
+  (
+    '70000000-0000-4000-8000-000000000013',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000013',
+    '00000000-0000-4000-8000-000000000001',
+    now() - interval '2 months',
+    now() - interval '2 months' + interval '30 minutes',
+    'completed',
+    'Visita de un paciente sin consentimiento.'
+  ),
+  -- Cancelada: no debe contar como visita.
+  (
+    '70000000-0000-4000-8000-000000000014',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000011',
+    '00000000-0000-4000-8000-000000000001',
+    now() - interval '10 days',
+    now() - interval '10 days' + interval '30 minutes',
+    'cancelled',
+    'Cancelada: no cuenta como visita.'
+  );
+
+INSERT INTO public.appointment_treatments (
+  id,
+  appointment_id,
+  treatment_id,
+  price_at_booking
+)
+VALUES
+  (
+    '80000000-0000-4000-8000-000000000010',
+    '70000000-0000-4000-8000-000000000010',
+    '40000000-0000-4000-8000-000000000001',
+    75.00
+  ),
+  (
+    '80000000-0000-4000-8000-000000000012',
+    '70000000-0000-4000-8000-000000000012',
+    '40000000-0000-4000-8000-000000000001',
+    75.00
+  );

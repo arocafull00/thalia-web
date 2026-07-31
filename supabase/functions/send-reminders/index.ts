@@ -1,5 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import { sendWhatsApp } from "../_shared/whatsapp.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -32,43 +34,8 @@ function buildMessage(
     .replace("{profesional}", vars.profesional);
 }
 
-async function sendWhatsAppMessage(
-  fromNumber: string,
-  token: string,
-  to: string,
-  message: string,
-): Promise<boolean> {
-  const accountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
-
-  if (!accountSid) {
-    return false;
-  }
-
-  const toFormatted = to.startsWith("whatsapp:") ? to : `whatsapp:${to}`;
-  const fromFormatted = fromNumber.startsWith("whatsapp:")
-    ? fromNumber
-    : `whatsapp:${fromNumber}`;
-
-  const body = new URLSearchParams({
-    From: fromFormatted,
-    To: toFormatted,
-    Body: message,
-  });
-
-  const response = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${btoa(`${accountSid}:${token}`)}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: body.toString(),
-    },
-  );
-
-  return response.ok;
-}
+// El envío vive en ../_shared/whatsapp.ts para que recordatorios y campañas
+// compartan la misma integración con Twilio y los mismos modos de operación.
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -77,9 +44,10 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
 
-  if (!supabaseUrl || !serviceRoleKey || !twilioAuthToken) {
+  // Las credenciales de Twilio ya no se comprueban aquí: en modo mock no hacen
+  // falta, y en los demás el adapter devuelve el motivo exacto si faltan.
+  if (!supabaseUrl || !serviceRoleKey) {
     return new Response("Missing configuration", {
       status: 500,
       headers: corsHeaders,
@@ -194,12 +162,13 @@ Deno.serve(async (req) => {
           profesional: employee?.full_name ?? "tu profesional",
         });
 
-        const ok = await sendWhatsAppMessage(
-          clinic.whatsapp_phone_number_id,
-          twilioAuthToken,
-          patient.phone,
-          message,
-        );
+        const result = await sendWhatsApp({
+          from: clinic.whatsapp_phone_number_id,
+          to: patient.phone,
+          body: message,
+        });
+
+        const ok = result.ok;
 
         await supabase.from("appointment_reminders").insert({
           appointment_id: appointment.id,
@@ -207,7 +176,8 @@ Deno.serve(async (req) => {
           patient_phone: patient.phone,
           hours_before: hoursBeforeTarget,
           status: ok ? "sent" : "failed",
-          error_message: ok ? null : "WhatsApp API request failed",
+          // Guardar el motivo real de Twilio en lugar de un texto genérico.
+          error_message: ok ? null : result.error,
           reminder_type: "whatsapp",
         });
 

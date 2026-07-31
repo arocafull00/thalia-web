@@ -162,6 +162,21 @@ export function formatDate(value: string | Date) {
   }).format(new Date(value));
 }
 
+/**
+ * Corta por caracteres y añade puntos suspensivos. Se usa donde el recorte
+ * tiene que ser real y no solo visual, para que el texto largo no infle la
+ * altura de una celda ni viaje entero al DOM.
+ */
+export function truncateText(value: string, maxLength: number) {
+  const trimmed = value.trim();
+
+  if (trimmed.length <= maxLength) {
+    return trimmed;
+  }
+
+  return `${trimmed.slice(0, maxLength).trimEnd()}…`;
+}
+
 export function appointmentStatusLabel(status: AppointmentStatus | null) {
   if (status === "confirmed") {
     return "Confirmada";

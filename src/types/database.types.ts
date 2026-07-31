@@ -118,6 +118,8 @@ export type Patient = {
   address: string | null;
   notes: string | null;
   avatar_url: string | null;
+  marketing_opt_in: boolean;
+  marketing_opt_out_at: string | null;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -310,6 +312,79 @@ export type Transaction = {
   updated_at: string | null;
 };
 
+export type CampaignStatus = "draft" | "scheduled" | "sent" | "cancelled";
+
+export type CampaignSegmentType =
+  | "treatment_type"
+  | "visit_count"
+  | "last_visit_date"
+  | "age_range"
+  | "custom_filter";
+
+export type CampaignRecipientStatus = "pending" | "sent" | "failed";
+
+export type CampaignTemplateApprovalStatus =
+  "pending" | "approved" | "rejected";
+
+export type CampaignTemplate = {
+  id: string;
+  clinic_id: string;
+  name: string;
+  title: string | null;
+  content: string;
+  footer: string | null;
+  image_url: string | null;
+  meta_template_name: string | null;
+  approval_status: CampaignTemplateApprovalStatus | null;
+  variables: Record<string, string> | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Campaign = {
+  id: string;
+  clinic_id: string;
+  title: string;
+  content: string;
+  footer_text: string | null;
+  footer_website: string | null;
+  footer_phone: string | null;
+  image_url: string | null;
+  status: CampaignStatus;
+  scheduled_at: string | null;
+  sent_at: string | null;
+  template_id: string | null;
+  variable_values: Record<string, string> | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CampaignSegment = {
+  id: string;
+  campaign_id: string;
+  segment_type: CampaignSegmentType;
+  config: Record<string, unknown>;
+  created_at: string;
+};
+
+export type CampaignRecipient = {
+  id: string;
+  campaign_id: string;
+  patient_id: string;
+  phone: string;
+  status: CampaignRecipientStatus;
+  sent_at: string | null;
+  error_message: string | null;
+  provider_message_id: string | null;
+  opened_at: string | null;
+  clicked_at: string | null;
+  created_at: string;
+};
+
+export type CampaignRecipientWithPatient = CampaignRecipient & {
+  patients: Pick<Patient, "id" | "full_name"> | null;
+};
+
 export type AppointmentWithRelations = Appointment & {
   patients: Pick<Patient, "id" | "full_name" | "phone" | "avatar_url"> | null;
   employees: Pick<
@@ -395,6 +470,26 @@ type Tables = {
     Insert: Partial<Transaction>;
     Update: Partial<Transaction>;
   };
+  campaigns: {
+    Row: Campaign;
+    Insert: Partial<Campaign>;
+    Update: Partial<Campaign>;
+  };
+  campaign_templates: {
+    Row: CampaignTemplate;
+    Insert: Partial<CampaignTemplate>;
+    Update: Partial<CampaignTemplate>;
+  };
+  campaign_segments: {
+    Row: CampaignSegment;
+    Insert: Partial<CampaignSegment>;
+    Update: Partial<CampaignSegment>;
+  };
+  campaign_recipients: {
+    Row: CampaignRecipient;
+    Insert: Partial<CampaignRecipient>;
+    Update: Partial<CampaignRecipient>;
+  };
 };
 
 export type Database = {
@@ -408,6 +503,36 @@ export type Database = {
           p_restore_stock?: boolean;
         };
         Returns: undefined;
+      };
+      campaign_patients_for_campaign: {
+        Args: {
+          p_campaign_id: string;
+        };
+        Returns: {
+          id: string;
+          full_name: string;
+          phone: string;
+          visit_count: number;
+          last_visit_at: string | null;
+        }[];
+      };
+      campaign_segment_patients: {
+        Args: {
+          p_clinic_id: string;
+          p_treatment_id?: string | null;
+          p_min_visits?: number | null;
+          p_max_visits?: number | null;
+          p_months_since_last_visit?: number | null;
+          p_min_age?: number | null;
+          p_max_age?: number | null;
+        };
+        Returns: {
+          id: string;
+          full_name: string;
+          phone: string;
+          visit_count: number;
+          last_visit_at: string | null;
+        }[];
       };
     };
     Enums: Record<string, never>;

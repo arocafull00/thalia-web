@@ -99,6 +99,7 @@ describe("patients-store", () => {
       email: null,
       address: null,
       notes: null,
+      marketing_opt_in: false,
     });
 
     expect(result).toEqual(mockPatient);
@@ -122,6 +123,7 @@ describe("patients-store", () => {
         email: null,
         address: null,
         notes: null,
+        marketing_opt_in: false,
       }),
     ).rejects.toThrow("insert failed");
 

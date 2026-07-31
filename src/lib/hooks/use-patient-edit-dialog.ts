@@ -28,6 +28,7 @@ function toFormValues(patient: Patient): PatientFormValues {
     email: patient.email ?? "",
     address: patient.address ?? "",
     notes: patient.notes ?? "",
+    marketing_opt_in: patient.marketing_opt_in,
   };
 }
 
@@ -70,6 +71,7 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
       email: data.email,
       address: data.address,
       notes: data.notes,
+      marketing_opt_in: data.marketing_opt_in,
     });
 
     if (!parsed.success) {
@@ -86,6 +88,7 @@ export function usePatientEditDialog(patient: Patient, onSuccess: () => void) {
         email: parsed.data.email,
         address: parsed.data.address,
         notes: parsed.data.notes,
+        marketing_opt_in: parsed.data.marketing_opt_in,
       });
       notifySuccess(PATIENT_EDIT_COPY.success);
       onSuccess();

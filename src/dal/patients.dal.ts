@@ -12,6 +12,7 @@ export type PatientInsert = {
   email: string | null;
   address: string | null;
   notes: string | null;
+  marketing_opt_in: boolean;
 };
 
 export type PatientUpdate = Partial<Omit<PatientInsert, "clinic_id">> & {

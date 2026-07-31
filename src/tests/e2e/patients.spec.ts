@@ -32,6 +32,12 @@ test("crea y edita un paciente con el formulario completo", async ({
   await createDialog
     .getByLabel("Notas")
     .fill("Paciente creado por Playwright.");
+
+  // Consentimiento de marketing: nace desmarcado y solo se activa a mano.
+  const createOptIn = createDialog.getByTestId("patient-marketing-opt-in");
+  await expect(createOptIn).not.toBeChecked();
+  await createOptIn.check();
+
   await page.getByTestId("patient-create-submit").click();
 
   await expect(createDialog).toBeHidden();
@@ -42,6 +48,11 @@ test("crea y edita un paciente con el formulario completo", async ({
   await clickPatientTableRow(page, new RegExp(patientName));
 
   const editDialog = page.getByRole("dialog", { name: "Editar paciente" });
+  // El consentimiento sobrevivió al guardado y vuelve marcado desde la BD.
+  await expect(
+    editDialog.getByTestId("patient-marketing-opt-in"),
+  ).toBeChecked();
+
   await editDialog.getByLabel(/Nombre completo/).fill(updatedName);
   await page.getByTestId("patient-edit-submit").click();
 

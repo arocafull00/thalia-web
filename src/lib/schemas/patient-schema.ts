@@ -20,6 +20,9 @@ const patientFieldsSchema = z.object({
   email: nullableEmail(),
   address: nullableTrimmedString(255, "La dirección es demasiado larga."),
   notes: nullableTrimmedString(1000, "Las notas son demasiado largas."),
+  // Consentimiento para comunicaciones comerciales. Sin esto el paciente queda
+  // fuera de toda campaña: lo filtra campaign_segment_patients en SQL.
+  marketing_opt_in: z.boolean(),
 });
 
 export const patientSchema = patientFieldsSchema.extend({

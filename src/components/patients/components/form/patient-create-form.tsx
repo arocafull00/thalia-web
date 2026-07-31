@@ -130,6 +130,22 @@ export default function PatientCreateForm({
           <span className="text-sm text-danger">{errors.notes.message}</span>
         ) : null}
       </label>
+      <label className="flex items-start gap-3 rounded-xl border border-border-subtle p-3">
+        <input
+          {...register("marketing_opt_in")}
+          type="checkbox"
+          data-testid="patient-marketing-opt-in"
+          className="mt-0.5 size-4 shrink-0 accent-primary"
+        />
+        <span className="space-y-1">
+          <span className="block text-sm text-ink">
+            {PATIENT_CREATE_COPY.fields.marketingOptIn}
+          </span>
+          <span className="block text-xs text-ink-muted">
+            {PATIENT_CREATE_COPY.fields.marketingOptInHint}
+          </span>
+        </span>
+      </label>
     </div>
   );
 }

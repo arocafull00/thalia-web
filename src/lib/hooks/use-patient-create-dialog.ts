@@ -32,6 +32,7 @@ const defaultValues: PatientFormValues = {
   email: "",
   address: "",
   notes: "",
+  marketing_opt_in: false,
 };
 
 export function usePatientCreateDialog(onSuccess: () => void) {
@@ -103,6 +104,7 @@ export function usePatientCreateDialog(onSuccess: () => void) {
       email: data.email,
       address: data.address,
       notes: data.notes,
+      marketing_opt_in: data.marketing_opt_in,
     });
 
     if (!parsed.success) {

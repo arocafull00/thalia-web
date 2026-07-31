@@ -33,6 +33,7 @@ export type PatientFormInput = {
   email: string | null;
   address: string | null;
   notes: string | null;
+  marketing_opt_in: boolean;
 };
 
 function patientsListKey(search: string) {

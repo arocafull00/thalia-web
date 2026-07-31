@@ -10,6 +10,9 @@ export const PATIENT_CREATE_COPY = {
     birthDate: "Fecha de nacimiento",
     address: "Dirección",
     notes: "Notas",
+    marketingOptIn: "Acepta recibir comunicaciones comerciales",
+    marketingOptInHint:
+      "Marca solo si el paciente lo ha consentido expresamente. Sin esto no entrará en ninguna campaña de marketing.",
     requiredMark: "*",
   },
   actions: {

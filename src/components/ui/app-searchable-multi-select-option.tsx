@@ -24,10 +24,14 @@ export default function AppSearchableMultiSelectOption({
       role="checkbox"
       aria-checked={checked}
       onClick={() => onToggle(id)}
-      className="h-auto w-full cursor-pointer justify-start gap-2.5 rounded-xl px-2 py-1.5 text-left text-sm"
+      // whitespace-normal anula el nowrap que trae Button: sin él, un nombre de
+      // tratamiento largo se desbordaba en lugar de partir línea.
+      className="h-auto w-full cursor-pointer items-start justify-start gap-3 rounded-xl px-3 py-2.5 text-left text-sm whitespace-normal"
     >
       <span
-        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+        // mt-0.5 para que la casilla quede alineada con la primera línea del
+        // texto cuando el nombre ocupa dos.
+        className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border transition-colors ${
           checked
             ? "border-primary bg-primary text-on-primary"
             : "border-border bg-surface"
@@ -35,7 +39,7 @@ export default function AppSearchableMultiSelectOption({
       >
         {checked ? <Check size={12} strokeWidth={3} /> : null}
       </span>
-      <span>{label}</span>
+      <span className="min-w-0 flex-1">{label}</span>
     </Button>
   );
 }

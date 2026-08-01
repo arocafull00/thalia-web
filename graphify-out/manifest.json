@@ -305,8 +305,8 @@
     "semantic_hash": ""
   },
   "src/components/inventory/inventory-page-client.tsx": {
-    "mtime": 1785502455.6359565,
-    "ast_hash": "dbe302f570f59771307c8a7361c7fb63",
+    "mtime": 1785593424.106195,
+    "ast_hash": "99f6cb12a1a61ece82f796c0aa102979",
     "semantic_hash": ""
   },
   "src/components/onboarding/invite-team-page-client.tsx": {
@@ -1600,8 +1600,8 @@
     "semantic_hash": ""
   },
   "src/copy/inventory-copy.ts": {
-    "mtime": 1783529733.5412881,
-    "ast_hash": "4b6aed786eefebac91cc30ef651c68db",
+    "mtime": 1785593386.1961865,
+    "ast_hash": "b2ebd1734e261c721e2ef44357c805d7",
     "semantic_hash": ""
   },
   "src/copy/patients-copy.ts": {
@@ -2155,8 +2155,8 @@
     "semantic_hash": ""
   },
   "src/components/inventory/components/list/inventory-columns.tsx": {
-    "mtime": 1783979076.6286497,
-    "ast_hash": "057896a49708018ad87bad792cb06b7a",
+    "mtime": 1785593380.9931183,
+    "ast_hash": "6a8be6e1a7e8a25b8ca0a1eefc3d86fb",
     "semantic_hash": ""
   },
   "src/components/inventory/components/list/inventory-filters-sheet.tsx": {
@@ -3075,8 +3075,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/inventory.spec.ts": {
-    "mtime": 1785530324.7574177,
-    "ast_hash": "3ee27f7a3708685688cd289c7057b4db",
+    "mtime": 1785593455.5262828,
+    "ast_hash": "6b2a08388a85b0e61a695e4e51e3e829",
     "semantic_hash": ""
   },
   "src/tests/e2e/patient-files.spec.ts": {
@@ -4112,6 +4112,21 @@
   "videos/thalia-product-promo/snapshots/render-contact-sheet.jpg": {
     "mtime": 1785579271.90944,
     "ast_hash": "4b94c2e3271cf18f5db96b871a20149a",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/list/inventory-stock-badge.tsx": {
+    "mtime": 1785597429.9985688,
+    "ast_hash": "aebe8dec8158b91b1aa0502bf091eda6",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/list/inventory-stock-summary-item.tsx": {
+    "mtime": 1785596139.6914175,
+    "ast_hash": "229be887d03f9f176cf77fd4a9955b7c",
+    "semantic_hash": ""
+  },
+  "src/components/inventory/components/list/inventory-stock-summary.tsx": {
+    "mtime": 1785594932.2859695,
+    "ast_hash": "b18c56de22c8ed163cf2ea6b3b10f3e2",
     "semantic_hash": ""
   }
 }

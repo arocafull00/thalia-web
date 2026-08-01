@@ -1,7 +1,7 @@
 # Graph Report - thalia-web  (2026-08-01)
 
 ## Corpus Check
-- 769 files · ~326,102 words
+- 769 files · ~326,211 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `69d7f6a3`
+- Built from commit: `450a566f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -729,7 +729,7 @@ Cohesion: 0.10
 Nodes (16): ClinicInfoRow(), ClinicInfoRowProps, SettingsClinicHoursPanelProps, SettingsClinicPanelProps, SettingsManagementLink(), SettingsManagementLinkProps, MANAGEMENT_LINKS, SettingsProfileHeader() (+8 more)
 
 ## Knowledge Gaps
-- **817 isolated node(s):** `InventoryStockBadgeProps`, `levelVariants`, `StockTone`, `InventoryStockSummaryItemProps`, `toneText` (+812 more)
+- **817 isolated node(s):** `AppointmentCreateDialogProps`, `AppSearchableMultiSelectOptionProps`, `AppSearchableMultiSelectOption`, `AppSearchableMultiSelectProps`, `InventoryStockBadgeProps` (+812 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -737,12 +737,12 @@ Nodes (16): ClinicInfoRow(), ClinicInfoRowProps, SettingsClinicHoursPanelProps, 
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `cn()` connect `cn` to `app-searchable-combobox.tsx`, `format.ts`, `sidebar.tsx`, `use-treatment-dialog.ts`, `calendar-agenda.ts`, `skeleton.tsx`, `dropzone.tsx`, `use-employee-edit-dialog.ts`, `inventory-page-client.tsx`, `use-schedule-x-calendar.ts`, `button.tsx`, `app-dialog-content.tsx`, `utils.ts`, `appointment-create-dialog.tsx`, `use-app-nav-items.tsx`, `app-date-field.tsx`, `filters-sheet.tsx`, `input-group.tsx`, `data-table.tsx`, `use-profile-edit-dialog.ts`, `use-owner-registration.ts`, `app-topbar.tsx`, `calendar-page-client.tsx`, `loader-spinner.tsx`, `badge.tsx`?**
-  _High betweenness centrality (0.079) - this node is a cross-community bridge._
+  _High betweenness centrality (0.076) - this node is a cross-community bridge._
 - **Why does `Button()` connect `button.tsx` to `settings-page-client.tsx`, `use-appointment-materials-override-dialog.ts`, `useEmployees`, `app-searchable-combobox.tsx`, `Patient`, `use-treatment-images.ts`, `employees-page-client.tsx`, `sidebar.tsx`, `campaigns-date-range-filter.tsx`, `finances-page-client.tsx`, `use-treatment-dialog.ts`, `settings-profile-header.tsx`, `dropzone.tsx`, `appointments-columns.tsx`, `use-employee-edit-dialog.ts`, `login-hero-panel.tsx`, `before-after-comparison-slider.tsx`, `bootstrap.ts`, `utils.ts`, `appointment-create-dialog.tsx`, `use-patient-create-dialog.ts`, `app-date-field.tsx`, `patient-files-copy.ts`, `filters-sheet.tsx`, `useAuth`, `cn`, `input-group.tsx`, `data-table.tsx`, `files-table.tsx`, `use-profile-edit-dialog.ts`, `patient-file-row.tsx`, `use-owner-registration.ts`, `invite-team-page-client.tsx`, `app-topbar.tsx`, `appointment-detail-page-client.tsx`, `use-active-clinic.ts`, `use-topbar-actions.ts`, `calendar-page-client.tsx`, `app-searchable-multi-select.tsx`, `patients-table.tsx`, `appointment-materials-section.tsx`, `app-search-bar-input.tsx`, `mobile-card-view.tsx`, `page-filters-bar.tsx`, `useFileUrl`?**
-  _High betweenness centrality (0.064) - this node is a cross-community bridge._
-- **Why does `devDependencies` connect `devDependencies` to `format.ts`?**
+  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+- **Why does `supabase` connect `devDependencies` to `supabase.ts`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._
-- **What connects `InventoryStockBadgeProps`, `levelVariants`, `StockTone` to the rest of the system?**
+- **What connects `AppointmentCreateDialogProps`, `AppSearchableMultiSelectOptionProps`, `AppSearchableMultiSelectOption` to the rest of the system?**
   _817 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `useEmployees` be split into smaller, more focused modules?**
   _Cohesion score 0.13793103448275862 - nodes in this community are weakly interconnected._

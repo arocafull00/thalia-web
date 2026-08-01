@@ -10,6 +10,15 @@ export const MARKETING_COPY = {
     description:
       "Crea tu primera campaña para enviar promociones y avisos a tus pacientes por WhatsApp.",
   },
+  filters: {
+    all: "Todas",
+    status: "Estado",
+    date: "Fecha",
+    anyDate: "Cualquier fecha",
+    dateFrom: "Desde",
+    dateTo: "Hasta",
+    clearDate: "Limpiar fechas",
+  },
   list: {
     emptyFiltered: "No hay campañas con ese criterio.",
     columns: {
@@ -69,13 +78,24 @@ export const MARKETING_COPY = {
       anyTreatment: "Cualquiera",
       requiredMark: "*",
     },
+    steps: {
+      message: "Mensaje",
+      image: "Imagen",
+      segment: "Destinatarios",
+      review: "Revisión",
+      progress: (current: number, total: number) =>
+        `Paso ${current} de ${total}`,
+    },
     actions: {
       cancel: "Cancelar",
+      back: "Atrás",
+      next: "Siguiente",
       save: "Guardar borrador",
       saving: "Guardando...",
     },
     validation: {
       clinicRequired: "No hay clínica activa.",
+      segmentInvalid: "Revisa los filtros de destinatarios.",
     },
     success: "Campaña guardada como borrador.",
     error: "No se pudo guardar la campaña.",
@@ -92,11 +112,14 @@ export const MARKETING_COPY = {
   messagePreview: {
     empty: "El mensaje aparecerá aquí mientras lo escribes.",
     imageAlt: "Imagen destacada de la campaña",
+    // Deben coincidir con buildBody() de supabase/functions/send-campaign.
+    footerWebsiteLabel: "Web",
+    footerPhoneLabel: "Móvil",
   },
   image: {
     label: "Imagen destacada",
     chooseFile: "Elegir imagen",
-    dropzone: "JPG, PNG o WEBP. Máximo 5 MB.",
+    dropzone: "JPG, PNG o WEBP. Se optimizan al guardarlas.",
     dropzoneActive: "Suelta la imagen aquí.",
     uploadError: "No se pudo subir la imagen.",
   },
@@ -117,6 +140,19 @@ export const MARKETING_COPY = {
       columnStatus: "Estado",
       columnPhone: "Teléfono",
     },
+    reach: {
+      reached: "Alcanzados",
+      failed: "Fallidos",
+      pending: "Pendientes",
+      total: "Total",
+    },
+  },
+  duplicate: {
+    action: "Duplicar campaña",
+    moreActions: "Más acciones",
+    copyPrefix: "Copia de",
+    success: "Campaña duplicada como borrador.",
+    error: "No se pudo duplicar la campaña.",
   },
   send: {
     action: "Enviar campaña",

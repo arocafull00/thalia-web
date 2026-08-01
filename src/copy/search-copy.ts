@@ -6,6 +6,7 @@ export const SEARCH_COPY = {
     "/inventory": "Buscar materiales...",
     "/treatments": "Buscar tratamientos...",
     "/finances": "Buscar por concepto...",
+    "/marketing": "Buscar campañas...",
   },
   clear: "Limpiar búsqueda",
   filters: {

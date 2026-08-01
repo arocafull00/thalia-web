@@ -8,6 +8,9 @@ type CampaignRecipientsPreviewProps = {
   count: number | null;
   isLoading: boolean;
   hasError: boolean;
+  // El contador aparece en dos pasos a la vez —y ambos están montados aunque
+  // solo uno se vea—, así que cada uno necesita su propio identificador.
+  testId: string;
 };
 
 function resolveMessage(
@@ -38,12 +41,13 @@ export default function CampaignRecipientsPreview({
   count,
   isLoading,
   hasError,
+  testId,
 }: CampaignRecipientsPreviewProps) {
   const tone = hasError ? "text-danger" : "text-ink";
 
   return (
     <div
-      data-testid="campaign-recipients-preview"
+      data-testid={testId}
       className="rounded-xl border border-border-subtle bg-surface-secondary px-4 py-3"
     >
       <div className="flex items-center gap-2">

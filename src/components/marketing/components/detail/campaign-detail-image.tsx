@@ -17,12 +17,17 @@ export default function CampaignDetailImage({
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={url}
-      alt={MARKETING_COPY.messagePreview.imageAlt}
-      data-testid="campaign-detail-image"
-      className="mb-3 w-full max-w-sm rounded-xl object-cover"
-    />
+    <section>
+      <h2 className="text-sm font-medium text-ink">
+        {MARKETING_COPY.createDialog.steps.image}
+      </h2>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={url}
+        alt={MARKETING_COPY.messagePreview.imageAlt}
+        data-testid="campaign-detail-image"
+        className="mt-2 w-full rounded-xl object-cover"
+      />
+    </section>
   );
 }

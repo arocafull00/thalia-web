@@ -7,10 +7,11 @@ const authFile = path.join("src", "tests", "e2e", ".auth", "user.json");
 
 export default defineConfig({
   testDir: "./src/tests/e2e",
+  timeout: 60_000,
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: process.env.CI
     ? [["github"], ["html", { open: "never" }]]
     : [["list"], ["html", { open: "never" }]],

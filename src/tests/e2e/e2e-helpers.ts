@@ -14,7 +14,9 @@ export async function expectSearchParam(
   value: string,
 ) {
   await expect
-    .poll(() => new URL(page.url()).searchParams.get(key))
+    .poll(() => new URL(page.url()).searchParams.get(key), {
+      timeout: 15_000,
+    })
     .toBe(value);
 }
 

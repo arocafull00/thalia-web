@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es"><head></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Geist"; src: local("Geist"); }
+        #root { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box; background: #ffffff; color: #1f2933; font-family: Geist, Arial, sans-serif; }
+        * { box-sizing: border-box; }
+        .stage { position: absolute; inset: 0; padding: 76px 96px 62px; }
+        .eyebrow { color: #3d8fa0; font-size: 18px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+        .layout { display: grid; grid-template-columns: .86fr 1.14fr; gap: 72px; align-items: center; height: 885px; }
+        .copy { max-width: 760px; z-index: 2; }
+        .copy h1 { margin: 0; font-size: 78px; line-height: .98; letter-spacing: -.055em; }
+        .accent { width: 64px; height: 5px; margin: 24px 0 0; border-radius: 8px; background: #3d8fa0; }
+        .product-window { position: relative; height: 720px; overflow: hidden; border: 3px solid rgba(61,143,160,.2); border-radius: 20px; background: #ffffff; }
+        .product-window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+        .window-label { position: absolute; left: 26px; top: 26px; padding: 11px 18px; border-radius: 999px; background: #3d8fa0; color: #ffffff; font-size: 16px; font-weight: 680; letter-spacing: .08em; }
+        .count { position: absolute; left: 96px; bottom: 52px; color: #2e7a8c; font-size: 15px; letter-spacing: .1em; }
+        .progress { position: absolute; left: 0; bottom: 0; width: 25%; height: 4px; background: #3d8fa0; }
+      </style>
+      <div data-hf-id="hf-6id2" id="root" data-composition-id="01-no-deberias-recordarlo-todo" data-start="0" data-width="1920" data-height="1080" data-duration="3.55">
+        <section data-hf-id="hf-3b2v" id="scene-01-layout" class="stage clip" data-start="0" data-duration="3.55" data-track-index="1">
+          <div data-hf-id="hf-b3ie" class="eyebrow">Thalia · El problema</div>
+          <div data-hf-id="hf-s2yi" class="layout"><div data-hf-id="hf-bdx3" class="copy"><h1 data-hf-id="hf-0sxx">Dirigir una clínica no debería depender de recordarlo todo.</h1><div data-hf-id="hf-hx96" class="accent"></div></div><div data-hf-id="hf-vo6m" class="product-window"><img data-hf-id="hf-ctg2" id="frame-01-agenda" src=".media/images/image_001.png" alt="Agenda semanal real de Thalia"><div data-hf-id="hf-o7h8" class="window-label">TODO A LA VISTA</div></div></div>
+          <div data-hf-id="hf-lu56" class="count">02 / 08</div><div data-hf-id="hf-31j5" class="progress"></div>
+        </section>
+        <script>
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo(".eyebrow", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.34, ease: "power4.out" }, 0.08);
+          tl.fromTo("h1", { opacity: 0, y: 76 }, { opacity: 1, y: 0, duration: 0.58, ease: "power4.out" }, 0.18);
+          tl.fromTo(".accent", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 0.34, ease: "power3.out" }, 0.72);
+          tl.fromTo(".product-window", { opacity: 0, x: 120, scale: 0.93 }, { opacity: 1, x: 0, scale: 1, duration: 0.74, ease: "power3.out" }, 0.36);
+          tl.fromTo(".product-window img", { scale: 1.08, x: 34 }, { scale: 1.02, x: 0, duration: 2.2, ease: "sine.inOut" }, 0.42);
+          tl.fromTo(".window-label", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.34, ease: "power3.out" }, 1.02);
+          tl.fromTo(".progress", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 2.6, ease: "none" }, 0.2);
+          tl.to({}, { duration: 3 }, 0);
+          window.__timelines["01-no-deberias-recordarlo-todo"] = tl;
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

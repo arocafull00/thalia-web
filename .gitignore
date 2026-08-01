@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+**/node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -56,5 +57,13 @@ next-env.d.ts
 certificates
 graphify-out/cost.json        
 graphify-out/cache/
+
+# local Codex and HyperFrames caches
+/.codex-worktrees/
+videos/**/.thumbnails/
+videos/**/.waveform-cache/
+videos/**/.hyperframes/backup/
+videos/**/.hyperframes/*.log
+videos/**/.hyperframes/*.wav
 # Sentry Config File
 .env.sentry-build-plugin

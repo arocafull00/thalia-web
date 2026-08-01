@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es"><head></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Geist"; src: local("Geist"); }
+        #root { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box; background: #ffffff; color: #1f2933; font-family: Geist, Arial, sans-serif; }
+        * { box-sizing: border-box; }
+        .stage { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+        .ring { position: absolute; border: 2px solid rgba(61,143,160,.2); border-radius: 50%; }
+        .ring-a { width: 820px; height: 820px; } .ring-b { width: 610px; height: 610px; } .ring-c { width: 410px; height: 410px; }
+        .lockup { position: relative; width: 1100px; }
+        .mark { width: 150px; height: 150px; margin: 0 auto 36px; overflow: hidden; border: 3px solid rgba(61,143,160,.2); border-radius: 38px; background: rgba(61,143,160,.04); }
+        .mark img { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .brand { color: #3d8fa0; font-size: 24px; font-weight: 680; letter-spacing: .22em; text-transform: uppercase; }
+        h1 { margin: 30px auto 0; font-size: 92px; line-height: 1.02; letter-spacing: -.06em; }
+        .rule { width: 70px; height: 5px; margin: 34px auto 0; border-radius: 8px; background: #3d8fa0; }
+        .count { position: absolute; left: 96px; bottom: 38px; color: #2e7a8c; font-size: 15px; letter-spacing: .1em; }
+        .progress { position: absolute; left: 0; bottom: 0; width: 100%; height: 4px; background: #3d8fa0; }
+      </style>
+      <div data-hf-id="hf-iw31" id="root" data-composition-id="05-thalia" data-start="0" data-width="1920" data-height="1080" data-duration="3">
+        <section data-hf-id="hf-sqjh" id="scene-05-layout" class="stage clip" data-start="0" data-duration="3" data-track-index="1">
+          <div data-hf-id="hf-vdpu" class="ring ring-a"></div><div data-hf-id="hf-rflt" class="ring ring-b"></div><div data-hf-id="hf-qny0" class="ring ring-c"></div>
+          <div data-hf-id="hf-6jvi" class="lockup"><div data-hf-id="hf-9gvv" class="mark"><img data-hf-id="hf-h4ms" id="frame-05-thalia-icon" src=".media/images/logo_001.png" alt="Icono de Thalia"></div><div data-hf-id="hf-5jak" class="brand">Thalia</div><h1 data-hf-id="hf-50w1">Toda tu clínica.<br data-hf-id="hf-x5px">En sincronía.</h1><div data-hf-id="hf-a46i" class="rule"></div></div>
+          <div data-hf-id="hf-90um" class="count">08 / 08</div><div data-hf-id="hf-31j5" class="progress"></div>
+        </section>
+        <script>
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo(".ring-a", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.72, ease: "power3.out" }, 0.08);
+          tl.fromTo(".ring-b", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.72, ease: "power3.out" }, 0.2);
+          tl.fromTo(".ring-c", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.72, ease: "power3.out" }, 0.32);
+          tl.fromTo(".mark", { opacity: 0, y: 46, scale: 0.74 }, { opacity: 1, y: 0, scale: 1, duration: 0.58, ease: "back.out(1.45)" }, 0.52);
+          tl.fromTo(".brand", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.42, ease: "power4.out" }, 0.82);
+          tl.fromTo("h1", { opacity: 0, y: 52 }, { opacity: 1, y: 0, duration: 0.52, ease: "power4.out" }, 1.04);
+          tl.fromTo(".rule", { scaleX: 0, transformOrigin: "center center" }, { scaleX: 1, duration: 0.44, ease: "power3.out" }, 1.48);
+          tl.to(".lockup", { scale: 1.02, duration: 1.15, ease: "sine.inOut" }, 1.72);
+          tl.fromTo(".progress", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 2.5, ease: "none" }, 0.2);
+          tl.to({}, { duration: 3 }, 0);
+          window.__timelines["05-thalia"] = tl;
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

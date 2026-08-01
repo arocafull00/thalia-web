@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es"><head></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Geist"; src: local("Geist"); }
+        #root { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box; background: #ffffff; color: #1f2933; font-family: Geist, Arial, sans-serif; }
+        * { box-sizing: border-box; }
+        .stage { position: absolute; inset: 0; padding: 68px 96px 62px; }
+        .eyebrow { color: #3d8fa0; font-size: 18px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+        .layout { display: grid; grid-template-columns: 1fr 1.04fr; gap: 80px; align-items: center; height: 880px; }
+        h1 { margin: 0; max-width: 820px; font-size: 84px; line-height: .99; letter-spacing: -.06em; }
+        .accent { width: 68px; height: 5px; margin: 30px 0; border-radius: 8px; background: #3d8fa0; }
+        .sub { max-width: 670px; color: #2e7a8c; font-size: 26px; line-height: 1.42; }
+        .source { display: grid; grid-template-columns: 220px 62px 430px; gap: 22px; align-items: center; justify-content: end; }
+        .appointment { padding: 26px 22px; border: 2px solid rgba(61,143,160,.2); border-radius: 16px; background: rgba(61,143,160,.04); }
+        .appointment-icon { display: grid; place-items: center; width: 70px; height: 70px; margin-bottom: 28px; border-radius: 50%; background: rgba(61,143,160,.15); color: #3d8fa0; }
+        .appointment-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+        .label { color: #3d8fa0; font-size: 14px; font-weight: 680; letter-spacing: .1em; }
+        .patient { margin-top: 20px; font-size: 28px; font-weight: 690; }
+        .time { margin-top: 9px; color: #2e7a8c; font-size: 19px; }
+        .arrow { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; background: #3d8fa0; color: #ffffff; font-size: 31px; font-weight: 700; }
+        .phone-wrap { position: relative; width: 430px; height: 830px; }
+        .phone { position: absolute; inset: 0; padding: 13px; border-radius: 58px; background: #1f2933; }
+        .screen { position: relative; height: 100%; overflow: hidden; border-radius: 46px; background: #f6f8f8; }
+        .island { position: absolute; left: 50%; top: 14px; z-index: 5; width: 126px; height: 34px; border-radius: 999px; background: #1f2933; transform: translateX(-50%); }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; height: 58px; padding: 0 28px; background: #ffffff; color: #1f2933; font-size: 15px; font-weight: 680; }
+        .status-icons { letter-spacing: .12em; }
+        .chat-head { display: grid; grid-template-columns: 48px 1fr; align-items: center; gap: 14px; padding: 18px 22px; background: #3d8fa0; color: #ffffff; }
+        .avatar { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #ffffff; color: #3d8fa0; font-weight: 750; }
+        .clinic { font-size: 18px; font-weight: 700; }
+        .online { margin-top: 3px; font-size: 13px; opacity: .85; }
+        .chat-body { min-height: 584px; padding: 34px 20px 18px; background: rgba(61,143,160,.08); }
+        .bubble { max-width: 87%; padding: 17px 18px; border-radius: 17px; font-size: 18px; line-height: 1.35; }
+        .bubble-out { border-top-left-radius: 5px; background: #ffffff; }
+        .bubble-in { margin: 24px 0 0 auto; border-top-right-radius: 5px; background: rgba(61,143,160,.2); }
+        .message-time { margin-top: 8px; color: #2e7a8c; font-size: 12px; text-align: right; }
+        .confirmed { margin: 32px auto 0; width: max-content; padding: 11px 17px; border-radius: 999px; background: #3d8fa0; color: #ffffff; font-size: 14px; font-weight: 700; letter-spacing: .08em; }
+        .composer { display: grid; grid-template-columns: 1fr 42px; gap: 10px; padding: 14px 18px 18px; background: #ffffff; }
+        .composer-field { height: 42px; border: 2px solid rgba(61,143,160,.2); border-radius: 999px; }
+        .composer-send { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #3d8fa0; color: #ffffff; font-size: 20px; }
+        .count { position: absolute; left: 96px; bottom: 38px; color: #2e7a8c; font-size: 15px; letter-spacing: .1em; }
+        .progress { position: absolute; left: 0; bottom: 0; width: 50%; height: 4px; background: #3d8fa0; }
+      </style>
+      <div data-hf-id="hf-ybrt" id="root" data-composition-id="02b-confirmacion-whatsapp" data-start="0" data-width="1920" data-height="1080" data-duration="4.4">
+        <section data-hf-id="hf-brrl" id="scene-02b-layout" class="stage clip" data-start="0" data-duration="4.4" data-track-index="1">
+          <div data-hf-id="hf-w76b" class="eyebrow">Thalia · Confirmación automática</div>
+          <div data-hf-id="hf-s2yi" class="layout">
+            <div data-hf-id="hf-yeow"><h1 data-hf-id="hf-fyjk">Avisa y confirma por WhatsApp. Automáticamente.</h1><div data-hf-id="hf-hx96" class="accent"></div><div data-hf-id="hf-rhy0" class="sub">Thalia avisa al cliente y registra su confirmación en la agenda, sin intervención manual.</div></div>
+            <div data-hf-id="hf-ok5b" class="source">
+              <div data-hf-id="hf-lyvz" class="appointment"><div data-hf-id="hf-hr37" class="appointment-icon"><svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-4rnt" d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" /><path data-hf-id="hf-nc30" d="m9 15 2 2 4-5" /></svg></div><div data-hf-id="hf-0olb" class="label">CITA PROGRAMADA</div><div data-hf-id="hf-f995" class="patient">Laura Martín</div><div data-hf-id="hf-83rx" class="time">Mañana · 10:30</div></div>
+              <div data-hf-id="hf-drib" class="arrow">→</div>
+              <div data-hf-id="hf-sdpd" class="phone-wrap"><div data-hf-id="hf-kda4" class="phone"><div data-hf-id="hf-cdmk" class="screen"><div data-hf-id="hf-7sfr" class="island"></div><div data-hf-id="hf-uq5y" class="status-bar"><span data-hf-id="hf-zwmt">9:41</span></div><div data-hf-id="hf-f2l9" class="chat-head"><div data-hf-id="hf-wpd9" class="avatar">T</div><div data-hf-id="hf-y7yw"><div data-hf-id="hf-51t6" class="clinic">Clínica Thalia</div><div data-hf-id="hf-va13" class="online">en línea</div></div></div><div data-hf-id="hf-h3wb" class="chat-body"><div data-hf-id="hf-jvrk" class="bubble bubble-out">Hola Laura. Te recordamos tu cita de mañana a las 10:30. ¿Puedes confirmar asistencia?<div data-hf-id="hf-uskf" class="message-time">14:32</div></div><div data-hf-id="hf-k757" class="bubble bubble-in">Confirmado. Nos vemos mañana.<div data-hf-id="hf-vzhi" class="message-time">14:35</div></div><div data-hf-id="hf-twg8" class="confirmed">CITA CONFIRMADA</div></div><div data-hf-id="hf-cydq" class="composer"><div data-hf-id="hf-p151" class="composer-field"></div><div data-hf-id="hf-jf79" class="composer-send">›</div></div></div></div></div>
+            </div>
+          </div>
+          <div data-hf-id="hf-0fss" class="count">04 / 08</div><div data-hf-id="hf-31j5" class="progress"></div>
+        </section>
+        <script>
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo(".eyebrow", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.32, ease: "power4.out" }, 0.06);
+          tl.fromTo("h1", { opacity: 0, y: 62 }, { opacity: 1, y: 0, duration: 0.52, ease: "power4.out" }, 0.16);
+          tl.fromTo(".accent", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 0.3, ease: "power3.out" }, 0.6);
+          tl.fromTo(".sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 0.68);
+          tl.fromTo(".appointment", { opacity: 0, x: 90, scale: 0.88 }, { opacity: 1, x: 0, scale: 1, duration: 0.54, ease: "power3.out" }, 0.5);
+          tl.fromTo(".arrow", { opacity: 0, x: -34 }, { opacity: 1, x: 0, duration: 0.38, ease: "power4.out" }, 1.02);
+          tl.fromTo(".phone-wrap", { opacity: 0, x: 100, y: 30, scale: 0.84 }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.68, ease: "power3.out" }, 0.86);
+          tl.fromTo(".bubble-out", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 1.46);
+          tl.fromTo(".bubble-in", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" }, 2.02);
+          tl.fromTo(".confirmed", { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.27, ease: "back.out(1.6)" }, 2.5);
+          tl.to(".confirmed", { scale: 0.94, duration: 0.12, ease: "power1.in" }, 2.78);
+          tl.to(".confirmed", { scale: 1, duration: 0.42, ease: "back.out(1.5)" }, 2.9);
+          tl.fromTo(".progress", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 3.5, ease: "none" }, 0.2);
+          tl.to({}, { duration: 4 }, 0);
+          window.__timelines["02b-confirmacion-whatsapp"] = tl;
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

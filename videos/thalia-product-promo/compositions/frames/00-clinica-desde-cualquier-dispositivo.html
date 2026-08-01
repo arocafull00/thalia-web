@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es"><head></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Geist"; src: local("Geist"); }
+        #root { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box; background: #ffffff; color: #1f2933; font-family: Geist, Arial, sans-serif; }
+        * { box-sizing: border-box; }
+        .stage { position: absolute; inset: 0; padding: 84px 96px 62px; }
+        .eyebrow { color: #378090; font-size: 18px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; }
+        .layout { display: grid; grid-template-columns: .82fr 1.18fr; gap: 86px; height: 860px; align-items: center; }
+        .brand-card { display: grid; place-items: center; width: 610px; height: 250px; border: 2px solid rgba(61,143,160,.2); border-radius: 22px; background: rgba(61,143,160,.04); }
+        .brand-name { font-size: 106px; font-weight: 680; letter-spacing: -.065em; }
+        .accent { width: 72px; height: 5px; margin: 38px 0 25px; border-radius: 8px; background: #3d8fa0; }
+        .promise { max-width: 700px; font-size: 60px; font-weight: 650; line-height: 1.03; letter-spacing: -.045em; }
+        .promise-detail { max-width: 650px; margin-top: 22px; color: #2e7a8c; font-size: 27px; line-height: 1.35; }
+        .devices { position: relative; height: 720px; }
+        .device { position: absolute; overflow: hidden; border: 3px solid rgba(61,143,160,.2); background: #ffffff; }
+        .device img { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .tablet { right: 50px; top: 22px; width: 650px; height: 455px; border-radius: 26px; opacity: .38; }
+        .tablet img { object-position: 18% top; }
+        .desktop { right: 0; top: 104px; width: 720px; height: 500px; border-radius: 24px; z-index: 2; }
+        .desktop img { object-position: left top; }
+        .mobile { left: 0; bottom: 30px; width: 226px; height: 470px; border: 9px solid #1f2933; border-radius: 42px; background: #ffffff; z-index: 4; }
+        .mobile img { object-position: center top; }
+        .mobile::before { content: ""; position: absolute; left: 50%; top: 12px; width: 72px; height: 19px; border-radius: 999px; background: #1f2933; transform: translateX(-50%); z-index: 2; }
+        .count { position: absolute; left: 96px; bottom: 38px; color: #2e7a8c; font-size: 15px; letter-spacing: .1em; }
+        .progress { position: absolute; left: 0; bottom: 0; width: 12.5%; height: 4px; background: #3d8fa0; }
+      </style>
+      <div data-hf-id="hf-jpim" id="root" data-composition-id="00-clinica-desde-cualquier-dispositivo" data-start="0" data-width="1920" data-height="1080" data-duration="3">
+        <section data-hf-id="hf-jy0s" id="scene-00-layout" class="stage clip" data-start="0" data-duration="3" data-track-index="1">
+          <div data-hf-id="hf-4weh" class="eyebrow">Gestión clínica integral</div>
+          <div data-hf-id="hf-s2yi" class="layout">
+            <div data-hf-id="hf-yeow"><div data-hf-id="hf-ay8i" class="brand-card"><div data-hf-id="hf-m27a" class="brand-name">Thalia</div></div><div data-hf-id="hf-hx96" class="accent"></div><div data-hf-id="hf-j1xq" class="promise">Tu clínica, estés donde estés.</div><div data-hf-id="hf-dzha" class="promise-detail">Gestiona todo desde móvil, ordenador o tablet.</div></div>
+            <div data-hf-id="hf-zrs9" class="devices">
+              <div data-hf-id="hf-sqzi" class="device tablet"><img data-hf-id="hf-aaoj" id="frame-00-tablet-finances" src=".media/images/image_005.png" alt="Finanzas reales de Thalia en tablet"></div>
+              <div data-hf-id="hf-hguy" class="device desktop"><img data-hf-id="hf-o8wj" id="frame-00-desktop-agenda" src=".media/images/image_001.png" alt="Agenda real de Thalia en ordenador"></div>
+              <div data-hf-id="hf-uojs" class="device mobile"><img data-hf-id="hf-fo64" id="frame-00-mobile-agenda" src=".media/images/image_002.png" alt="Agenda móvil real de Thalia"></div>
+            </div>
+          </div>
+          <div data-hf-id="hf-yiox" class="count">01 / 08</div><div data-hf-id="hf-31j5" class="progress"></div>
+        </section>
+        <script>
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo(".eyebrow", { opacity: 1, y: 28 }, { opacity: 1, y: 0, duration: 0.38, ease: "power4.out" }, 0);
+          tl.fromTo(".brand-card", { opacity: 0.12, y: 58, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.58, ease: "power3.out" }, 0.12);
+          tl.fromTo(".accent", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 0.32, ease: "power3.out" }, 0.62);
+          tl.fromTo(".promise", { opacity: 0, y: 48 }, { opacity: 1, y: 0, duration: 0.46, ease: "power4.out" }, 0.66);
+          tl.fromTo(".promise-detail", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.86);
+          tl.fromTo(".tablet", { opacity: 0, x: 100, y: -36, scale: 0.84 }, { opacity: 0.38, x: 0, y: 0, scale: 1, duration: 0.78, ease: "power3.out" }, 0.3);
+          tl.fromTo(".desktop", { opacity: 0, x: 80, y: 42, scale: 0.82 }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.82, ease: "power3.out" }, 0.48);
+          tl.fromTo(".mobile", { opacity: 0, x: -68, y: 70, scale: 0.72 }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.74, ease: "power3.out" }, 0.72);
+          tl.to(".devices", { scale: 1.018, x: -8, duration: 1.3, ease: "sine.inOut" }, 1.5);
+          tl.fromTo(".progress", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 2.6, ease: "none" }, 0.2);
+          tl.to({}, { duration: 3 }, 0);
+          window.__timelines["00-clinica-desde-cualquier-dispositivo"] = tl;
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

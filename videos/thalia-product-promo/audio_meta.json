@@ -1,0 +1,8 @@
+{
+  "bgm": {
+    "path": ".media/audio/bgm/bgm_002.wav",
+    "volume": 0.85
+  },
+  "voices": [],
+  "sfx": []
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es"><head></head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Geist"; src: local("Geist"); }
+        #root { position: absolute; inset: 0; overflow: hidden; box-sizing: border-box; background: #ffffff; color: #1f2933; font-family: Geist, Arial, sans-serif; }
+        * { box-sizing: border-box; }
+        .stage { position: absolute; inset: 0; padding: 72px 96px 62px; }
+        .header { display: flex; align-items: center; justify-content: space-between; }
+        .eyebrow { color: #3d8fa0; font-size: 18px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+        .tag { padding: 10px 18px; border-radius: 999px; background: rgba(61,143,160,.08); color: #3d8fa0; font-size: 15px; font-weight: 600; }
+        .layout { display: grid; grid-template-columns: 560px 1fr; gap: 62px; margin-top: 60px; align-items: center; }
+        h1 { margin: 0; font-size: 82px; line-height: 1; letter-spacing: -.055em; }
+        .metric { margin-top: 58px; padding: 32px 0 34px; border-top: 2px solid rgba(61,143,160,.2); border-bottom: 2px solid rgba(61,143,160,.2); }
+        .metric-label { color: #2e7a8c; font-size: 18px; letter-spacing: .08em; text-transform: uppercase; }
+        .metric-value { margin-top: 10px; color: #3d8fa0; font-size: 82px; font-weight: 730; letter-spacing: -.05em; }
+        .metric-note { margin-top: 10px; color: #2e7a8c; font-size: 20px; }
+        .product { position: relative; height: 620px; }
+        .finance-shot { position: absolute; inset: 0 0 52px 0; overflow: hidden; border: 3px solid rgba(61,143,160,.2); border-radius: 18px; background: #ffffff; }
+        .finance-shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+        .inventory-shot { position: absolute; right: -14px; bottom: 0; width: 390px; height: 220px; overflow: hidden; border: 4px solid #ffffff; border-radius: 15px; background: #ffffff; }
+        .inventory-shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+        .shot-label { position: absolute; left: 22px; top: 22px; padding: 10px 16px; border-radius: 999px; background: #3d8fa0; color: #ffffff; font-size: 14px; font-weight: 700; letter-spacing: .08em; }
+        .inventory-shot .shot-label { top: 14px; left: 14px; }
+        .count { position: absolute; left: 96px; bottom: 38px; color: #2e7a8c; font-size: 15px; letter-spacing: .1em; }
+        .progress { position: absolute; left: 0; bottom: 0; width: 87.5%; height: 4px; background: #3d8fa0; }
+      </style>
+      <div data-hf-id="hf-z3he" id="root" data-composition-id="04-control-real" data-start="0" data-width="1920" data-height="1080" data-duration="4.5">
+        <section data-hf-id="hf-khq5" id="scene-04-layout" class="stage clip" data-start="0" data-duration="4.5" data-track-index="1">
+          <div data-hf-id="hf-4y7z" class="header"><div data-hf-id="hf-s948" class="eyebrow">Thalia · Visión de negocio</div><div data-hf-id="hf-qq63" class="tag">Gastos + cobros + stock</div></div>
+          <div data-hf-id="hf-s2yi" class="layout">
+            <div data-hf-id="hf-yeow"><h1 data-hf-id="hf-msq1">Control real. Sin perder el foco.</h1><div data-hf-id="hf-dq4c" class="metric"><div data-hf-id="hf-cql3" class="metric-label">Balance neto · junio</div><div data-hf-id="hf-3t0i" class="metric-value">6.568,50 €</div><div data-hf-id="hf-nk5t" class="metric-note">Ingresos y gastos en una única visión.</div></div></div>
+            <div data-hf-id="hf-8p8t" class="product"><div data-hf-id="hf-r9sb" class="finance-shot"><img data-hf-id="hf-pp3x" id="frame-04-finances" src=".media/images/image_005.png" alt="Finanzas reales de Thalia"><div data-hf-id="hf-pwul" class="shot-label">FINANZAS</div></div><div data-hf-id="hf-ye95" class="inventory-shot"><img data-hf-id="hf-gh3k" id="frame-04-inventory" src=".media/images/image_004.png" alt="Inventario real de Thalia"><div data-hf-id="hf-hs62" class="shot-label">INVENTARIO</div></div></div>
+          </div>
+          <div data-hf-id="hf-u20n" class="count">07 / 08</div><div data-hf-id="hf-31j5" class="progress"></div>
+        </section>
+        <script>
+          window.__timelines = window.__timelines || {};
+          var tl = gsap.timeline({ paused: true });
+          var metric = { value: 0 };
+          var metricEl = document.querySelector(".metric-value");
+          tl.fromTo(".eyebrow", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.32, ease: "power4.out" }, 0.06);
+          tl.fromTo(".tag", { opacity: 0, x: 34 }, { opacity: 1, x: 0, duration: 0.38, ease: "power3.out" }, 0.18);
+          tl.fromTo("h1", { opacity: 0, y: 54 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, 0.16);
+          tl.fromTo(".metric", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.46, ease: "power3.out" }, 0.54);
+          tl.to(metric, { value: 6568.5, duration: 1.65, ease: "power3.out", onUpdate: function () { metricEl.textContent = metric.value.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"; } }, 0.72);
+          tl.fromTo(".metric-value", { scale: 0.68, transformOrigin: "left center" }, { scale: 1, duration: 1.65, ease: "power3.out" }, 0.72);
+          tl.fromTo(".finance-shot", { opacity: 0, x: 92, scale: 0.94 }, { opacity: 1, x: 0, scale: 1, duration: 0.68, ease: "power3.out" }, 0.5);
+          tl.fromTo(".finance-shot img", { scale: 1.06 }, { scale: 1.01, duration: 2.8, ease: "sine.inOut" }, 0.54);
+          tl.fromTo(".inventory-shot", { opacity: 0, x: 74, y: 52, scale: 0.82 }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 1.55);
+          tl.fromTo(".progress", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 3.5, ease: "none" }, 0.2);
+          tl.to({}, { duration: 4 }, 0);
+          window.__timelines["04-control-real"] = tl;
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

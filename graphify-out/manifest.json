@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1785576367.4234972,
-    "ast_hash": "bb5cfe0847bb2d66f2e7aa9d5cbf9a61",
+    "mtime": 1785576734.781322,
+    "ast_hash": "c70022a573cd863cc7bb9d304d94e66c",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -2885,8 +2885,8 @@
     "semantic_hash": ""
   },
   "playwright.config.ts": {
-    "mtime": 1785576367.4250097,
-    "ast_hash": "cc0d622295885ddacc88dc26ace6b0cd",
+    "mtime": 1785576947.3547132,
+    "ast_hash": "5c2fb85793b7274c96675744d2787c58",
     "semantic_hash": ""
   },
   "src/tests/e2e/appointments.spec.ts": {
@@ -2910,8 +2910,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/e2e-helpers.ts": {
-    "mtime": 1785576367.431213,
-    "ast_hash": "1cb3386158b901222cb93f3891752b63",
+    "mtime": 1785576947.392153,
+    "ast_hash": "78fe33d6483266b3f9aea2bde5735122",
     "semantic_hash": ""
   },
   "src/tests/e2e/gallery.spec.ts": {
@@ -6305,8 +6305,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/calendar.spec.ts": {
-    "mtime": 1785576367.430214,
-    "ast_hash": "97cbbddb7bc072d9a5fc60679e9661fc",
+    "mtime": 1785576409.4304135,
+    "ast_hash": "641e09a5612ac8769a18d5c5ae560e77",
     "semantic_hash": ""
   },
   "src/tests/unit/calendar-grid.test.ts": {
@@ -6745,227 +6745,227 @@
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/anim-map/animation-map.json": {
-    "mtime": 1785514487.7101448,
-    "ast_hash": "da03bc294ca6a972177c6d6eed0ba546",
+    "mtime": 1785576580.9039004,
+    "ast_hash": "68ed9184b78fc7774cfffc50fdfcea68",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/capture-product.mjs": {
-    "mtime": 1785509310.6974046,
-    "ast_hash": "ed2c62d128d0d1140d2320d5f1533183",
+    "mtime": 1785576580.905405,
+    "ast_hash": "655bbe359841163afe9a27b6d840b2d4",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/cleanup-demo.sql": {
-    "mtime": 1785509215.059047,
-    "ast_hash": "bd12a8e6ebd9d5a285fdc16cd85a85a4",
+    "mtime": 1785576580.9064121,
+    "ast_hash": "66d502ef143bfea72b64683da1ddf779",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/frame-comments.json": {
-    "mtime": 1785513463.664683,
-    "ast_hash": "5725e28c24232739bccc9faed10ddcd1",
+    "mtime": 1785576580.9064121,
+    "ast_hash": "779a53b2798fd1cbe83bdabe15e209ab",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/generate-music.ps1": {
-    "mtime": 1785514066.3806682,
-    "ast_hash": "af7e3f083aadc02cec561b840975ee4a",
+    "mtime": 1785576580.907444,
+    "ast_hash": "87a0f72e51c6e37a4cf09497d54b35ea",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/seed-demo.sql": {
-    "mtime": 1785509215.0580409,
-    "ast_hash": "a77cec78f6abd8e487b6dd86c57743b9",
+    "mtime": 1785576580.9084435,
+    "ast_hash": "f6b9a50702f8525e3136a14a75dc87e1",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/preferences.json": {
-    "mtime": 1785509467.8101218,
-    "ast_hash": "f3c204203c6ecadae13d3b27ea84bbf5",
+    "mtime": 1785576580.9836307,
+    "ast_hash": "1c78e2f94e57fb5dfac682c9bc068934",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/audio_meta.json": {
-    "mtime": 1785514602.8581226,
-    "ast_hash": "4da2a9cfeeeab4d188df0300ac694c82",
+    "mtime": 1785576580.988648,
+    "ast_hash": "b42cec18f197f01b07c354e1d00983ad",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/hyperframes.json": {
-    "mtime": 1785508930.5259583,
-    "ast_hash": "80d300dd25024165691d726ad37ba53d",
+    "mtime": 1785576581.0083096,
+    "ast_hash": "9ad97946a9d282e8c31df5c8ad8f50f6",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/meta.json": {
-    "mtime": 1785508930.5249586,
-    "ast_hash": "aa0da93cc78897ebb9d66af5862097f0",
+    "mtime": 1785576581.009819,
+    "ast_hash": "d5e081c3e51b5204bc45e7b35cf360fd",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/package.json": {
-    "mtime": 1785514943.0942044,
-    "ast_hash": "6dc8af67fa2f8c12b1729b4d168bdf13",
+    "mtime": 1785576581.0108216,
+    "ast_hash": "5251ffd38798b47f0057bdb82670e49e",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/renders/thalia-product-promo_2026-07-31_16-58-47.meta.json": {
-    "mtime": 1785509941.9618697,
+    "mtime": 1785576581.0732217,
     "ast_hash": "5e00e9e6339f488ac8d5b0e12e5618b8",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/caption-skin.html": {
-    "mtime": 1785508873.1423624,
-    "ast_hash": "5f714cc77717c7b79243a05d53403acc",
+    "mtime": 1785576580.9039004,
+    "ast_hash": "7935eb17b6e815a2c5fb555c9646f094",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/music-filter.txt": {
-    "mtime": 1785514046.5331056,
-    "ast_hash": "a1014fc8454a5a916a7a5ecb055b4c66",
+    "mtime": 1785576580.9084435,
+    "ast_hash": "0ab81ec55c3537841de0e9c634a4cf6e",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/extracted/visible-text.txt": {
-    "mtime": 1785509435.1050353,
-    "ast_hash": "f0dc377a0f735e6d180b0933371d1676",
+    "mtime": 1785576580.9991677,
+    "ast_hash": "f4dddcd1987a27276bd41af25d38f8f5",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/00-clinica-desde-cualquier-dispositivo.html": {
-    "mtime": 1785514417.5363996,
-    "ast_hash": "79df8d6bc90910b533365d3e71ef8b32",
+    "mtime": 1785576581.0012898,
+    "ast_hash": "e63becba82f87a06aa90f4e312dcd2e2",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/01-no-deberias-recordarlo-todo.html": {
-    "mtime": 1785514608.8617442,
-    "ast_hash": "4fb0c510310568889c58f1100d8dfae4",
+    "mtime": 1785576581.0012898,
+    "ast_hash": "c1e6fbca0c8b3f32bdb885a6af89cd75",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/02-el-dia-entra-en-sincronia.html": {
-    "mtime": 1785514608.8650992,
-    "ast_hash": "b4cadcdf8a869a4ceb2b9ca7908a933a",
+    "mtime": 1785576581.0027947,
+    "ast_hash": "c1a04d8d229d1c180502b0abead8f5b7",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/02b-confirmacion-whatsapp.html": {
-    "mtime": 1785514608.8681006,
-    "ast_hash": "9326ce7c41246ce4d2888522ca831cf3",
+    "mtime": 1785576581.0038,
+    "ast_hash": "bcd2e7a39ca3500f4e885b1e3a7b442e",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/02c-paciente-en-un-solo-lugar.html": {
-    "mtime": 1785514608.8963635,
-    "ast_hash": "debdc65302854b2aaeba177a1f0e8bc1",
+    "mtime": 1785576581.0038,
+    "ast_hash": "91ca3e02e07fd1fb793efc2f903458f1",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/03-todo-conectado.html": {
-    "mtime": 1785514608.8973646,
-    "ast_hash": "12c293d595c414f228ae8c0377e56ced",
+    "mtime": 1785576581.0038,
+    "ast_hash": "d53c459f0091b37a8ee6db630fbc9ddb",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/04-control-real.html": {
-    "mtime": 1785514608.8993647,
-    "ast_hash": "8f617f546b0360a89aae59df33bb5c4e",
+    "mtime": 1785576581.0053048,
+    "ast_hash": "dac3325377b9b6349ef2c3f6027aa8e1",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/compositions/frames/05-thalia.html": {
-    "mtime": 1785514158.3394797,
-    "ast_hash": "62b059a3139748070b240903c56f40fe",
+    "mtime": 1785576581.0063102,
+    "ast_hash": "23989b0de002b921b5de47b1b0cbbd3e",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/index.html": {
-    "mtime": 1785514609.236,
-    "ast_hash": "ec6540f98a8c308cabdf24ed7180611f",
+    "mtime": 1785576581.009311,
+    "ast_hash": "3054e928c5192b27df30178f1d4448da",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/agenda-movil.png": {
-    "mtime": 1785512864.0106661,
+    "mtime": 1785576580.969128,
     "ast_hash": "3e8f6f639f0dc2dd8036c7df198a3f90",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/agenda.png": {
-    "mtime": 1785512829.3814297,
+    "mtime": 1785576580.9701312,
     "ast_hash": "77d62e3dee8982ddcda4f80bbff97a82",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/finances.png": {
-    "mtime": 1785513023.9860122,
+    "mtime": 1785576580.9711301,
     "ast_hash": "c43e77cd8f1aca9d6ae8a0635ee8eeab",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/image_001.png": {
-    "mtime": 1785512829.3814297,
+    "mtime": 1785576580.9736426,
     "ast_hash": "77d62e3dee8982ddcda4f80bbff97a82",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/image_002.png": {
-    "mtime": 1785512864.0106661,
+    "mtime": 1785576580.9736426,
     "ast_hash": "3e8f6f639f0dc2dd8036c7df198a3f90",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/image_003.png": {
-    "mtime": 1785512906.1814735,
+    "mtime": 1785576580.9751468,
     "ast_hash": "6bbf4109357bc7617b20f776b85eefc0",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/image_004.png": {
-    "mtime": 1785513002.7644491,
+    "mtime": 1785576580.9771514,
     "ast_hash": "9f71c11564914846b576e8ece6c85f70",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/image_005.png": {
-    "mtime": 1785513023.9860122,
+    "mtime": 1785576580.978151,
     "ast_hash": "c43e77cd8f1aca9d6ae8a0635ee8eeab",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/inventory.png": {
-    "mtime": 1785513002.7644491,
+    "mtime": 1785576580.979626,
     "ast_hash": "9f71c11564914846b576e8ece6c85f70",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/logo_001.png": {
-    "mtime": 1782644579.019197,
+    "mtime": 1785576580.980627,
     "ast_hash": "1e01e7b3321fe5d7383c5d85f2cbfe47",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/patients.png": {
-    "mtime": 1785512906.1814735,
+    "mtime": 1785576580.9816265,
     "ast_hash": "6bbf4109357bc7617b20f776b85eefc0",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/assets/calendar.png": {
-    "mtime": 1785509368.3634691,
+    "mtime": 1785576580.9906526,
     "ast_hash": "4c2f24f3f9e06b6f26cb895f4bc2bfc5",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/assets/dashboard.png": {
-    "mtime": 1785509366.7186165,
+    "mtime": 1785576580.9916525,
     "ast_hash": "5dff8a06de61a759163ab75d4e81838a",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/assets/finances.png": {
-    "mtime": 1785509374.9544485,
+    "mtime": 1785576580.9926543,
     "ast_hash": "958dd94c26f35743eb231b8913e57a02",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/assets/icon.png": {
-    "mtime": 1782644579.019197,
+    "mtime": 1785576580.993656,
     "ast_hash": "1e01e7b3321fe5d7383c5d85f2cbfe47",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/assets/inventory.png": {
-    "mtime": 1785509373.3439794,
+    "mtime": 1785576580.99516,
     "ast_hash": "b4b0501d83f1dc017513b407b5d22a66",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/capture/assets/patient-detail.png": {
-    "mtime": 1785509371.4014227,
+    "mtime": 1785576580.9971688,
     "ast_hash": "ec53c647a7f773ad7f5b61ff89e0c974",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/audio/bgm/bgm_001.wav": {
-    "mtime": 1785514071.432989,
+    "mtime": 1785576580.9390075,
     "ast_hash": "2d283b7619a2d501d2bb1c61e4cb055b",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/audio/bgm/bgm_002.wav": {
-    "mtime": 1785514596.6472492,
+    "mtime": 1785576580.967616,
     "ast_hash": "3bd138bdc31c5d09a267ee588b62ac51",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/renders/thalia-product-promo.mp4": {
-    "mtime": 1785514644.394893,
+    "mtime": 1785576581.0707192,
     "ast_hash": "7db1654a106739866678c830b27bfc80",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/renders/thalia-product-promo_2026-07-31_16-58-47.mp4": {
-    "mtime": 1785509941.8288527,
+    "mtime": 1785576581.0742235,
     "ast_hash": "0fba39085eded1992bd0ace643b6c016",
     "semantic_hash": ""
   },
@@ -7627,6 +7627,211 @@
   "videos/thalia-product-promo/.hyperframes/thalia-orchestral.wav": {
     "mtime": 1785514071.432989,
     "ast_hash": "2d283b7619a2d501d2bb1c61e4cb055b",
+    "semantic_hash": ""
+  },
+  "app/(app)/marketing/[id]/page.tsx": {
+    "mtime": 1785576356.8492982,
+    "ast_hash": "3a4e2d7ada1adeec06c6d0a43b9ec42b",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/campaign-detail-page-client.tsx": {
+    "mtime": 1785576356.8518806,
+    "ast_hash": "cd7eb1b3351f092aad1c2e4629fda5bb",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/detail/campaign-detail-header.tsx": {
+    "mtime": 1785576356.8528867,
+    "ast_hash": "66eb4628733f13dd71e3be99ed9d55a2",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/detail/campaign-detail-image.tsx": {
+    "mtime": 1785576356.8543925,
+    "ast_hash": "99e6372be152450ba0ca50759700acfe",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/detail/campaign-recipient-status-badge.tsx": {
+    "mtime": 1785576356.8553977,
+    "ast_hash": "43a80684dcd8be045172681192d0f053",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/detail/campaign-recipients-list.tsx": {
+    "mtime": 1785576356.8564043,
+    "ast_hash": "25694bf3288fd08deaf5ddf2ae015f24",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-create-form.tsx": {
+    "mtime": 1785576356.857404,
+    "ast_hash": "6ae56297f998b408455e5a05fe882444",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-image-dropzone-file-item.tsx": {
+    "mtime": 1785576356.857404,
+    "ast_hash": "9e55ec2d945bb87de14b0f9cd3bddc79",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-image-field.tsx": {
+    "mtime": 1785576356.8584588,
+    "ast_hash": "489c14fc5924701343399af5ccc48fb7",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-message-fields.tsx": {
+    "mtime": 1785576356.8584588,
+    "ast_hash": "e4f75e80028b79683a0b2e2c8453006b",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-message-preview.tsx": {
+    "mtime": 1785576356.8594584,
+    "ast_hash": "8fb1c027d6257f9a4757552826ace23d",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-recipients-preview.tsx": {
+    "mtime": 1785576356.8594584,
+    "ast_hash": "06789381b945213926176abf266e7dca",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/form/campaign-segment-fields.tsx": {
+    "mtime": 1785576356.8604586,
+    "ast_hash": "aae32190b4adac8a57b32d7817ab2216",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaign-date-cell.tsx": {
+    "mtime": 1785576356.86146,
+    "ast_hash": "b098053349e693aafd2d92768a382240",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaign-image-cell.tsx": {
+    "mtime": 1785576356.86146,
+    "ast_hash": "0f38694423f569b021bf04377335955d",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaign-image-dialog.tsx": {
+    "mtime": 1785576356.8624585,
+    "ast_hash": "ca93edb0c96fb5052d88b893d6040697",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaign-status-badge.tsx": {
+    "mtime": 1785576356.8634586,
+    "ast_hash": "1e51e3cfa6bd5305597b7adfe45d1c1c",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaigns-columns.tsx": {
+    "mtime": 1785576356.8634586,
+    "ast_hash": "5fa9a13a3beaf0d51e82f74e4e0674aa",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaigns-empty-state.tsx": {
+    "mtime": 1785576356.8634586,
+    "ast_hash": "10c8bbff43b8d9d5ba22bf3fe8acefaf",
+    "semantic_hash": ""
+  },
+  "src/components/marketing/components/list/campaigns-table.tsx": {
+    "mtime": 1785576356.8650887,
+    "ast_hash": "ccaf02cdb9527d9ae517e4a21d65c593",
+    "semantic_hash": ""
+  },
+  "src/dal/campaign-recipients.dal.ts": {
+    "mtime": 1785576356.8698041,
+    "ast_hash": "e7f7dfd345213e96c0078cec666dfbc2",
+    "semantic_hash": ""
+  },
+  "src/dal/campaign-segments.dal.ts": {
+    "mtime": 1785576356.8708053,
+    "ast_hash": "2cb8f0af42fb1b3bb57abdaf38f120d7",
+    "semantic_hash": ""
+  },
+  "src/dal/campaigns.dal.ts": {
+    "mtime": 1785576356.8718052,
+    "ast_hash": "3d68242222239c9666ca8c038b73c200",
+    "semantic_hash": ""
+  },
+  "src/lib/campaign-image-storage.ts": {
+    "mtime": 1785576356.8738039,
+    "ast_hash": "30aa13eb89a8f408cbf91c63622c4546",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-campaign-create-dialog.ts": {
+    "mtime": 1785576356.8763087,
+    "ast_hash": "f2c5250708e582a478e1a031551dcdf5",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-campaign-detail.ts": {
+    "mtime": 1785576356.8773136,
+    "ast_hash": "4b3df288058031b88924a67620549af4",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-campaign-image-url.ts": {
+    "mtime": 1785576356.878321,
+    "ast_hash": "c7a217e6d3e5d10730e2770f12cc88f4",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-campaign-segment-preview.ts": {
+    "mtime": 1785576356.878321,
+    "ast_hash": "a247a7ac39a1e036ed6031b72eac3219",
+    "semantic_hash": ""
+  },
+  "src/lib/hooks/use-campaigns.ts": {
+    "mtime": 1785576356.879321,
+    "ast_hash": "fd5820814438e33b010c8ee82517b8b2",
+    "semantic_hash": ""
+  },
+  "src/lib/schemas/campaign-schema.ts": {
+    "mtime": 1785576356.8829143,
+    "ast_hash": "6dbc9b3beeba6a03c33fe49d3fd8a3ab",
+    "semantic_hash": ""
+  },
+  "src/lib/schemas/campaign-segment-schema.ts": {
+    "mtime": 1785576356.8829143,
+    "ast_hash": "02e880abce70c559095a7d42a4ba7c0a",
+    "semantic_hash": ""
+  },
+  "src/stores/campaigns-store.ts": {
+    "mtime": 1785576356.885939,
+    "ast_hash": "bfe73c204e1f8777fba496e947a3cc9e",
+    "semantic_hash": ""
+  },
+  "src/tests/deno-globals.d.ts": {
+    "mtime": 1785576356.8884652,
+    "ast_hash": "2b6d7eaee2524a15ef01fdf15e2ef364",
+    "semantic_hash": ""
+  },
+  "src/tests/e2e/marketing.spec.ts": {
+    "mtime": 1785576356.8924649,
+    "ast_hash": "1e233cf80aced906f892e2cb312c0b5d",
+    "semantic_hash": ""
+  },
+  "src/tests/unit/campaign-segment-filters.test.ts": {
+    "mtime": 1785576356.896466,
+    "ast_hash": "510ed20909e6f66d9249387b9a3f116f",
+    "semantic_hash": ""
+  },
+  "src/tests/unit/whatsapp-adapter.test.ts": {
+    "mtime": 1785576356.897478,
+    "ast_hash": "bf12cd7569dbdf3ce196fb5a233a3676",
+    "semantic_hash": ""
+  },
+  "supabase/functions/_shared/whatsapp.ts": {
+    "mtime": 1785576356.90049,
+    "ast_hash": "e65b97e2ec2727384e997069919625f1",
+    "semantic_hash": ""
+  },
+  "supabase/functions/send-campaign/index.ts": {
+    "mtime": 1785576356.9014895,
+    "ast_hash": "8e4a0f81c6db9ceba5718b04fd58e5bc",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260731000001_marketing_campaigns.sql": {
+    "mtime": 1785576356.9036033,
+    "ast_hash": "6a8187edb1c8cbecb99e5b1de443c289",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260731000002_campaign_segment_patients.sql": {
+    "mtime": 1785576356.9036033,
+    "ast_hash": "0dea92e6856263e0f38e7eb11cd481fb",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260731000003_campaign_patients_for_campaign.sql": {
+    "mtime": 1785576356.9046025,
+    "ast_hash": "e625032ee2bc65f8e50ed49e47685330",
     "semantic_hash": ""
   }
 }

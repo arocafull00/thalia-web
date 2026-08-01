@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "eslint.config.mjs": {
-    "mtime": 1785574680.812527,
-    "ast_hash": "5a380107158bfd30999b850a22525d76",
+    "mtime": 1785576356.851299,
+    "ast_hash": "aec2735b5a856e01a6f80d2fd049706c",
     "semantic_hash": ""
   },
   "next.config.ts": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1785574811.529469,
-    "ast_hash": "3adff48f26e071cafc004c1ae3a7c081",
+    "mtime": 1785576367.4234972,
+    "ast_hash": "bb5cfe0847bb2d66f2e7aa9d5cbf9a61",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -615,8 +615,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-create-copy.ts": {
-    "mtime": 1785574680.8115282,
-    "ast_hash": "2abbcc59fd1abf7a0efa039a078a56b9",
+    "mtime": 1785576356.8687966,
+    "ast_hash": "e5aa18063703a93b5f056ff692079bc6",
     "semantic_hash": ""
   },
   "src/copy/patient-detail-copy.ts": {
@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "src/lib/format.ts": {
-    "mtime": 1785574680.8039749,
-    "ast_hash": "656895c004c16663e588c7e0f8f87e03",
+    "mtime": 1785576356.8748033,
+    "ast_hash": "adc164510d2aec0f944cd86bfda92258",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-active-clinic.ts": {
@@ -795,8 +795,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-create-dialog.ts": {
-    "mtime": 1785574680.876248,
-    "ast_hash": "0fb26aac6f092c4cd8f41906ee818c2e",
+    "mtime": 1785576356.8803267,
+    "ast_hash": "88084a48ab3a20005718c6230a0e2b8d",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patients.ts": {
@@ -890,8 +890,8 @@
     "semantic_hash": ""
   },
   "src/lib/schemas/patient-schema.ts": {
-    "mtime": 1782906181.0406952,
-    "ast_hash": "cf91dac7fabe6794265829e7e76d3181",
+    "mtime": 1785576356.8844326,
+    "ast_hash": "26bbf1e3ecb5cb737833af0e9d71aaeb",
     "semantic_hash": ""
   },
   "src/lib/schemas/schema-helpers.ts": {
@@ -1010,8 +1010,8 @@
     "semantic_hash": ""
   },
   "src/stores/patients-store.ts": {
-    "mtime": 1785574680.8731976,
-    "ast_hash": "7bbaaea142ab52039f07ad2c9340c7f1",
+    "mtime": 1785576356.8874578,
+    "ast_hash": "5f382149a0204044321254d831d347b1",
     "semantic_hash": ""
   },
   "src/stores/pending-invite-store.ts": {
@@ -1045,8 +1045,8 @@
     "semantic_hash": ""
   },
   "src/types/database.types.ts": {
-    "mtime": 1785574680.8029678,
-    "ast_hash": "a8841b4a71e71cb01ddc021f7549e98d",
+    "mtime": 1785576356.898483,
+    "ast_hash": "e8d809876dd1e83ae82c25186830b6a1",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -1115,8 +1115,8 @@
     "semantic_hash": ""
   },
   "supabase/functions/send-reminders/index.ts": {
-    "mtime": 1784669640.6813688,
-    "ast_hash": "a064caee73702e65a858c3fd4cd97ba3",
+    "mtime": 1785576356.9024892,
+    "ast_hash": "056994ef484db769212a88c1b6fb4355",
     "semantic_hash": ""
   },
   "supabase/migrations/001_base.sql": {
@@ -1205,8 +1205,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-edit-dialog.ts": {
-    "mtime": 1785574680.8731976,
-    "ast_hash": "ba4f7f44671f2929108ab38c217b3271",
+    "mtime": 1785576356.8823261,
+    "ast_hash": "f0c2db38e4b95fea60730f66b15c37fd",
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-timeline-item.tsx": {
@@ -1865,8 +1865,8 @@
     "semantic_hash": ""
   },
   "src/dal/patients.dal.ts": {
-    "mtime": 1785497585.383667,
-    "ast_hash": "50fdbf34c3fd610f274e16d8fc05f451",
+    "mtime": 1785576356.8728034,
+    "ast_hash": "7d519e1bf4c0a3ed9901f1b363a962b1",
     "semantic_hash": ""
   },
   "src/dal/treatments.dal.ts": {
@@ -2255,8 +2255,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/form/patient-create-form.tsx": {
-    "mtime": 1785495316.6212223,
-    "ast_hash": "98e689c0f07fcc21e4e9a597bfaf345c",
+    "mtime": 1785576356.8677895,
+    "ast_hash": "eb464f6838f153b7a79b6822d4443127",
     "semantic_hash": ""
   },
   "src/components/patients/components/form/patient-edit-dialog.tsx": {
@@ -2585,8 +2585,8 @@
     "semantic_hash": ""
   },
   "src/tests/stores/patients-store.test.ts": {
-    "mtime": 1783961981.0991573,
-    "ast_hash": "b908408f5f05efaedf094829291e1e49",
+    "mtime": 1785576356.8954654,
+    "ast_hash": "c52de9795d54abadd52ad320f3b0bc17",
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-actions-menu.tsx": {
@@ -2885,8 +2885,8 @@
     "semantic_hash": ""
   },
   "playwright.config.ts": {
-    "mtime": 1785508106.3107686,
-    "ast_hash": "5c2fb85793b7274c96675744d2787c58",
+    "mtime": 1785576367.4250097,
+    "ast_hash": "cc0d622295885ddacc88dc26ace6b0cd",
     "semantic_hash": ""
   },
   "src/tests/e2e/appointments.spec.ts": {
@@ -2910,8 +2910,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/e2e-helpers.ts": {
-    "mtime": 1785508312.7111354,
-    "ast_hash": "446ddc1113cad70702a399b4b641c720",
+    "mtime": 1785576367.431213,
+    "ast_hash": "1cb3386158b901222cb93f3891752b63",
     "semantic_hash": ""
   },
   "src/tests/e2e/gallery.spec.ts": {
@@ -2920,18 +2920,18 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/patients.spec.ts": {
-    "mtime": 1785508312.717229,
-    "ast_hash": "7836e3ba940470425168098893601f93",
+    "mtime": 1785576356.893465,
+    "ast_hash": "42c98ad3e9170c075653cbc57b9bea9f",
     "semantic_hash": ""
   },
   "src/tests/e2e/run-with-local-supabase.mjs": {
-    "mtime": 1784670938.5127566,
-    "ast_hash": "7fba25542f526a8937098e120a2de962",
+    "mtime": 1785576356.8944664,
+    "ast_hash": "ac655b3e962da098e1182c216f70df02",
     "semantic_hash": ""
   },
   "supabase/seed.sql": {
-    "mtime": 1784239505.50165,
-    "ast_hash": "1c4e8626d7798877d522d9f70f1e2387",
+    "mtime": 1785576356.9056072,
+    "ast_hash": "a6dd6c5787467178c8a6e2b174045991",
     "semantic_hash": ""
   },
   ".github/workflows/e2e.yml": {
@@ -6280,8 +6280,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/inventory.spec.ts": {
-    "mtime": 1785253345.111233,
-    "ast_hash": "dad97fa8d0d2ef69e86ed77affffd35c",
+    "mtime": 1785576356.8914645,
+    "ast_hash": "0b2bd4af30b814a754259e8455ad37b7",
     "semantic_hash": ""
   },
   "src/tests/e2e/patient-files.spec.ts": {
@@ -6305,8 +6305,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/calendar.spec.ts": {
-    "mtime": 1785514794.054651,
-    "ast_hash": "b857d69ea4222667b227f3dfccb2dd95",
+    "mtime": 1785576367.430214,
+    "ast_hash": "97cbbddb7bc072d9a5fc60679e9661fc",
     "semantic_hash": ""
   },
   "src/tests/unit/calendar-grid.test.ts": {
@@ -6389,19 +6389,14 @@
     "ast_hash": "04af01c871bbefd15b4808886c90aab5",
     "semantic_hash": ""
   },
-  "src/components/marketing/components/marketing-placeholder.tsx": {
-    "mtime": 1785258049.6740146,
-    "ast_hash": "83be7e5a650a21f9e1dd31e9be2bf54d",
-    "semantic_hash": ""
-  },
   "src/components/marketing/marketing-copy.ts": {
-    "mtime": 1785258049.682758,
-    "ast_hash": "a51c1d17b565b58b4868820e06f09128",
+    "mtime": 1785576356.8656645,
+    "ast_hash": "a5c3a19ec2129159fd730a0daee7a61c",
     "semantic_hash": ""
   },
   "src/components/marketing/marketing-page-client.tsx": {
-    "mtime": 1785258049.68936,
-    "ast_hash": "d014012e088c5208d1b5a247fd3464db",
+    "mtime": 1785576356.8656645,
+    "ast_hash": "b08851896b88f3e3dceb4d1dd1d6e340",
     "semantic_hash": ""
   },
   ".github/vercel/playwright-deployment-check.json": {
@@ -6972,6 +6967,666 @@
   "videos/thalia-product-promo/renders/thalia-product-promo_2026-07-31_16-58-47.mp4": {
     "mtime": 1785509941.8288527,
     "ast_hash": "0fba39085eded1992bd0ace643b6c016",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.waveform-cache/v2_.media_audio_bgm_bgm_001.wav.json": {
+    "mtime": 1785514167.8690722,
+    "ast_hash": "55d801771aa3c4909c7f15a10435d835",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_006d20abef31a5ec_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785511710302_3.00.jpg": {
+    "mtime": 1785511730.745091,
+    "ast_hash": "921856f8d6887554709f7114c4636bde",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_00ca7b31f1c86ced_jpeg_compositions_frames_05-thalia.html_1920x1080_1785510445198_3.50.jpg": {
+    "mtime": 1785510447.710277,
+    "ast_hash": "b1648f51d33670c974d81d8b374d1625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_0269a83d960752f5_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785510733281_2.30.jpg": {
+    "mtime": 1785511060.773723,
+    "ast_hash": "6f803362123c92446a7152918763140a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_0269a83d960752f5_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785510733281_3.00.jpg": {
+    "mtime": 1785510735.490377,
+    "ast_hash": "6f803362123c92446a7152918763140a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_078b56e98b30faf5_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785509874061_5.00.jpg": {
+    "mtime": 1785509899.2679667,
+    "ast_hash": "a5e226b4007b7d0f5e7ad763c97b4635",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_0884bad2c9a6cf7d_jpeg_compositions_frames_04-control-real.html_1920x1080_1785510809919_3.00.jpg": {
+    "mtime": 1785511063.032768,
+    "ast_hash": "ae7ac792140dac2c711a0118f2ade0b7",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_0884bad2c9a6cf7d_jpeg_compositions_frames_04-control-real.html_1920x1080_1785510809919_4.00.jpg": {
+    "mtime": 1785510813.1642754,
+    "ast_hash": "ae7ac792140dac2c711a0118f2ade0b7",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_08a6efc123ee72e7_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785511728611_3.00.jpg": {
+    "mtime": 1785511788.929958,
+    "ast_hash": "289105652532a4bb70ef936e6d6e751a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_110f5f2818eefc36_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785511021492_3.00.jpg": {
+    "mtime": 1785511062.9277854,
+    "ast_hash": "3aeee144aca97d5c5f4e016a59ef811f",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_1ae9c5669194ca5e_jpeg_compositions_frames_04-control-real.html_1920x1080_1785509874063_4.00.jpg": {
+    "mtime": 1785510734.7357337,
+    "ast_hash": "dc66547cb911b37de12cea9f1a8d2d31",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_1ae9c5669194ca5e_jpeg_compositions_frames_04-control-real.html_1920x1080_1785509874063_4.50.jpg": {
+    "mtime": 1785509899.9793503,
+    "ast_hash": "dc66547cb911b37de12cea9f1a8d2d31",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_222699a6d8cf574b_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785511118214_2.30.jpg": {
+    "mtime": 1785511121.059998,
+    "ast_hash": "9d4e2b06b69c9787952546d9a4135ab5",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2539126886c48f18_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785511710300_3.00.jpg": {
+    "mtime": 1785511730.7510898,
+    "ast_hash": "289105652532a4bb70ef936e6d6e751a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2c3bf64457daedd9_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785512577726_1.50__frame-00-desktop-dashboard_0.jpg": {
+    "mtime": 1785512760.536797,
+    "ast_hash": "77826ace2ac4d1fb6b250e71f35e9cf6",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2c3bf64457daedd9_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785512577726_1.50__frame-00-mobile-calendar_0.jpg": {
+    "mtime": 1785512760.5317738,
+    "ast_hash": "d1d251ac733d6f998e779011f13b0f19",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2c3bf64457daedd9_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785512577726_1.50__frame-00-tablet-calendar_0.jpg": {
+    "mtime": 1785512759.7823863,
+    "ast_hash": "30365e0eb84163a90ab5e934d60ae95c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2c3bf64457daedd9_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785512577726_1.50__scene-00-layout_0.jpg": {
+    "mtime": 1785512759.7390945,
+    "ast_hash": "324472d861086435153df7fe8817a12c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2c3bf64457daedd9_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785512577726_2.30.jpg": {
+    "mtime": 1785512580.0340643,
+    "ast_hash": "324472d861086435153df7fe8817a12c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2c3bf64457daedd9_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785512577726_5.00__root_0.jpg": {
+    "mtime": 1785512759.1660993,
+    "ast_hash": "e8fa678f35542b8b5382d006334aa912",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_2ea3bbb935b02e97_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785514188533_3.00.jpg": {
+    "mtime": 1785514189.4151666,
+    "ast_hash": "d08df1526f70ebc1104dc18e91c60625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_3081df51cc27fefa_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785514348221_2.30.jpg": {
+    "mtime": 1785514369.12051,
+    "ast_hash": "bc4e5b4f220a0685b8ea1d139ff1e5e4",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_32023379a9aff2b6_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785514348224_3.70.jpg": {
+    "mtime": 1785514369.875641,
+    "ast_hash": "7fc393ca463ad168fc8b7f7c5a41be55",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_32023379a9aff2b6_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785514608897_3.70.jpg": {
+    "mtime": 1785514611.2047756,
+    "ast_hash": "7fc393ca463ad168fc8b7f7c5a41be55",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_35d4e29f6287833f_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785511762764_3.00.jpg": {
+    "mtime": 1785511790.2191706,
+    "ast_hash": "bf2a871a8ed9d26f90daedfd37f708c6",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_41903c28f6c1b9a2_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785513463662_2.30.jpg": {
+    "mtime": 1785513466.9092836,
+    "ast_hash": "fcfefd613bcc8c61ef544ee291a3e134",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_44ac5c4b83d392eb_jpeg_compositions_frames_04-control-real.html_1920x1080_1785513237413_3.00.jpg": {
+    "mtime": 1785513242.6097133,
+    "ast_hash": "47a3716a3b5aec21ce2942944e0af8a2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4bfa860fb7c97f53_jpeg_compositions_frames_05-thalia.html_1920x1080_1785511118226_2.30.jpg": {
+    "mtime": 1785511121.9023552,
+    "ast_hash": "1391aaf3f3af3dc60cf468f1707e5349",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4bfa860fb7c97f53_jpeg_compositions_frames_05-thalia.html_1920x1080_1785511118226_3.00.jpg": {
+    "mtime": 1785512759.588465,
+    "ast_hash": "e8fa678f35542b8b5382d006334aa912",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4d28d734ad9ad265_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785512581565_3.00.jpg": {
+    "mtime": 1785512759.1755462,
+    "ast_hash": "339e897d1fe9a02e32a9e93aa67d80c2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4d28d734ad9ad265_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785512581565_3.70.jpg": {
+    "mtime": 1785512583.7565844,
+    "ast_hash": "339e897d1fe9a02e32a9e93aa67d80c2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4d82bc97858ec348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785512579308_2.20.jpg": {
+    "mtime": 1785512582.6269374,
+    "ast_hash": "82fafaee857466627e6de04d73d561a2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4d82bc97858ec348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785512579308_3.00.jpg": {
+    "mtime": 1785512759.0914006,
+    "ast_hash": "e8fa678f35542b8b5382d006334aa912",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_4f5bb45afe582343_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785511652300_2.20.jpg": {
+    "mtime": 1785511655.1352792,
+    "ast_hash": "0041f9313dfc702ad39aa8741288a968",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_5044183634d44a94_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785511118219_2.20.jpg": {
+    "mtime": 1785511121.0658033,
+    "ast_hash": "e4128ecdd908ce1d523535f3929b75f2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_529619a6d685fd84_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785510809917_3.70.jpg": {
+    "mtime": 1785511061.946256,
+    "ast_hash": "5c18a35efee2bd134a8194c388d6f63a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_529619a6d685fd84_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785510809917_4.50.jpg": {
+    "mtime": 1785510813.2287774,
+    "ast_hash": "5c18a35efee2bd134a8194c388d6f63a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_55965e7dfd6188a0_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785510389597_4.50.jpg": {
+    "mtime": 1785510734.0316968,
+    "ast_hash": "5b76f6a2ce695015a498190814d05201",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_55965e7dfd6188a0_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785510389597_5.00.jpg": {
+    "mtime": 1785510391.9174733,
+    "ast_hash": "5b76f6a2ce695015a498190814d05201",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_56efb1bad76bb9af_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785513999132_3.00.jpg": {
+    "mtime": 1785514001.7833896,
+    "ast_hash": "d08df1526f70ebc1104dc18e91c60625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_597e960e1c102759_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785511652285_2.30.jpg": {
+    "mtime": 1785511654.901523,
+    "ast_hash": "240dae2617d3149962facc1c1fae1271",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_59871e9de05dddf4_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785514166886_2.00.jpg": {
+    "mtime": 1785514169.5946057,
+    "ast_hash": "e012983b53289b26682e6bcf0e78c42b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_59871e9de05dddf4_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785514166886_2.25.jpg": {
+    "mtime": 1785514171.59494,
+    "ast_hash": "cd3035292b1980514264c2ae16aa5b81",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_59871e9de05dddf4_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785514166886_3.00.jpg": {
+    "mtime": 1785514168.7379017,
+    "ast_hash": "806689120f94cef3585a728a7a336761",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_59871e9de05dddf4_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785514608896_3.00.jpg": {
+    "mtime": 1785514611.1976326,
+    "ast_hash": "806689120f94cef3585a728a7a336761",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_5cbab526273ee1fe_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785510786711_2.20.jpg": {
+    "mtime": 1785511060.8433135,
+    "ast_hash": "b0a9cea16b2e3ab66a448e88e709b270",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_5cbab526273ee1fe_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785510786711_3.00.jpg": {
+    "mtime": 1785510789.2352996,
+    "ast_hash": "b0a9cea16b2e3ab66a448e88e709b270",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_601bc692fee4809a_jpeg_compositions_frames_05-thalia.html_1920x1080_1785509766978_3.50.jpg": {
+    "mtime": 1785509844.0880342,
+    "ast_hash": "ad985c47f30538ba63d4cc7e62a88b4f",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_648e3c0cc4425815_jpeg_compositions_frames_05-thalia.html_1920x1080_1785510575496_3.00.jpg": {
+    "mtime": 1785510751.3363183,
+    "ast_hash": "b1648f51d33670c974d81d8b374d1625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_648e3c0cc4425815_jpeg_compositions_frames_05-thalia.html_1920x1080_1785510575496_3.50.jpg": {
+    "mtime": 1785510577.0949886,
+    "ast_hash": "b1648f51d33670c974d81d8b374d1625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_68039cb13c74f4f4_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785514166908_2.50.jpg": {
+    "mtime": 1785514170.333875,
+    "ast_hash": "60020a316314417050057ab8bd904465",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_68039cb13c74f4f4_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785514166908_2.70.jpg": {
+    "mtime": 1785514173.3993015,
+    "ast_hash": "df99686ddb10cf8334f2fce9a365d743",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_68039cb13c74f4f4_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785514166908_3.70.jpg": {
+    "mtime": 1785514190.1066248,
+    "ast_hash": "1fecc68528bbb1b94c48f2cbe78576dc",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_6fb3f8008f74babb_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785511728858_3.00.jpg": {
+    "mtime": 1785511789.5112433,
+    "ast_hash": "921856f8d6887554709f7114c4636bde",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_714ab7ce9156347c_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785511060923_3.00.jpg": {
+    "mtime": 1785511063.9758456,
+    "ast_hash": "3aeee144aca97d5c5f4e016a59ef811f",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_771c3e16547554d2_jpeg_compositions_frames_04-control-real.html_1920x1080_1785509766977_4.50.jpg": {
+    "mtime": 1785509844.0257215,
+    "ast_hash": "125ae36041b595d98b3adb5969337032",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_77a8532df0b7dceb_jpeg_compositions_frames_04-control-real.html_1920x1080_1785511821938_3.00.jpg": {
+    "mtime": 1785511824.7545123,
+    "ast_hash": "162aa7561c536dd57ee0ff52590345a9",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_77ffd180a7e93322_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785511021493_3.00.jpg": {
+    "mtime": 1785511062.8389053,
+    "ast_hash": "f89191f37e7a2e2e05df6bc8c22a8f5b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_79d1e4cc8b527368_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785509874060_3.00.jpg": {
+    "mtime": 1785509899.2129455,
+    "ast_hash": "5e490857711241180cbb18181f587b55",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_79d388761f3f174e_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785513999133_3.00.jpg": {
+    "mtime": 1785514003.302767,
+    "ast_hash": "806689120f94cef3585a728a7a336761",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_7b992b12bbfca340_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785513999131_3.00.jpg": {
+    "mtime": 1785514002.9945295,
+    "ast_hash": "ea2f25e40c366cb8498e9e09887d9f44",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_82ca5c2cd8a9b123_jpeg_compositions_frames_04-control-real.html_1920x1080_1785511819961_3.00.jpg": {
+    "mtime": 1785511823.5574737,
+    "ast_hash": "162aa7561c536dd57ee0ff52590345a9",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_8a1dcaff20d8b4d5_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785513237413_3.00.jpg": {
+    "mtime": 1785513243.007278,
+    "ast_hash": "fcc733aad5016629e517ce106e49cc7d",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_8adcdd4545aa2b1e_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785514166861_2.00.jpg": {
+    "mtime": 1785514169.6031215,
+    "ast_hash": "a3cfe0e1fca7f89ae8c87534455e8ba1",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_8adcdd4545aa2b1e_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785514166861_2.20.jpg": {
+    "mtime": 1785514172.8250434,
+    "ast_hash": "96995340b7011aa3a87a2f5bdbc800c2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_8ddbc275e76e441b_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785511023942_3.00.jpg": {
+    "mtime": 1785511060.8379033,
+    "ast_hash": "c018592ed4ad9fc249c4287c16a8b005",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_8ddbc275e76e441b_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785511023942_3.80.jpg": {
+    "mtime": 1785511026.2716,
+    "ast_hash": "c018592ed4ad9fc249c4287c16a8b005",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_936910e74af8193f_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785511819959_3.70.jpg": {
+    "mtime": 1785511823.441017,
+    "ast_hash": "c170ad9bb188fde96b3aedcb565788ca",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_938095e0e4f512b6_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785511650930_2.30.jpg": {
+    "mtime": 1785511654.1407871,
+    "ast_hash": "240dae2617d3149962facc1c1fae1271",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_952add0da24e97cc_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785514348223_3.00.jpg": {
+    "mtime": 1785514369.246142,
+    "ast_hash": "9d333dbc6b6623105c2487f4ae9507d3",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_952add0da24e97cc_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785514608865_3.00.jpg": {
+    "mtime": 1785514610.5289266,
+    "ast_hash": "9d333dbc6b6623105c2487f4ae9507d3",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_9585e821741d5ed8_jpeg_compositions_frames_05-thalia.html_1920x1080_1785509874064_3.50.jpg": {
+    "mtime": 1785509899.9708512,
+    "ast_hash": "02fe77782b6e33d43915fb379467be37",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_95acc3220f06c7f9_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785513463663_3.70.jpg": {
+    "mtime": 1785513466.9052546,
+    "ast_hash": "c3ccf01c776de3b84804e2f8fc57b294",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_97d3f32f5166b5af_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785514417536_2.30.jpg": {
+    "mtime": 1785514428.8029313,
+    "ast_hash": "4088937d391a4043d95ee037631eee94",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_9815acbc7f3cf0d9_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785511060936_3.00.jpg": {
+    "mtime": 1785511063.957739,
+    "ast_hash": "f89191f37e7a2e2e05df6bc8c22a8f5b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_98ff149cae2d6c1f_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785512577728_3.00.jpg": {
+    "mtime": 1785512581.410359,
+    "ast_hash": "51fc05ac868b18a226252e1c0cc257d6",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_9d32173dff16b49c_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785514158333_1.50.jpg": {
+    "mtime": 1785514168.6634884,
+    "ast_hash": "188458c825750263f6d3785bddb4bcb7",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_9d32173dff16b49c_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785514158333_2.30.jpg": {
+    "mtime": 1785514188.7698405,
+    "ast_hash": "eba34937b9b096f8b18cbd59b9ee2835",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a06644eaf6d969cf_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785514166832_2.00.jpg": {
+    "mtime": 1785514169.4867952,
+    "ast_hash": "c2568620ec223d078d09b44115b6a4a2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a06644eaf6d969cf_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785514166832_2.23.jpg": {
+    "mtime": 1785514171.4789624,
+    "ast_hash": "c8ba69b13d44ceb490373a2a4ab0e503",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a06644eaf6d969cf_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785514166832_3.00.jpg": {
+    "mtime": 1785514189.2748535,
+    "ast_hash": "ea2f25e40c366cb8498e9e09887d9f44",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a2f40e2b4bae3424_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785512580297_3.00.jpg": {
+    "mtime": 1785512582.6851664,
+    "ast_hash": "c1413b5e4d2ecda7ce05408f9e60545c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a4553f91e2f68c93_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785511118221_3.70.jpg": {
+    "mtime": 1785511121.149778,
+    "ast_hash": "60945542d2da3617eefce3353491403b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a590acad3e3bb5e8_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785512579329_3.00.jpg": {
+    "mtime": 1785512582.6770926,
+    "ast_hash": "51fc05ac868b18a226252e1c0cc257d6",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_a6708a5e3485af52_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785511788575_3.00.jpg": {
+    "mtime": 1785511802.2830796,
+    "ast_hash": "bf2a871a8ed9d26f90daedfd37f708c6",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_aecb94a56873948f_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785513999134_3.70.jpg": {
+    "mtime": 1785514004.9021568,
+    "ast_hash": "1fecc68528bbb1b94c48f2cbe78576dc",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_b099b2ba4ae756de_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785513999131_2.20.jpg": {
+    "mtime": 1785514002.9104776,
+    "ast_hash": "ffa4d61f88f141f9c76296daac7a129b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_b0ca1958f9cce4e8_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785512577727_2.20.jpg": {
+    "mtime": 1785512581.415358,
+    "ast_hash": "82fafaee857466627e6de04d73d561a2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_b1b76fd38f383b83_jpeg_index.html_1920x1080_1785514167561_1.50__scene-00-layout_0.jpg": {
+    "mtime": 1785514171.6255145,
+    "ast_hash": "188458c825750263f6d3785bddb4bcb7",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_b541a03b8dba6393_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785509766976_4.50.jpg": {
+    "mtime": 1785509842.0063186,
+    "ast_hash": "322705e17a64cfe858d9ae62fcaeb7a6",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_b96198b18f512178_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785509874061_3.80.jpg": {
+    "mtime": 1785510734.0561645,
+    "ast_hash": "1bd4ffe0f7eb3b299d4a5ecb2628e75b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_b96198b18f512178_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785509874061_4.50.jpg": {
+    "mtime": 1785509899.2740755,
+    "ast_hash": "1bd4ffe0f7eb3b299d4a5ecb2628e75b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_ba06940f4f0899ca_jpeg_compositions_frames_04-control-real.html_1920x1080_1785511118224_3.00.jpg": {
+    "mtime": 1785511121.8988438,
+    "ast_hash": "9598838c0ec88b460db2dfdc0a8887fe",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_bb275026d85b2633_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785511650932_2.20.jpg": {
+    "mtime": 1785511654.148846,
+    "ast_hash": "0041f9313dfc702ad39aa8741288a968",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_bb66e2f6cd55a7c7_jpeg_compositions_frames_05-thalia.html_1920x1080_1785510445927_3.50.jpg": {
+    "mtime": 1785510448.534242,
+    "ast_hash": "b1648f51d33670c974d81d8b374d1625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_bbf4af56d7c923ea_jpeg_compositions_frames_04-control-real.html_1920x1080_1785514166934_2.00.jpg": {
+    "mtime": 1785514170.4596245,
+    "ast_hash": "14da0157601bd39cd74491e45d41a6c4",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_bbf4af56d7c923ea_jpeg_compositions_frames_04-control-real.html_1920x1080_1785514166934_2.25.jpg": {
+    "mtime": 1785514172.7252011,
+    "ast_hash": "87701ba022b0a8072a76fe12053ad862",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_bbf4af56d7c923ea_jpeg_compositions_frames_04-control-real.html_1920x1080_1785514166934_3.00.jpg": {
+    "mtime": 1785514190.3443084,
+    "ast_hash": "39a03abce7a75449bee3ab9507bd619f",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_bbf4af56d7c923ea_jpeg_compositions_frames_04-control-real.html_1920x1080_1785514608899_3.00.jpg": {
+    "mtime": 1785514612.2952878,
+    "ast_hash": "39a03abce7a75449bee3ab9507bd619f",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c11da9ea8f1fb6ed_jpeg_compositions_frames_05-thalia.html_1920x1080_1785514158339_1.50.jpg": {
+    "mtime": 1785514170.4671705,
+    "ast_hash": "3210b46114e3155f8c4c2e28b38ec9f7",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c11da9ea8f1fb6ed_jpeg_compositions_frames_05-thalia.html_1920x1080_1785514158339_2.30.jpg": {
+    "mtime": 1785514190.391901,
+    "ast_hash": "7aab4f0d3c88ded2337f71ce3caed513",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c1961c685c09bfdf_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785510387812_5.00.jpg": {
+    "mtime": 1785510391.6046271,
+    "ast_hash": "5b76f6a2ce695015a498190814d05201",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c1a8752880ea5ed2_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785513237411_2.20.jpg": {
+    "mtime": 1785513241.2893095,
+    "ast_hash": "db4b6a49485fb736c14d61808ee6a825",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c44ac4133df79140_jpeg_compositions_frames_02c-paciente-en-un-solo-lugar.html_1920x1080_1785514158337_3.00.jpg": {
+    "mtime": 1785514161.113015,
+    "ast_hash": "806689120f94cef3585a728a7a336761",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c460012a351d5b40_jpeg_compositions_frames_04-control-real.html_1920x1080_1785513999135_3.00.jpg": {
+    "mtime": 1785514005.2624142,
+    "ast_hash": "33ebda76ed6764be7ec037e16f86f4dd",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c66e6d786a649a8c_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785513999130_2.30.jpg": {
+    "mtime": 1785514001.0025477,
+    "ast_hash": "eba34937b9b096f8b18cbd59b9ee2835",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c682e25d44356cac_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785510709751_3.00.jpg": {
+    "mtime": 1785510735.0809042,
+    "ast_hash": "6f803362123c92446a7152918763140a",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c6f5c2e02fc9770f_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785514348225_3.00.jpg": {
+    "mtime": 1785514369.242621,
+    "ast_hash": "d08df1526f70ebc1104dc18e91c60625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_c6f5c2e02fc9770f_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785514608868_3.00.jpg": {
+    "mtime": 1785514610.539498,
+    "ast_hash": "d08df1526f70ebc1104dc18e91c60625",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_ca616e1932985d53_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785512577729_3.00.jpg": {
+    "mtime": 1785512582.5638316,
+    "ast_hash": "c1413b5e4d2ecda7ce05408f9e60545c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_ce6448acc14647e5_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785512577730_3.70.jpg": {
+    "mtime": 1785512583.4001987,
+    "ast_hash": "339e897d1fe9a02e32a9e93aa67d80c2",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_cf2e6038f60bdaa8_jpeg_index.html_1920x1080_1785509822912_3.00.jpg": {
+    "mtime": 1785512759.8893247,
+    "ast_hash": "e8fa678f35542b8b5382d006334aa912",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_d0666f10e59ea874_jpeg_compositions_frames_05-thalia.html_1920x1080_1785510809920_2.30.jpg": {
+    "mtime": 1785511063.8965187,
+    "ast_hash": "6ede17906b2cc19c4d2fb05aab115304",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_d0666f10e59ea874_jpeg_compositions_frames_05-thalia.html_1920x1080_1785510809920_3.00.jpg": {
+    "mtime": 1785510813.2237723,
+    "ast_hash": "6ede17906b2cc19c4d2fb05aab115304",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_d0bc8a3a0d65f348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785514166807_1.50.jpg": {
+    "mtime": 1785514168.667488,
+    "ast_hash": "4d66fb75a4e0ec38d519b3b337e4092d",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_d0bc8a3a0d65f348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785514166807_1.77.jpg": {
+    "mtime": 1785514172.611271,
+    "ast_hash": "303e37ad28e1d73aa8c0f4660f9bc0b9",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_d0bc8a3a0d65f348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785514166807_2.20.jpg": {
+    "mtime": 1785514189.2698286,
+    "ast_hash": "ffa4d61f88f141f9c76296daac7a129b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_d0bc8a3a0d65f348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785514608862_2.20.jpg": {
+    "mtime": 1785514610.4471369,
+    "ast_hash": "ffa4d61f88f141f9c76296daac7a129b",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_db0d74a0ed8bca2b_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785513237412_3.00.jpg": {
+    "mtime": 1785513241.3239243,
+    "ast_hash": "374a4e54afe2c93ffc8e3a0a06481800",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_dc7221c02106f3c1_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785511021491_3.80.jpg": {
+    "mtime": 1785511025.9120898,
+    "ast_hash": "c018592ed4ad9fc249c4287c16a8b005",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_e3f48c5967cdb827_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785511184288_3.00.jpg": {
+    "mtime": 1785511187.4104705,
+    "ast_hash": "373c09f610bb1d7cd6ae5437012f6be1",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_e5410514bd5ad78f_jpeg_compositions_frames_05-thalia.html_1920x1080_1785513999136_2.30.jpg": {
+    "mtime": 1785514003.973985,
+    "ast_hash": "7aab4f0d3c88ded2337f71ce3caed513",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_e57af0772d6b80c5_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785513237408_1.50__frame-00-desktop-agenda_0.jpg": {
+    "mtime": 1785513239.9208803,
+    "ast_hash": "08fddaf52bad0311dcb4ac61b5c3ef22",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_e57af0772d6b80c5_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785513237408_1.50__frame-00-mobile-agenda_0.jpg": {
+    "mtime": 1785513240.3380065,
+    "ast_hash": "600a35612244cee1e088ec1acce2233c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_e57af0772d6b80c5_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785513237408_1.50__frame-00-tablet-finances_0.jpg": {
+    "mtime": 1785513240.3289866,
+    "ast_hash": "4be569305f623563e765665486a38ba3",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_e57af0772d6b80c5_jpeg_compositions_frames_00-clinica-desde-cualquier-dispositivo.html_1920x1080_1785513237408_2.30.jpg": {
+    "mtime": 1785513240.750382,
+    "ast_hash": "a2efead933c88dc990e0833f97c4805c",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_ee0529e3a7096b7a_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785509766977_5.00.jpg": {
+    "mtime": 1785509842.0118318,
+    "ast_hash": "7964fc2c23f5e849cdd2264a646d1e00",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_f1382ed0ba89adc5_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785511821553_3.70.jpg": {
+    "mtime": 1785511824.7036963,
+    "ast_hash": "c170ad9bb188fde96b3aedcb565788ca",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_f96ae242247c5051_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785510786712_3.80.jpg": {
+    "mtime": 1785510789.230258,
+    "ast_hash": "9d3dee1cd582ef3739acaee3b5571fc0",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.thumbnails/v4_v3_fd9ae87b885b6d9c_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785509766976_3.00.jpg": {
+    "mtime": 1785509841.9515302,
+    "ast_hash": "b33b5d068845c98551207d51492beb62",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.hyperframes/thalia-orchestral-master.wav": {
+    "mtime": 1785514596.6472492,
+    "ast_hash": "3bd138bdc31c5d09a267ee588b62ac51",
+    "semantic_hash": ""
+  },
+  "videos/thalia-product-promo/.hyperframes/thalia-orchestral.wav": {
+    "mtime": 1785514071.432989,
+    "ast_hash": "2d283b7619a2d501d2bb1c61e4cb055b",
     "semantic_hash": ""
   }
 }

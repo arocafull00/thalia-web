@@ -4,6 +4,7 @@ import { E2E_DATA } from "./e2e-constants";
 import {
   clickTopbarMenuAction,
   clickTopbarTrigger,
+  expectSearchParam,
   selectComboboxOption,
 } from "./e2e-helpers";
 
@@ -91,4 +92,47 @@ test("edita un material del inventario", async ({ page }) => {
     page.getByText("Material actualizado correctamente."),
   ).toBeVisible({ timeout: 15_000 });
   await expect(dialog).toBeHidden({ timeout: 15_000 });
+});
+
+test("los indicadores de stock filtran el listado al pulsarlos", async ({
+  page,
+}) => {
+  await page.goto("/inventory");
+  await expect(page.getByTestId("inventory-page")).toBeVisible();
+
+  const critical = page.getByTestId("inventory-summary-critical");
+  const optimal = page.getByTestId("inventory-summary-optimal");
+
+  // Arrancan sin filtro aplicado.
+  await expect(critical).toHaveAttribute("aria-pressed", "false");
+
+  // El material del seed tiene stock de sobra, así que es óptimo.
+  await optimal.click();
+  await expectSearchParam(page, "stock", "ok");
+  await expect(optimal).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("row", { name: new RegExp(E2E_DATA.inventoryItemName) }),
+  ).toBeVisible();
+
+  // Filtrando por crítico desaparece, y el indicador anterior se desmarca.
+  await critical.click();
+  await expectSearchParam(page, "stock", "critical");
+  await expect(optimal).toHaveAttribute("aria-pressed", "false");
+  await expect(
+    page
+      .getByRole("table")
+      .getByRole("row", { name: new RegExp(E2E_DATA.inventoryItemName) }),
+  ).toHaveCount(0);
+
+  // Un segundo clic sobre el activo quita el filtro.
+  await critical.click();
+  await expect(critical).toHaveAttribute("aria-pressed", "false");
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get("stock"), {
+      timeout: 15_000,
+    })
+    .toBeNull();
+  await expect(
+    page.getByRole("row", { name: new RegExp(E2E_DATA.inventoryItemName) }),
+  ).toBeVisible();
 });

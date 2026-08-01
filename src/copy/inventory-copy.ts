@@ -15,5 +15,8 @@ export const INVENTORY_COPY = {
     critical: "Crítico",
     low: "Bajo",
     optimal: "Óptimo",
+    filterBy: (label: string) => `Filtrar por stock ${label.toLowerCase()}`,
+    clearFilter: (label: string) =>
+      `Quitar el filtro de stock ${label.toLowerCase()}`,
   },
 } as const;

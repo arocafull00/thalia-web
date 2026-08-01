@@ -2,6 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
+import InventoryStockBadge from "@/components/inventory/components/list/inventory-stock-badge";
 import SortableTableHead from "@/components/ui/sortable-table-head";
 import {
   getInventoryStockLevel,
@@ -75,25 +76,13 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
     header: ({ column }) => (
       <SortableTableHead column={column} title="Estado" />
     ),
-    cell: ({ row }) => {
-      const stock = Number(row.original.stock ?? 0);
-      const minStock = Number(row.original.min_stock ?? 0);
-      const level = getInventoryStockLevel(stock, minStock);
-
-      const badgeClass =
-        level === "critical"
-          ? "bg-danger/10 text-danger"
-          : level === "low"
-            ? "bg-warning/10 text-warning"
-            : "bg-success/10 text-success";
-
-      return (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${badgeClass}`}
-        >
-          {inventoryStockLevelLabel(level)}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <InventoryStockBadge
+        level={getInventoryStockLevel(
+          Number(row.original.stock ?? 0),
+          Number(row.original.min_stock ?? 0),
+        )}
+      />
+    ),
   },
 ];

@@ -6,30 +6,27 @@ import {
   uuidSchema,
 } from "@/lib/schemas/schema-helpers";
 
-const appointmentFieldsSchema = z.object({
+const appointmentCommonFieldsSchema = z.object({
   patientId: uuidSchema("El paciente no es válido."),
   employeeId: uuidSchema("El profesional no es válido."),
-  startsAt: z
-    .date()
-    .refine(
-      (date) => date.getTime() > Date.now(),
-      "La fecha no puede ser en el pasado.",
-    ),
   treatmentIds: z.array(uuidSchema("El tratamiento no es válido.")),
   notes: nullableTrimmedString(1000, "Las notas son demasiado largas."),
 });
 
-export const appointmentSchema = appointmentFieldsSchema.extend({
-  clinicId: clinicIdSchema(),
+export const appointmentFormSchema = appointmentCommonFieldsSchema.extend({
+  startsAt: z.date(),
 });
 
-export const appointmentUpdateSchema = appointmentFieldsSchema
-  .extend({
-    id: uuidSchema("La cita no es válida."),
-  })
-  .extend({
-    clinicId: clinicIdSchema(),
-  });
+export const appointmentSchema = appointmentCommonFieldsSchema.extend({
+  clinicId: clinicIdSchema(),
+  startsAtIso: z.string().datetime({ offset: true }),
+});
+
+export const appointmentUpdateSchema = appointmentCommonFieldsSchema.extend({
+  id: uuidSchema("La cita no es válida."),
+  clinicId: clinicIdSchema(),
+  startsAtIso: z.string().datetime({ offset: true }),
+});
 
 export type AppointmentSchemaInput = z.infer<typeof appointmentSchema>;
 export type AppointmentUpdateSchemaInput = z.infer<

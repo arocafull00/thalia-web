@@ -6,9 +6,14 @@ export const INVENTORY_ITEM_DETAIL_COPY = {
     movements: "Movimientos",
   },
   moreActions: "Más acciones",
+  moreActions: "Más acciones",
   sections: {
     stats: "Stock y precio",
     movements: "Historial de movimientos",
+  },
+  menuSections: {
+    management: "Gestión",
+    danger: "Peligro",
   },
   fields: {
     category: "Categoría",

@@ -145,19 +145,21 @@ describe("appointments-store", () => {
       undefined,
     );
 
-    const futureDate = new Date(Date.now() + 86_400_000);
+    const futureDate = new Date(Date.now() + 86_400_000).toISOString();
 
     const result = await useAppointmentsStore.getState().createAppointment({
       clinicId: CLINIC_ID,
       patientId: PATIENT_ID,
       employeeId: EMPLOYEE_ID,
-      startsAt: futureDate,
+      startsAtIso: futureDate,
       treatmentIds: [TREATMENT_ID],
       notes: null,
     });
 
     expect(result).toEqual(mockAppointment);
-    expect(appointmentsDal.insertAppointment).toHaveBeenCalled();
+    expect(appointmentsDal.insertAppointment).toHaveBeenCalledWith(
+      expect.objectContaining({ starts_at: futureDate }),
+    );
     expect(appointmentsDal.insertAppointmentTreatments).toHaveBeenCalled();
     expect(useAppointmentsStore.getState().creating).toBe(false);
     expect(useAppointmentsStore.getState().createError).toBeNull();
@@ -171,14 +173,14 @@ describe("appointments-store", () => {
       new Error("insert failed"),
     );
 
-    const futureDate = new Date(Date.now() + 86_400_000);
+    const futureDate = new Date(Date.now() + 86_400_000).toISOString();
 
     await expect(
       useAppointmentsStore.getState().createAppointment({
         clinicId: CLINIC_ID,
         patientId: PATIENT_ID,
         employeeId: EMPLOYEE_ID,
-        startsAt: futureDate,
+        startsAtIso: futureDate,
         treatmentIds: [TREATMENT_ID],
         notes: null,
       }),
@@ -186,6 +188,61 @@ describe("appointments-store", () => {
 
     expect(useAppointmentsStore.getState().createError).toBeTruthy();
     expect(useAppointmentsStore.getState().creating).toBe(false);
+  });
+
+  it("updateAppointment sends the exact UTC ISO to the DAL", async () => {
+    const startsAtIso = new Date(Date.now() + 172_800_000).toISOString();
+    vi.mocked(treatmentsDal.getTreatmentsByIds).mockResolvedValue([
+      mockTreatment as never,
+    ]);
+    vi.mocked(appointmentsDal.updateAppointment).mockResolvedValue(
+      mockAppointment as never,
+    );
+    vi.mocked(appointmentsDal.deleteAppointmentTreatments).mockResolvedValue(
+      undefined,
+    );
+    vi.mocked(appointmentsDal.insertAppointmentTreatments).mockResolvedValue(
+      undefined,
+    );
+    vi.mocked(appointmentsDal.getAppointment).mockResolvedValue(
+      mockAppointment as never,
+    );
+
+    await useAppointmentsStore.getState().updateAppointment({
+      id: APPOINTMENT_ID,
+      clinicId: CLINIC_ID,
+      patientId: PATIENT_ID,
+      employeeId: EMPLOYEE_ID,
+      startsAtIso,
+      treatmentIds: [TREATMENT_ID],
+      notes: null,
+    });
+
+    expect(appointmentsDal.updateAppointment).toHaveBeenCalledWith(
+      APPOINTMENT_ID,
+      expect.objectContaining({ starts_at: startsAtIso }),
+    );
+  });
+
+  it("rescheduleAppointment preserves the supplied UTC instants", async () => {
+    const startsAtIso = "2030-07-15T19:00:00.000Z";
+    const endsAtIso = "2030-07-15T19:30:00.000Z";
+    vi.mocked(appointmentsDal.rescheduleAppointment).mockResolvedValue(
+      mockAppointment as never,
+    );
+    vi.mocked(appointmentsDal.getAppointment).mockResolvedValue(
+      mockAppointment as never,
+    );
+
+    await useAppointmentsStore
+      .getState()
+      .rescheduleAppointment(APPOINTMENT_ID, startsAtIso, endsAtIso);
+
+    expect(appointmentsDal.rescheduleAppointment).toHaveBeenCalledWith(
+      APPOINTMENT_ID,
+      startsAtIso,
+      endsAtIso,
+    );
   });
 
   it("updateAppointmentStatus sets status and clears loading", async () => {

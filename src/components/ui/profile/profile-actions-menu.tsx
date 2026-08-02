@@ -6,24 +6,30 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
+import ProfileActionMenuItem from "@/components/ui/profile/profile-action-menu-item";
 import { cn } from "@/lib/utils";
 
 type ProfileActionsMenuProps = {
-  actions: ProfileAction[];
+  sections: ProfileActionSection[];
   ariaLabel: string;
   className?: string;
 };
 
 export default function ProfileActionsMenu({
-  actions,
+  sections,
   ariaLabel,
   className,
 }: ProfileActionsMenuProps) {
-  if (actions.length === 0) {
+  const visibleSections = sections.filter(
+    (section) => section.actions.length > 0,
+  );
+
+  if (visibleSections.length === 0) {
     return null;
   }
 
@@ -41,33 +47,15 @@ export default function ProfileActionsMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {actions.map((action) => {
-          const Icon = action.icon;
-          const variant =
-            action.variant === "danger" ? "destructive" : "default";
-
-          if (action.href) {
-            return (
-              <DropdownMenuItem key={action.label} variant={variant} asChild>
-                <a href={action.href}>
-                  <Icon aria-hidden="true" />
-                  {action.label}
-                </a>
-              </DropdownMenuItem>
-            );
-          }
-
-          return (
-            <DropdownMenuItem
-              key={action.label}
-              variant={variant}
-              onClick={action.onClick}
-            >
-              <Icon aria-hidden="true" />
-              {action.label}
-            </DropdownMenuItem>
-          );
-        })}
+        {visibleSections.map((section, sectionIndex) => (
+          <div key={section.label}>
+            {sectionIndex > 0 ? <DropdownMenuSeparator /> : null}
+            <DropdownMenuLabel>{section.label}</DropdownMenuLabel>
+            {section.actions.map((action) => (
+              <ProfileActionMenuItem key={action.label} action={action} />
+            ))}
+          </div>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,3 +1,4 @@
+import { fromZonedTime } from "date-fns-tz";
 import { create } from "zustand";
 
 import {
@@ -5,6 +6,7 @@ import {
   deletePatientImage as deletePatientImageDal,
   getPatientImages,
 } from "@/dal/patient-images.dal";
+import { CLINIC_TIME_ZONE } from "@/lib/constants";
 import {
   compressTreatmentImage,
   getImageDimensions,
@@ -64,6 +66,7 @@ type PatientImagesStore = {
 
 async function uploadSinglePatientImage(
   { clinicId, patientId, file, metadata }: UploadPatientImageInput,
+  capturedAt: string,
   onProgress: (progress: number) => void,
 ): Promise<PatientImage> {
   const compressedFile = await compressTreatmentImage(file);
@@ -77,10 +80,6 @@ async function uploadSinglePatientImage(
     "image/webp",
     onProgress,
   );
-
-  const capturedAt = metadata.captured_at
-    ? new Date(`${metadata.captured_at}T12:00:00`).toISOString()
-    : new Date().toISOString();
 
   return createPatientImage({
     patient_id: patientId,
@@ -96,6 +95,17 @@ async function uploadSinglePatientImage(
     notes: metadata.notes,
     captured_at: capturedAt,
   });
+}
+
+function resolveCapturedAt(metadata: PatientImageUploadInput) {
+  if (!metadata.captured_at) {
+    return new Date().toISOString();
+  }
+
+  return fromZonedTime(
+    `${metadata.captured_at}T12:00:00`,
+    CLINIC_TIME_ZONE,
+  ).toISOString();
 }
 
 export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
@@ -154,8 +164,10 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
     });
 
     try {
+      const capturedAt = resolveCapturedAt(metadata);
       const image = await uploadSinglePatientImage(
         { clinicId, patientId, file, metadata },
+        capturedAt,
         (progress) => set({ uploadProgress: progress }),
       );
 
@@ -197,6 +209,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
 
     try {
       const images: PatientImage[] = [];
+      const capturedAt = resolveCapturedAt(metadata);
 
       for (let index = 0; index < files.length; index++) {
         const file = files[index];
@@ -204,6 +217,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
 
         const image = await uploadSinglePatientImage(
           { clinicId, patientId, file, metadata },
+          capturedAt,
           (fileProgress) =>
             set({
               uploadProgress: ((index + fileProgress / 100) / total) * 100,

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { derivePatientDetailStats } from "@/lib/patient-detail-stats";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
@@ -19,6 +20,7 @@ export default function PatientSummaryTab({
   patient,
   appointments,
 }: PatientSummaryTabProps) {
+  const timezone = useActiveClinicTimezone();
   const [referenceTime] = useState(Date.now);
   const upcomingAppointments = useMemo(
     () =>
@@ -40,8 +42,9 @@ export default function PatientSummaryTab({
         appointments,
         upcomingAppointments,
         PATIENT_DETAIL_COPY.stats.empty,
+        timezone,
       ),
-    [appointments, upcomingAppointments],
+    [appointments, timezone, upcomingAppointments],
   );
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">

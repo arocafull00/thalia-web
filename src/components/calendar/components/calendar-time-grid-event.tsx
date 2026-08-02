@@ -11,6 +11,7 @@ import {
 } from "@/lib/calendar-event-surface";
 import { isOverlapGroupEventId } from "@/lib/calendar-overlap-groups";
 import { formatTime } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { cn } from "@/lib/utils";
 
 type CalendarEventProps = {
@@ -26,6 +27,7 @@ type CalendarEventProps = {
 export default function CalendarTimeGridEvent({
   calendarEvent,
 }: CalendarEventProps) {
+  const timezone = useActiveClinicTimezone();
   const eventId = String(calendarEvent.id);
 
   if (isOverlapGroupEventId(eventId)) {
@@ -67,7 +69,7 @@ export default function CalendarTimeGridEvent({
         {treatmentPart ? ` · ${treatmentPart}` : ""}
       </strong>
       <small className="sx-event-meta truncate text-[11px] leading-tight text-ink-muted">
-        {formatTime(start)}–{formatTime(end)}
+        {formatTime(start, timezone)}–{formatTime(end, timezone)}
         {employeeName ? ` · ${employeeName}` : ""}
       </small>
     </div>

@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import type { Treatment } from "@/types/database.types";
@@ -13,13 +15,18 @@ export default function PatientImageTreatmentSelect({
   value,
   onChange,
 }: PatientImageTreatmentSelectProps) {
-  const treatmentOptions = treatments.map((treatment) => ({
-    value: treatment.id,
-    label: treatment.name,
-  }));
+  const treatmentOptions = useMemo(
+    () =>
+      treatments.map((treatment) => ({
+        value: treatment.id,
+        label: treatment.name,
+      })),
+    [treatments],
+  );
 
   return (
     <AppSearchableCombobox
+      testId="patient-image-treatment-combobox"
       value={value || null}
       onValueChange={(nextValue) => onChange(nextValue ?? "")}
       options={treatmentOptions}

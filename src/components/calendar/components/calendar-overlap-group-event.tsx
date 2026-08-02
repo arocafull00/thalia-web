@@ -9,6 +9,7 @@ import {
   formatProfessionalSummary,
 } from "@/lib/calendar-overlap-groups";
 import { formatTime } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { cn } from "@/lib/utils";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
@@ -31,7 +32,11 @@ export default function CalendarOverlapGroupEvent({
   calendarEvent,
   appointments,
 }: CalendarOverlapGroupEventProps) {
-  const startTime = formatTime(new Date(calendarEvent.start.epochMilliseconds));
+  const timezone = useActiveClinicTimezone();
+  const startTime = formatTime(
+    new Date(calendarEvent.start.epochMilliseconds),
+    timezone,
+  );
   const professionals = collectUniqueProfessionalColors(
     getEmployeeName,
     getEmployeeColor,

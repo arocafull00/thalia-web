@@ -6,7 +6,11 @@ import {
   getDefaultAppointmentDateRange,
   parseAppointmentDateParam,
 } from "@/components/appointments/components/appointment-date-range";
-import { formatClinicDayKey } from "@/lib/format";
+import {
+  formatClinicDayKey,
+  getClinicRangeIso,
+} from "@/lib/appointment-datetime";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
 import { appointmentsKey } from "@/stores/appointments-store";
@@ -38,9 +42,10 @@ export function useAppointmentsPage(
   filters: AppointmentPageFilters,
   seed?: AppointmentsPageSeed,
 ) {
+  const timezone = useActiveClinicTimezone();
   const defaults = (() => {
     if (seed?.initialRange?.from && seed.initialRange.to) {
-      const fallback = getDefaultAppointmentDateRange();
+      const fallback = getDefaultAppointmentDateRange(timezone);
 
       return {
         from: parseAppointmentDateParam(seed.initialRange.from, fallback.from),
@@ -48,7 +53,7 @@ export function useAppointmentsPage(
       };
     }
 
-    return getDefaultAppointmentDateRange();
+    return getDefaultAppointmentDateRange(timezone);
   })();
 
   const rangeStart = useMemo(
@@ -62,11 +67,12 @@ export function useAppointmentsPage(
   );
 
   const employeeId = filters.employeeId || null;
-  const appointmentsKeyValue = appointmentsKey(
-    rangeStart.toISOString(),
-    rangeEnd.toISOString(),
-    employeeId,
+  const { startIso, endIso } = getClinicRangeIso(
+    rangeStart,
+    rangeEnd,
+    timezone,
   );
+  const appointmentsKeyValue = appointmentsKey(startIso, endIso, employeeId);
   const seededAppointments = useServerSeed(
     appointmentsKeyValue,
     seed?.initialAppointmentsKey ?? "",
@@ -111,7 +117,7 @@ export function useAppointmentsPage(
 
     const byDay = new Map<string, typeof filtered>();
     for (const appt of sorted) {
-      const day = formatClinicDayKey(appt.starts_at);
+      const day = formatClinicDayKey(appt.starts_at, timezone);
       if (!byDay.has(day)) {
         byDay.set(day, []);
       }
@@ -123,7 +129,7 @@ export function useAppointmentsPage(
       appointments: dayAppointments,
       date: new Date(`${day}T00:00:00`),
     }));
-  }, [appointments.data, filters.search, filters.status]);
+  }, [appointments.data, filters.search, filters.status, timezone]);
 
   const flatAppointments = useMemo(
     () => groupedAppointments.flatMap((group) => group.appointments),

@@ -40,6 +40,10 @@ export const EMPLOYEE_DETAIL_COPY = {
     activate: "Activar empleado",
   },
   moreActions: "Más acciones",
+  menuSections: {
+    contact: "Contacto",
+    status: "Estado del empleado",
+  },
   errors: {
     load: "No se pudo cargar el empleado.",
     stats: "No se pudieron cargar las estadísticas.",

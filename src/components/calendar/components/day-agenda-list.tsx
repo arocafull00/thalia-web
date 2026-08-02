@@ -6,6 +6,7 @@ import {
   type AgendaAppointment,
 } from "@/lib/calendar-agenda";
 import { getAgendaHours, TIME_COLUMN_WIDTH } from "@/lib/calendar-grid";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 
 type DayAgendaListProps = {
   day: Date;
@@ -17,6 +18,7 @@ export default function DayAgendaList({
   appointments,
   onAppointmentClick,
 }: DayAgendaListProps) {
+  const timezone = useActiveClinicTimezone();
   if (appointments.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center px-6 py-16 text-center text-sm text-ink-secondary">
@@ -26,7 +28,7 @@ export default function DayAgendaList({
   }
 
   const hours = getAgendaHours();
-  const appointmentsByHour = groupAppointmentsByHour(appointments);
+  const appointmentsByHour = groupAppointmentsByHour(appointments, timezone);
 
   return (
     <div className="flex px-4 py-4">

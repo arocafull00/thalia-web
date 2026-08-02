@@ -155,6 +155,9 @@ export const MARKETING_COPY = {
   duplicate: {
     action: "Duplicar campaña",
     moreActions: "Más acciones",
+    menuSections: {
+      campaign: "Campaña",
+    },
     copyPrefix: "Copia de",
     success: "Campaña duplicada como borrador.",
     error: "No se pudo duplicar la campaña.",

@@ -1,6 +1,5 @@
 "use client";
 
-import { Pencil } from "lucide-react";
 import { notFound, useParams, useRouter } from "next/navigation";
 
 import TreatmentDeleteConfirmDialog from "@/components/treatments/components/treatment-delete-confirm-dialog";
@@ -9,7 +8,10 @@ import TreatmentDetailInfoSection from "@/components/treatments/components/treat
 import TreatmentDetailInventorySection from "@/components/treatments/components/treatment-detail-inventory-section";
 import TreatmentDialog from "@/components/treatments/components/treatment-dialog";
 import TreatmentImagesSection from "@/components/treatments/components/treatment-images-section";
-import { getTreatmentDetailActions } from "@/components/treatments/treatment-detail-actions";
+import {
+  getTreatmentDetailMenuSections,
+  getTreatmentDetailPrimaryAction,
+} from "@/components/treatments/treatment-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -51,21 +53,17 @@ export default function TreatmentDetailPageClient({
       : null,
   );
 
+  const treatmentActionHandlers = {
+    onEdit: openEditDialog,
+    onDelete: openDeleteDialog,
+  };
+
   useTopbarActions(
     treatment
       ? {
-          buttons: [
-            {
-              title: TREATMENT_DETAIL_COPY.actions.edit,
-              icon: Pencil,
-              onClick: openEditDialog,
-            },
-          ],
+          buttons: [getTreatmentDetailPrimaryAction(treatmentActionHandlers)],
           menu: {
-            actions: getTreatmentDetailActions({
-              onEdit: openEditDialog,
-              onDelete: openDeleteDialog,
-            }),
+            sections: getTreatmentDetailMenuSections(treatmentActionHandlers),
             ariaLabel: TREATMENT_DETAIL_COPY.moreActions,
           },
         }

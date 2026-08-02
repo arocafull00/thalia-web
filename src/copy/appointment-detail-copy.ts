@@ -45,6 +45,7 @@ export const APPOINTMENT_DETAIL_COPY = {
   materialsLoadError: "No se pudieron cargar los materiales.",
   resetToDefault: "Usar materiales del tratamiento",
   markCompleted: "Marcar como completada",
+  confirm: "Confirmar cita",
   cancel: "Cancelar cita",
   confirmCancelTitle: "Cancelar cita",
   confirmCancelDescription:
@@ -62,4 +63,9 @@ export const APPOINTMENT_DETAIL_COPY = {
   deleteSuccess: "Cita eliminada correctamente.",
   deleteError: "No se pudo eliminar la cita.",
   moreActions: "Más acciones",
+  menuSections: {
+    appointment: "Cita",
+    status: "Estado",
+    danger: "Peligro",
+  },
 } as const;

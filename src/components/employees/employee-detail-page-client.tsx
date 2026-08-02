@@ -1,6 +1,5 @@
 "use client";
 
-import { Pencil } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -9,7 +8,10 @@ import EmployeeDetailTabBar from "@/components/employees/components/detail/emplo
 import EmployeeDetailTabContent from "@/components/employees/components/detail/employee-detail-tab-content";
 import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/form/employee-status-confirm-dialog";
-import { getEmployeeDetailActions } from "@/components/employees/employee-detail-actions";
+import {
+  getEmployeeDetailMenuSections,
+  getEmployeeDetailPrimaryAction,
+} from "@/components/employees/employee-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -86,21 +88,20 @@ export default function EmployeeDetailPageClient({
       : null,
   );
 
+  const employeeActionHandlers = {
+    onEdit: () => setEditDialogOpen(true),
+    onToggleStatus: () => setStatusDialogOpen(true),
+  };
+
   useTopbarActions(
     employee
       ? {
-          buttons: [
-            {
-              title: EMPLOYEE_DETAIL_COPY.actions.edit,
-              icon: Pencil,
-              onClick: () => setEditDialogOpen(true),
-            },
-          ],
+          buttons: [getEmployeeDetailPrimaryAction(employeeActionHandlers)],
           menu: {
-            actions: getEmployeeDetailActions(employee, {
-              onEdit: () => setEditDialogOpen(true),
-              onToggleStatus: () => setStatusDialogOpen(true),
-            }),
+            sections: getEmployeeDetailMenuSections(
+              employee,
+              employeeActionHandlers,
+            ),
             ariaLabel: EMPLOYEE_DETAIL_COPY.moreActions,
           },
         }

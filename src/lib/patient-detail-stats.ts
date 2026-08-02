@@ -70,19 +70,20 @@ export function derivePatientDetailStats(
   appointments: AppointmentWithRelations[],
   upcomingAppointments: AppointmentWithRelations[],
   emptyLabel: string,
+  timezone: string,
 ): PatientDetailStats {
   const lastAppointment = getMostRecentPastAppointment(appointments);
   const nextAppointment = upcomingAppointments[0];
 
   return {
     lastAppointmentLabel: lastAppointment
-      ? formatDate(lastAppointment.starts_at)
+      ? formatDate(lastAppointment.starts_at, timezone)
       : emptyLabel,
     currentTreatmentLabel: lastAppointment
       ? getTreatmentName(lastAppointment)
       : emptyLabel,
     nextAppointmentLabel: nextAppointment
-      ? formatDate(nextAppointment.starts_at)
+      ? formatDate(nextAppointment.starts_at, timezone)
       : emptyLabel,
     totalAppointmentsLabel: String(appointments.length),
   };

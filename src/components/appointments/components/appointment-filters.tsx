@@ -12,6 +12,7 @@ import AppointmentStatusFilter from "@/components/appointments/components/appoin
 import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { Employee } from "@/types/database.types";
 
 type AppointmentFiltersProps = {
@@ -43,7 +44,11 @@ export default function AppointmentFilters({
   onStatusChange,
   onToChange,
 }: AppointmentFiltersProps) {
-  const defaults = useMemo(() => getDefaultAppointmentDateRange(), []);
+  const timezone = useActiveClinicTimezone();
+  const defaults = useMemo(
+    () => getDefaultAppointmentDateRange(timezone),
+    [timezone],
+  );
   const rangeFrom = parseAppointmentDateParam(from, defaults.from);
   const rangeTo = parseAppointmentDateParam(to, defaults.to);
 

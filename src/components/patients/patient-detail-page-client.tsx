@@ -1,6 +1,5 @@
 "use client";
 
-import { Pencil } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -13,7 +12,10 @@ import PatientFileUploaderDialog from "@/components/patients/components/files/pa
 import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
 import PatientImageDeleteConfirmDialog from "@/components/patients/components/gallery/patient-image-delete-confirm-dialog";
 import PatientImageUploaderDialog from "@/components/patients/components/gallery/patient-image-uploader-dialog";
-import { getPatientDetailActions } from "@/components/patients/patient-detail-actions";
+import {
+  getPatientDetailMenuSections,
+  getPatientDetailPrimaryAction,
+} from "@/components/patients/patient-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -87,23 +89,20 @@ export default function PatientDetailPageClient({
       : null,
   );
 
+  const patientActionHandlers = {
+    onEdit: () => setEditDialogOpen(true),
+    onCreateAppointment: () => setAppointmentDialogOpen(true),
+  };
+
   useTopbarActions(
     patient
       ? {
-          buttons: [
-            {
-              title: PATIENT_DETAIL_COPY.actions.edit,
-              icon: Pencil,
-              testId: "patient-edit-trigger",
-              onClick: () => setEditDialogOpen(true),
-            },
-          ],
+          buttons: [getPatientDetailPrimaryAction(patientActionHandlers)],
           menu: {
-            actions: getPatientDetailActions(patient, {
-              onEdit: () => setEditDialogOpen(true),
-              onCreateAppointment: () => setAppointmentDialogOpen(true),
-              onOpenGallery: () => setActiveTab("gallery"),
-            }),
+            sections: getPatientDetailMenuSections(
+              patient,
+              patientActionHandlers,
+            ),
             ariaLabel: PATIENT_DETAIL_COPY.moreActions,
           },
         }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import {
@@ -12,6 +14,7 @@ import {
   formatAppointmentTimeRange,
   formatDate,
 } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 type PatientTimelineProps = {
@@ -24,14 +27,16 @@ type PatientTimelineProps = {
 
 function mapAppointmentsToTimelineItems(
   appointments: AppointmentWithRelations[],
+  timezone: string,
 ): ProfileTimelineItem[] {
   return appointments.map((appointment) => ({
     id: appointment.id,
-    date: formatDate(appointment.starts_at),
-    monthGroup: formatAppointmentMonthGroup(appointment.starts_at),
+    date: formatDate(appointment.starts_at, timezone),
+    monthGroup: formatAppointmentMonthGroup(appointment.starts_at, timezone),
     time: formatAppointmentTimeRange(
       appointment.starts_at,
       appointment.ends_at,
+      timezone,
     ),
     primary: appointment.employees?.full_name ?? "—",
     statusLabel: appointmentStatusLabel(appointment.status),
@@ -49,6 +54,7 @@ export default function PatientTimeline({
   heading = PATIENT_DETAIL_COPY.sections.history,
   headingId = "patient-history-heading",
 }: PatientTimelineProps) {
+  const timezone = useActiveClinicTimezone();
   if (isLoading) {
     return (
       <section
@@ -87,7 +93,7 @@ export default function PatientTimeline({
       variant="integrated"
       headingId={headingId}
       heading={heading}
-      items={mapAppointmentsToTimelineItems(appointments)}
+      items={mapAppointmentsToTimelineItems(appointments, timezone)}
       emptyMessage={PATIENT_DETAIL_COPY.history.empty}
     />
   );

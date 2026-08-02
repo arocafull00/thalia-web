@@ -45,7 +45,10 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-surface text-ink">
+      <body
+        className="min-h-full flex flex-col bg-surface text-ink"
+        suppressHydrationWarning
+      >
         <Theme accentColor="teal" grayColor="gray" radius="large">
           <ServiceWorkerProvider>
             <PwaInstallProvider>

@@ -53,7 +53,7 @@ export type AppointmentFormInput = {
   clinicId: string;
   patientId: string;
   employeeId: string;
-  startsAt: Date;
+  startsAtIso: string;
   treatmentIds: string[];
   notes: string | null;
 };
@@ -67,18 +67,22 @@ function appointmentsKey(
   end: string,
   employeeId: string | null,
 ) {
-  return JSON.stringify({ start, end, employeeId });
+  return JSON.stringify({
+    start: new Date(start).toISOString(),
+    end: new Date(end).toISOString(),
+    employeeId,
+  });
 }
 
 let appointmentsRealtimeChannel: RealtimeChannel | null = null;
 let appointmentsRealtimeSubscribers = 0;
 
-function calculateEndDate(startsAt: Date, treatments: Treatment[]) {
+function calculateEndDate(startsAtIso: string, treatments: Treatment[]) {
   const duration = treatments.reduce(
     (total, treatment) => total + (treatment.duration_minutes ?? 30),
     0,
   );
-  return addMinutes(startsAt, duration || 30);
+  return addMinutes(new Date(startsAtIso), duration || 30);
 }
 
 async function refreshAllAppointmentEntries() {
@@ -146,6 +150,25 @@ function defaultMaterialsKey(treatmentIds: string[]) {
   return [...treatmentIds].sort().join(",");
 }
 
+function updateAppointmentInRangeEntries(
+  byRange: Record<string, QueryEntry<AppointmentWithRelations[]>>,
+  appointment: Appointment,
+) {
+  return Object.fromEntries(
+    Object.entries(byRange).map(([key, entry]) => [
+      key,
+      entry.data
+        ? {
+            ...entry,
+            data: entry.data.map((item) =>
+              item.id === appointment.id ? { ...item, ...appointment } : item,
+            ),
+          }
+        : entry,
+    ]),
+  );
+}
+
 type AppointmentsStore = {
   byRange: Record<string, QueryEntry<AppointmentWithRelations[]>>;
   byId: Record<string, QueryEntry<AppointmentWithRelations>>;
@@ -176,6 +199,12 @@ type AppointmentsStore = {
     end: Date;
     employeeId: string | null;
   }) => Promise<void>;
+  seedAppointments: (params: {
+    start: string;
+    end: string;
+    employeeId: string | null;
+    appointments: AppointmentWithRelations[];
+  }) => void;
   fetchAppointment: (appointmentId: string) => Promise<void>;
   fetchAppointmentInventoryItems: (appointmentId: string) => Promise<void>;
   fetchDefaultMaterials: (treatmentIds: string[]) => Promise<void>;
@@ -191,8 +220,8 @@ type AppointmentsStore = {
   ) => Promise<Appointment>;
   rescheduleAppointment: (
     id: string,
-    startsAt: Date,
-    endsAt: Date,
+    startsAtIso: string,
+    endsAtIso: string,
   ) => Promise<Appointment>;
   deleteAppointment: (id: string, restoreStock: boolean) => Promise<void>;
 };
@@ -217,6 +246,23 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
   subscribeRealtime: subscribeAppointmentsRealtime,
   unsubscribeRealtime: unsubscribeAppointmentsRealtime,
+
+  seedAppointments: ({ start, end, employeeId, appointments }) => {
+    const key = appointmentsKey(start, end, employeeId);
+
+    set((state) => {
+      if (state.byRange[key]?.data != null) {
+        return state;
+      }
+
+      return {
+        byRange: {
+          ...state.byRange,
+          [key]: successQueryEntry(appointments),
+        },
+      };
+    });
+  },
 
   fetchAppointments: async ({ start, end, employeeId }) => {
     const startIso = start.toISOString();
@@ -391,13 +437,13 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
       const validated = parsed.data;
       const treatments = await getTreatmentsByIds(validated.treatmentIds);
-      const endsAt = calculateEndDate(validated.startsAt, treatments);
+      const endsAt = calculateEndDate(validated.startsAtIso, treatments);
 
       const createdAppointment = await insertAppointment({
         clinic_id: validated.clinicId,
         patient_id: validated.patientId,
         employee_id: validated.employeeId,
-        starts_at: validated.startsAt.toISOString(),
+        starts_at: validated.startsAtIso,
         ends_at: endsAt.toISOString(),
         notes: validated.notes,
         status: "scheduled",
@@ -442,12 +488,12 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
       const validated = parsed.data;
       const treatments = await getTreatmentsByIds(validated.treatmentIds);
-      const endsAt = calculateEndDate(validated.startsAt, treatments);
+      const endsAt = calculateEndDate(validated.startsAtIso, treatments);
 
       const appointment = await updateAppointment(validated.id, {
         patient_id: validated.patientId,
         employee_id: validated.employeeId,
-        starts_at: validated.startsAt.toISOString(),
+        starts_at: validated.startsAtIso,
         ends_at: endsAt.toISOString(),
         notes: validated.notes,
       });
@@ -488,9 +534,28 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
     try {
       const appointment = await updateAppointmentStatus(id, status);
-      await refreshAllAppointmentEntries();
-      await get().fetchAppointment(id);
-      await useDashboardStore.getState().fetchDashboard();
+      set((state) => {
+        const detailEntry = state.byId[id];
+
+        return {
+          byRange: updateAppointmentInRangeEntries(state.byRange, appointment),
+          byId: detailEntry?.data
+            ? {
+                ...state.byId,
+                [id]: successQueryEntry({
+                  ...detailEntry.data,
+                  ...appointment,
+                }),
+              }
+            : state.byId,
+        };
+      });
+
+      await Promise.all([
+        refreshAllAppointmentEntries(),
+        get().fetchAppointment(id),
+        useDashboardStore.getState().fetchDashboard(),
+      ]);
 
       if (status === "completed") {
         void useInventoryStore.getState().fetchInventoryItems();
@@ -513,14 +578,14 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
     }
   },
 
-  rescheduleAppointment: async (id, startsAt, endsAt) => {
+  rescheduleAppointment: async (id, startsAtIso, endsAtIso) => {
     set({ rescheduling: true, rescheduleError: null });
 
     try {
       const appointment = await dalRescheduleAppointment(
         id,
-        startsAt.toISOString(),
-        endsAt.toISOString(),
+        startsAtIso,
+        endsAtIso,
       );
 
       await refreshAllAppointmentEntries();

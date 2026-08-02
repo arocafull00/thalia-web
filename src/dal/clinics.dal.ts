@@ -6,8 +6,18 @@ export type ClinicMembershipRow = {
   role: string;
   status: string;
   clinics:
-    | { id: string; name: string; logo_url: string | null }
-    | { id: string; name: string; logo_url: string | null }[]
+    | {
+        id: string;
+        name: string;
+        logo_url: string | null;
+        timezone: string | null;
+      }
+    | {
+        id: string;
+        name: string;
+        logo_url: string | null;
+        timezone: string | null;
+      }[]
     | null;
 };
 
@@ -16,7 +26,9 @@ export async function getMemberships(
 ): Promise<ClinicMembershipRow[]> {
   const { data, error } = await supabase
     .from("clinic_memberships")
-    .select("id, clinic_id, role, status, clinics(id, name, logo_url)")
+    .select(
+      "id, clinic_id, role, status, clinics(id, name, logo_url, timezone)",
+    )
     .eq("user_id", userId)
     .eq("status", "active");
 

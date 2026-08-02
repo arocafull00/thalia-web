@@ -1,9 +1,12 @@
+"use client";
+
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
 import { formatTime } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 
 type AppointmentRowProps = {
   appointment: AgendaAppointment;
@@ -14,6 +17,7 @@ export default function AppointmentRow({
   appointment,
   onClick,
 }: AppointmentRowProps) {
+  const timezone = useActiveClinicTimezone();
   const content = (
     <>
       <span
@@ -26,7 +30,7 @@ export default function AppointmentRow({
         aria-hidden
       />
       <span className="w-12 shrink-0 text-sm font-medium tabular-nums text-ink-muted">
-        {formatTime(appointment.startsAt)}
+        {formatTime(appointment.startsAt, timezone)}
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-ink">

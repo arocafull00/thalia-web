@@ -62,3 +62,42 @@ test("sube imágenes y abre la comparativa before/after", async ({ page }) => {
     page.getByTestId("patient-gallery-comparison-close"),
   ).toBeVisible();
 });
+
+test("mantiene editables los metadatos con 24 imÃ¡genes pendientes", async ({
+  context,
+  page,
+}) => {
+  const session = await context.newCDPSession(page);
+  await session.send("Emulation.setCPUThrottlingRate", { rate: 6 });
+
+  await page.goto(`/patients/${E2E_DATA.patientId}`);
+  await expect(page.getByTestId("patient-detail-page")).toBeVisible();
+  await page.getByRole("tab", { name: "GalerÃ­a", exact: true }).click();
+  await page.getByTestId("patient-gallery-upload-trigger").click();
+
+  const dialog = page.getByRole("dialog", { name: "Subir imÃ¡genes" });
+  const files = Array.from({ length: 24 }, (_, index) => ({
+    name: `e2e-batch-${index + 1}.png`,
+    mimeType: "image/png",
+    buffer: E2E_TINY_PNG,
+  }));
+
+  await dialog.locator('input[type="file"]').setInputFiles(files);
+  await expect(
+    dialog.getByRole("listitem", { name: "dropzone-file-list-item" }),
+  ).toHaveCount(24);
+
+  const phaseCombobox = dialog.getByTestId("patient-image-phase-combobox");
+  const treatmentCombobox = dialog.getByTestId(
+    "patient-image-treatment-combobox",
+  );
+  const capturedAtInput = dialog.locator('input[type="date"]');
+
+  await selectComboboxOption(page, phaseCombobox, "DespuÃ©s");
+  await selectComboboxOption(page, treatmentCombobox, E2E_DATA.treatment);
+  await capturedAtInput.fill("2025-02-03");
+
+  await expect(phaseCombobox).toContainText("DespuÃ©s");
+  await expect(treatmentCombobox).toContainText(E2E_DATA.treatment);
+  await expect(capturedAtInput).toHaveValue("2025-02-03");
+});

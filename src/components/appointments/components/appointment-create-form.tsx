@@ -11,6 +11,7 @@ import NewAppointmentDatetimeField from "@/components/appointments/new-appointme
 import AppDialogError from "@/components/ui/app-dialog-error";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSearchableMultiSelect from "@/components/ui/app-searchable-multi-select";
+import { Notice } from "@/components/ui/primitives/notice";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
 import type { SlotSearchMode } from "@/lib/find-slots";
 import type { AppointmentFormValues } from "@/lib/hooks/use-appointment-create-dialog";
@@ -45,6 +46,9 @@ type AppointmentCreateFormProps = {
   onOpenSlots: () => void;
   onCloseSlots: () => void;
   onSelectSlot: (date: Date) => void;
+  onInvalidStartsAt: () => void;
+  onValidStartsAt: () => void;
+  showPastAppointmentWarning?: boolean;
 };
 
 export default function AppointmentCreateForm({
@@ -68,6 +72,9 @@ export default function AppointmentCreateForm({
   onOpenSlots,
   onCloseSlots,
   onSelectSlot,
+  onInvalidStartsAt,
+  onValidStartsAt,
+  showPastAppointmentWarning = false,
 }: AppointmentCreateFormProps) {
   const canFindSlots = treatmentIds.length > 0;
 
@@ -95,8 +102,13 @@ export default function AppointmentCreateForm({
   return (
     <div className="mt-4 space-y-4">
       <AppDialogError message={errors.root?.message} />
+      {showPastAppointmentWarning ? (
+        <Notice
+          tone="warning"
+          message={APPOINTMENT_CREATE_COPY.pastAppointmentWarning}
+        />
+      ) : null}
 
-      {/* Paciente */}
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {APPOINTMENT_CREATE_COPY.fields.patient}{" "}
@@ -193,6 +205,8 @@ export default function AppointmentCreateForm({
               value={field.value}
               onChange={field.onChange}
               clinic={clinic}
+              onInvalidTime={onInvalidStartsAt}
+              onValidTime={onValidStartsAt}
             />
           )}
         />

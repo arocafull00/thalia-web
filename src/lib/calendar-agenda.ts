@@ -2,6 +2,10 @@ import { format } from "date-fns";
 
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import {
+  formatClinicDayKey,
+  instantToClinicZonedDateTime,
+} from "@/lib/appointment-datetime";
+import {
   getAppointmentStockIssue,
   type AppointmentStockIssue,
 } from "@/lib/appointment-stock";
@@ -45,11 +49,15 @@ export function toAgendaAppointments(
 
 export function groupAppointmentsByHour(
   appointments: AgendaAppointment[],
+  timezone: string,
 ): Map<number, AgendaAppointment[]> {
   const grouped = new Map<number, AgendaAppointment[]>();
 
   for (const appointment of appointments) {
-    const hour = appointment.startsAt.getHours();
+    const hour = instantToClinicZonedDateTime(
+      appointment.startsAt,
+      timezone,
+    ).hour;
     const existing = grouped.get(hour) ?? [];
     existing.push(appointment);
     grouped.set(hour, existing);
@@ -72,10 +80,11 @@ export function getAgendaHourRowHeight(appointmentCount: number): number {
 
 export function buildHasAppointmentsOnDay(
   appointments: AgendaAppointment[],
+  timezone: string,
 ): (day: Date) => boolean {
   const days = new Set(
     appointments.map((appointment) =>
-      format(appointment.startsAt, "yyyy-MM-dd"),
+      formatClinicDayKey(appointment.startsAt, timezone),
     ),
   );
 

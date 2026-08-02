@@ -27,6 +27,17 @@ const defaultValues: PatientImageFormValues = {
   captured_at: null,
 };
 
+function createSelectedFilesStore() {
+  let files: File[] = [];
+
+  return {
+    get: () => files,
+    set: (nextFiles: File[]) => {
+      files = nextFiles;
+    },
+  };
+}
+
 export function usePatientImageUploader(
   patientId: string,
   onSuccess: () => void,
@@ -34,7 +45,7 @@ export function usePatientImageUploader(
   const clinicId = useClinicId();
   const { mutateAsync, isPending, progress, currentFile, totalFiles } =
     useUploadPatientImages();
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFilesStore] = useState(createSelectedFilesStore);
 
   const {
     register,
@@ -51,12 +62,15 @@ export function usePatientImageUploader(
 
   const resetForm = useCallback(() => {
     reset(defaultValues);
-    setSelectedFiles([]);
-  }, [reset]);
+    selectedFilesStore.set([]);
+  }, [reset, selectedFilesStore]);
 
-  const setFiles = useCallback((files: File[]) => {
-    setSelectedFiles(files);
-  }, []);
+  const setFiles = useCallback(
+    (files: File[]) => {
+      selectedFilesStore.set(files);
+    },
+    [selectedFilesStore],
+  );
 
   const onSubmit = handleSubmit(
     async (data) => {
@@ -68,6 +82,8 @@ export function usePatientImageUploader(
         });
         return;
       }
+
+      const selectedFiles = selectedFilesStore.get();
 
       if (selectedFiles.length === 0) {
         setError("root", {
@@ -121,7 +137,6 @@ export function usePatientImageUploader(
     progress,
     currentFile,
     totalFiles,
-    selectedFiles,
     setFiles,
     resetForm,
   };

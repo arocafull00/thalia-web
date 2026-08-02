@@ -1,26 +1,28 @@
 import { Pencil } from "lucide-react";
 
-import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
+import type { TopbarActionButtonConfig } from "@/lib/hooks/use-topbar-actions";
 import type { Employee } from "@/types/database.types";
 
 type SettingsDetailActionHandlers = {
   onEdit: () => void;
 };
 
-export function getSettingsDetailActions(
+export function getSettingsDetailPrimaryAction(
+  handlers: SettingsDetailActionHandlers,
+): TopbarActionButtonConfig {
+  return {
+    title: SETTINGS_COPY.profile.editProfile,
+    icon: Pencil,
+    onClick: handlers.onEdit,
+  };
+}
+
+export function getSettingsDetailMenuSections(
   _profile: Employee,
   _userEmail: string | undefined,
-  handlers: SettingsDetailActionHandlers,
-): ProfileAction[] {
-  const actions: ProfileAction[] = [
-    {
-      label: SETTINGS_COPY.profile.editProfile,
-      icon: Pencil,
-      onClick: handlers.onEdit,
-      buttonVariant: "solid",
-    },
-  ];
-
-  return actions;
+  _handlers: SettingsDetailActionHandlers,
+): ProfileActionSection[] {
+  return [];
 }

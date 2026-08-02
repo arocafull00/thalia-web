@@ -4,7 +4,9 @@ import { addDays, addMonths, addWeeks, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useEffect } from "react";
 
+import { instantToClinicWallDate } from "@/lib/appointment-datetime";
 import { formatFullDayLabel, formatMonthLabel } from "@/lib/calendar-grid";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
 
@@ -28,6 +30,7 @@ function formatVisibleRangeLabel(startIso: string, endIso: string) {
 }
 
 export function useCalendarPage() {
+  const timezone = useActiveClinicTimezone();
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
   const setWeekAnchor = useCalendarStore((state) => state.setWeekAnchor);
   const viewMode = useCalendarStore((state) => state.viewMode);
@@ -54,6 +57,10 @@ export function useCalendarPage() {
       setEmployeeId(employeeIdParam);
     }
   }, [setEmployeeId]);
+
+  useEffect(() => {
+    setWeekAnchor(instantToClinicWallDate(new Date(), timezone));
+  }, [setWeekAnchor, timezone]);
 
   const rangeLabel =
     viewMode === "day"
@@ -90,7 +97,7 @@ export function useCalendarPage() {
 
   const onChangeViewMode = (mode: CalendarViewMode) => {
     setViewMode(mode);
-    setWeekAnchor(new Date());
+    setWeekAnchor(instantToClinicWallDate(new Date(), timezone));
   };
 
   return {
@@ -104,7 +111,7 @@ export function useCalendarPage() {
     closeDialog,
     onPrevious,
     onNext,
-    onToday: () => setWeekAnchor(new Date()),
+    onToday: () => setWeekAnchor(instantToClinicWallDate(new Date(), timezone)),
     onChangeViewMode,
   };
 }

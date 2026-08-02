@@ -1,7 +1,6 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
 
 import AppointmentStatusSelect from "@/components/appointments/components/appointment-status-select";
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
@@ -21,6 +20,7 @@ import type {
 
 export function buildAppointmentsColumns(
   onStatusChange: (id: string, status: AppointmentStatus) => void,
+  timezone: string,
 ): ColumnDef<AppointmentWithRelations>[] {
   return [
     {
@@ -30,11 +30,9 @@ export function buildAppointmentsColumns(
         <SortableTableHead column={column} title="Fecha" />
       ),
       cell: ({ row }) => {
-        const startsAt = new Date(row.original.starts_at);
         return (
           <span className="text-sm text-ink-secondary">
-            {formatDateTime(row.original.starts_at).split(",")[0] ??
-              format(startsAt, "dd/MM/yyyy")}
+            {formatDateTime(row.original.starts_at, timezone).split(",")[0]}
           </span>
         );
       },
@@ -50,7 +48,7 @@ export function buildAppointmentsColumns(
       ),
       cell: ({ row }) => (
         <span className="font-medium tabular-nums text-ink">
-          {formatTime(new Date(row.original.starts_at))}
+          {formatTime(row.original.starts_at, timezone)}
         </span>
       ),
     },

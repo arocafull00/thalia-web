@@ -1,6 +1,9 @@
 "use client";
 
-import { getEmployeeDetailActions } from "@/components/employees/employee-detail-actions";
+import {
+  getEmployeeDetailMenuSections,
+  getEmployeeDetailPrimaryAction,
+} from "@/components/employees/employee-detail-actions";
 import ProfileQuickActionButton from "@/components/ui/profile/profile-quick-action-button";
 import type { Employee } from "@/types/database.types";
 
@@ -15,10 +18,26 @@ export default function EmployeeQuickActions({
   onEdit,
   onToggleStatus,
 }: EmployeeQuickActionsProps) {
-  const actions = getEmployeeDetailActions(employee, {
-    onEdit,
-    onToggleStatus,
-  });
+  const handlers = { onEdit, onToggleStatus };
+  const primaryAction = getEmployeeDetailPrimaryAction(handlers);
+  const menuActions = getEmployeeDetailMenuSections(employee, handlers).flatMap(
+    (section) => section.actions,
+  );
+  const actions = [
+    {
+      label: primaryAction.title,
+      icon: primaryAction.icon!,
+      onClick: primaryAction.onClick,
+      buttonVariant: "solid" as const,
+    },
+    ...menuActions.map((action) => ({
+      label: action.label,
+      icon: action.icon,
+      onClick: action.onClick,
+      href: action.href,
+      buttonVariant: "ghost" as const,
+    })),
+  ];
 
   return (
     <div className="flex flex-col gap-2 px-6 py-6">
@@ -27,7 +46,7 @@ export default function EmployeeQuickActions({
           key={action.label}
           label={action.label}
           icon={action.icon}
-          variant={action.buttonVariant ?? "solid"}
+          variant={action.buttonVariant}
           onClick={
             action.onClick ??
             (() => {

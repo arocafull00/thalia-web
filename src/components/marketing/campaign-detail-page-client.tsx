@@ -61,18 +61,33 @@ export default function CampaignDetailPageClient() {
                   onClick: () => setConfirmOpen(true),
                 },
               ]
-            : [],
+            : [
+                {
+                  title: duplicateCopy.action,
+                  icon: Copy,
+                  onClick: () =>
+                    duplicate((newId) => router.push(`/marketing/${newId}`)),
+                },
+              ],
           menu: {
+            sections: canSend
+              ? [
+                  {
+                    label: duplicateCopy.menuSections.campaign,
+                    actions: [
+                      {
+                        label: duplicateCopy.action,
+                        icon: Copy,
+                        onClick: () =>
+                          duplicate((newId) =>
+                            router.push(`/marketing/${newId}`),
+                          ),
+                      },
+                    ],
+                  },
+                ]
+              : [],
             ariaLabel: duplicateCopy.moreActions,
-            actions: [
-              {
-                label: duplicateCopy.action,
-                icon: Copy,
-                onClick: () =>
-                  duplicate((newId) => router.push(`/marketing/${newId}`)),
-                buttonVariant: "ghost",
-              },
-            ],
           },
         }
       : null,

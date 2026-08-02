@@ -19,7 +19,18 @@ import {
   APP_SIDEBAR_COPY,
   type AppNavSectionId,
 } from "@/copy/app-sidebar-copy";
+import { SETTINGS_COPY } from "@/copy/settings-copy";
+import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
+import {
+  canManageClinicSettings,
+  SETTINGS_SECTIONS,
+} from "@/lib/settings-sections";
 import { useShellStore } from "@/stores/shell-store";
+
+export type AppNavSubItem = {
+  href: string;
+  label: string;
+};
 
 export type AppNavItem = {
   href: string;
@@ -28,6 +39,7 @@ export type AppNavItem = {
   section: AppNavSectionId;
   visible: boolean;
   primaryMobile: boolean;
+  subItems?: AppNavSubItem[];
 };
 
 export type AppNavSection = {
@@ -43,7 +55,7 @@ const NAV_SECTION_ORDER: AppNavSectionId[] = [
   "configuration",
 ];
 
-const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
+const BASE_NAV_ITEMS: Array<Omit<AppNavItem, "visible" | "primaryMobile">> = [
   {
     href: "/dashboard",
     label: "Inicio",
@@ -109,6 +121,10 @@ const BASE_NAV_ITEMS: Omit<AppNavItem, "visible" | "primaryMobile">[] = [
     label: "Ajustes",
     icon: <Settings size={18} strokeWidth={1.5} />,
     section: "configuration",
+    subItems: SETTINGS_SECTIONS.map((section) => ({
+      href: section.href,
+      label: SETTINGS_COPY.nav[section.id],
+    })),
   },
 ];
 
@@ -120,9 +136,11 @@ const PRIMARY_MOBILE_HREFS = new Set([
 ]);
 
 export function useAppNavItems() {
+  const { platformRole } = useActiveClinic();
   const showEmployees = useShellStore((state) => state.showEmployees);
   const showFinances = useShellStore((state) => state.showFinances);
   const showInventory = useShellStore((state) => state.showInventory);
+  const canManageClinic = canManageClinicSettings(platformRole);
 
   const items: AppNavItem[] = BASE_NAV_ITEMS.map((item) => {
     let visible = true;
@@ -143,6 +161,9 @@ export function useAppNavItems() {
       ...item,
       visible,
       primaryMobile: PRIMARY_MOBILE_HREFS.has(item.href) && visible,
+      subItems: item.subItems?.filter(
+        (subItem) => subItem.href !== "/settings/clinica" || canManageClinic,
+      ),
     };
   });
 

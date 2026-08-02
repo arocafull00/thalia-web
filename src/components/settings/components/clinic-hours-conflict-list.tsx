@@ -4,18 +4,20 @@ import { CalendarX } from "lucide-react";
 
 import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";
 import type { FutureAppointmentConflict } from "@/dal/appointments.dal";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 
 type Props = {
   conflicts: FutureAppointmentConflict[];
 };
 
-function formatDate(startsAt: string): string {
+function formatDate(startsAt: string, timezone: string): string {
   return new Intl.DateTimeFormat("es-ES", {
     weekday: "short",
     day: "numeric",
     month: "short",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: timezone,
   }).format(new Date(startsAt));
 }
 
@@ -29,6 +31,7 @@ function resolveName(
 }
 
 export default function ClinicHoursConflictList({ conflicts }: Props) {
+  const timezone = useActiveClinicTimezone();
   return (
     <div className="space-y-3">
       <p className="text-sm text-ink-secondary">
@@ -46,7 +49,7 @@ export default function ClinicHoursConflictList({ conflicts }: Props) {
                 )}
               </p>
               <p className="text-xs text-ink-muted">
-                {formatDate(appt.starts_at)}
+                {formatDate(appt.starts_at, timezone)}
                 {" · "}
                 {resolveName(
                   appt.employees,

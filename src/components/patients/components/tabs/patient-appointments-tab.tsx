@@ -7,6 +7,7 @@ import { notifyAppointmentStatusError } from "@/components/appointments/componen
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
 import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
+import { usePatientsStore } from "@/stores/patients-store";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -24,9 +25,12 @@ export default function PatientAppointmentsTab({
   const handleStatusChange = useCallback(
     async (id: string, status: AppointmentStatus) => {
       try {
-        await useAppointmentsStore
+        const appointment = await useAppointmentsStore
           .getState()
           .updateAppointmentStatus(id, status);
+        await usePatientsStore
+          .getState()
+          .fetchPatientAppointments(appointment.patient_id);
         notifySuccess("Estado de la cita actualizado.");
       } catch (cause) {
         notifyAppointmentStatusError(cause);

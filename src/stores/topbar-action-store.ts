@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { create } from "zustand";
 
-import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 
 export type TopbarBreadcrumb = {
   rootLabel: string;
@@ -20,7 +20,7 @@ export type TopbarAction = {
 };
 
 export type TopbarMenu = {
-  actions: ProfileAction[];
+  sections: ProfileActionSection[];
   ariaLabel: string;
 };
 

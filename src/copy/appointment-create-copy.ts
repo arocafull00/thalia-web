@@ -29,7 +29,12 @@ export const APPOINTMENT_CREATE_COPY = {
     clinicRequired: "No hay clínica activa.",
     closedDay: "La clínica no abre ese día.",
     outsideHours: "La cita está fuera del horario de apertura.",
+    past: "La fecha no puede estar en el pasado.",
+    invalidLocalTime:
+      "Esa hora no existe o se repite por el cambio horario. Elige otra hora.",
   },
+  pastAppointmentWarning:
+    "Esta cita ya ha ocurrido. Puedes editarla, pero revisa bien los cambios.",
   findSlots: {
     button: "Buscar hueco",
     loading: "Buscando...",

@@ -1,6 +1,9 @@
+"use client";
+
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
 import { buildEventSurfaceColor } from "@/lib/calendar-event-surface";
 import { formatTime } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { cn } from "@/lib/utils";
 
 type DayAgendaAppointmentCardProps = {
@@ -14,6 +17,7 @@ export default function DayAgendaAppointmentCard({
   className,
   onClick,
 }: DayAgendaAppointmentCardProps) {
+  const timezone = useActiveClinicTimezone();
   const surfaceColor = buildEventSurfaceColor(appointment.employeeColor);
 
   return (
@@ -45,8 +49,8 @@ export default function DayAgendaAppointmentCard({
             {appointment.patientName}
           </span>
           <span className="shrink-0 text-xs tabular-nums text-ink-muted">
-            {formatTime(appointment.startsAt)} –{" "}
-            {formatTime(appointment.endsAt)}
+            {formatTime(appointment.startsAt, timezone)} –{" "}
+            {formatTime(appointment.endsAt, timezone)}
           </span>
         </div>
         <span className="truncate text-xs text-ink-secondary">

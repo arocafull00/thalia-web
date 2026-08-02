@@ -1,14 +1,15 @@
 "use client";
 
 import { Clock, Pencil } from "lucide-react";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import ClinicEditDialog from "@/components/settings/components/clinic-edit-dialog";
 import ClinicHoursDialog from "@/components/settings/components/clinic-hours-dialog";
 import ProfileEditDialog from "@/components/settings/components/profile-edit-dialog";
-import SettingsDetailTabBar from "@/components/settings/components/settings-detail-tab-bar";
-import SettingsDetailTabContent from "@/components/settings/components/settings-detail-tab-content";
-import { getSettingsDetailActions } from "@/components/settings/settings-detail-actions";
+import SettingsNav from "@/components/settings/components/settings-nav";
+import SettingsSectionContent from "@/components/settings/components/settings-section-content";
+import { getSettingsDetailPrimaryAction } from "@/components/settings/settings-detail-actions";
 import { Notice } from "@/components/ui/primitives/notice";
 import { CLINIC_EDIT_COPY } from "@/copy/clinic-edit-copy";
 import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";
@@ -17,20 +18,25 @@ import { useAuth } from "@/lib/hooks/use-auth";
 import { useClinicInfo, type ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useSettingsPageActions } from "@/lib/hooks/use-settings-page";
-import { useSettingsTabs } from "@/lib/hooks/use-settings-tabs";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
+import { getSettingsSectionFromPathname } from "@/lib/settings-sections";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 import type { Employee } from "@/types/database.types";
 
-type SettingsPageClientProps = {
+type SettingsLayoutClientProps = {
+  children: React.ReactNode;
   initialClinic?: ClinicInfo | null;
   initialEmployees?: Employee[];
 };
 
-export default function SettingsPageClient({
+export default function SettingsLayoutClient({
+  children,
   initialClinic = null,
   initialEmployees,
-}: SettingsPageClientProps) {
+}: SettingsLayoutClientProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const activeSection = getSettingsSectionFromPathname(pathname);
   const { profile, user } = useAuth();
   const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
@@ -40,13 +46,12 @@ export default function SettingsPageClient({
     handleAvatarPress,
     handleChangePassword,
     handleSignOut,
-    isAdmin,
+    canManageClinic,
     passwordMessage,
     passwordSubmitting,
     signOutSubmitting,
     uploadAvatar,
   } = useSettingsPageActions(initialEmployees);
-  const { activeTab, setActiveTab } = useSettingsTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [clinicEditDialogOpen, setClinicEditDialogOpen] = useState(false);
   const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
@@ -56,9 +61,17 @@ export default function SettingsPageClient({
     refetch: refetchClinic,
   } = useClinicInfo(initialClinic);
 
+  useEffect(() => {
+    if (activeSection !== "clinica" || canManageClinic) {
+      return;
+    }
+
+    router.replace("/settings/usuario");
+  }, [activeSection, canManageClinic, router]);
+
   useTopbarActions(
-    profile
-      ? activeTab === "clinica"
+    profile && activeSection
+      ? activeSection === "clinica"
         ? {
             buttons: [
               {
@@ -67,22 +80,32 @@ export default function SettingsPageClient({
                 onClick: () => setClinicEditDialogOpen(true),
                 variant: "solid" as const,
               },
-              {
-                title: CLINIC_HOURS_COPY.title,
-                icon: Clock,
-                onClick: () => setHoursDialogOpen(true),
-                variant: "ghost" as const,
-              },
             ],
-            menu: { actions: [], ariaLabel: SETTINGS_COPY.moreActions },
+            menu: {
+              sections: [
+                {
+                  label: SETTINGS_COPY.menuSections.clinic,
+                  actions: [
+                    {
+                      label: CLINIC_HOURS_COPY.title,
+                      icon: Clock,
+                      onClick: () => setHoursDialogOpen(true),
+                    },
+                  ],
+                },
+              ],
+              ariaLabel: SETTINGS_COPY.moreActions,
+            },
           }
-        : activeTab === "usuario"
+        : activeSection === "usuario"
           ? {
-              buttons: [],
-              menu: {
-                actions: getSettingsDetailActions(profile, user?.email, {
+              buttons: [
+                getSettingsDetailPrimaryAction({
                   onEdit: () => setEditDialogOpen(true),
                 }),
+              ],
+              menu: {
+                sections: [],
                 ariaLabel: SETTINGS_COPY.moreActions,
               },
             }
@@ -98,17 +121,24 @@ export default function SettingsPageClient({
     );
   }
 
+  if (!activeSection) {
+    return null;
+  }
+
+  if (activeSection === "clinica" && !canManageClinic) {
+    return null;
+  }
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-      <div className="flex flex-col gap-6 px-4 pb-8 pt-6 lg:px-8">
-        <SettingsDetailTabBar
-          activeTab={activeTab}
-          isAdmin={isAdmin}
-          onTabChange={setActiveTab}
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <SettingsNav
+          activeSection={activeSection}
+          canManageClinic={canManageClinic}
         />
-        <div role="tabpanel">
-          <SettingsDetailTabContent
-            activeTab={activeTab}
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-8 pt-6 lg:px-8">
+          <SettingsSectionContent
+            section={activeSection}
             profile={profile}
             userEmail={user.email}
             avatarDisplayUri={displayUri}
@@ -123,6 +153,7 @@ export default function SettingsPageClient({
             clinic={clinic}
             clinicLoading={clinicLoading}
           />
+          {children}
         </div>
       </div>
 

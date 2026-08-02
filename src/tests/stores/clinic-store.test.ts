@@ -18,6 +18,7 @@ const singleClinicRow = {
     id: "clinic-1",
     name: "Clínica Central",
     logo_url: "https://logo.png",
+    timezone: "Europe/Madrid",
   },
 };
 
@@ -26,7 +27,14 @@ const arrayClinicRow = {
   clinic_id: "clinic-2",
   role: "doctor",
   status: "active",
-  clinics: [{ id: "clinic-2", name: "Clínica Norte", logo_url: null }],
+  clinics: [
+    {
+      id: "clinic-2",
+      name: "Clínica Norte",
+      logo_url: null,
+      timezone: "Europe/Paris",
+    },
+  ],
 };
 
 const nullClinicRow = {
@@ -68,6 +76,7 @@ describe("clinic-store", () => {
         clinicId: "clinic-1",
         clinicName: "Clínica Central",
         clinicLogoUrl: "https://logo.png",
+        clinicTimezone: "Europe/Madrid",
         role: "admin",
         status: "active",
       });
@@ -118,6 +127,7 @@ describe("clinic-store", () => {
             clinicId: "clinic-1",
             clinicName: "Clínica Central",
             clinicLogoUrl: null,
+            clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
           },
@@ -151,6 +161,7 @@ describe("clinic-store", () => {
             clinicId: "clinic-1",
             clinicName: "Test",
             clinicLogoUrl: null,
+            clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
           },
@@ -174,6 +185,7 @@ describe("clinic-store", () => {
         clinicId: "clinic-1",
         clinicName: "Clínica Central",
         clinicLogoUrl: null,
+        clinicTimezone: null,
         role: "admin" as const,
         status: "active" as const,
       };
@@ -204,6 +216,7 @@ describe("clinic-store", () => {
             clinicId: "clinic-1",
             clinicName: "Clínica Central",
             clinicLogoUrl: null,
+            clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
           },
@@ -225,6 +238,7 @@ describe("clinic-store", () => {
             clinicId: "clinic-1",
             clinicName: "Central",
             clinicLogoUrl: null,
+            clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
           },
@@ -233,6 +247,7 @@ describe("clinic-store", () => {
             clinicId: "clinic-2",
             clinicName: "External",
             clinicLogoUrl: null,
+            clinicTimezone: null,
             role: "external" as const,
             status: "active" as const,
           },
@@ -241,6 +256,7 @@ describe("clinic-store", () => {
             clinicId: "clinic-3",
             clinicName: "Another External",
             clinicLogoUrl: null,
+            clinicTimezone: null,
             role: "external" as const,
             status: "active" as const,
           },

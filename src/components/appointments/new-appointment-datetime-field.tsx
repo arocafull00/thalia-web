@@ -5,18 +5,23 @@ import { useId } from "react";
 import AppointmentTimeField from "@/components/appointments/components/appointment-time-field";
 import AppDateField from "@/components/ui/app-date-field";
 import { APPOINTMENT_CREATE_COPY } from "@/copy/appointment-create-copy";
+import { clinicWallFieldsToIso } from "@/lib/appointment-datetime";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 
 type NewAppointmentDatetimeFieldProps = {
   value: Date;
   onChange: (value: Date) => void;
   clinic?: ClinicInfo | null;
+  onInvalidTime: () => void;
+  onValidTime: () => void;
 };
 
 export default function NewAppointmentDatetimeField({
   value,
   onChange,
   clinic,
+  onInvalidTime,
+  onValidTime,
 }: NewAppointmentDatetimeFieldProps) {
   const dateFieldId = useId();
   const closedJsDays = clinic
@@ -32,14 +37,52 @@ export default function NewAppointmentDatetimeField({
   const maxTime = clinic ? clinic.closing_time.substring(0, 5) : undefined;
 
   const handleDateChange = (nextDate: Date) => {
+    if (clinic) {
+      try {
+        clinicWallFieldsToIso(
+          {
+            year: nextDate.getFullYear(),
+            month: nextDate.getMonth() + 1,
+            day: nextDate.getDate(),
+            hour: value.getHours(),
+            minute: value.getMinutes(),
+          },
+          clinic.timezone,
+        );
+      } catch {
+        onInvalidTime();
+        return;
+      }
+    }
+
     const next = new Date(nextDate);
     next.setHours(value.getHours(), value.getMinutes(), 0, 0);
+    onValidTime();
     onChange(next);
   };
 
   const handleTimeChange = (hours: number, minutes: number) => {
+    if (clinic) {
+      try {
+        clinicWallFieldsToIso(
+          {
+            year: value.getFullYear(),
+            month: value.getMonth() + 1,
+            day: value.getDate(),
+            hour: hours,
+            minute: minutes,
+          },
+          clinic.timezone,
+        );
+      } catch {
+        onInvalidTime();
+        return;
+      }
+    }
+
     const next = new Date(value);
     next.setHours(hours, minutes, 0, 0);
+    onValidTime();
     onChange(next);
   };
 

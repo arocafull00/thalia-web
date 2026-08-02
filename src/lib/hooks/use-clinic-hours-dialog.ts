@@ -12,6 +12,7 @@ import {
   type FutureAppointmentConflict,
 } from "@/dal/appointments.dal";
 import { updateClinicHours } from "@/dal/clinics.dal";
+import { instantToClinicWallDate } from "@/lib/appointment-datetime";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useClinicStore } from "@/stores/clinic-store";
 
@@ -50,14 +51,15 @@ const EMPTY_DEFAULTS: ClinicHoursFormValues = {
 };
 
 function isConflicting(
-  startsAt: Date,
+  startsAt: string,
   newHours: ClinicHoursFormValues,
 ): boolean {
-  const jsDay = startsAt.getDay();
+  const localStartsAt = instantToClinicWallDate(startsAt, newHours.timezone);
+  const jsDay = localStartsAt.getDay();
   const isoDay = jsDay === 0 ? 7 : jsDay;
   if (!newHours.open_days.includes(isoDay)) return true;
-  const hh = String(startsAt.getHours()).padStart(2, "0");
-  const mm = String(startsAt.getMinutes()).padStart(2, "0");
+  const hh = String(localStartsAt.getHours()).padStart(2, "0");
+  const mm = String(localStartsAt.getMinutes()).padStart(2, "0");
   const time = `${hh}:${mm}`;
   return time < newHours.opening_time || time >= newHours.closing_time;
 }
@@ -67,6 +69,9 @@ export function useClinicHoursDialog(
   onSuccess: () => void,
 ) {
   const activeClinicId = useClinicStore((s) => s.activeClinicId);
+  const updateActiveClinicTimezone = useClinicStore(
+    (s) => s.updateActiveClinicTimezone,
+  );
   const [conflicts, setConflicts] = useState<
     FutureAppointmentConflict[] | null
   >(null);
@@ -101,6 +106,7 @@ export function useClinicHoursDialog(
         open_days: data.open_days,
         timezone: data.timezone,
       });
+      updateActiveClinicTimezone(data.timezone);
       toast.success(CLINIC_HOURS_COPY.success);
       setConflicts(null);
       setPendingData(null);
@@ -131,7 +137,7 @@ export function useClinicHoursDialog(
     }
 
     const conflicting = futureAppointments.filter((appt) =>
-      isConflicting(new Date(appt.starts_at), parsed.data),
+      isConflicting(appt.starts_at, parsed.data),
     );
 
     if (conflicting.length > 0) {

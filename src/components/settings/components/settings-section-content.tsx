@@ -1,12 +1,11 @@
-import PwaInstallPanel from "@/components/pwa/components/pwa-install-panel";
 import SettingsClinicPanel from "@/components/settings/components/settings-clinic-panel";
 import SettingsUserPanel from "@/components/settings/components/settings-user-panel";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
-import type { SettingsTabId } from "@/lib/hooks/use-settings-tabs";
+import type { SettingsSectionId } from "@/lib/settings-sections";
 import type { Employee } from "@/types/database.types";
 
-type SettingsDetailTabContentProps = {
-  activeTab: SettingsTabId;
+type SettingsSectionContentProps = {
+  section: SettingsSectionId;
   profile: Employee;
   userEmail: string | undefined;
   avatarDisplayUri: string | null;
@@ -22,8 +21,8 @@ type SettingsDetailTabContentProps = {
   clinicLoading: boolean;
 };
 
-export default function SettingsDetailTabContent({
-  activeTab,
+export default function SettingsSectionContent({
+  section,
   profile,
   userEmail,
   avatarDisplayUri,
@@ -37,8 +36,8 @@ export default function SettingsDetailTabContent({
   signOutSubmitting,
   clinic,
   clinicLoading,
-}: SettingsDetailTabContentProps) {
-  if (activeTab === "usuario") {
+}: SettingsSectionContentProps) {
+  if (section === "usuario") {
     return (
       <SettingsUserPanel
         profile={profile}
@@ -55,15 +54,11 @@ export default function SettingsDetailTabContent({
     );
   }
 
-  if (activeTab === "clinica") {
-    return (
-      <SettingsClinicPanel
-        clinic={clinic}
-        loading={clinicLoading}
-        activeEmployeesCount={activeEmployeesCount}
-      />
-    );
-  }
-
-  return <PwaInstallPanel />;
+  return (
+    <SettingsClinicPanel
+      clinic={clinic}
+      loading={clinicLoading}
+      activeEmployeesCount={activeEmployeesCount}
+    />
+  );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import {
@@ -12,6 +14,7 @@ import {
   formatAppointmentTimeRange,
   formatDate,
 } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { EmployeeAppointmentRow } from "@/stores/employees-store";
 
 type EmployeeTimelineProps = {
@@ -22,14 +25,16 @@ type EmployeeTimelineProps = {
 
 function mapAppointmentsToTimelineItems(
   appointments: EmployeeAppointmentRow[],
+  timezone: string,
 ): ProfileTimelineItem[] {
   return appointments.map((appointment) => ({
     id: appointment.id,
-    date: formatDate(appointment.starts_at),
-    monthGroup: formatAppointmentMonthGroup(appointment.starts_at),
+    date: formatDate(appointment.starts_at, timezone),
+    monthGroup: formatAppointmentMonthGroup(appointment.starts_at, timezone),
     time: formatAppointmentTimeRange(
       appointment.starts_at,
       appointment.ends_at,
+      timezone,
     ),
     primary: appointment.patients?.full_name ?? "—",
     statusLabel: appointmentStatusLabel(appointment.status),
@@ -45,6 +50,7 @@ export default function EmployeeTimeline({
   isLoading,
   error,
 }: EmployeeTimelineProps) {
+  const timezone = useActiveClinicTimezone();
   if (isLoading) {
     return (
       <section
@@ -83,7 +89,7 @@ export default function EmployeeTimeline({
       variant="integrated"
       headingId="employee-history-heading"
       heading={EMPLOYEE_DETAIL_COPY.sections.history}
-      items={mapAppointmentsToTimelineItems(appointments)}
+      items={mapAppointmentsToTimelineItems(appointments, timezone)}
       emptyMessage={EMPLOYEE_DETAIL_COPY.history.empty}
     />
   );

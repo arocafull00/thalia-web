@@ -7,4 +7,11 @@ export type ProfileAction = {
   href?: string;
   variant?: "default" | "danger";
   buttonVariant?: "solid" | "ghost";
+  disabled?: boolean;
+  testId?: string;
+};
+
+export type ProfileActionSection = {
+  label: string;
+  actions: ProfileAction[];
 };

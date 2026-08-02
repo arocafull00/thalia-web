@@ -1,8 +1,11 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import AppSidebarNavPending from "@/components/ui/app-sidebar-nav-pending";
+import AppSidebarNavSubmenu from "@/components/ui/app-sidebar-nav-submenu";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { AppNavItem } from "@/lib/hooks/use-app-nav-items";
 import { cn } from "@/lib/utils";
@@ -10,26 +13,68 @@ import { cn } from "@/lib/utils";
 type AppSidebarNavItemProps = {
   item: AppNavItem;
   active: boolean;
+  pathname: string;
   onNavigate: () => void;
 };
 
 export default function AppSidebarNavItem({
   item,
   active,
+  pathname,
   onNavigate,
 }: AppSidebarNavItemProps) {
+  const hasSubmenu = Boolean(item.subItems?.length);
+  const [submenuOpenOverride, setSubmenuOpenOverride] = useState<
+    boolean | null
+  >(null);
+  const submenuOpen = submenuOpenOverride ?? active;
+
+  const buttonClassName = cn(
+    "h-10 rounded-xl px-3 text-[14px] font-medium transition-colors",
+    "[&_svg]:size-[18px] [&_svg]:stroke-[1.75]",
+    "text-ink-secondary hover:bg-primary-subtle hover:text-primary",
+    "data-active:bg-primary data-active:font-semibold data-active:text-on-primary data-active:hover:bg-primary-hover data-active:hover:text-on-primary data-active:[&_svg]:text-on-primary",
+  );
+
+  if (hasSubmenu && item.subItems) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          type="button"
+          isActive={active}
+          size="default"
+          aria-expanded={submenuOpen}
+          className={buttonClassName}
+          onClick={() => setSubmenuOpenOverride(!submenuOpen)}
+        >
+          {item.icon}
+          <span>{item.label}</span>
+          <ChevronRight
+            aria-hidden="true"
+            className={cn(
+              "ml-auto transition-transform",
+              submenuOpen && "rotate-90",
+            )}
+          />
+        </SidebarMenuButton>
+        {submenuOpen ? (
+          <AppSidebarNavSubmenu
+            items={item.subItems}
+            pathname={pathname}
+            onNavigate={onNavigate}
+          />
+        ) : null}
+      </SidebarMenuItem>
+    );
+  }
+
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
         asChild
         isActive={active}
         size="default"
-        className={cn(
-          "h-10 rounded-xl px-3 text-[14px] font-medium transition-colors",
-          "[&_svg]:size-[18px] [&_svg]:stroke-[1.75]",
-          "text-ink-secondary hover:bg-primary-subtle hover:text-primary",
-          "data-active:bg-primary data-active:font-semibold data-active:text-on-primary data-active:hover:bg-primary-hover data-active:hover:text-on-primary data-active:[&_svg]:text-on-primary",
-        )}
+        className={buttonClassName}
       >
         <Link
           href={item.href}

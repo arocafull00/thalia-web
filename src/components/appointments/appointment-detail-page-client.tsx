@@ -1,10 +1,12 @@
 "use client";
 
-import { BadgeCheck, CheckCircle, Pencil } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { getAppointmentDetailMenuActions } from "@/components/appointments/appointment-detail-actions";
+import {
+  getAppointmentDetailMenuSections,
+  getAppointmentDetailPrimaryAction,
+} from "@/components/appointments/appointment-detail-actions";
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentDeleteDialog from "@/components/appointments/components/appointment-delete-dialog";
 import AppointmentDetailSidebar from "@/components/appointments/components/appointment-detail-sidebar";
@@ -103,47 +105,39 @@ export default function AppointmentDetailPageClient({
     appointment
       ? {
           buttons: [
-            {
-              title: APPOINTMENT_DETAIL_COPY.edit,
-              icon: Pencil,
-              onClick: openEditDialog,
-              testId: "appointment-edit-trigger",
-            },
-            ...(canChangeStatus
-              ? [
-                  ...(appointment.status === "scheduled"
-                    ? [
-                        {
-                          title: "Confirmar cita",
-                          icon: BadgeCheck,
-                          variant: "ghost" as const,
-                          disabled: updatingStatus,
-                          onClick: () => {
-                            void handleStatusChange("confirmed");
-                          },
-                        },
-                      ]
-                    : []),
-                  {
-                    title: APPOINTMENT_DETAIL_COPY.markCompleted,
-                    icon: CheckCircle,
-                    variant: "ghost" as const,
-                    disabled: updatingStatus,
-                    onClick: () => {
-                      void handleStatusChange("completed");
-                    },
-                  },
-                ]
-              : []),
+            getAppointmentDetailPrimaryAction({
+              status: appointment.status,
+              canChangeStatus,
+              updatingStatus,
+              handlers: {
+                onEdit: openEditDialog,
+                onConfirm: () => {
+                  void handleStatusChange("confirmed");
+                },
+                onMarkCompleted: () => {
+                  void handleStatusChange("completed");
+                },
+                onCancel: openCancelConfirm,
+                onDelete: openDeleteConfirm,
+              },
+            }),
           ],
           menu: {
-            actions: getAppointmentDetailMenuActions(canChangeStatus, {
-              onEdit: openEditDialog,
-              onMarkCompleted: () => {
-                void handleStatusChange("completed");
+            sections: getAppointmentDetailMenuSections({
+              status: appointment.status,
+              canChangeStatus,
+              updatingStatus,
+              handlers: {
+                onEdit: openEditDialog,
+                onConfirm: () => {
+                  void handleStatusChange("confirmed");
+                },
+                onMarkCompleted: () => {
+                  void handleStatusChange("completed");
+                },
+                onCancel: openCancelConfirm,
+                onDelete: openDeleteConfirm,
               },
-              onCancel: openCancelConfirm,
-              onDelete: openDeleteConfirm,
             }),
             ariaLabel: APPOINTMENT_DETAIL_COPY.moreActions,
           },

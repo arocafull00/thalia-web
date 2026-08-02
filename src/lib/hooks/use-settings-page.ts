@@ -5,6 +5,7 @@ import { useAuth, useUploadProfileAvatar } from "@/lib/hooks/use-auth";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePendingClinicRequests } from "@/lib/hooks/use-pending-clinic-requests";
 import { compressAvatarImage } from "@/lib/image-compression";
+import { canManageClinicSettings } from "@/lib/settings-sections";
 import { supabase } from "@/lib/supabase";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 import type { EmployeeRole, Employee } from "@/types/database.types";
@@ -55,7 +56,7 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
   );
   const uploadAvatar = useUploadProfileAvatar();
 
-  const isAdmin = profile?.role === "admin";
+  const canManageClinic = canManageClinicSettings(platformRole);
   const activeEmployeesCount =
     employees.data?.filter((employee) => employee.active).length ?? 0;
 
@@ -115,7 +116,7 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
     handleAvatarPress,
     handleChangePassword,
     handleSignOut,
-    isAdmin,
+    canManageClinic,
     localAvatarUri,
     passwordMessage,
     passwordSubmitting,

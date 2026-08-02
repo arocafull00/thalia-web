@@ -25,6 +25,8 @@ import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { instantToClinicWallDate } from "@/lib/appointment-datetime";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { useAppointment } from "@/lib/hooks/use-appointments";
 import { useClinicInfo, type ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -79,35 +81,44 @@ export default function CalendarPageClient({
     onChangeViewMode,
   } = useCalendarPage();
   const editingAppointment = useAppointment(editingAppointmentId ?? "");
+  const activeClinicTimezone = useActiveClinicTimezone();
   const { clinic } = useClinicInfo(initialClinic);
+  const timezone = clinic?.timezone ?? activeClinicTimezone;
   const isLoadingAppointment =
     Boolean(editingAppointmentId) && !editingAppointment.data;
 
-  const handleOpenGroupSheet = useCallback((groupId: string) => {
-    const appointments = calendarWeekUiRefs.groupAppointmentsById.get(groupId);
-    if (!appointments || appointments.length === 0) {
-      return;
-    }
+  const handleOpenGroupSheet = useCallback(
+    (groupId: string) => {
+      const appointments =
+        calendarWeekUiRefs.groupAppointmentsById.get(groupId);
+      if (!appointments || appointments.length === 0) {
+        return;
+      }
 
-    const sortedAppointments = [...appointments].sort(
-      (left, right) =>
-        new Date(left.starts_at).getTime() -
-        new Date(right.starts_at).getTime(),
-    );
-    const firstAppointment = sortedAppointments[0]!;
-    const dayLabel = format(new Date(firstAppointment.starts_at), "EEEE d", {
-      locale: es,
-    });
-    const timeLabel = format(new Date(firstAppointment.starts_at), "HH:mm");
-    const capitalizedDay = dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1);
+      const sortedAppointments = [...appointments].sort(
+        (left, right) =>
+          new Date(left.starts_at).getTime() -
+          new Date(right.starts_at).getTime(),
+      );
+      const firstAppointment = sortedAppointments[0]!;
+      const startsAt = instantToClinicWallDate(
+        firstAppointment.starts_at,
+        timezone,
+      );
+      const dayLabel = format(startsAt, "EEEE d", { locale: es });
+      const timeLabel = format(startsAt, "HH:mm");
+      const capitalizedDay =
+        dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1);
 
-    setGroupSheet({
-      open: true,
-      title: `${capitalizedDay} · ${timeLabel}`,
-      subtitle: CALENDAR_COPY.week.groupSubtitle(sortedAppointments.length),
-      appointments: sortedAppointments,
-    });
-  }, []);
+      setGroupSheet({
+        open: true,
+        title: `${capitalizedDay} · ${timeLabel}`,
+        subtitle: CALENDAR_COPY.week.groupSubtitle(sortedAppointments.length),
+        appointments: sortedAppointments,
+      });
+    },
+    [timezone],
+  );
 
   const handleNavigateToDay = useCallback(
     (date: Date) => {

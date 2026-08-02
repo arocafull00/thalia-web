@@ -1,11 +1,13 @@
 "use client";
 
-import { Bell, MoreHorizontal, Plus } from "lucide-react";
+import { Bell, Download, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
+import PwaInstallDialog from "@/components/pwa/components/pwa-install-dialog";
+import { usePwaInstall } from "@/components/pwa/hooks/use-pwa-install";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppDialog from "@/components/ui/app-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -18,30 +20,22 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import NotificationsSheet from "@/components/ui/notifications-sheet";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
-import { TopbarSecondaryAction } from "@/components/ui/topbar-secondary-action";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { FILES_COPY } from "@/copy/files-copy";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
+import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
-import {
-  type TopbarAction,
-  useTopbarActionStore,
-} from "@/stores/topbar-action-store";
+import { useTopbarActionStore } from "@/stores/topbar-action-store";
 
 const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
   "/appointments": APPOINTMENTS_COPY.page.title,
@@ -58,33 +52,29 @@ const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
 export default function AppTopbar() {
   const pathname = usePathname();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [pwaInstallOpen, setPwaInstallOpen] = useState(false);
   const action = useTopbarActionStore((state) => state.action);
   const breadcrumb = useTopbarActionStore((state) => state.breadcrumb);
   const actions = useTopbarActionStore((state) => state.actions);
   const menu = useTopbarActionStore((state) => state.menu);
   const unreadCount = useInventoryAlertsStore((state) => state.unreadCount);
   const markAsRead = useInventoryAlertsStore((state) => state.markAsRead);
-  const title = PAGE_TITLES_BY_ROUTE[pathname];
-  const primaryTitles = new Set(
-    actions.map((topbarAction) => topbarAction.title),
-  );
-  const secondaryMenuActions =
-    menu?.actions.filter(
-      (menuAction) => !primaryTitles.has(menuAction.label),
-    ) ?? [];
+  const { canPromptInstall, handleInstall, showInstallCta } = usePwaInstall();
+  const title =
+    PAGE_TITLES_BY_ROUTE[pathname] ??
+    (pathname.startsWith("/settings") ? SETTINGS_COPY.page.title : undefined);
+  const primaryAction = action ?? actions[0] ?? null;
+  const hasOverflowMenu =
+    menu?.sections.some((section) => section.actions.length > 0) ?? false;
 
-  const allMobileActions: TopbarAction[] = [
-    ...(action ? [action] : []),
-    ...actions,
-    ...secondaryMenuActions.map((menuAction): TopbarAction => ({
-      title: menuAction.label,
-      icon: menuAction.icon,
-      onClick: menuAction.onClick ?? (() => {}),
-      disabled: false,
-      variant: menuAction.variant === "danger" ? "ghost" : "ghost",
-    })),
-  ];
-  const hasMobileActions = allMobileActions.length > 0;
+  const handlePwaInstallClick = () => {
+    if (canPromptInstall) {
+      void handleInstall();
+      return;
+    }
+
+    setPwaInstallOpen(true);
+  };
 
   return (
     <header data-testid="app-topbar" className="sticky top-0 z-40 mb-6">
@@ -154,66 +144,37 @@ export default function AppTopbar() {
             </Button>
             <NotificationsSheet onClose={() => setNotificationsOpen(false)} />
           </AppDialog>
-          {hasMobileActions ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="lg:hidden">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Más acciones"
-                >
-                  <MoreHorizontal size={18} strokeWidth={1.5} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {allMobileActions.map((mobileAction) => {
-                  const Icon = mobileAction.icon ?? Plus;
-                  return (
-                    <DropdownMenuItem
-                      key={mobileAction.title}
-                      onClick={mobileAction.onClick}
-                      disabled={mobileAction.disabled}
-                      data-testid={mobileAction.testId}
-                    >
-                      <Icon className="size-4 shrink-0" aria-hidden="true" />
-                      {mobileAction.title}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {showInstallCta ? (
+            <ActionButton
+              title={PWA_INSTALL_COPY.installButton}
+              icon={Download}
+              variant="ghost"
+              testId="pwa-install-topbar"
+              onClick={handlePwaInstallClick}
+            />
           ) : null}
-          <div className="hidden items-center gap-2 lg:flex">
-            {secondaryMenuActions.map((menuAction) => (
-              <TopbarSecondaryAction
-                key={menuAction.label}
-                action={menuAction}
-              />
-            ))}
-            {actions.map((topbarAction) => (
-              <ActionButton
-                key={topbarAction.title}
-                title={topbarAction.title}
-                icon={topbarAction.icon}
-                disabled={topbarAction.disabled}
-                variant={topbarAction.variant}
-                testId={topbarAction.testId}
-                onClick={topbarAction.onClick}
-              />
-            ))}
-            {action ? (
-              <ActionButton
-                title={action.title}
-                icon={action.icon ?? Plus}
-                disabled={action.disabled}
-                testId={action.testId}
-                onClick={action.onClick}
-              />
-            ) : null}
-          </div>
+          {primaryAction ? (
+            <ActionButton
+              title={primaryAction.title}
+              icon={primaryAction.icon ?? Plus}
+              disabled={primaryAction.disabled}
+              variant={primaryAction.variant}
+              testId={primaryAction.testId}
+              onClick={primaryAction.onClick}
+            />
+          ) : null}
+          {hasOverflowMenu && menu ? (
+            <ProfileActionsMenu
+              sections={menu.sections}
+              ariaLabel={menu.ariaLabel}
+            />
+          ) : null}
         </div>
       </div>
+      <PwaInstallDialog
+        open={pwaInstallOpen}
+        onOpenChange={setPwaInstallOpen}
+      />
     </header>
   );
 }

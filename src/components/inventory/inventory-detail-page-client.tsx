@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -9,7 +8,10 @@ import InventoryDetailTabBar from "@/components/inventory/components/detail/inve
 import InventoryDetailTabContent from "@/components/inventory/components/detail/inventory-detail-tab-content";
 import InventoryItemAdjustStockDialog from "@/components/inventory/components/form/inventory-item-adjust-stock-dialog";
 import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
-import { getInventoryDetailActions } from "@/components/inventory/inventory-detail-actions";
+import {
+  getInventoryDetailMenuSections,
+  getInventoryDetailPrimaryAction,
+} from "@/components/inventory/inventory-detail-actions";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -67,22 +69,17 @@ export default function InventoryDetailPageClient({
       : null,
   );
 
+  const inventoryActionHandlers = {
+    onAdjustStock: () => setAdjustDialogOpen(true),
+    onEdit: () => setEditDialogOpen(true),
+  };
+
   useTopbarActions(
     item
       ? {
-          buttons: [
-            {
-              title: INVENTORY_ITEM_DETAIL_COPY.actions.adjustStock,
-              icon: TrendingUp,
-              testId: "inventory-movement-create-trigger",
-              onClick: () => setAdjustDialogOpen(true),
-            },
-          ],
+          buttons: [getInventoryDetailPrimaryAction(inventoryActionHandlers)],
           menu: {
-            actions: getInventoryDetailActions({
-              onAdjustStock: () => setAdjustDialogOpen(true),
-              onEdit: () => setEditDialogOpen(true),
-            }),
+            sections: getInventoryDetailMenuSections(inventoryActionHandlers),
             ariaLabel: INVENTORY_ITEM_DETAIL_COPY.moreActions,
           },
         }

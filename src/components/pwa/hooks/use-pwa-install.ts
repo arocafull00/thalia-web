@@ -5,10 +5,13 @@ import { usePwaInstallStore } from "@/stores/pwa-install-store";
 export function usePwaInstall() {
   const deferredPrompt = usePwaInstallStore((state) => state.deferredPrompt);
   const environment = usePwaInstallStore((state) => state.environment);
-  const setDeferredPrompt = usePwaInstallStore((state) => state.setDeferredPrompt);
+  const setDeferredPrompt = usePwaInstallStore(
+    (state) => state.setDeferredPrompt,
+  );
 
   const canPromptInstall = deferredPrompt !== null;
   const isInstalled = environment.isStandalone;
+  const showInstallCta = !isInstalled;
 
   const handleInstall = useCallback(async () => {
     if (!deferredPrompt) {
@@ -28,5 +31,6 @@ export function usePwaInstall() {
     environment,
     handleInstall,
     isInstalled,
+    showInstallCta,
   };
 }

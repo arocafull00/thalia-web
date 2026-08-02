@@ -1,8 +1,9 @@
 import { Pencil, Trash2, TrendingUp } from "lucide-react";
 import { toast } from "react-toastify";
 
-import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
+import type { TopbarActionButtonConfig } from "@/lib/hooks/use-topbar-actions";
 
 type InventoryDetailActionHandlers = {
   onAdjustStock: () => void;
@@ -13,28 +14,41 @@ function showComingSoon() {
   toast.info(INVENTORY_ITEM_DETAIL_COPY.actions.comingSoon);
 }
 
-export function getInventoryDetailActions(
+export function getInventoryDetailPrimaryAction(
   handlers: InventoryDetailActionHandlers,
-): ProfileAction[] {
+): TopbarActionButtonConfig {
+  return {
+    title: INVENTORY_ITEM_DETAIL_COPY.actions.adjustStock,
+    icon: TrendingUp,
+    testId: "inventory-movement-create-trigger",
+    onClick: handlers.onAdjustStock,
+  };
+}
+
+export function getInventoryDetailMenuSections(
+  handlers: InventoryDetailActionHandlers,
+): ProfileActionSection[] {
   return [
     {
-      label: INVENTORY_ITEM_DETAIL_COPY.actions.adjustStock,
-      icon: TrendingUp,
-      onClick: handlers.onAdjustStock,
-      buttonVariant: "solid",
+      label: INVENTORY_ITEM_DETAIL_COPY.menuSections.management,
+      actions: [
+        {
+          label: INVENTORY_ITEM_DETAIL_COPY.actions.edit,
+          icon: Pencil,
+          onClick: handlers.onEdit,
+        },
+      ],
     },
     {
-      label: INVENTORY_ITEM_DETAIL_COPY.actions.edit,
-      icon: Pencil,
-      onClick: handlers.onEdit,
-      buttonVariant: "ghost",
-    },
-    {
-      label: INVENTORY_ITEM_DETAIL_COPY.actions.delete,
-      icon: Trash2,
-      onClick: showComingSoon,
-      variant: "danger",
-      buttonVariant: "ghost",
+      label: INVENTORY_ITEM_DETAIL_COPY.menuSections.danger,
+      actions: [
+        {
+          label: INVENTORY_ITEM_DETAIL_COPY.actions.delete,
+          icon: Trash2,
+          onClick: showComingSoon,
+          variant: "danger",
+        },
+      ],
     },
   ];
 }

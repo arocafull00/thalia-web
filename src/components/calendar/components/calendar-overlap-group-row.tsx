@@ -3,6 +3,7 @@
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { formatTime, getTreatmentName } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { cn } from "@/lib/utils";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
@@ -15,6 +16,7 @@ export default function CalendarOverlapGroupRow({
   appointment,
   onSelect,
 }: CalendarOverlapGroupRowProps) {
+  const timezone = useActiveClinicTimezone();
   const patientName =
     appointment.patients?.full_name ?? CALENDAR_COPY.event.defaultPatient;
   const treatmentName = getTreatmentName(appointment);
@@ -38,7 +40,7 @@ export default function CalendarOverlapGroupRow({
       <div className="min-w-0">
         <h3 className="truncate text-sm font-medium text-ink">{patientName}</h3>
         <p className="mt-1 truncate text-xs text-ink-muted">
-          {formatTime(startsAt)} · {treatmentName}
+          {formatTime(startsAt, timezone)} · {treatmentName}
           {employeeName ? ` · ${employeeName}` : ""}
         </p>
       </div>

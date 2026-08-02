@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-action.ts": {
-    "mtime": 1783330870.4755497,
-    "ast_hash": "2d06ed943aa3271742668fe923673b84",
+    "mtime": 1785697046.6662352,
+    "ast_hash": "4111f31ff98300aaa371775a2fdbbc3c",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/onboarding/create-clinic-page-client.tsx": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-materials-override-form.tsx": {
-    "mtime": 1785495316.608855,
-    "ast_hash": "b001eddee52f9421ae378caf0980cad2",
+    "mtime": 1785693111.3969631,
+    "ast_hash": "b2781d048f84a1206d9fe48ce11f9661",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/snapshots/frame-13-at-27.857s.png": {
@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "src/copy/pwa-install-copy.ts": {
-    "mtime": 1782841916.3657267,
-    "ast_hash": "0d72d483d70e2a27c49574bd2acbd8e6",
+    "mtime": 1785693111.557476,
+    "ast_hash": "8cd8477fd02e9d38258dad1b0f202ab0",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/detail/patient-stat-card.tsx": {
@@ -445,8 +445,8 @@
     "semantic_hash": ""
   },
   "src/copy/clinic-hours-copy.ts": {
-    "mtime": 1784832852.2071915,
-    "ast_hash": "7ea002d537534fee3b4e2c5d28cea7c4",
+    "mtime": 1785693111.496016,
+    "ast_hash": "e8539f035e6a0b42bda41f482caae482",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/lib/hooks/use-topbar-breadcrumb.ts": {
@@ -455,8 +455,8 @@
     "semantic_hash": ""
   },
   "src/copy/combobox-copy.ts": {
-    "mtime": 1782841916.3641708,
-    "ast_hash": "494dd7b1633ad7f9845d0209dc23a67e",
+    "mtime": 1785693111.4985917,
+    "ast_hash": "7a07c61fd66a67aea33abfff8743bee8",
     "semantic_hash": ""
   },
   "src/components/employees/components/form/employee-edit-form.tsx": {
@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-actions.ts": {
-    "mtime": 1784670432.3014286,
-    "ast_hash": "2d96847a3b2d403617f6d54b2691316f",
+    "mtime": 1785697272.0370271,
+    "ast_hash": "8dcc04531cf0336e7dbd51376e51499f",
     "semantic_hash": ""
   },
   "src/tests/e2e/treatments.spec.ts": {
@@ -560,8 +560,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-image-uploader-dialog.tsx": {
-    "mtime": 1784841224.0588846,
-    "ast_hash": "3571abb74526e9e2b9b249f7d38ea0a7",
+    "mtime": 1785693385.576685,
+    "ast_hash": "0256592a5f5906e4775f805d7829098d",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_8ddbc275e76e441b_jpeg_compositions_frames_02-el-dia-entra-en-sincronia.html_1920x1080_1785511023942_3.80.jpg": {
@@ -595,8 +595,8 @@
     "semantic_hash": ""
   },
   "src/types/clinic-membership.ts": {
-    "mtime": 1785501607.315028,
-    "ast_hash": "d43ae765f1ee701dbc29d21c81dc554a",
+    "mtime": 1785697109.749004,
+    "ast_hash": "9d27818169757cf4fdf068d12f5362b2",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -625,8 +625,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-create-copy.ts": {
-    "mtime": 1785692492.8653982,
-    "ast_hash": "9bbb47e0a103dfadea2c751659445caf",
+    "mtime": 1785697337.9418902,
+    "ast_hash": "335585a0c064700fa0cb93469b8555ee",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/auth/register-employee/components/register-employee-sidebar.tsx": {
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaigns-columns.tsx": {
-    "mtime": 1785576356.8634586,
-    "ast_hash": "5fa9a13a3beaf0d51e82f74e4e0674aa",
+    "mtime": 1785693111.1906586,
+    "ast_hash": "457501ee7a1dba23148243326fb8c52f",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -695,13 +695,13 @@
     "semantic_hash": ""
   },
   "src/components/inventory/components/form/inventory-item-adjust-stock-dialog.tsx": {
-    "mtime": 1785690407.769662,
-    "ast_hash": "1a8dc74a8d9bbb295024f5fcbaab30fc",
+    "mtime": 1785693207.2517095,
+    "ast_hash": "5dd58a05db2773cea00fd3ce40bf979b",
     "semantic_hash": ""
   },
   "src/components/treatments/treatment-detail-page-client.tsx": {
-    "mtime": 1785502676.5058408,
-    "ast_hash": "d73638489d0c8c5b166ef7c588d92704",
+    "mtime": 1785697099.3263147,
+    "ast_hash": "d8ecd25c72924aba1dd234a6f97b5e88",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/lib/auth/get-auth-error-message.ts": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "src/copy/transaction-create-copy.ts": {
-    "mtime": 1785690407.7686646,
-    "ast_hash": "9926c89bb6c56eb979d83237aca487c4",
+    "mtime": 1785693111.5761702,
+    "ast_hash": "fa2d0db32e80bd5ebecd3d4fa36006dc",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/employees/components/list/employees-table.tsx": {
@@ -927,11 +927,6 @@
   "src/components/marketing/components/detail/campaign-reach-summary.tsx": {
     "mtime": 1785692953.1098118,
     "ast_hash": "5240c4e08003d874f84c666a95d1d4f0",
-    "semantic_hash": ""
-  },
-  "src/components/settings/settings-page-client.tsx": {
-    "mtime": 1785690407.7947278,
-    "ast_hash": "5c577db882c1e84e6746fea9b238dbd4",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/stores/finances-ui-store.ts": {
@@ -1010,8 +1005,8 @@
     "semantic_hash": ""
   },
   "src/dal/clinics.dal.ts": {
-    "mtime": 1784806087.221019,
-    "ast_hash": "b9fe2202af48b40ab8660da26ca97d46",
+    "mtime": 1785697109.7500043,
+    "ast_hash": "e7aaa7d240de65e9002a31fba924a30b",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/supabase/migrations/004_clinic_requests_rls.sql": {
@@ -1040,8 +1035,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-active-clinic.ts": {
-    "mtime": 1785501606.3988261,
-    "ast_hash": "0da1a59e45609f93e05e7ef03368bb82",
+    "mtime": 1785697109.7545156,
+    "ast_hash": "00482e7356be92701157e60f4320cadd",
     "semantic_hash": ""
   },
   "src/components/providers/pwa-install-provider.tsx": {
@@ -1090,8 +1085,8 @@
     "semantic_hash": ""
   },
   "src/lib/find-slots.ts": {
-    "mtime": 1785502534.232571,
-    "ast_hash": "30dc1226893a1948c6468795f3c9d555",
+    "mtime": 1785697162.8911247,
+    "ast_hash": "3ce607375c246797e459602cd4a3fe98",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/supabase/functions/invite-employee/index.ts": {
@@ -1175,8 +1170,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/patient-detail-actions.ts": {
-    "mtime": 1785690407.7240555,
-    "ast_hash": "2016760488819ab1d2da51c541be5808",
+    "mtime": 1785697266.2742283,
+    "ast_hash": "5f2adf176da1cf589308313a6f4ab5c4",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/ui/context-menu.tsx": {
@@ -1240,8 +1235,8 @@
     "semantic_hash": ""
   },
   "src/components/finances/components/transactions-table.tsx": {
-    "mtime": 1785690407.774187,
-    "ast_hash": "c8d818360cb6e44f8cdf3426fee65e13",
+    "mtime": 1785693111.0161219,
+    "ast_hash": "ffab993a3fe2d90f8ccf05db51ce274f",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/form/patient-create-form.tsx": {
@@ -1255,8 +1250,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-create-copy.ts": {
-    "mtime": 1785690407.7721727,
-    "ast_hash": "e5aa18063703a93b5f056ff692079bc6",
+    "mtime": 1785693111.5342526,
+    "ast_hash": "d50aa27f0ab3abc103b4d1ef7b0cfe45",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/tabs/patient-summary-tab.tsx": {
@@ -1265,8 +1260,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-reminder-row.tsx": {
-    "mtime": 1784669640.6477249,
-    "ast_hash": "e8b9de835948cd6ace9058ad71674a25",
+    "mtime": 1785693111.4136608,
+    "ast_hash": "b9c7a67d6e915153c9afaca7cdef4393",
     "semantic_hash": ""
   },
   "src/components/calendar/components/clinic-status-badge.tsx": {
@@ -1290,8 +1285,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/form/employee-edit-dialog.tsx": {
-    "mtime": 1785690407.8193479,
-    "ast_hash": "c37cf0ff552ff8d157604fe640bdd75d",
+    "mtime": 1785693385.5695298,
+    "ast_hash": "1335c8c6374f89afa09cf6a3ffce235e",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/logo_001.png": {
@@ -1505,8 +1500,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaign-status-badge.tsx": {
-    "mtime": 1785576356.8634586,
-    "ast_hash": "1e51e3cfa6bd5305597b7adfe45d1c1c",
+    "mtime": 1785693111.1856585,
+    "ast_hash": "e41da1608e9dc6b28e615b5a285c2f7e",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-status-badge.tsx": {
@@ -1560,8 +1555,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-filters.tsx": {
-    "mtime": 1785692870.523677,
-    "ast_hash": "30547771e3fa94a2495a55f0e682fe68",
+    "mtime": 1785697426.5901332,
+    "ast_hash": "ed1346eaf86c09af0a333a89b55c00a0",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-global-patient-files.ts": {
@@ -1585,8 +1580,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/marketing-page-client.tsx": {
-    "mtime": 1785692953.276433,
-    "ast_hash": "0bc6f8c1112ff918a91ffd2db398eba8",
+    "mtime": 1785693187.264305,
+    "ast_hash": "bc1edc2ced78ba384fc4df8b43bf6948",
     "semantic_hash": ""
   },
   "src/dal/appointments.server.dal.ts": {
@@ -1725,8 +1720,8 @@
     "semantic_hash": ""
   },
   "src/copy/employee-invite-copy.ts": {
-    "mtime": 1783095608.0132434,
-    "ast_hash": "223a10495e6b71b6c8a0a54bed9815f9",
+    "mtime": 1785693111.5091023,
+    "ast_hash": "0dfec269a61be4498572af59676b9f08",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/app/(app)/appointments/page.tsx": {
@@ -1810,8 +1805,8 @@
     "semantic_hash": ""
   },
   "src/components/treatments/treatment-detail-actions.ts": {
-    "mtime": 1784041945.093935,
-    "ast_hash": "89544ba730bc6854a3560b243429b428",
+    "mtime": 1785697267.102588,
+    "ast_hash": "a62a7944f760c97f91f313ad010f9253",
     "semantic_hash": ""
   },
   "src/lib/schemas/inventory-adjust-stock-schema.ts": {
@@ -1910,8 +1905,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/files/patient-file-uploader-dialog.tsx": {
-    "mtime": 1784841223.8856914,
-    "ast_hash": "792b578362b8e0d563987672f4ea3026",
+    "mtime": 1785693385.576685,
+    "ast_hash": "637b2577cc0758bc0cb03de4e7d4b34d",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/snapshots/frame-00-at-0s.png": {
@@ -1980,8 +1975,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/form/patient-edit-dialog.tsx": {
-    "mtime": 1785690407.7686646,
-    "ast_hash": "24a035854174dd388d2200d66083d53b",
+    "mtime": 1785693385.5695298,
+    "ast_hash": "4d2984883f269448c940ae640e4ce1d6",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-campaign-detail.ts": {
@@ -2035,8 +2030,8 @@
     "semantic_hash": ""
   },
   "src/copy/inventory-item-detail-copy.ts": {
-    "mtime": 1785690407.7345667,
-    "ast_hash": "39dbc19d1097b4c83bac15d1740eb055",
+    "mtime": 1785697070.7396739,
+    "ast_hash": "5874b9f7b12fe7f673e3146604c2ac11",
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaigns-date-range-filter.tsx": {
@@ -2140,8 +2135,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/campaign-detail-page-client.tsx": {
-    "mtime": 1785692953.0907185,
-    "ast_hash": "c2308f3d5885051aa54656db18038044",
+    "mtime": 1785697129.1945052,
+    "ast_hash": "af9b71d58f9f78a84226dae62b381e92",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/tests/stores/inventory-store.test.ts": {
@@ -2155,8 +2150,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/detail/employee-quick-actions.tsx": {
-    "mtime": 1783845068.9372227,
-    "ast_hash": "4d85dce103921c9149a86631f4c6e80d",
+    "mtime": 1785697144.930333,
+    "ast_hash": "6e80170ad5126db0f5bd79ea5a2b1a5d",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-registration-progress.tsx": {
@@ -2215,8 +2210,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/components/calendar-time-grid-event.tsx": {
-    "mtime": 1785692952.2001529,
-    "ast_hash": "d0210e24dc6d8c553d819e9205798121",
+    "mtime": 1785697381.216578,
+    "ast_hash": "4474b9cbccba2d05063329b9b67db565",
     "semantic_hash": ""
   },
   "src/lib/utils.ts": {
@@ -2300,8 +2295,8 @@
     "semantic_hash": ""
   },
   "src/components/inventory/inventory-detail-actions.ts": {
-    "mtime": 1784132992.879004,
-    "ast_hash": "18d3ba1391353d18af22706a2ae44a3b",
+    "mtime": 1785697265.8970065,
+    "ast_hash": "1785b50eab66a31eb75eeda98bb41e52",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/snapshots/frame-05-at-10.714s.png": {
@@ -2360,8 +2355,8 @@
     "semantic_hash": ""
   },
   "src/components/treatments/components/treatment-dialog.tsx": {
-    "mtime": 1785495316.6285613,
-    "ast_hash": "014ce888a5a24566c9e3c9898affc374",
+    "mtime": 1785693111.3535452,
+    "ast_hash": "205623a92822c10c51114caae2e25485",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/inventory.png": {
@@ -2370,13 +2365,13 @@
     "semantic_hash": ""
   },
   "src/stores/appointments-store.ts": {
-    "mtime": 1784670432.2929099,
-    "ast_hash": "3ce1b72323ab6a4aedebac610a032d56",
+    "mtime": 1785697128.4621384,
+    "ast_hash": "657cfc5ad19f65663dffd06631e014d9",
     "semantic_hash": ""
   },
   "src/copy/login-copy.ts": {
-    "mtime": 1784669640.6650736,
-    "ast_hash": "20415a6b37b12aac26b2a0adcc165226",
+    "mtime": 1785693111.5317452,
+    "ast_hash": "380db411dc209eefbef9010a2baf0964",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/inventory/components/form/inventory-item-create-form.tsx": {
@@ -2485,8 +2480,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-page-client.tsx": {
-    "mtime": 1785690407.7751877,
-    "ast_hash": "9c83a6e66a2f293133c37069381a8046",
+    "mtime": 1785697108.9791665,
+    "ast_hash": "58afe7d778fb43582c9e0a57c7962504",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/files/patient-file-row.tsx": {
@@ -2562,11 +2557,6 @@
   "src/components/auth/register/components/owner-confirmation-step.tsx": {
     "mtime": 1785261958.398786,
     "ast_hash": "fb93c4127325d05bec3c9ffb9a03847e",
-    "semantic_hash": ""
-  },
-  "src/components/settings/components/settings-detail-tab-button.tsx": {
-    "mtime": 1783878915.3062146,
-    "ast_hash": "16f50e4c43b1679ff788bbdbef8942b0",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/app/(app)/settings/page.tsx": {
@@ -2690,8 +2680,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/profile-edit-dialog.tsx": {
-    "mtime": 1785253345.1051905,
-    "ast_hash": "04578d38808ad56fdab08bbd1e18ad9d",
+    "mtime": 1785693385.5716183,
+    "ast_hash": "26d0218d8ae3e069f763bbca148f9652",
     "semantic_hash": ""
   },
   "src/components/patients/components/files/patient-file-delete-confirm-dialog.tsx": {
@@ -2810,8 +2800,8 @@
     "semantic_hash": ""
   },
   "src/copy/settings-copy.ts": {
-    "mtime": 1784806087.2200074,
-    "ast_hash": "07f3c6413db17ce0bd7f9ab4e0ccb44a",
+    "mtime": 1785697386.1868534,
+    "ast_hash": "f1698820182c8a5b22d5754c44d83a7b",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-profile-summary.tsx": {
@@ -2870,8 +2860,8 @@
     "semantic_hash": ""
   },
   "src/lib/calendar-agenda.ts": {
-    "mtime": 1784136971.0995665,
-    "ast_hash": "390bc2a748b5d948aad038fedb41c59c",
+    "mtime": 1785697329.075975,
+    "ast_hash": "9addb839843f60f6b3cb82659acb17cc",
     "semantic_hash": ""
   },
   "src/components/ui/breadcrumb.tsx": {
@@ -2955,8 +2945,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-actions-menu.tsx": {
-    "mtime": 1785690407.7721727,
-    "ast_hash": "c40b67cee7b0d70c6ea154198a914618",
+    "mtime": 1785697284.7757192,
+    "ast_hash": "f2c13b63f6bd0be77dd9146a25492ab0",
     "semantic_hash": ""
   },
   "src/components/employees/components/detail/employee-detail-tab-bar.tsx": {
@@ -2977,11 +2967,6 @@
   "app/(auth)/callback/route.ts": {
     "mtime": 1784040602.5742533,
     "ast_hash": "9b58d2f21f6b26930d5d5556efaeac73",
-    "semantic_hash": ""
-  },
-  "src/components/patients/components/detail/patient-detail-actions-menu.tsx": {
-    "mtime": 1783962140.843961,
-    "ast_hash": "fa5e4f4fecd5bc63ad97ec05d26fe427",
     "semantic_hash": ""
   },
   "src/lib/navigation/resolve-post-auth-route.ts": {
@@ -3005,13 +2990,13 @@
     "semantic_hash": ""
   },
   "src/components/calendar/schedule-x-calendar.tsx": {
-    "mtime": 1785690407.782693,
-    "ast_hash": "7d3f15f10b59a445fa636387ecd98557",
+    "mtime": 1785697255.9571087,
+    "ast_hash": "61cf72ec8d4927c71cb05b80f61abe75",
     "semantic_hash": ""
   },
   "src/components/calendar/components/day-agenda-list.tsx": {
-    "mtime": 1784237479.6669002,
-    "ast_hash": "28391bf4dbce7e78ceeff8054b931146",
+    "mtime": 1785697329.0769744,
+    "ast_hash": "5e0d92fa552e4c524f721acf39940bbb",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/calendar/components/day-agenda-list.tsx": {
@@ -3035,13 +3020,13 @@
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaigns-empty-state.tsx": {
-    "mtime": 1785576356.8634586,
-    "ast_hash": "10c8bbff43b8d9d5ba22bf3fe8acefaf",
+    "mtime": 1785693111.2071369,
+    "ast_hash": "22a13ff69716fe400e6810b4ec11ac5d",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-status-select.tsx": {
-    "mtime": 1783534903.1939838,
-    "ast_hash": "f708e1529c9f06dfe72450b07e90dd5d",
+    "mtime": 1785693111.4425173,
+    "ast_hash": "5a6031818e6ee39ba8507852e5023e69",
     "semantic_hash": ""
   },
   "src/tests/e2e/appointments.spec.ts": {
@@ -3060,8 +3045,8 @@
     "semantic_hash": ""
   },
   "src/components/treatments/components/treatment-form.tsx": {
-    "mtime": 1785495316.6285613,
-    "ast_hash": "754cf9a85068e45160504cb54a9a4669",
+    "mtime": 1785693111.057185,
+    "ast_hash": "da38f7d244973e8bdb60447716413f76",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/appointments/components/appointment-filters.tsx": {
@@ -3130,8 +3115,8 @@
     "semantic_hash": ""
   },
   "src/lib/calendar-week-events.ts": {
-    "mtime": 1785690407.801235,
-    "ast_hash": "54502e647eba6c196609f32ffcb5dc0d",
+    "mtime": 1785697223.6472056,
+    "ast_hash": "16387abcc69d1c934efbe5717a4b62a8",
     "semantic_hash": ""
   },
   "src/tests/stores/inventory-store.test.ts": {
@@ -3160,8 +3145,8 @@
     "semantic_hash": ""
   },
   "src/copy/treatment-detail-copy.ts": {
-    "mtime": 1785502774.1157444,
-    "ast_hash": "66f8f01b960051190934b6a212de9778",
+    "mtime": 1785697060.5797448,
+    "ast_hash": "d5cd24bde485e0c03bd394394e69fe19",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-whatsapp-panel.tsx": {
@@ -3180,8 +3165,8 @@
     "semantic_hash": ""
   },
   "src/lib/schemas/appointment-schema.ts": {
-    "mtime": 1783099946.2965493,
-    "ast_hash": "8013e41fa2893fedb9a21844ffebd489",
+    "mtime": 1785697109.7555156,
+    "ast_hash": "e7178c0df7b8979360770ba3cc92c959",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/inventory/components/list/inventory-table.tsx": {
@@ -3220,8 +3205,8 @@
     "semantic_hash": ""
   },
   "src/components/inventory/inventory-detail-page-client.tsx": {
-    "mtime": 1785690407.782693,
-    "ast_hash": "eabc7a82912ba51c0db409bf2928d2a5",
+    "mtime": 1785697115.1442957,
+    "ast_hash": "774099024e00a32caa3157bdc7966bf1",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/pnpm-workspace.yaml": {
@@ -3230,8 +3215,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-detail-sidebar.tsx": {
-    "mtime": 1784669640.6467183,
-    "ast_hash": "cd45326002ce2a9302ec2cfe00acaf3c",
+    "mtime": 1785693111.3293185,
+    "ast_hash": "48c6b954fa9a10b4eff25787cf5a5980",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/lib/hooks/use-patient-avatar.ts": {
@@ -3250,8 +3235,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointment-create-dialog.ts": {
-    "mtime": 1785502611.318879,
-    "ast_hash": "73221e9da7e6521b6d7c6b592afcfc8d",
+    "mtime": 1785697340.5680735,
+    "ast_hash": "43509d24014b2bb738714d3b553f5bc7",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-date-group.tsx": {
@@ -3270,8 +3255,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-create-form.tsx": {
-    "mtime": 1785502559.472343,
-    "ast_hash": "09e1b08618a5efbc511c1c3219aabc25",
+    "mtime": 1785697354.6134844,
+    "ast_hash": "36c200950a820d72c4a66539dcfaf778",
     "semantic_hash": ""
   },
   "app/(app)/finances/page.tsx": {
@@ -3455,8 +3440,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/hooks/use-calendar-mobile-month.ts": {
-    "mtime": 1783534749.141444,
-    "ast_hash": "6bad864c52ad1d18d9ab56eec34f2777",
+    "mtime": 1785697362.7536688,
+    "ast_hash": "e62b190a19d95bebfc6331d6e62bf830",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/auth/login/components/login-hero-panel.tsx": {
@@ -3515,8 +3500,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/clinic-edit-dialog.tsx": {
-    "mtime": 1785253345.1031923,
-    "ast_hash": "f4b2ffafc1914c73f2bc8fc09f39c865",
+    "mtime": 1785693385.5726247,
+    "ast_hash": "35edb953577e194d52e573c09a23c5ce",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/lib/patient-gallery-grouping.ts": {
@@ -3580,8 +3565,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-edit-copy.ts": {
-    "mtime": 1785690407.8133154,
-    "ast_hash": "2f504ac5795d297557f27dd53806c4eb",
+    "mtime": 1785693111.539253,
+    "ast_hash": "677ba46546a26829c0db4b83f6538e60",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/app/(auth)/no-membership/page.tsx": {
@@ -3675,8 +3660,8 @@
     "semantic_hash": ""
   },
   "src/lib/format.ts": {
-    "mtime": 1785692952.303345,
-    "ast_hash": "3d40e4ea736eadd19f52b4a6c38d8928",
+    "mtime": 1785697279.721113,
+    "ast_hash": "43845b6164e94eca917836367da39beb",
     "semantic_hash": ""
   },
   "src/components/patients/components/before-after-comparison/before-after-comparison-image.tsx": {
@@ -3715,8 +3700,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaigns-table.tsx": {
-    "mtime": 1785576356.8650887,
-    "ast_hash": "ccaf02cdb9527d9ae517e4a21d65c593",
+    "mtime": 1785693111.2438529,
+    "ast_hash": "440385afe8d133e459aedc80ddd3f1f6",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-status-row.tsx": {
@@ -3760,8 +3745,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaign-image-dialog.tsx": {
-    "mtime": 1785576356.8624585,
-    "ast_hash": "ca93edb0c96fb5052d88b893d6040697",
+    "mtime": 1785693111.1826582,
+    "ast_hash": "d57179effc92315dac6d7e616180c421",
     "semantic_hash": ""
   },
   "src/lib/invite-team-emails.ts": {
@@ -3770,8 +3755,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/clinic-hours-dialog.tsx": {
-    "mtime": 1784832852.2021863,
-    "ast_hash": "344f477954eff9df7672f1950e32742f",
+    "mtime": 1785693385.5726247,
+    "ast_hash": "6a099a1e9193157c5c31390bbd611089",
     "semantic_hash": ""
   },
   "src/components/inventory/components/detail/inventory-detail-tab-button.tsx": {
@@ -3925,8 +3910,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/marketing-copy.ts": {
-    "mtime": 1785692953.2518938,
-    "ast_hash": "1943afa2191d0d96b946744f45f33437",
+    "mtime": 1785697125.4444623,
+    "ast_hash": "c2a95ae7ac7d3444caa6482b9436a778",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_ca616e1932985d53_jpeg_compositions_frames_02b-confirmacion-whatsapp.html_1920x1080_1785512577729_3.00.jpg": {
@@ -3955,8 +3940,8 @@
     "semantic_hash": ""
   },
   "src/copy/register-owner-copy.ts": {
-    "mtime": 1785261520.297141,
-    "ast_hash": "7fa31fb3ea9a67990c11d201fdec3bde",
+    "mtime": 1785693111.5650585,
+    "ast_hash": "f914061fa387465e63c2d9d4f0ecf0ec",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_bbf4af56d7c923ea_jpeg_compositions_frames_04-control-real.html_1920x1080_1785514166934_3.00.jpg": {
@@ -4015,8 +4000,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/app-topbar.tsx": {
-    "mtime": 1785690407.7706645,
-    "ast_hash": "61a63365d826b95dc07c6d5e8f84eb6d",
+    "mtime": 1785697388.3027992,
+    "ast_hash": "80efe4ef3eb275bd72025a1a732138ff",
     "semantic_hash": ""
   },
   "src/components/loader/components/loader-inline.tsx": {
@@ -4035,8 +4020,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/patient-detail-page-client.tsx": {
-    "mtime": 1785690407.7967288,
-    "ast_hash": "4e109a627b8b02d8e5323dfcb5aaef15",
+    "mtime": 1785697110.0608802,
+    "ast_hash": "3d30c0ce891a312cf62c6d6a49e6137f",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/onboarding/invite-team-page-client.tsx": {
@@ -4057,11 +4042,6 @@
   ".codex-worktrees/e2e-fix/src/components/ui/app-dialog-footer.tsx": {
     "mtime": 1784670153.020585,
     "ast_hash": "1f508963a28e47d1e61db9b5a6d6d50f",
-    "semantic_hash": ""
-  },
-  "src/lib/hooks/use-settings-tabs.ts": {
-    "mtime": 1784669640.6751928,
-    "ast_hash": "9500066c7bae341a690cd6b26b11cae4",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/.ci-artifact/playwright-report/trace/uiMode.Ut8wwJNp.js": {
@@ -4145,8 +4125,8 @@
     "semantic_hash": ""
   },
   "src/lib/server/bootstrap.ts": {
-    "mtime": 1785502429.3715584,
-    "ast_hash": "40ebb0c708d651149077be96b6a095b8",
+    "mtime": 1785697109.7525094,
+    "ast_hash": "0c77b267cb394d5f54a9ab06a584a14c",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/app/(auth)/register/page.tsx": {
@@ -4175,8 +4155,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-detail-copy.ts": {
-    "mtime": 1785690407.769662,
-    "ast_hash": "49127b1de37dec1235c49768e94610c7",
+    "mtime": 1785697058.536541,
+    "ast_hash": "efe96ef8ce8f2066c635541722b7a3ea",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/lib/calendar-agenda.ts": {
@@ -4525,8 +4505,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointments-columns.tsx": {
-    "mtime": 1785692473.4912717,
-    "ast_hash": "4de0575ebf78529962fd441e3d888146",
+    "mtime": 1785697396.791034,
+    "ast_hash": "468d95748211b3a89a50a2e78b33c9ca",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/files/patient-file-pdf-viewer-content.tsx": {
@@ -4830,8 +4810,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/files/patient-file-category-filter.tsx": {
-    "mtime": 1783966007.3760178,
-    "ast_hash": "bb1ec4c5975cdce80e9ec5e5ad26fc63",
+    "mtime": 1785693249.9161043,
+    "ast_hash": "1718d15acdadad2e1d1f6292eb8d6136",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/inventory/components/detail/inventory-detail-tab-button.tsx": {
@@ -4955,8 +4935,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-row.tsx": {
-    "mtime": 1785690407.8133154,
-    "ast_hash": "ec4d8313ac0226804e50120edd859978",
+    "mtime": 1785697329.077975,
+    "ast_hash": "426c0153514dd2c4435c466d9304fc74",
     "semantic_hash": ""
   },
   "src/components/ui/toggle.tsx": {
@@ -5030,8 +5010,8 @@
     "semantic_hash": ""
   },
   "src/components/finances/finances-page-client.tsx": {
-    "mtime": 1785690407.7315676,
-    "ast_hash": "b64e60f642f825fa82850bd384a39fe8",
+    "mtime": 1785693385.5746856,
+    "ast_hash": "c72e4c3e5524ca1a3794d4b71a20e492",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/inventory/components/detail/inventory-detail-tab-bar.tsx": {
@@ -5050,8 +5030,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/components/calendar-overlap-group-row.tsx": {
-    "mtime": 1785690407.7325675,
-    "ast_hash": "77ef98f52e256b433aa86eb96ba7a51a",
+    "mtime": 1785697381.2125714,
+    "ast_hash": "0371a4634ec56cbf15cac8a5dc0203fc",
     "semantic_hash": ""
   },
   "src/tests/e2e/calendar.spec.ts": {
@@ -5140,8 +5120,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/components/day-agenda-appointment-card.tsx": {
-    "mtime": 1785692952.2207077,
-    "ast_hash": "30f0fb265c3d0027ab4bfc8be0fc1645",
+    "mtime": 1785697329.0789752,
+    "ast_hash": "1394ab88e4121ef9f6a89246e4570d3d",
     "semantic_hash": ""
   },
   "app/(app)/inventory/page.tsx": {
@@ -5157,11 +5137,6 @@
   "src/components/dashboard/components/dashboard-agenda.tsx": {
     "mtime": 1783960984.0519783,
     "ast_hash": "bb885ca3d32a5ef4dc905a497728c851",
-    "semantic_hash": ""
-  },
-  "src/components/settings/components/settings-detail-tab-bar.tsx": {
-    "mtime": 1784669640.6554978,
-    "ast_hash": "728f7df53da70a296d00db282af9f9c8",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/employees/employees-page-client.tsx": {
@@ -5230,8 +5205,8 @@
     "semantic_hash": ""
   },
   "src/copy/create-clinic-copy.ts": {
-    "mtime": 1785261520.2926102,
-    "ast_hash": "162b92b40ac590246595f1e1584a6634",
+    "mtime": 1785693111.501098,
+    "ast_hash": "7b8694551ea9f85dbe984cc281f0f675",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/supabase/migrations/011_inventory_alerts.sql": {
@@ -5315,8 +5290,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-date-range.tsx": {
-    "mtime": 1785692849.7012973,
-    "ast_hash": "e3fe93d5e9fbba4aa80001bb4f2deb1b",
+    "mtime": 1785697426.587016,
+    "ast_hash": "e04825119bd8ff1cb7c2eb0694dc09c1",
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-action-row.tsx": {
@@ -5725,8 +5700,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/patients-page-client.tsx": {
-    "mtime": 1785690407.773179,
-    "ast_hash": "7302254d1ac9c54708a11c360a430270",
+    "mtime": 1785693385.5736852,
+    "ast_hash": "2732a3b656621a6199cd9bf14f69c279",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/ui/page-search-filter.tsx": {
@@ -5745,8 +5720,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/tabs/patient-appointments-tab.tsx": {
-    "mtime": 1784136971.1015663,
-    "ast_hash": "0bbf105e77fc11057d64ea10469be5a9",
+    "mtime": 1785696823.9592953,
+    "ast_hash": "83ca4c94afb6cfd6b37e4f349adb10f9",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_4d82bc97858ec348_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785512579308_3.00.jpg": {
@@ -5785,8 +5760,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employees-page-client.tsx": {
-    "mtime": 1785690407.7947278,
-    "ast_hash": "14dc60ae4122d4856488f1577ec108a0",
+    "mtime": 1785693385.5746856,
+    "ast_hash": "219ad4396dcf1779c265c602325d3a9f",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/hyperframes.json": {
@@ -5845,13 +5820,13 @@
     "semantic_hash": ""
   },
   "src/components/inventory/components/form/inventory-item-edit-dialog.tsx": {
-    "mtime": 1785690407.7882142,
-    "ast_hash": "e3c54a5e18bedbbfbf257c86c4afa8c7",
+    "mtime": 1785693385.5710347,
+    "ast_hash": "ba72beeee7e635a2ecd1a0d27a488592",
     "semantic_hash": ""
   },
   "src/tests/e2e/auth.spec.ts": {
-    "mtime": 1785259723.1361008,
-    "ast_hash": "752314b910af9ae55d12f5037bc4e1dd",
+    "mtime": 1785697391.9714303,
+    "ast_hash": "e20f1a5a59487f0bde6a42e2fb382033",
     "semantic_hash": ""
   },
   "src/stores/calendar-store.ts": {
@@ -5860,8 +5835,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/settings-detail-actions.ts": {
-    "mtime": 1784132932.2691584,
-    "ast_hash": "adeb0c31daea81c06551e72a7328485a",
+    "mtime": 1785697272.199095,
+    "ast_hash": "8112296075615502db24432775a99e41",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/.ci-artifact/playwright-report/data/a2eb6c44c85e67f3b9cb646bb4c463fbed6f90d9.webm": {
@@ -5910,8 +5885,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-topbar-actions.ts": {
-    "mtime": 1784835866.9277215,
-    "ast_hash": "03226944d9319e8fdaacd832627070dd",
+    "mtime": 1785697264.6501656,
+    "ast_hash": "6eee9e13cb348bef6dedff9a289f4bcc",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/public/icon-192x192.png": {
@@ -6025,8 +6000,8 @@
     "semantic_hash": ""
   },
   "src/components/treatments/components/treatment-inventory-link-row.tsx": {
-    "mtime": 1785690407.745595,
-    "ast_hash": "d14b3f2a58db04c48a62dee91e43ef82",
+    "mtime": 1785693111.07945,
+    "ast_hash": "d73eb035f5d704df748f5c15ec7fa87b",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/shared/new-patient-date-field.tsx": {
@@ -6110,8 +6085,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointments-page.ts": {
-    "mtime": 1785692405.9956944,
-    "ast_hash": "1dfc540aebc79bce27c4da71a3721e65",
+    "mtime": 1785697426.5891244,
+    "ast_hash": "3e5a16249078b0514a80f63facfb9d74",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/treatments/hooks/use-treatment-dialog.ts": {
@@ -6120,8 +6095,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/files/patient-file-edit-dialog.tsx": {
-    "mtime": 1785495316.6194305,
-    "ast_hash": "1ed6af450b079fe7553018536775cbd6",
+    "mtime": 1785693385.5756843,
+    "ast_hash": "876469f9c2defe779dad9b7024837ed8",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/next.config.ts": {
@@ -6170,8 +6145,8 @@
     "semantic_hash": ""
   },
   "src/stores/topbar-action-store.ts": {
-    "mtime": 1784841224.203114,
-    "ast_hash": "621a369dfbfda5a23bf8e048f51daeed",
+    "mtime": 1785697047.5525084,
+    "ast_hash": "c0f5cd5fe9c7e7db5cc823e74df4efc3",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/.ci-artifact/playwright-report/data/c799fcfe92544a6945e65898f076713b88c1b87b.png": {
@@ -6225,8 +6200,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-create-dialog.tsx": {
-    "mtime": 1785692951.984556,
-    "ast_hash": "e750f01cb60828e7d103b198044094be",
+    "mtime": 1785697359.9729047,
+    "ast_hash": "5f30cf312f32e2ddd53fb87e0c305623",
     "semantic_hash": ""
   },
   "src/components/ui/app-dialog-footer.tsx": {
@@ -6240,8 +6215,8 @@
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaign-date-cell.tsx": {
-    "mtime": 1785576356.86146,
-    "ast_hash": "b098053349e693aafd2d92768a382240",
+    "mtime": 1785693111.1740136,
+    "ast_hash": "f029992cf00cddce31498b0d8778f320",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/appointments/appointments-page-client.tsx": {
@@ -6310,8 +6285,8 @@
     "semantic_hash": ""
   },
   "src/copy/employee-detail-copy.ts": {
-    "mtime": 1785690407.7967288,
-    "ast_hash": "06bd3d303cf36bab0af55943aecd8fb5",
+    "mtime": 1785697061.0438926,
+    "ast_hash": "72e5b7c417d5a58a07cf35653314f511",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/.ci-artifact/playwright-report/data/6632fc3cf04f42c336dd50464542fe514808b400.webm": {
@@ -6322,11 +6297,6 @@
   ".codex-worktrees/e2e-fix/src/copy/employee-edit-copy.ts": {
     "mtime": 1784670153.1237113,
     "ast_hash": "163f4b2ce45c910c3c5f4b2bd34a0016",
-    "semantic_hash": ""
-  },
-  "src/components/settings/components/settings-detail-tab-content.tsx": {
-    "mtime": 1784669640.656519,
-    "ast_hash": "9c50578dc4551b0bceeeabffd02f015b",
     "semantic_hash": ""
   },
   "src/dal/patients.server.dal.ts": {
@@ -6390,8 +6360,8 @@
     "semantic_hash": ""
   },
   "src/components/finances/components/finances-movements-section.tsx": {
-    "mtime": 1785690407.7345667,
-    "ast_hash": "1dc63ccb650c274e2d95c821bf08e6da",
+    "mtime": 1785693110.990947,
+    "ast_hash": "c0e19e40a589ec80726c2a2f05984013",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/register-type-picker.tsx": {
@@ -6405,8 +6375,8 @@
     "semantic_hash": ""
   },
   "src/copy/clinic-edit-copy.ts": {
-    "mtime": 1784669640.664074,
-    "ast_hash": "21712f27c8a5ff4cb48654df7cd84041",
+    "mtime": 1785693111.4904952,
+    "ast_hash": "dcccc229f5bedfa065eff119ec2314c1",
     "semantic_hash": ""
   },
   "app/(app)/employees/page.tsx": {
@@ -6470,8 +6440,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/employee-detail-actions.ts": {
-    "mtime": 1783330869.0262542,
-    "ast_hash": "2ac0a20938ff08bcbfb41a89ea7af132",
+    "mtime": 1785697265.4390173,
+    "ast_hash": "9c27eb385567779a48feac3f6f3935db",
     "semantic_hash": ""
   },
   "supabase/.temp/linked-project.json": {
@@ -6580,8 +6550,8 @@
     "semantic_hash": ""
   },
   "src/stores/clinic-store.ts": {
-    "mtime": 1785501605.0223384,
-    "ast_hash": "bce088e581b68f8cafebf790f6be45f2",
+    "mtime": 1785697109.7510045,
+    "ast_hash": "4c4ccb4a9cb14bf85eb8a988722a7f57",
     "semantic_hash": ""
   },
   "src/components/ui/primitives/mobile-fab.tsx": {
@@ -6665,8 +6635,8 @@
     "semantic_hash": ""
   },
   "src/copy/patient-files-copy.ts": {
-    "mtime": 1783964926.639372,
-    "ast_hash": "fd1569f14f03ec3099556feb0806a4a6",
+    "mtime": 1785693230.0717986,
+    "ast_hash": "9119a87d6bf4f794627b63ed10085683",
     "semantic_hash": ""
   },
   "src/components/patients/components/detail/patient-detail-tab-content.tsx": {
@@ -6695,8 +6665,8 @@
     "semantic_hash": ""
   },
   "src/lib/calendar-day-stats.ts": {
-    "mtime": 1785690407.769662,
-    "ast_hash": "490993e9cb5bda47a0ca428957311ae4",
+    "mtime": 1785697335.5617616,
+    "ast_hash": "6d3e62d5782caa2a4d9c430dac267992",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-person-avatar.tsx": {
@@ -6745,8 +6715,8 @@
     "semantic_hash": ""
   },
   "src/components/inventory/inventory-page-client.tsx": {
-    "mtime": 1785692953.0749009,
-    "ast_hash": "99f6cb12a1a61ece82f796c0aa102979",
+    "mtime": 1785693385.5736852,
+    "ast_hash": "8362b7eb8ffcccb33cecdb17f2e408f1",
     "semantic_hash": ""
   },
   "src/copy/finances-copy.ts": {
@@ -6810,8 +6780,8 @@
     "semantic_hash": ""
   },
   "src/copy/loader-copy.ts": {
-    "mtime": 1785495316.6410046,
-    "ast_hash": "eb88b935f6d9c6054f0818c6ac51bf4c",
+    "mtime": 1785693111.5287468,
+    "ast_hash": "8aebd6c423f63404611bfbba4a5810b5",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_aecb94a56873948f_jpeg_compositions_frames_03-todo-conectado.html_1920x1080_1785513999134_3.70.jpg": {
@@ -7080,8 +7050,8 @@
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-image-uploader-form.tsx": {
-    "mtime": 1785495316.6212223,
-    "ast_hash": "9096f3bdcfc5bd0c6904481a66d578ac",
+    "mtime": 1785693110.8937705,
+    "ast_hash": "62d90bf1210f44482b5cbd063b954c17",
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaign-image-cell.tsx": {
@@ -7115,8 +7085,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointment-materials-override-dialog.tsx": {
-    "mtime": 1784136389.5295281,
-    "ast_hash": "5318e724b6fbb70753ce7e79e6782b69",
+    "mtime": 1785693203.2683077,
+    "ast_hash": "270c196226cd07dac2f3d1e8cfb039de",
     "semantic_hash": ""
   },
   "src/lib/constants.ts": {
@@ -7470,8 +7440,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-detail-copy.ts": {
-    "mtime": 1784670452.3098881,
-    "ast_hash": "0e0326cb271b9078241fe02ba70e5ce9",
+    "mtime": 1785697057.232625,
+    "ast_hash": "0ccab227ef6825da22f8133b5819ddea",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/tests/e2e/e2e-constants.ts": {
@@ -7515,8 +7485,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/components/calendar-overlap-group-event.tsx": {
-    "mtime": 1785690407.801235,
-    "ast_hash": "68aed30b98e083807a26e2072d5be3eb",
+    "mtime": 1785697381.214577,
+    "ast_hash": "65e19d251d432a671297a197599e6039",
     "semantic_hash": ""
   },
   "src/components/dashboard/components/dashboard-header.tsx": {
@@ -7665,13 +7635,13 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointment-detail-page-client.tsx": {
-    "mtime": 1785501606.133499,
-    "ast_hash": "c353aecdeda6747f4c9bd5c8ca51baa5",
+    "mtime": 1785697088.4954736,
+    "ast_hash": "a8a539885a82f584b6f9f35c39f95eb4",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-appointments.ts": {
-    "mtime": 1785501606.5170403,
-    "ast_hash": "88b13387d79581f20318b685d833cf69",
+    "mtime": 1785697128.4636493,
+    "ast_hash": "3ff841ff66d147b5d4bcee484f6ceeb0",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/snapshots/frame-08-at-17.143s.png": {
@@ -7705,8 +7675,8 @@
     "semantic_hash": ""
   },
   "src/copy/employee-edit-copy.ts": {
-    "mtime": 1785690407.774187,
-    "ast_hash": "409d60c3fb1ba024ca81b6bb3b45996a",
+    "mtime": 1785693111.506104,
+    "ast_hash": "a3e6e5054e079c7746f6d0595cb0a7fd",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.media/images/patients.png": {
@@ -7740,8 +7710,8 @@
     "semantic_hash": ""
   },
   "src/copy/app-dialog-copy.ts": {
-    "mtime": 1782841916.360586,
-    "ast_hash": "763a4a239c021dc6d1decfa1c727aaa9",
+    "mtime": 1785693111.4728239,
+    "ast_hash": "b4669daa4f704f88bb414190080d352e",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_601bc692fee4809a_jpeg_compositions_frames_05-thalia.html_1920x1080_1785509766978_3.50.jpg": {
@@ -7765,8 +7735,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointments-table.tsx": {
-    "mtime": 1785692952.1371236,
-    "ast_hash": "db0e83efc41c7dac957f67d4f81f0f25",
+    "mtime": 1785697396.7920353,
+    "ast_hash": "c8b52396a5e5170a543e44eac79f3837",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/employees/components/detail/employee-profile-sidebar.tsx": {
@@ -7840,8 +7810,8 @@
     "semantic_hash": ""
   },
   "src/components/calendar/hooks/use-schedule-x-calendar.ts": {
-    "mtime": 1785690407.7721727,
-    "ast_hash": "62cc17376864ee2207075861554c9f75",
+    "mtime": 1785697255.9556043,
+    "ast_hash": "30231cc17a8e055d9f0c7b03ba0df6a9",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/patients/components/detail/patient-info-section.tsx": {
@@ -7930,18 +7900,18 @@
     "semantic_hash": ""
   },
   "src/components/finances/components/transaction-create-form.tsx": {
-    "mtime": 1785495316.608855,
-    "ast_hash": "3ff6306ef7b924c82051548a6759d908",
+    "mtime": 1785693111.0066173,
+    "ast_hash": "11d637245774b12a07abad62b83a6f54",
     "semantic_hash": ""
   },
   "src/components/patients/components/files/patient-files-tab.tsx": {
-    "mtime": 1784835890.4964366,
-    "ast_hash": "022ea69cb5c4906b9640ec4856dbeab9",
+    "mtime": 1785693256.0411747,
+    "ast_hash": "371f8542581c97fc763be11611daf18d",
     "semantic_hash": ""
   },
   "app/(app)/settings/page.tsx": {
-    "mtime": 1785501606.061364,
-    "ast_hash": "f185feb66079899ca97f354e922e72ef",
+    "mtime": 1785697375.9818907,
+    "ast_hash": "74741f9650aecdc301603cedd2749684",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/settings/components/profile-edit-form.tsx": {
@@ -7977,6 +7947,61 @@
   "src/tests/unit/calendar-event-surface.test.ts": {
     "mtime": 1785692952.5072994,
     "ast_hash": "f50ca7de04850d5f47137836e70e4f79",
+    "semantic_hash": ""
+  },
+  "src/components/ui/primitives/form-action-icons.ts": {
+    "mtime": 1785693079.078112,
+    "ast_hash": "2b87393032a521c4c4dccffc67e20047",
+    "semantic_hash": ""
+  },
+  "src/lib/appointment-datetime.ts": {
+    "mtime": 1785697109.7479973,
+    "ast_hash": "dd5d49f71ab8c10a43a0c649108b883d",
+    "semantic_hash": ""
+  },
+  "app/(app)/settings/clinica/page.tsx": {
+    "mtime": 1785697376.0126228,
+    "ast_hash": "a811dd661937c6f63b08d40c9871218b",
+    "semantic_hash": ""
+  },
+  "app/(app)/settings/layout.tsx": {
+    "mtime": 1785697375.9703748,
+    "ast_hash": "9531a6883c2a5f04f71cad25d07996e6",
+    "semantic_hash": ""
+  },
+  "app/(app)/settings/usuario/page.tsx": {
+    "mtime": 1785697375.9990819,
+    "ast_hash": "1e85c07f0cad7cd98f6ecb52794926de",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-nav-item.tsx": {
+    "mtime": 1785697376.5695393,
+    "ast_hash": "3513bef49673dae938aeb44144cad70c",
+    "semantic_hash": ""
+  },
+  "src/components/ui/profile/profile-action-menu-item.tsx": {
+    "mtime": 1785697263.1966476,
+    "ast_hash": "111ecf7eeef9c0a1e23bd62b01ff2337",
+    "semantic_hash": ""
+  },
+  "src/lib/settings-sections.ts": {
+    "mtime": 1785697375.9848893,
+    "ast_hash": "4d15586939462762c40a1f2f831b06c1",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-nav.tsx": {
+    "mtime": 1785697377.6826224,
+    "ast_hash": "2ea8465d1bbda942ccacd875682d4251",
+    "semantic_hash": ""
+  },
+  "src/components/settings/components/settings-section-content.tsx": {
+    "mtime": 1785697379.3656044,
+    "ast_hash": "86ede2af52ff9f5855fcda2370a0c144",
+    "semantic_hash": ""
+  },
+  "src/components/settings/settings-layout-client.tsx": {
+    "mtime": 1785697386.2803228,
+    "ast_hash": "d656b6ac1cbb4cfb674c9bfa163329ec",
     "semantic_hash": ""
   }
 }

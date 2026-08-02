@@ -3,7 +3,13 @@ import { create } from "zustand";
 
 import { getTodayAppointments } from "@/dal/dashboard.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import {
+  getClinicRangeIso,
+  instantToClinicWallDate,
+  resolveAppointmentTimezone,
+} from "@/lib/appointment-datetime";
 import { logger } from "@/lib/logger";
+import { useClinicStore } from "@/stores/clinic-store";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -29,8 +35,15 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     set({ data: loadingQueryEntry(get().data) });
 
     try {
-      const todayStart = startOfDay(new Date()).toISOString();
-      const todayEnd = endOfDay(new Date()).toISOString();
+      const timezone = resolveAppointmentTimezone(
+        useClinicStore.getState().getActiveMembership()?.clinicTimezone,
+      );
+      const clinicNow = instantToClinicWallDate(new Date(), timezone);
+      const { startIso: todayStart, endIso: todayEnd } = getClinicRangeIso(
+        startOfDay(clinicNow),
+        endOfDay(clinicNow),
+        timezone,
+      );
 
       const clinicId = getActiveClinicId();
       const appointments = await getTodayAppointments(

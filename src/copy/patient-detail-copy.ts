@@ -67,6 +67,10 @@ export const PATIENT_DETAIL_COPY = {
     createAppointment: "Crear cita",
   },
   moreActions: "Más acciones",
+  menuSections: {
+    patient: "Paciente",
+    contact: "Contacto",
+  },
   errors: {
     load: "No se pudo cargar el paciente.",
     notFound: "Paciente no encontrado.",

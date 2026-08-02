@@ -1,3 +1,5 @@
+"use client";
+
 import { Calendar, FileText } from "lucide-react";
 
 import AppointmentDetailCard from "@/components/appointments/components/appointment-detail-card";
@@ -9,6 +11,7 @@ import {
   formatAppointmentTimeRange,
   formatDateTime,
 } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 type AppointmentDetailSidebarProps = {
@@ -18,6 +21,7 @@ type AppointmentDetailSidebarProps = {
 export default function AppointmentDetailSidebar({
   appointment,
 }: AppointmentDetailSidebarProps) {
+  const timezone = useActiveClinicTimezone();
   const notes = appointment.notes?.trim();
 
   return (
@@ -32,7 +36,7 @@ export default function AppointmentDetailSidebar({
               {APPOINTMENT_DETAIL_COPY.date}
             </dt>
             <dd className="text-right text-sm font-medium text-ink">
-              {formatAppointmentDetailDay(appointment.starts_at)}
+              {formatAppointmentDetailDay(appointment.starts_at, timezone)}
             </dd>
           </div>
           <div className="flex items-start justify-between gap-4 border-b border-border-subtle py-3">
@@ -43,6 +47,7 @@ export default function AppointmentDetailSidebar({
               {formatAppointmentTimeRange(
                 appointment.starts_at,
                 appointment.ends_at,
+                timezone,
               )}
             </dd>
           </div>
@@ -60,7 +65,7 @@ export default function AppointmentDetailSidebar({
                 {APPOINTMENT_DETAIL_COPY.created}
               </dt>
               <dd className="text-right text-sm font-medium text-ink">
-                {formatDateTime(appointment.created_at)}
+                {formatDateTime(appointment.created_at, timezone)}
               </dd>
             </div>
           ) : null}

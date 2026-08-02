@@ -3,16 +3,18 @@ export const SETTINGS_COPY = {
     title: "Ajustes",
     profileError: "No se pudo cargar el perfil.",
   },
-  tabs: {
+  nav: {
     usuario: "Usuario",
     clinica: "Clínica",
-    aplicacion: "Aplicación",
   },
   actions: {
     call: "Llamar",
     email: "Enviar email",
   },
   moreActions: "Más acciones",
+  menuSections: {
+    clinic: "Clínica",
+  },
   sections: {
     stats: "Resumen",
     statsEmpty: "No hay estadísticas disponibles.",

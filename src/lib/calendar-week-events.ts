@@ -1,7 +1,10 @@
-import { format } from "date-fns";
 import { Temporal } from "temporal-polyfill";
 
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
+import {
+  formatClinicDayKey,
+  instantToClinicZonedDateTime,
+} from "@/lib/appointment-datetime";
 import {
   groupOverlappingAppointmentsByDay,
   type OverlapGroup,
@@ -21,24 +24,19 @@ export type WeekScheduleEventsResult = {
   groupAppointmentsById: Map<string, AppointmentWithRelations[]>;
 };
 
-function toZonedDateTime(iso: string) {
-  return Temporal.Instant.from(iso).toZonedDateTimeISO(
-    Temporal.Now.timeZoneId(),
-  );
+function toZonedDateTime(iso: string, timezone: string) {
+  return instantToClinicZonedDateTime(iso, timezone);
 }
 
-function toZonedDateTimeFromMs(ms: number) {
+function toZonedDateTimeFromMs(ms: number, timezone: string) {
   return Temporal.Instant.fromEpochMilliseconds(ms).toZonedDateTimeISO(
-    Temporal.Now.timeZoneId(),
+    timezone,
   );
-}
-
-function getDayKey(startsAt: string) {
-  return format(new Date(startsAt), "yyyy-MM-dd");
 }
 
 function buildSingleEvent(
   appointment: AppointmentWithRelations,
+  timezone: string,
 ): ScheduleXCalendarEvent {
   return {
     id: appointment.id,
@@ -46,33 +44,36 @@ function buildSingleEvent(
       appointment.appointment_treatments[0]?.treatment?.name ??
       CALENDAR_COPY.event.defaultTreatment
     }`,
-    start: toZonedDateTime(appointment.starts_at),
-    end: toZonedDateTime(appointment.ends_at),
+    start: toZonedDateTime(appointment.starts_at, timezone),
+    end: toZonedDateTime(appointment.ends_at, timezone),
     calendarId: appointment.employee_id,
   };
 }
 
 function buildGroupEvent(
   group: OverlapGroup<AppointmentWithRelations>,
+  timezone: string,
 ): ScheduleXCalendarEvent {
-  const startTime = format(new Date(group.startMs), "HH:mm");
+  const start = toZonedDateTimeFromMs(group.startMs, timezone);
+  const startTime = `${String(start.hour).padStart(2, "0")}:${String(start.minute).padStart(2, "0")}`;
 
   return {
     id: group.id,
     title: CALENDAR_COPY.week.groupTitle(startTime, group.appointments.length),
-    start: toZonedDateTimeFromMs(group.startMs),
-    end: toZonedDateTimeFromMs(group.endMs),
+    start,
+    end: toZonedDateTimeFromMs(group.endMs, timezone),
     calendarId: "overlap-group",
   };
 }
 
 export function buildWeekScheduleEvents(
   data: AppointmentWithRelations[] | null | undefined,
+  timezone: string,
 ): WeekScheduleEventsResult {
   const appointments = data ?? [];
   const partition = groupOverlappingAppointmentsByDay(
     appointments,
-    (appointment) => getDayKey(appointment.starts_at),
+    (appointment) => formatClinicDayKey(appointment.starts_at, timezone),
   );
 
   const groupAppointmentsById = new Map<string, AppointmentWithRelations[]>();
@@ -82,8 +83,10 @@ export function buildWeekScheduleEvents(
   }
 
   const events: ScheduleXCalendarEvent[] = [
-    ...partition.singles.map(buildSingleEvent),
-    ...partition.groups.map(buildGroupEvent),
+    ...partition.singles.map((appointment) =>
+      buildSingleEvent(appointment, timezone),
+    ),
+    ...partition.groups.map((group) => buildGroupEvent(group, timezone)),
   ];
 
   return { events, groupAppointmentsById };
@@ -91,6 +94,9 @@ export function buildWeekScheduleEvents(
 
 export function buildIndividualScheduleEvents(
   data: AppointmentWithRelations[] | null | undefined,
+  timezone: string,
 ): ScheduleXCalendarEvent[] {
-  return (data ?? []).map(buildSingleEvent);
+  return (data ?? []).map((appointment) =>
+    buildSingleEvent(appointment, timezone),
+  );
 }

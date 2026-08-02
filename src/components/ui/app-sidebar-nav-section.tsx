@@ -45,6 +45,7 @@ export default function AppSidebarNavSection({
                 key={item.href}
                 item={item}
                 active={active}
+                pathname={pathname}
                 onNavigate={onNavigate}
               />
             );

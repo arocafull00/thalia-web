@@ -1,52 +1,67 @@
 import { CalendarPlus, Mail, Pencil, Phone } from "lucide-react";
 
-import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
+import type { TopbarActionButtonConfig } from "@/lib/hooks/use-topbar-actions";
 import type { Patient } from "@/types/database.types";
 
 type PatientDetailActionHandlers = {
   onEdit: () => void;
   onCreateAppointment: () => void;
-  onOpenGallery: () => void;
 };
 
-export function getPatientDetailActions(
+export function getPatientDetailPrimaryAction(
+  handlers: PatientDetailActionHandlers,
+): TopbarActionButtonConfig {
+  return {
+    title: PATIENT_DETAIL_COPY.actions.createAppointment,
+    icon: CalendarPlus,
+    onClick: handlers.onCreateAppointment,
+  };
+}
+
+export function getPatientDetailMenuSections(
   patient: Patient,
   handlers: PatientDetailActionHandlers,
-): ProfileAction[] {
-  const actions: ProfileAction[] = [
+): ProfileActionSection[] {
+  const sections: ProfileActionSection[] = [
     {
-      label: PATIENT_DETAIL_COPY.actions.edit,
-      icon: Pencil,
-      onClick: handlers.onEdit,
-      buttonVariant: "solid",
+      label: PATIENT_DETAIL_COPY.menuSections.patient,
+      actions: [
+        {
+          label: PATIENT_DETAIL_COPY.actions.edit,
+          icon: Pencil,
+          onClick: handlers.onEdit,
+          testId: "patient-edit-trigger",
+        },
+      ],
     },
   ];
 
+  const contactActions = [];
+
   if (patient.phone) {
-    actions.push({
+    contactActions.push({
       label: PATIENT_DETAIL_COPY.actions.call,
       icon: Phone,
       href: `tel:${patient.phone}`,
-      buttonVariant: "ghost",
     });
   }
 
   if (patient.email) {
-    actions.push({
+    contactActions.push({
       label: PATIENT_DETAIL_COPY.actions.email,
       icon: Mail,
       href: `mailto:${patient.email}`,
-      buttonVariant: "ghost",
     });
   }
 
-  actions.push({
-    label: PATIENT_DETAIL_COPY.actions.createAppointment,
-    icon: CalendarPlus,
-    onClick: handlers.onCreateAppointment,
-    buttonVariant: "ghost",
-  });
+  if (contactActions.length > 0) {
+    sections.push({
+      label: PATIENT_DETAIL_COPY.menuSections.contact,
+      actions: contactActions,
+    });
+  }
 
-  return actions;
+  return sections;
 }

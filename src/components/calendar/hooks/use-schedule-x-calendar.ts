@@ -32,6 +32,7 @@ import CalendarEmptyHeader from "@/components/calendar/components/calendar-empty
 import CalendarTimeGridEvent from "@/components/calendar/components/calendar-time-grid-event";
 import CalendarWeekGridDate from "@/components/calendar/components/calendar-week-grid-date";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
+import { getClinicRangeIso } from "@/lib/appointment-datetime";
 import { computeDayStatsForRange } from "@/lib/calendar-day-stats";
 import {
   CALENDAR_END_HOUR,
@@ -44,6 +45,7 @@ import {
   buildIndividualScheduleEvents,
   buildWeekScheduleEvents,
 } from "@/lib/calendar-week-events";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
@@ -181,8 +183,16 @@ function toPlainDate(date: Date) {
   });
 }
 
-function zonedDateTimeToDate(dateTime: Temporal.ZonedDateTime) {
-  return new Date(dateTime.epochMilliseconds);
+function zonedDateTimeToWallDate(dateTime: Temporal.ZonedDateTime) {
+  return new Date(
+    dateTime.year,
+    dateTime.month - 1,
+    dateTime.day,
+    dateTime.hour,
+    dateTime.minute,
+    dateTime.second,
+    dateTime.millisecond,
+  );
 }
 
 function toDateOnlyIso(value: unknown) {
@@ -206,31 +216,37 @@ function getRangeForViewMode(viewMode: CalendarViewMode, anchor: Date) {
 function buildScheduleEventsForViewMode(
   data: AppointmentWithRelations[] | null | undefined,
   viewMode: CalendarViewMode,
+  timezone: string,
 ) {
   if (viewMode === "week") {
-    return buildWeekScheduleEvents(data);
+    return buildWeekScheduleEvents(data, timezone);
   }
 
   return {
-    events: buildIndividualScheduleEvents(data),
+    events: buildIndividualScheduleEvents(data, timezone),
     groupAppointmentsById: new Map<string, AppointmentWithRelations[]>(),
   };
 }
 
-function getInitialCalendarConfig() {
+function getInitialCalendarConfig(timezone: string) {
   const { weekAnchor, employeeId, viewMode } = useCalendarStore.getState();
   const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
     viewMode,
     weekAnchor,
   );
-  const key = appointmentsKey(
-    rangeStart.toISOString(),
-    rangeEnd.toISOString(),
-    employeeId,
+  const { startIso, endIso } = getClinicRangeIso(
+    rangeStart,
+    rangeEnd,
+    timezone,
   );
+  const key = appointmentsKey(startIso, endIso, employeeId);
   const entry = useAppointmentsStore.getState().byRange[key];
 
-  const scheduleResult = buildScheduleEventsForViewMode(entry?.data, viewMode);
+  const scheduleResult = buildScheduleEventsForViewMode(
+    entry?.data,
+    viewMode,
+    timezone,
+  );
 
   return {
     selectedDate: toPlainDate(weekAnchor),
@@ -248,6 +264,8 @@ export function useScheduleXCalendar(gridHeight: number) {
   const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
   const { clinic } = useClinicInfo();
+  const activeClinicTimezone = useActiveClinicTimezone();
+  const timezone = clinic?.timezone ?? activeClinicTimezone;
 
   const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
     viewMode,
@@ -310,11 +328,11 @@ export function useScheduleXCalendar(gridHeight: number) {
     timeGridEvent: CalendarTimeGridEvent,
     weekGridDate: CalendarWeekGridDate,
   }))[0];
-  const [initialConfig] = useState(getInitialCalendarConfig);
+  const [initialConfig] = useState(() => getInitialCalendarConfig(timezone));
 
   const scheduleResult = useMemo(
-    () => buildScheduleEventsForViewMode(appointments.data, viewMode),
-    [appointments.data, viewMode],
+    () => buildScheduleEventsForViewMode(appointments.data, viewMode, timezone),
+    [appointments.data, timezone, viewMode],
   );
 
   const scheduleEvents = scheduleResult.events;
@@ -382,6 +400,7 @@ export function useScheduleXCalendar(gridHeight: number) {
     views: [dayView, weekView, monthView],
     defaultView: viewNameFor(initialConfig.viewMode),
     locale: "es-ES",
+    timezone,
     firstDayOfWeek: 1,
     isResponsive: false,
     weekOptions: {
@@ -411,7 +430,7 @@ export function useScheduleXCalendar(gridHeight: number) {
         const c = clinicRef.current;
         if (c && isBlockedSlot(dateTime, c)) return;
         openCreateDialogRef.current(
-          roundToNearestSlot(zonedDateTimeToDate(dateTime)),
+          roundToNearestSlot(zonedDateTimeToWallDate(dateTime)),
         );
       },
       onClickDate: (dateString) => {

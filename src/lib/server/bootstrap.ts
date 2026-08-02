@@ -83,6 +83,7 @@ function mapMembershipRow(row: ClinicMembershipRow): ClinicMembershipView {
     clinicId: row.clinic_id,
     clinicName: clinic?.name ?? "Clínica",
     clinicLogoUrl: clinic?.logo_url ?? null,
+    clinicTimezone: clinic?.timezone ?? null,
     role: row.role as ClinicMembershipRole,
     status: row.status as ClinicMembershipStatus,
   };

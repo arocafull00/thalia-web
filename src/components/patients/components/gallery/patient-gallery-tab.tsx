@@ -7,6 +7,7 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { Separator } from "@/components/ui/separator";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
+import { usePatientGalleryDensity } from "@/lib/hooks/use-patient-gallery-density";
 import {
   usePatientImageViewerSlides,
   usePatientImages,
@@ -17,6 +18,7 @@ import type { Patient, PatientImage } from "@/types/database.types";
 import BeforeAfterComparison from "../before-after-comparison/before-after-comparison";
 
 import PatientGalleryDateGroup from "./patient-gallery-date-group";
+import PatientGalleryDensityToggle from "./patient-gallery-density-toggle";
 import PatientGalleryFilters from "./patient-gallery-filters";
 import PatientGalleryFiltersSheet from "./patient-gallery-filters-sheet";
 import PatientImageViewer from "./patient-image-viewer";
@@ -77,6 +79,7 @@ export default function PatientGalleryTab({
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
+  const { density, setDensity } = usePatientGalleryDensity();
   const imagesQuery = usePatientImages(patient.id);
 
   const images = useMemo(() => imagesQuery.data ?? [], [imagesQuery.data]);
@@ -189,6 +192,10 @@ export default function PatientGalleryTab({
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <PatientGalleryDensityToggle
+              density={density}
+              onChange={setDensity}
+            />
             <ActionButton
               title={PATIENT_GALLERY_COPY.actions.upload}
               icon={Upload}
@@ -252,6 +259,7 @@ export default function PatientGalleryTab({
                   key={group.dateGroupLabel}
                   label={group.dateGroupLabel}
                   images={group.images}
+                  density={density}
                   selectionMode={selectionMode}
                   selectedImageIds={selectedImageIds}
                   eagerImageIds={eagerImageIds}

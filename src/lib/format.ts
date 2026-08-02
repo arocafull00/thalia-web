@@ -18,15 +18,15 @@ import type {
   TransactionType,
 } from "@/types/database.types";
 
-function toClinicDate(value: string | Date) {
+function toClinicDate(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
   if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return parseISO(value);
   }
 
-  return toZonedTime(
-    value instanceof Date ? value : new Date(value),
-    CLINIC_TIME_ZONE,
-  );
+  return toZonedTime(value instanceof Date ? value : new Date(value), timezone);
 }
 
 export function formatInputDate(value: string | Date) {
@@ -76,8 +76,11 @@ export function formatInputDateTime(value: string | Date) {
   return format(toClinicDate(value), "d MMM yyyy, HH:mm", { locale: es });
 }
 
-export function formatClinicDayKey(value: string | Date) {
-  return format(toClinicDate(value), "yyyy-MM-dd");
+export function formatClinicDayKey(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
+  return format(toClinicDate(value, timezone), "yyyy-MM-dd");
 }
 
 export function formatCurrency(value: number) {
@@ -99,21 +102,27 @@ export function formatFileSize(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function formatDateTime(value: string | Date) {
+export function formatDateTime(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
   return new Intl.DateTimeFormat("es-ES", {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
     month: "short",
-    timeZone: CLINIC_TIME_ZONE,
+    timeZone: timezone,
   }).format(new Date(value));
 }
 
-export function formatTime(value: string | Date) {
+export function formatTime(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
   return new Intl.DateTimeFormat("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: CLINIC_TIME_ZONE,
+    timeZone: timezone,
   }).format(new Date(value));
 }
 
@@ -123,15 +132,19 @@ export function formatAppointmentReferenceId(id: string) {
   return `#${compact.slice(0, 4)}-${compact.slice(4, 5)}`;
 }
 
-export function formatAppointmentDetailDay(value: string | Date) {
-  return format(toClinicDate(value), "d MMMM", { locale: es });
+export function formatAppointmentDetailDay(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
+  return format(toClinicDate(value, timezone), "d MMMM", { locale: es });
 }
 
 export function formatAppointmentTimeRange(
   start: string | Date,
   end: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
 ) {
-  return `${formatTime(start)} – ${formatTime(end)}`;
+  return `${formatTime(start, timezone)} – ${formatTime(end, timezone)}`;
 }
 
 export function formatAppointmentDuration(
@@ -161,11 +174,14 @@ export function formatPatientLastVisitLabel(lastVisitAt: string | Date | null) {
   return `Visitó hace ${distance}`;
 }
 
-export function formatDate(value: string | Date) {
+export function formatDate(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
   return new Intl.DateTimeFormat("es-ES", {
     day: "2-digit",
     month: "long",
-    timeZone: CLINIC_TIME_ZONE,
+    timeZone: timezone,
     year: "numeric",
   }).format(new Date(value));
 }
@@ -225,11 +241,13 @@ export function appointmentStatusVariant(status: AppointmentStatus | null) {
   return "default";
 }
 
-export function formatAppointmentMonthGroup(value: string | Date) {
-  return format(toClinicDate(value), "MMM yyyy", { locale: es }).replace(
-    ".",
-    "",
-  );
+export function formatAppointmentMonthGroup(
+  value: string | Date,
+  timezone: string = CLINIC_TIME_ZONE,
+) {
+  return format(toClinicDate(value, timezone), "MMM yyyy", {
+    locale: es,
+  }).replace(".", "");
 }
 
 export function transactionTypeLabel(type: TransactionType) {

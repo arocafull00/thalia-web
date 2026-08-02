@@ -10,6 +10,7 @@ import AppDateField from "@/components/ui/app-date-field";
 import { Button } from "@/components/ui/button";
 import FilterField from "@/components/ui/filter-field";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import { instantToClinicWallDate } from "@/lib/appointment-datetime";
 import { formatLocalDateInputValue } from "@/lib/date-input";
 
 type AppointmentDateRangeProps = {
@@ -20,8 +21,8 @@ type AppointmentDateRangeProps = {
   onToChange: (value: Date) => void;
 };
 
-export function getDefaultAppointmentDateRange() {
-  const today = new Date();
+export function getDefaultAppointmentDateRange(timezone = "Europe/Madrid") {
+  const today = instantToClinicWallDate(new Date(), timezone);
   return {
     from: startOfWeek(today, { weekStartsOn: 1 }),
     to: endOfWeek(today, { weekStartsOn: 1 }),

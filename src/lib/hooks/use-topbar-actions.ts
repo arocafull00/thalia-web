@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent } from "react";
 
-import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 import type { TopbarAction } from "@/stores/topbar-action-store";
 import { useTopbarActionStore } from "@/stores/topbar-action-store";
 
@@ -11,10 +11,14 @@ export type TopbarActionButtonConfig = Omit<TopbarAction, "onClick"> & {
 export type TopbarActionsConfig = {
   buttons: TopbarActionButtonConfig[];
   menu: {
-    actions: ProfileAction[];
+    sections: ProfileActionSection[];
     ariaLabel: string;
   };
 };
+
+function flattenMenuSections(sections: ProfileActionSection[]) {
+  return sections.flatMap((section) => section.actions);
+}
 
 export function useTopbarActions(config: TopbarActionsConfig | null) {
   const setActions = useTopbarActionStore((state) => state.setActions);
@@ -23,11 +27,18 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
     config?.buttons
       .map(
         (button) =>
-          `${button.title}:${button.variant ?? "solid"}:${button.desktopOnly ?? false}:${button.testId ?? ""}`,
+          `${button.title}:${button.variant ?? "solid"}:${button.disabled ?? false}:${button.testId ?? ""}`,
       )
       .join("|") ?? "";
   const menuKey =
-    config?.menu.actions.map((action) => action.label).join("|") ?? "";
+    config?.menu.sections
+      .flatMap((section) =>
+        section.actions.map(
+          (action) =>
+            `${section.label}:${action.label}:${action.disabled ?? false}`,
+        ),
+      )
+      .join("|") ?? "";
   const menuAriaLabel = config?.menu.ariaLabel;
 
   const handleButtonClick = useEffectEvent((index: number) => {
@@ -35,7 +46,11 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
   });
 
   const handleMenuClick = useEffectEvent((index: number) => {
-    config?.menu.actions[index]?.onClick?.();
+    if (!config) {
+      return;
+    }
+
+    flattenMenuSections(config.menu.sections)[index]?.onClick?.();
   });
 
   useEffect(() => {
@@ -57,11 +72,23 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
       })),
     );
 
+    let actionIndex = 0;
+
     setMenu({
       ariaLabel: config.menu.ariaLabel,
-      actions: config.menu.actions.map((action, index) => ({
-        ...action,
-        onClick: action.onClick ? () => handleMenuClick(index) : undefined,
+      sections: config.menu.sections.map((section) => ({
+        label: section.label,
+        actions: section.actions.map((action) => {
+          const currentIndex = actionIndex;
+          actionIndex += 1;
+
+          return {
+            ...action,
+            onClick: action.onClick
+              ? () => handleMenuClick(currentIndex)
+              : undefined,
+          };
+        }),
       })),
     });
 

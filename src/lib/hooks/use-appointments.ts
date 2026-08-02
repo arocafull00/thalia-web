@@ -1,7 +1,11 @@
 import { endOfDay, startOfDay } from "date-fns";
 import { useCallback, useEffect } from "react";
 
-import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import { getClinicRangeIso } from "@/lib/appointment-datetime";
+import {
+  useActiveClinicTimezone,
+  useClinicId,
+} from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
   useServerSeed,
@@ -31,13 +35,20 @@ export function useAppointments(
     dateOrRange instanceof Date ? startOfDay(dateOrRange) : dateOrRange.start;
   const rangeEnd =
     dateOrRange instanceof Date ? endOfDay(dateOrRange) : dateOrRange.end;
-  const start = rangeStart.toISOString();
-  const end = rangeEnd.toISOString();
+  const timezone = useActiveClinicTimezone();
+  const { startIso: start, endIso: end } = getClinicRangeIso(
+    rangeStart,
+    rangeEnd,
+    timezone,
+  );
   const key = appointmentsKey(start, end, employeeId);
 
   const entry = useAppointmentsStore((state) => state.byRange[key]);
   const fetchAppointments = useAppointmentsStore(
     (state) => state.fetchAppointments,
+  );
+  const seedAppointments = useAppointmentsStore(
+    (state) => state.seedAppointments,
   );
   const subscribeRealtime = useAppointmentsStore(
     (state) => state.subscribeRealtime,
@@ -56,7 +67,20 @@ export function useAppointments(
   const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData === undefined || hasClientData) {
+      return;
+    }
+
+    seedAppointments({
+      start,
+      end,
+      employeeId,
+      appointments: seededData,
+    });
+  }, [employeeId, end, hasClientData, seedAppointments, seededData, start]);
+
+  useEffect(() => {
+    if (seededData !== undefined) {
       return;
     }
 
@@ -65,15 +89,7 @@ export function useAppointments(
       end: new Date(end),
       employeeId,
     });
-  }, [
-    clinicId,
-    employeeId,
-    end,
-    fetchAppointments,
-    hasClientData,
-    seededData,
-    start,
-  ]);
+  }, [clinicId, employeeId, end, fetchAppointments, seededData, start]);
 
   const data = entry?.data ?? seededData;
 
@@ -196,8 +212,15 @@ export function useRescheduleAppointment() {
   const error = useAppointmentsStore((state) => state.rescheduleError);
 
   const mutateAsync = useCallback(
-    ({ id, startsAt, endsAt }: { id: string; startsAt: Date; endsAt: Date }) =>
-      rescheduleAppointment(id, startsAt, endsAt),
+    ({
+      id,
+      startsAtIso,
+      endsAtIso,
+    }: {
+      id: string;
+      startsAtIso: string;
+      endsAtIso: string;
+    }) => rescheduleAppointment(id, startsAtIso, endsAtIso),
     [rescheduleAppointment],
   );
 

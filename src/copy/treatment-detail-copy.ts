@@ -33,6 +33,9 @@ export const TREATMENT_DETAIL_COPY = {
     delete: "Eliminar tratamiento",
   },
   moreActions: "Más acciones",
+  menuSections: {
+    danger: "Peligro",
+  },
   errors: {
     load: "No se pudo cargar el tratamiento.",
     notFound: "Tratamiento no encontrado.",

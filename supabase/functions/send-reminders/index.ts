@@ -11,8 +11,14 @@ const corsHeaders = {
 const QUIET_HOURS_START = 22;
 const QUIET_HOURS_END = 9;
 
-function isQuietHour(): boolean {
-  const hour = new Date().getHours();
+function isQuietHour(timezone: string): boolean {
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      hourCycle: "h23",
+      timeZone: timezone,
+    }).format(new Date()),
+  );
   return hour >= QUIET_HOURS_START || hour < QUIET_HOURS_END;
 }
 
@@ -72,7 +78,7 @@ Deno.serve(async (req) => {
   const { data: clinics, error: clinicsError } = await supabase
     .from("clinics")
     .select(
-      "id, name, address, whatsapp_reminder_enabled, whatsapp_reminder_hours, whatsapp_phone_number_id, whatsapp_message_template",
+      "id, name, address, timezone, whatsapp_reminder_enabled, whatsapp_reminder_hours, whatsapp_phone_number_id, whatsapp_message_template",
     )
     .eq("whatsapp_reminder_enabled", true)
     .not("whatsapp_phone_number_id", "is", null);
@@ -96,7 +102,7 @@ Deno.serve(async (req) => {
       : (clinic.whatsapp_reminder_hours as number[]);
 
     for (const hoursBeforeTarget of hoursWindows) {
-      if (!manualAppointmentId && isQuietHour()) continue;
+      if (!manualAppointmentId && isQuietHour(clinic.timezone)) continue;
 
       const windowStart = new Date(
         Date.now() + hoursBeforeTarget * 60 * 60 * 1000,
@@ -148,10 +154,12 @@ Deno.serve(async (req) => {
           weekday: "long",
           day: "numeric",
           month: "long",
+          timeZone: clinic.timezone,
         });
         const hora = appointmentDate.toLocaleTimeString("es-ES", {
           hour: "2-digit",
           minute: "2-digit",
+          timeZone: clinic.timezone,
         });
 
         const message = buildMessage(clinic.whatsapp_message_template, {

@@ -11,6 +11,7 @@ import {
   formatAppointmentDuration,
   formatAppointmentTimeRange,
 } from "@/lib/format";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 type AppointmentHeaderProps = {
@@ -20,6 +21,7 @@ type AppointmentHeaderProps = {
 export default function AppointmentHeader({
   appointment,
 }: AppointmentHeaderProps) {
+  const timezone = useActiveClinicTimezone();
   const patient = appointment.patients;
   const employee = appointment.employees;
   const patientName = patient?.full_name ?? APPOINTMENT_DETAIL_COPY.patient;
@@ -79,13 +81,14 @@ export default function AppointmentHeader({
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-secondary">
         <span className="inline-flex items-center gap-1.5">
           <Calendar className="size-3.5" aria-hidden="true" />
-          {formatAppointmentDetailDay(appointment.starts_at)}
+          {formatAppointmentDetailDay(appointment.starts_at, timezone)}
         </span>
         <span className="inline-flex items-center gap-1.5">
           <Clock className="size-3.5" aria-hidden="true" />
           {formatAppointmentTimeRange(
             appointment.starts_at,
             appointment.ends_at,
+            timezone,
           )}
         </span>
         <span>{formatAppointmentDuration(appointment)}</span>

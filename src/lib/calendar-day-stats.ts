@@ -1,5 +1,6 @@
-import { differenceInMinutes, format } from "date-fns";
+import { differenceInMinutes } from "date-fns";
 
+import { formatClinicDayKey } from "@/lib/appointment-datetime";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
@@ -25,10 +26,6 @@ function jsDayToIsoDay(jsDay: number) {
   return jsDay === 0 ? 7 : jsDay;
 }
 
-function getAppointmentDayKey(startsAt: string) {
-  return format(new Date(startsAt), "yyyy-MM-dd");
-}
-
 export function computeDayStats(
   appointments: AppointmentWithRelations[],
   clinic: ClinicInfo | null,
@@ -37,7 +34,10 @@ export function computeDayStats(
   const byDay = new Map<string, AppointmentWithRelations[]>();
 
   for (const appointment of appointments) {
-    const dayKey = getAppointmentDayKey(appointment.starts_at);
+    const dayKey = formatClinicDayKey(
+      appointment.starts_at,
+      clinic?.timezone ?? "Europe/Madrid",
+    );
     const existing = byDay.get(dayKey) ?? [];
     existing.push(appointment);
     byDay.set(dayKey, existing);

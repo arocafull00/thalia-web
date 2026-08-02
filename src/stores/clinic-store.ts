@@ -17,6 +17,7 @@ type ClinicStore = {
   hydrated: boolean;
   fetchMemberships: (userId: string) => Promise<ClinicMembershipView[]>;
   setActiveClinic: (clinicId: string) => void;
+  updateActiveClinicTimezone: (timezone: string) => void;
   clearClinicState: () => void;
   getActiveMembership: () => ClinicMembershipView | null;
   getExternalMemberships: () => ClinicMembershipView[];
@@ -38,8 +39,18 @@ export const useClinicStore = create<ClinicStore>()(
 
           const memberships: ClinicMembershipView[] = rows.map((row) => {
             const clinicRaw = row.clinics as
-              | { id: string; name: string; logo_url: string | null }
-              | { id: string; name: string; logo_url: string | null }[]
+              | {
+                  id: string;
+                  name: string;
+                  logo_url: string | null;
+                  timezone: string | null;
+                }
+              | {
+                  id: string;
+                  name: string;
+                  logo_url: string | null;
+                  timezone: string | null;
+                }[]
               | null;
             const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;
 
@@ -48,6 +59,7 @@ export const useClinicStore = create<ClinicStore>()(
               clinicId: row.clinic_id,
               clinicName: clinic?.name ?? "Clínica",
               clinicLogoUrl: clinic?.logo_url ?? null,
+              clinicTimezone: clinic?.timezone ?? null,
               role: row.role as ClinicMembershipRole,
               status: row.status as ClinicMembershipStatus,
             };
@@ -74,6 +86,17 @@ export const useClinicStore = create<ClinicStore>()(
       setActiveClinic: (clinicId) => {
         set({ activeClinicId: clinicId });
         writeActiveClinicCookie(clinicId);
+      },
+
+      updateActiveClinicTimezone: (timezone) => {
+        const { activeClinicId, memberships } = get();
+        set({
+          memberships: memberships.map((membership) =>
+            membership.clinicId === activeClinicId
+              ? { ...membership, clinicTimezone: timezone }
+              : membership,
+          ),
+        });
       },
 
       clearClinicState: () => {

@@ -24,6 +24,12 @@ export const PATIENT_GALLERY_COPY = {
     phase: "Fase",
     sort: "Orden",
   },
+  density: {
+    label: "Densidad de la galería",
+    compact: "Compacta",
+    comfortable: "Media",
+    large: "Grande",
+  },
   phases: {
     antes: "Antes",
     durante: "Durante",

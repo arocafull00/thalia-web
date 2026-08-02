@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { buildAppointmentsColumns } from "@/components/appointments/components/appointments-columns";
 import AppointmentsMobileList from "@/components/appointments/components/appointments-mobile-list";
 import { DataTable } from "@/components/ui/data-table";
+import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -24,9 +25,10 @@ export default function AppointmentsTable({
   onRowClick,
   onStatusChange,
 }: AppointmentsTableProps) {
+  const timezone = useActiveClinicTimezone();
   const columns = useMemo(
-    () => buildAppointmentsColumns(onStatusChange),
-    [onStatusChange],
+    () => buildAppointmentsColumns(onStatusChange, timezone),
+    [onStatusChange, timezone],
   );
 
   return (

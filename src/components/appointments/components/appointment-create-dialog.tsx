@@ -93,6 +93,9 @@ export default function AppointmentCreateDialog({
               onOpenSlots={dialog.openSlots}
               onCloseSlots={dialog.closeSlots}
               onSelectSlot={dialog.selectSlot}
+              onInvalidStartsAt={dialog.markStartsAtInvalid}
+              onValidStartsAt={dialog.markStartsAtValid}
+              showPastAppointmentWarning={dialog.showPastAppointmentWarning}
             />
           )}
         </div>

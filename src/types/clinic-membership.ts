@@ -8,6 +8,7 @@ export type ClinicMembershipView = {
   clinicId: string;
   clinicName: string;
   clinicLogoUrl: string | null;
+  clinicTimezone: string | null;
   role: ClinicMembershipRole;
   status: ClinicMembershipStatus;
 };

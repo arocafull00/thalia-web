@@ -7,6 +7,10 @@ import {
   startOfWeek,
 } from "date-fns";
 
+import {
+  instantToClinicWallDate,
+  resolveAppointmentTimezone,
+} from "@/lib/appointment-datetime";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 
 type ExistingAppointment = {
@@ -117,6 +121,7 @@ export function findAvailableSlots(params: {
   const openTotal = toMinutes(openH, openM);
   const closeTotal = toMinutes(closeH, closeM);
   const shouldDistribute = searchMode === "anytime";
+  const timezone = resolveAppointmentTimezone(clinic.timezone);
 
   let current = roundUpToStep(searchRange.from, STEP_MINUTES);
 
@@ -149,8 +154,8 @@ export function findAvailableSlots(params: {
 
     const slotEnd = addMinutes(current, duration);
     const hasConflict = existing.some((appt) => {
-      const apptStart = new Date(appt.starts_at);
-      const apptEnd = new Date(appt.ends_at);
+      const apptStart = instantToClinicWallDate(appt.starts_at, timezone);
+      const apptEnd = instantToClinicWallDate(appt.ends_at, timezone);
       return current < apptEnd && slotEnd > apptStart;
     });
 

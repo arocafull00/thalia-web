@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 
 import { useServerBootstrap } from "@/components/providers/store-hydrator";
+import { resolveAppointmentTimezone } from "@/lib/appointment-datetime";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicStore } from "@/stores/clinic-store";
 
@@ -47,6 +48,7 @@ export function useActiveClinic() {
     clinicId,
     clinicName: membership?.clinicName ?? null,
     clinicLogoUrl: membership?.clinicLogoUrl ?? null,
+    clinicTimezone: resolveAppointmentTimezone(membership?.clinicTimezone),
     membership,
     platformRole: membership?.role ?? null,
     memberships: resolvedMemberships,
@@ -58,4 +60,9 @@ export function useActiveClinic() {
 export function useClinicId() {
   const { clinicId } = useActiveClinic();
   return clinicId;
+}
+
+export function useActiveClinicTimezone() {
+  const { clinicTimezone } = useActiveClinic();
+  return clinicTimezone;
 }

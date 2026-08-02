@@ -33,8 +33,13 @@ export default function EmployeeQuickActions({
     ...menuActions.map((action) => ({
       label: action.label,
       icon: action.icon,
-      onClick: action.onClick,
-      href: action.href,
+      onClick:
+        action.onClick ??
+        (action.href
+          ? () => {
+              window.location.href = action.href!;
+            }
+          : () => {}),
       buttonVariant: "ghost" as const,
     })),
   ];
@@ -47,14 +52,7 @@ export default function EmployeeQuickActions({
           label={action.label}
           icon={action.icon}
           variant={action.buttonVariant}
-          onClick={
-            action.onClick ??
-            (() => {
-              if (action.href) {
-                window.location.href = action.href;
-              }
-            })
-          }
+          onClick={action.onClick}
         />
       ))}
     </div>

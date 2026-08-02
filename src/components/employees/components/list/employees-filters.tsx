@@ -1,6 +1,7 @@
 "use client";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { SEARCH_COPY } from "@/copy/search-copy";
@@ -40,37 +41,44 @@ export default function EmployeesFilters({
   return (
     <PageFiltersBar
       search={search}
+      searchLabel={EMPLOYEES_COPY.filterLabels.search}
       searchPlaceholder={SEARCH_COPY.placeholders["/employees"]}
       searchClearLabel={SEARCH_COPY.clear}
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
-      <div className="w-40 min-w-0">
-        <AppSearchableCombobox
-          value={role || null}
-          onValueChange={(value) => onRoleChange(value ?? "")}
-          options={roleOptions}
-          placeholder={EMPLOYEES_COPY.roles.all}
-          searchPlaceholder={EMPLOYEES_COPY.filters.role}
-          allowClear
-          clearLabel={EMPLOYEES_COPY.roles.all}
-          variant="pill"
-          className="w-full"
-        />
-      </div>
-      <div className="w-40 min-w-0">
-        <AppSearchableCombobox
-          value={status || null}
-          onValueChange={(value) => onStatusChange(value ?? "")}
-          options={statusOptions}
-          placeholder={EMPLOYEES_COPY.filters.all}
-          searchPlaceholder={EMPLOYEES_COPY.filters.status}
-          allowClear
-          clearLabel={EMPLOYEES_COPY.filters.all}
-          variant="pill"
-          className="w-full"
-        />
-      </div>
+      <FilterField label={EMPLOYEES_COPY.filterLabels.role} className="w-40">
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={role || null}
+            onValueChange={(value) => onRoleChange(value ?? "")}
+            options={roleOptions}
+            placeholder={EMPLOYEES_COPY.roles.all}
+            searchPlaceholder={EMPLOYEES_COPY.filters.role}
+            allowClear
+            clearLabel={EMPLOYEES_COPY.roles.all}
+            variant="pill"
+            className="w-full"
+          />
+        )}
+      </FilterField>
+      <FilterField label={EMPLOYEES_COPY.filterLabels.status} className="w-40">
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={status || null}
+            onValueChange={(value) => onStatusChange(value ?? "")}
+            options={statusOptions}
+            placeholder={EMPLOYEES_COPY.filters.all}
+            searchPlaceholder={EMPLOYEES_COPY.filters.status}
+            allowClear
+            clearLabel={EMPLOYEES_COPY.filters.all}
+            variant="pill"
+            className="w-full"
+          />
+        )}
+      </FilterField>
     </PageFiltersBar>
   );
 }

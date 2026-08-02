@@ -21,4 +21,10 @@ export const APPOINTMENTS_COPY = {
     cancelled: "Cancelada",
     noShow: "No asistió",
   },
+  filterLabels: {
+    search: "Buscar cita",
+    employee: "Profesional",
+    dateRange: "Rango de fechas",
+    status: "Estado",
+  },
 } as const;

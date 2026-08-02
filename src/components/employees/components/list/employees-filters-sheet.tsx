@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import type { EmployeeRole } from "@/types/database.types";
@@ -58,38 +59,38 @@ export default function EmployeesFiltersSheet({
       onApply={handleApply}
       onClear={handleClear}
     >
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {EMPLOYEES_COPY.filters.role}
-        </p>
-        <AppSearchableCombobox
-          value={pending.role || null}
-          onValueChange={(v) =>
-            setPending((prev) => ({ ...prev, role: v ?? "" }))
-          }
-          options={roleOptions}
-          placeholder={EMPLOYEES_COPY.roles.all}
-          searchPlaceholder={EMPLOYEES_COPY.filters.role}
-          allowClear
-          clearLabel={EMPLOYEES_COPY.roles.all}
-        />
-      </div>
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {EMPLOYEES_COPY.filters.status}
-        </p>
-        <AppSearchableCombobox
-          value={pending.status || null}
-          onValueChange={(v) =>
-            setPending((prev) => ({ ...prev, status: v ?? "" }))
-          }
-          options={statusOptions}
-          placeholder={EMPLOYEES_COPY.filters.all}
-          searchPlaceholder={EMPLOYEES_COPY.filters.status}
-          allowClear
-          clearLabel={EMPLOYEES_COPY.filters.all}
-        />
-      </div>
+      <FilterField variant="sheet" label={EMPLOYEES_COPY.filterLabels.role}>
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.role || null}
+            onValueChange={(v) =>
+              setPending((prev) => ({ ...prev, role: v ?? "" }))
+            }
+            options={roleOptions}
+            placeholder={EMPLOYEES_COPY.roles.all}
+            searchPlaceholder={EMPLOYEES_COPY.filters.role}
+            allowClear
+            clearLabel={EMPLOYEES_COPY.roles.all}
+          />
+        )}
+      </FilterField>
+      <FilterField variant="sheet" label={EMPLOYEES_COPY.filterLabels.status}>
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.status || null}
+            onValueChange={(v) =>
+              setPending((prev) => ({ ...prev, status: v ?? "" }))
+            }
+            options={statusOptions}
+            placeholder={EMPLOYEES_COPY.filters.all}
+            searchPlaceholder={EMPLOYEES_COPY.filters.status}
+            allowClear
+            clearLabel={EMPLOYEES_COPY.filters.all}
+          />
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { SEARCH_COPY } from "@/copy/search-copy";
@@ -28,25 +29,29 @@ export default function PatientsFilters({
   return (
     <PageFiltersBar
       search={search}
+      searchLabel={PATIENTS_COPY.filterLabels.search}
       searchPlaceholder={SEARCH_COPY.placeholders["/patients"]}
       searchClearLabel={SEARCH_COPY.clear}
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
-      <div className="w-40 min-w-0">
-        <AppSearchableCombobox
-          testId="patients-status-combobox"
-          value={status || null}
-          onValueChange={(value) => onStatusChange(value ?? "")}
-          options={statusOptions}
-          placeholder={PATIENTS_COPY.filters.all}
-          searchPlaceholder={PATIENTS_COPY.filters.status}
-          allowClear
-          clearLabel={PATIENTS_COPY.filters.all}
-          variant="pill"
-          className="w-full"
-        />
-      </div>
+      <FilterField label={PATIENTS_COPY.filterLabels.status} className="w-40">
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            testId="patients-status-combobox"
+            value={status || null}
+            onValueChange={(value) => onStatusChange(value ?? "")}
+            options={statusOptions}
+            placeholder={PATIENTS_COPY.filters.all}
+            searchPlaceholder={PATIENTS_COPY.filters.status}
+            allowClear
+            clearLabel={PATIENTS_COPY.filters.all}
+            variant="pill"
+            className="w-full"
+          />
+        )}
+      </FilterField>
     </PageFiltersBar>
   );
 }

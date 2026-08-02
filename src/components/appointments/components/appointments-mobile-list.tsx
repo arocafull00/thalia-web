@@ -16,7 +16,7 @@ export default function AppointmentsMobileList({
   onRowClick,
 }: AppointmentsMobileListProps) {
   const agendaAppointments = useMemo(
-    () => toAgendaAppointments(appointments),
+    () => toAgendaAppointments(appointments).toReversed(),
     [appointments],
   );
 

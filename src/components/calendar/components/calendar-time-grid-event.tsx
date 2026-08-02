@@ -5,6 +5,10 @@ import "temporal-polyfill/global";
 
 import { calendarWeekUiRefs } from "@/components/calendar/calendar-week-ui-refs";
 import CalendarOverlapGroupEvent from "@/components/calendar/components/calendar-overlap-group-event";
+import {
+  buildEventSurfaceColor,
+  normalizeEventColor,
+} from "@/lib/calendar-event-surface";
 import { isOverlapGroupEventId } from "@/lib/calendar-overlap-groups";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -40,16 +44,22 @@ export default function CalendarTimeGridEvent({
   const [patientPart, treatmentPart] = calendarEvent.title.split(" · ");
   const appointment = calendarWeekUiRefs.appointmentsById.get(eventId);
   const employeeName = appointment?.employees?.full_name;
-  const employeeColor = appointment?.employees?.color;
+  const employeeColor = normalizeEventColor(appointment?.employees?.color);
+  const surfaceColor = buildEventSurfaceColor(employeeColor);
 
   return (
     <div
       className={cn(
-        "flex h-full min-h-full flex-col justify-center gap-0.5 overflow-hidden rounded-xl border border-border-subtle border-l-4 bg-surface px-2.5 py-1",
-        employeeColor ? "" : "border-l-border",
+        "flex h-full min-h-full flex-col justify-center gap-0.5 overflow-hidden rounded-xl border border-border-subtle border-l-4 px-2.5 py-1",
+        employeeColor ? "" : "border-l-border bg-primary-subtle",
       )}
       style={
-        employeeColor ? { borderInlineStartColor: employeeColor } : undefined
+        employeeColor && surfaceColor
+          ? {
+              borderInlineStartColor: employeeColor,
+              backgroundColor: surfaceColor,
+            }
+          : undefined
       }
     >
       <strong className="truncate text-[12px] leading-tight font-semibold text-ink">

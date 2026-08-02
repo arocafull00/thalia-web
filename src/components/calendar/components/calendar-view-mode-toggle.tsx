@@ -14,6 +14,7 @@ const VIEW_MODE_OPTIONS: { value: CalendarViewMode; label: string }[] = [
 const DEFAULT_VIEW_MODES: CalendarViewMode[] = ["day", "week", "month"];
 
 type CalendarViewModeToggleProps = {
+  labelledBy?: string;
   viewMode: CalendarViewMode;
   modes?: CalendarViewMode[];
   fullWidth?: boolean;
@@ -21,6 +22,7 @@ type CalendarViewModeToggleProps = {
 };
 
 export default function CalendarViewModeToggle({
+  labelledBy,
   viewMode,
   modes = DEFAULT_VIEW_MODES,
   fullWidth = false,
@@ -33,6 +35,7 @@ export default function CalendarViewModeToggle({
   return (
     <ToggleGroup
       type="single"
+      aria-labelledby={labelledBy}
       value={viewMode}
       onValueChange={(value) => {
         if (!value) return;

@@ -10,6 +10,10 @@ export const FINANCES_COPY = {
     category: "Categoría",
     all: "Todos",
   },
+  filterLabels: {
+    search: "Buscar movimiento",
+    category: "Categoría",
+  },
   metrics: {
     income: "Ingresos",
     expenses: "Gastos",

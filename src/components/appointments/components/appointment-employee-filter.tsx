@@ -9,12 +9,14 @@ import { useEmployees } from "@/lib/hooks/use-employees";
 import type { Employee } from "@/types/database.types";
 
 type AppointmentEmployeeFilterProps = {
+  id?: string;
   employeeId: string;
   initialEmployees?: Employee[];
   onEmployeeIdChange: (value: string) => void;
 };
 
 export default function AppointmentEmployeeFilter({
+  id,
   employeeId,
   initialEmployees,
   onEmployeeIdChange,
@@ -47,6 +49,7 @@ export default function AppointmentEmployeeFilter({
   return (
     <div className="min-w-0">
       <AppSearchableCombobox
+        id={id}
         value={employeeId || null}
         onValueChange={(value) => onEmployeeIdChange(value ?? "")}
         options={employeeOptions}

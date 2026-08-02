@@ -3,10 +3,10 @@ import "server-only";
 import { endOfDay, endOfWeek, format, startOfDay, startOfWeek } from "date-fns";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 
-const DEFAULT_TIMEZONE = "Europe/Madrid";
+import { CLINIC_TIME_ZONE } from "@/lib/constants";
 
 export function resolveClinicTimezone(timezone: string | null | undefined) {
-  return timezone?.trim() || DEFAULT_TIMEZONE;
+  return timezone?.trim() || CLINIC_TIME_ZONE;
 }
 
 export function getClinicDayRange(

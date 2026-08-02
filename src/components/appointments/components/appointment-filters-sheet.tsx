@@ -9,6 +9,7 @@ import {
 import { appointmentStatusOptions } from "@/components/appointments/components/appointment-status-filter";
 import AppDateField from "@/components/ui/app-date-field";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { useEmployees } from "@/lib/hooks/use-employees";
@@ -96,29 +97,31 @@ export default function AppointmentFiltersSheet({
       onClear={handleClear}
       contentClassName="min-h-[70dvh]"
     >
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {APPOINTMENTS_COPY.filters.employee}
-        </p>
-        <AppSearchableCombobox
-          value={pending.employeeId || null}
-          onValueChange={(v) =>
-            setPending((prev) => ({ ...prev, employeeId: v ?? "" }))
-          }
-          options={employeeOptions}
-          placeholder={APPOINTMENTS_COPY.filters.all}
-          searchPlaceholder={APPOINTMENTS_COPY.filters.searchEmployee}
-          allowClear
-          clearLabel={APPOINTMENTS_COPY.filters.all}
-        />
-      </div>
+      <FilterField
+        variant="sheet"
+        label={APPOINTMENTS_COPY.filterLabels.employee}
+      >
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.employeeId || null}
+            onValueChange={(v) =>
+              setPending((prev) => ({ ...prev, employeeId: v ?? "" }))
+            }
+            options={employeeOptions}
+            placeholder={APPOINTMENTS_COPY.filters.all}
+            searchPlaceholder={APPOINTMENTS_COPY.filters.searchEmployee}
+            allowClear
+            clearLabel={APPOINTMENTS_COPY.filters.all}
+          />
+        )}
+      </FilterField>
 
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">Rango de fechas</p>
-        <div className="flex flex-col gap-3">
-          <label className="flex items-center justify-between gap-2 text-sm text-ink-secondary">
-            <span>{APPOINTMENTS_COPY.filters.dateFrom}</span>
+      <div className="flex flex-col gap-3">
+        <FilterField variant="sheet" label={APPOINTMENTS_COPY.filters.dateFrom}>
+          {({ controlId }) => (
             <AppDateField
+              id={controlId}
               value={pendingFrom}
               onChange={(v) =>
                 setPending((prev) => ({
@@ -127,10 +130,12 @@ export default function AppointmentFiltersSheet({
                 }))
               }
             />
-          </label>
-          <label className="flex items-center justify-between gap-2 text-sm text-ink-secondary">
-            <span>{APPOINTMENTS_COPY.filters.dateTo}</span>
+          )}
+        </FilterField>
+        <FilterField variant="sheet" label={APPOINTMENTS_COPY.filters.dateTo}>
+          {({ controlId }) => (
             <AppDateField
+              id={controlId}
               value={pendingTo}
               onChange={(v) =>
                 setPending((prev) => ({
@@ -139,26 +144,29 @@ export default function AppointmentFiltersSheet({
                 }))
               }
             />
-          </label>
-        </div>
+          )}
+        </FilterField>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {APPOINTMENTS_COPY.filters.status}
-        </p>
-        <AppSearchableCombobox
-          value={pending.status || null}
-          onValueChange={(v) =>
-            setPending((prev) => ({ ...prev, status: v ?? "" }))
-          }
-          options={appointmentStatusOptions}
-          placeholder={APPOINTMENTS_COPY.filters.all}
-          searchPlaceholder={APPOINTMENTS_COPY.filters.status}
-          allowClear
-          clearLabel={APPOINTMENTS_COPY.filters.all}
-        />
-      </div>
+      <FilterField
+        variant="sheet"
+        label={APPOINTMENTS_COPY.filterLabels.status}
+      >
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.status || null}
+            onValueChange={(v) =>
+              setPending((prev) => ({ ...prev, status: v ?? "" }))
+            }
+            options={appointmentStatusOptions}
+            placeholder={APPOINTMENTS_COPY.filters.all}
+            searchPlaceholder={APPOINTMENTS_COPY.filters.status}
+            allowClear
+            clearLabel={APPOINTMENTS_COPY.filters.all}
+          />
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

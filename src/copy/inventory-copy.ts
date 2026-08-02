@@ -11,9 +11,17 @@ export const INVENTORY_COPY = {
     low: "Bajo",
     optimal: "Óptimo",
   },
+  filterLabels: {
+    search: "Buscar material",
+    category: "Categoría",
+    stock: "Nivel de stock",
+  },
   summary: {
     critical: "Crítico",
     low: "Bajo",
     optimal: "Óptimo",
+    filterBy: (label: string) => `Filtrar por stock ${label.toLowerCase()}`,
+    clearFilter: (label: string) =>
+      `Quitar el filtro de stock ${label.toLowerCase()}`,
   },
 } as const;

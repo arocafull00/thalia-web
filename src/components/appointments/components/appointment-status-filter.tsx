@@ -5,6 +5,7 @@ import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import type { AppointmentStatus } from "@/types/database.types";
 
 type AppointmentStatusFilterProps = {
+  id?: string;
   active: string;
   onChange: (value: string) => void;
 };
@@ -21,12 +22,14 @@ const statusOptions: Array<{ label: string; value: AppointmentStatus }> = [
 export { statusOptions as appointmentStatusOptions };
 
 export default function AppointmentStatusFilter({
+  id,
   active,
   onChange,
 }: AppointmentStatusFilterProps) {
   return (
     <div className="min-w-0">
       <AppSearchableCombobox
+        id={id}
         value={active || null}
         onValueChange={(v) => onChange(v ?? "")}
         options={statusOptions}

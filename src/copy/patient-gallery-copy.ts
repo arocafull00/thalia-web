@@ -19,6 +19,11 @@ export const PATIENT_GALLERY_COPY = {
     sortRecent: "Más recientes",
     sortOldest: "Más antiguas",
   },
+  filterLabels: {
+    search: "Buscar imagen",
+    phase: "Fase",
+    sort: "Orden",
+  },
   phases: {
     antes: "Antes",
     durante: "Durante",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 
@@ -52,36 +53,42 @@ export default function PatientGalleryFiltersSheet({
       onApply={handleApply}
       onClear={handleClear}
     >
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {PATIENT_GALLERY_COPY.filters.phase}
-        </p>
-        <AppSearchableCombobox
-          value={pending.phase || null}
-          onValueChange={(value) =>
-            setPending((prev) => ({ ...prev, phase: value ?? "" }))
-          }
-          options={phaseOptions}
-          placeholder={PATIENT_GALLERY_COPY.filters.allPhases}
-          searchPlaceholder={PATIENT_GALLERY_COPY.filters.phase}
-          allowClear
-          clearLabel={PATIENT_GALLERY_COPY.filters.allPhases}
-        />
-      </div>
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {PATIENT_GALLERY_COPY.filters.sort}
-        </p>
-        <AppSearchableCombobox
-          value={pending.sort || null}
-          onValueChange={(value) =>
-            setPending((prev) => ({ ...prev, sort: value ?? "recent" }))
-          }
-          options={sortOptions}
-          placeholder={PATIENT_GALLERY_COPY.filters.sortRecent}
-          searchPlaceholder={PATIENT_GALLERY_COPY.filters.sort}
-        />
-      </div>
+      <FilterField
+        variant="sheet"
+        label={PATIENT_GALLERY_COPY.filterLabels.phase}
+      >
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.phase || null}
+            onValueChange={(value) =>
+              setPending((prev) => ({ ...prev, phase: value ?? "" }))
+            }
+            options={phaseOptions}
+            placeholder={PATIENT_GALLERY_COPY.filters.allPhases}
+            searchPlaceholder={PATIENT_GALLERY_COPY.filters.phase}
+            allowClear
+            clearLabel={PATIENT_GALLERY_COPY.filters.allPhases}
+          />
+        )}
+      </FilterField>
+      <FilterField
+        variant="sheet"
+        label={PATIENT_GALLERY_COPY.filterLabels.sort}
+      >
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.sort || null}
+            onValueChange={(value) =>
+              setPending((prev) => ({ ...prev, sort: value ?? "recent" }))
+            }
+            options={sortOptions}
+            placeholder={PATIENT_GALLERY_COPY.filters.sortRecent}
+            searchPlaceholder={PATIENT_GALLERY_COPY.filters.sort}
+          />
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

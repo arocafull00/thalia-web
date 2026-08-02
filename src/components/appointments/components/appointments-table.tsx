@@ -1,5 +1,6 @@
 "use client";
 
+import type { SortingState } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 import { buildAppointmentsColumns } from "@/components/appointments/components/appointments-columns";
@@ -9,6 +10,8 @@ import type {
   AppointmentStatus,
   AppointmentWithRelations,
 } from "@/types/database.types";
+
+const APPOINTMENTS_INITIAL_SORTING: SortingState = [{ desc: true, id: "date" }];
 
 type AppointmentsTableProps = {
   appointments: AppointmentWithRelations[];
@@ -39,6 +42,7 @@ export default function AppointmentsTable({
           columns={columns}
           data={appointments}
           enableSorting
+          initialSorting={APPOINTMENTS_INITIAL_SORTING}
           onRowClick={(appointment) => onRowClick(appointment.id)}
         />
       </div>

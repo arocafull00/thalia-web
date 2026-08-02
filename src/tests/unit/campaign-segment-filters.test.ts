@@ -4,6 +4,8 @@ import {
   buildCampaignSegmentFilters,
   buildSegmentsFromFilters,
   EMPTY_CAMPAIGN_SEGMENT_FILTERS,
+  EMPTY_CAMPAIGN_SEGMENT_INPUTS,
+  parseCampaignSegmentInputs,
 } from "@/lib/schemas/campaign-segment-schema";
 import type { CampaignSegment } from "@/types/database.types";
 
@@ -135,6 +137,108 @@ describe("buildCampaignSegmentFilters", () => {
         segment("age_range", { min_age: 60, max_age: 20 }),
       ]),
     ).toThrow();
+  });
+});
+
+describe("parseCampaignSegmentInputs", () => {
+  const inputs = (
+    overrides: Partial<typeof EMPTY_CAMPAIGN_SEGMENT_INPUTS>,
+  ) => ({
+    ...EMPTY_CAMPAIGN_SEGMENT_INPUTS,
+    ...overrides,
+  });
+
+  it("sin nada escrito no aplica filtros y es válido", () => {
+    const result = parseCampaignSegmentInputs(EMPTY_CAMPAIGN_SEGMENT_INPUTS);
+
+    expect(result.isValid).toBe(true);
+    expect(result.filters).toEqual(EMPTY_CAMPAIGN_SEGMENT_FILTERS);
+  });
+
+  // El bug: un 0 se colaba como filtro y la condición SQL pasaba a incluir a
+  // cualquiera que hubiese venido alguna vez.
+  it("rechaza 0 meses sin visitar y no lo deja pasar al filtro", () => {
+    const result = parseCampaignSegmentInputs(
+      inputs({ monthsSinceLastVisit: "0" }),
+    );
+
+    expect(result.isValid).toBe(false);
+    expect(result.errors.monthsSinceLastVisit).toBeDefined();
+    expect(result.filters.monthsSinceLastVisit).toBeNull();
+  });
+
+  it("acepta 1 mes sin visitar", () => {
+    const result = parseCampaignSegmentInputs(
+      inputs({ monthsSinceLastVisit: "1" }),
+    );
+
+    expect(result.isValid).toBe(true);
+    expect(result.filters.monthsSinceLastVisit).toBe(1);
+  });
+
+  it("distingue vacío de cero", () => {
+    const vacio = parseCampaignSegmentInputs(
+      inputs({ monthsSinceLastVisit: "   " }),
+    );
+
+    expect(vacio.isValid).toBe(true);
+    expect(vacio.filters.monthsSinceLastVisit).toBeNull();
+  });
+
+  it("0 visitas mínimas sí es válido: significa sin visitas", () => {
+    const result = parseCampaignSegmentInputs(inputs({ minVisits: "0" }));
+
+    expect(result.isValid).toBe(true);
+    expect(result.filters.minVisits).toBe(0);
+  });
+
+  it("rechaza un rango de visitas invertido", () => {
+    const result = parseCampaignSegmentInputs(
+      inputs({ minVisits: "10", maxVisits: "2" }),
+    );
+
+    expect(result.isValid).toBe(false);
+    expect(result.errors.maxVisits).toBeDefined();
+  });
+
+  it("rechaza una franja de edad invertida", () => {
+    const result = parseCampaignSegmentInputs(
+      inputs({ minAge: "60", maxAge: "20" }),
+    );
+
+    expect(result.isValid).toBe(false);
+    expect(result.errors.maxAge).toBeDefined();
+  });
+
+  it("rechaza decimales y texto", () => {
+    expect(
+      parseCampaignSegmentInputs(inputs({ minVisits: "2.5" })).isValid,
+    ).toBe(false);
+    expect(parseCampaignSegmentInputs(inputs({ minAge: "abc" })).isValid).toBe(
+      false,
+    );
+  });
+
+  it("rechaza negativos", () => {
+    const result = parseCampaignSegmentInputs(inputs({ minVisits: "-3" }));
+
+    expect(result.isValid).toBe(false);
+    expect(result.filters.minVisits).toBeNull();
+  });
+
+  it("lo que produce encaja con buildSegmentsFromFilters", () => {
+    const { filters, isValid } = parseCampaignSegmentInputs(
+      inputs({ monthsSinceLastVisit: "6", minVisits: "1" }),
+    );
+
+    expect(isValid).toBe(true);
+    expect(buildSegmentsFromFilters(filters)).toEqual([
+      { segment_type: "visit_count", config: { min_visits: 1 } },
+      {
+        segment_type: "last_visit_date",
+        config: { months_since_last_visit: 6 },
+      },
+    ]);
   });
 });
 

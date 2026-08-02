@@ -1,6 +1,7 @@
 "use client";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { SEARCH_COPY } from "@/copy/search-copy";
@@ -35,39 +36,49 @@ export default function InventoryFilters({
   return (
     <PageFiltersBar
       search={search}
+      searchLabel={INVENTORY_COPY.filterLabels.search}
       searchPlaceholder={SEARCH_COPY.placeholders["/inventory"]}
       searchClearLabel={SEARCH_COPY.clear}
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
       {categoryOptions.length > 0 ? (
-        <div className="w-40 min-w-0">
+        <FilterField
+          label={INVENTORY_COPY.filterLabels.category}
+          className="w-40"
+        >
+          {({ controlId }) => (
+            <AppSearchableCombobox
+              id={controlId}
+              value={category || null}
+              onValueChange={(value) => onCategoryChange(value ?? "")}
+              options={categoryOptions}
+              placeholder={INVENTORY_COPY.filters.all}
+              searchPlaceholder={INVENTORY_COPY.filters.category}
+              allowClear
+              clearLabel={INVENTORY_COPY.filters.all}
+              variant="pill"
+              className="w-full"
+            />
+          )}
+        </FilterField>
+      ) : null}
+      <FilterField label={INVENTORY_COPY.filterLabels.stock} className="w-40">
+        {({ controlId }) => (
           <AppSearchableCombobox
-            value={category || null}
-            onValueChange={(value) => onCategoryChange(value ?? "")}
-            options={categoryOptions}
+            id={controlId}
+            value={stock || null}
+            onValueChange={(value) => onStockChange(value ?? "")}
+            options={stockOptions}
             placeholder={INVENTORY_COPY.filters.all}
-            searchPlaceholder={INVENTORY_COPY.filters.category}
+            searchPlaceholder={INVENTORY_COPY.filters.stock}
             allowClear
             clearLabel={INVENTORY_COPY.filters.all}
             variant="pill"
             className="w-full"
           />
-        </div>
-      ) : null}
-      <div className="w-40 min-w-0">
-        <AppSearchableCombobox
-          value={stock || null}
-          onValueChange={(value) => onStockChange(value ?? "")}
-          options={stockOptions}
-          placeholder={INVENTORY_COPY.filters.all}
-          searchPlaceholder={INVENTORY_COPY.filters.stock}
-          allowClear
-          clearLabel={INVENTORY_COPY.filters.all}
-          variant="pill"
-          className="w-full"
-        />
-      </div>
+        )}
+      </FilterField>
     </PageFiltersBar>
   );
 }

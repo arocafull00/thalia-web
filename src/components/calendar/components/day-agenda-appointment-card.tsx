@@ -1,4 +1,5 @@
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
+import { buildEventSurfaceColor } from "@/lib/calendar-event-surface";
 import { formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -13,14 +14,18 @@ export default function DayAgendaAppointmentCard({
   className,
   onClick,
 }: DayAgendaAppointmentCardProps) {
+  const surfaceColor = buildEventSurfaceColor(appointment.employeeColor);
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "flex shrink-0 overflow-hidden rounded-card border border-border/60 bg-surface text-left",
+        "flex shrink-0 overflow-hidden rounded-card border border-border/60 text-left",
+        surfaceColor ? "" : "bg-primary-subtle",
         className,
       )}
+      style={surfaceColor ? { backgroundColor: surfaceColor } : undefined}
     >
       <span
         className={cn(

@@ -144,6 +144,166 @@ export function buildCampaignSegmentFilters(
   return filters;
 }
 
+export type CampaignSegmentInputs = {
+  treatmentId: string;
+  monthsSinceLastVisit: string;
+  minVisits: string;
+  maxVisits: string;
+  minAge: string;
+  maxAge: string;
+};
+
+export type CampaignSegmentInputErrors = Partial<
+  Record<keyof CampaignSegmentInputs, string>
+>;
+
+export const EMPTY_CAMPAIGN_SEGMENT_INPUTS: CampaignSegmentInputs = {
+  treatmentId: "",
+  monthsSinceLastVisit: "",
+  minVisits: "",
+  maxVisits: "",
+  minAge: "",
+  maxAge: "",
+};
+
+type NumericFieldRule = {
+  min: number;
+  max: number;
+  belowMinMessage: string;
+  invalidMessage: string;
+  aboveMaxMessage: string;
+};
+
+const NUMERIC_RULES: Record<
+  Exclude<keyof CampaignSegmentInputs, "treatmentId">,
+  NumericFieldRule
+> = {
+  // Mínimo 1: con 0 la condición SQL queda "última visita anterior a ahora",
+  // que incluye a cualquiera que haya venido alguna vez. El filtro dejaría de
+  // filtrar sin dar ningún error.
+  monthsSinceLastVisit: {
+    min: 1,
+    max: 120,
+    belowMinMessage: "Debe ser 1 mes o más.",
+    invalidMessage: "Los meses sin visitar no son válidos.",
+    aboveMaxMessage: "Como máximo 120 meses.",
+  },
+  minVisits: {
+    min: 0,
+    max: 1000,
+    belowMinMessage: "No puede ser negativo.",
+    invalidMessage: "El número de visitas no es válido.",
+    aboveMaxMessage: "Valor demasiado alto.",
+  },
+  maxVisits: {
+    min: 0,
+    max: 1000,
+    belowMinMessage: "No puede ser negativo.",
+    invalidMessage: "El número de visitas no es válido.",
+    aboveMaxMessage: "Valor demasiado alto.",
+  },
+  minAge: {
+    min: 0,
+    max: 120,
+    belowMinMessage: "No puede ser negativa.",
+    invalidMessage: "La edad no es válida.",
+    aboveMaxMessage: "Como máximo 120 años.",
+  },
+  maxAge: {
+    min: 0,
+    max: 120,
+    belowMinMessage: "No puede ser negativa.",
+    invalidMessage: "La edad no es válida.",
+    aboveMaxMessage: "Como máximo 120 años.",
+  },
+};
+
+type ParsedField = { value: number | null; error: string | null };
+
+function parseNumericField(raw: string, rule: NumericFieldRule): ParsedField {
+  const trimmed = raw.trim();
+
+  if (!trimmed) {
+    return { value: null, error: null };
+  }
+
+  const parsed = Number(trimmed);
+
+  if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+    return { value: null, error: rule.invalidMessage };
+  }
+
+  if (parsed < rule.min) {
+    return { value: null, error: rule.belowMinMessage };
+  }
+
+  if (parsed > rule.max) {
+    return { value: null, error: rule.aboveMaxMessage };
+  }
+
+  return { value: parsed, error: null };
+}
+
+/**
+ * Valida lo que se escribe en el editor y produce los filtros de la consulta.
+ *
+ * Un campo inválido no aporta valor a los filtros: así un error de escritura
+ * nunca llega al DAL convertido en un filtro que no filtra, que es justo lo que
+ * pasaba escribiendo 0 en "no viene desde hace meses".
+ */
+export function parseCampaignSegmentInputs(inputs: CampaignSegmentInputs): {
+  filters: CampaignSegmentFilters;
+  errors: CampaignSegmentInputErrors;
+  isValid: boolean;
+} {
+  const errors: CampaignSegmentInputErrors = {};
+  const parsed = {} as Record<
+    Exclude<keyof CampaignSegmentInputs, "treatmentId">,
+    number | null
+  >;
+
+  for (const [field, rule] of Object.entries(NUMERIC_RULES)) {
+    const key = field as keyof typeof NUMERIC_RULES;
+    const result = parseNumericField(inputs[key], rule);
+    parsed[key] = result.value;
+
+    if (result.error) {
+      errors[key] = result.error;
+    }
+  }
+
+  if (
+    parsed.minVisits != null &&
+    parsed.maxVisits != null &&
+    parsed.minVisits > parsed.maxVisits
+  ) {
+    errors.maxVisits = "El máximo no puede ser menor que el mínimo.";
+  }
+
+  if (
+    parsed.minAge != null &&
+    parsed.maxAge != null &&
+    parsed.minAge > parsed.maxAge
+  ) {
+    errors.maxAge = "La edad máxima no puede ser menor que la mínima.";
+  }
+
+  const isValid = Object.keys(errors).length === 0;
+
+  return {
+    filters: {
+      treatmentId: inputs.treatmentId || null,
+      minVisits: parsed.minVisits,
+      maxVisits: parsed.maxVisits,
+      monthsSinceLastVisit: parsed.monthsSinceLastVisit,
+      minAge: parsed.minAge,
+      maxAge: parsed.maxAge,
+    },
+    errors,
+    isValid,
+  };
+}
+
 /**
  * Inversa de buildCampaignSegmentFilters: convierte los filtros del editor en
  * las filas que se guardan en campaign_segments. Los filtros sin valor no

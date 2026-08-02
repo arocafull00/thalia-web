@@ -2,6 +2,7 @@
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { SEARCH_COPY } from "@/copy/search-copy";
 
@@ -27,6 +28,7 @@ export default function TreatmentsFilters({
   return (
     <PageFiltersBar
       search={search}
+      searchLabel={TREATMENTS_COPY.filterLabels.search}
       searchPlaceholder={SEARCH_COPY.placeholders["/treatments"]}
       searchClearLabel={SEARCH_COPY.clear}
       onSearchChange={onSearchChange}
@@ -34,19 +36,25 @@ export default function TreatmentsFilters({
       showMobileSheetButton={showCategoryFilter}
     >
       {showCategoryFilter ? (
-        <div className="w-40 min-w-0">
-          <AppSearchableCombobox
-            value={category || null}
-            onValueChange={(value) => onCategoryChange(value ?? "")}
-            options={categoryOptions}
-            placeholder={TREATMENTS_COPY.page.allCategories}
-            searchPlaceholder={TREATMENTS_COPY.form.category}
-            allowClear
-            clearLabel={TREATMENTS_COPY.page.allCategories}
-            variant="pill"
-            className="w-full"
-          />
-        </div>
+        <FilterField
+          label={TREATMENTS_COPY.filterLabels.category}
+          className="w-40"
+        >
+          {({ controlId }) => (
+            <AppSearchableCombobox
+              id={controlId}
+              value={category || null}
+              onValueChange={(value) => onCategoryChange(value ?? "")}
+              options={categoryOptions}
+              placeholder={TREATMENTS_COPY.page.allCategories}
+              searchPlaceholder={TREATMENTS_COPY.form.category}
+              allowClear
+              clearLabel={TREATMENTS_COPY.page.allCategories}
+              variant="pill"
+              className="w-full"
+            />
+          )}
+        </FilterField>
       ) : null}
     </PageFiltersBar>
   );

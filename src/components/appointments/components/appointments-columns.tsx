@@ -38,6 +38,9 @@ export function buildAppointmentsColumns(
           </span>
         );
       },
+      sortingFn: (left, right) =>
+        new Date(left.original.starts_at).getTime() -
+        new Date(right.original.starts_at).getTime(),
     },
     {
       id: "time",

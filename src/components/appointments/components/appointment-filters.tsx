@@ -9,6 +9,7 @@ import AppointmentDateRange, {
 } from "@/components/appointments/components/appointment-date-range";
 import AppointmentEmployeeFilter from "@/components/appointments/components/appointment-employee-filter";
 import AppointmentStatusFilter from "@/components/appointments/components/appointment-status-filter";
+import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import type { Employee } from "@/types/database.types";
@@ -49,31 +50,55 @@ export default function AppointmentFilters({
   return (
     <PageFiltersBar
       search={search}
+      searchLabel={APPOINTMENTS_COPY.filterLabels.search}
       searchPlaceholder={APPOINTMENTS_COPY.filters.search}
       searchClearLabel={APPOINTMENTS_COPY.filters.searchClear}
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
-      <div className="w-40 min-w-0 shrink-0">
-        <AppointmentEmployeeFilter
-          employeeId={employeeId}
-          initialEmployees={initialEmployees}
-          onEmployeeIdChange={onEmployeeIdChange}
-        />
-      </div>
-      <div className="w-48 min-w-0 shrink-0">
-        <AppointmentDateRange
-          from={rangeFrom}
-          to={rangeTo}
-          onFromChange={(value) =>
-            onFromChange(formatAppointmentDateParam(value))
-          }
-          onToChange={(value) => onToChange(formatAppointmentDateParam(value))}
-        />
-      </div>
-      <div className="w-48 min-w-0 shrink-0">
-        <AppointmentStatusFilter active={status} onChange={onStatusChange} />
-      </div>
+      <FilterField
+        label={APPOINTMENTS_COPY.filterLabels.employee}
+        className="w-40 shrink-0"
+      >
+        {({ controlId }) => (
+          <AppointmentEmployeeFilter
+            id={controlId}
+            employeeId={employeeId}
+            initialEmployees={initialEmployees}
+            onEmployeeIdChange={onEmployeeIdChange}
+          />
+        )}
+      </FilterField>
+      <FilterField
+        label={APPOINTMENTS_COPY.filterLabels.dateRange}
+        className="w-48 shrink-0"
+      >
+        {({ controlId }) => (
+          <AppointmentDateRange
+            id={controlId}
+            from={rangeFrom}
+            to={rangeTo}
+            onFromChange={(value) =>
+              onFromChange(formatAppointmentDateParam(value))
+            }
+            onToChange={(value) =>
+              onToChange(formatAppointmentDateParam(value))
+            }
+          />
+        )}
+      </FilterField>
+      <FilterField
+        label={APPOINTMENTS_COPY.filterLabels.status}
+        className="w-48 shrink-0"
+      >
+        {({ controlId }) => (
+          <AppointmentStatusFilter
+            id={controlId}
+            active={status}
+            onChange={onStatusChange}
+          />
+        )}
+      </FilterField>
     </PageFiltersBar>
   );
 }

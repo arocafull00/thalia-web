@@ -46,6 +46,7 @@ export default function CalendarEmployeeFilter({
   return (
     <div className="relative z-10 hidden min-w-0 md:inline-block md:min-w-[12rem] lg:min-w-[14rem]">
       <AppSearchableCombobox
+        ariaLabel={CALENDAR_COPY.filterLabels.employee}
         value={employeeId}
         onValueChange={setEmployeeId}
         options={employeeOptions}

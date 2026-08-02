@@ -7,6 +7,7 @@ import { CalendarDays, ChevronDown } from "lucide-react";
 
 import AppDateField from "@/components/ui/app-date-field";
 import { Button } from "@/components/ui/button";
+import FilterField from "@/components/ui/filter-field";
 import { FILES_COPY } from "@/copy/files-copy";
 import {
   formatLocalDateInputValue,
@@ -14,6 +15,7 @@ import {
 } from "@/lib/date-input";
 
 type FilesDateRangeFilterProps = {
+  id?: string;
   from: string;
   to: string;
   onFromChange: (value: string) => void;
@@ -52,6 +54,7 @@ function formatRangeLabel(from: string, to: string) {
 }
 
 export default function FilesDateRangeFilter({
+  id,
   from,
   to,
   onFromChange,
@@ -65,6 +68,7 @@ export default function FilesDateRangeFilter({
     <Popover.Root>
       <Popover.Trigger asChild>
         <Button
+          id={id}
           type="button"
           variant="outline"
           className="w-full justify-between rounded-full px-3 text-ink-secondary"
@@ -83,26 +87,33 @@ export default function FilesDateRangeFilter({
           className="pointer-events-auto z-100 w-72 rounded-[14px] border border-border/60 bg-surface p-3 shadow-float"
         >
           <div className="space-y-3">
-            <label className="block space-y-1.5 text-sm text-ink-secondary">
-              <span>{FILES_COPY.filters.dateFrom}</span>
-              <AppDateField
-                value={fromDate}
-                onChange={(value) =>
-                  onFromChange(formatLocalDateInputValue(value))
-                }
-                maxDate={toDate ?? undefined}
-              />
-            </label>
-            <label className="block space-y-1.5 text-sm text-ink-secondary">
-              <span>{FILES_COPY.filters.dateTo}</span>
-              <AppDateField
-                value={toDate}
-                onChange={(value) =>
-                  onToChange(formatLocalDateInputValue(value))
-                }
-                minDate={fromDate ?? undefined}
-              />
-            </label>
+            <FilterField
+              variant="sheet"
+              label={FILES_COPY.filterLabels.dateFrom}
+            >
+              {({ controlId }) => (
+                <AppDateField
+                  id={controlId}
+                  value={fromDate}
+                  onChange={(value) =>
+                    onFromChange(formatLocalDateInputValue(value))
+                  }
+                  maxDate={toDate ?? undefined}
+                />
+              )}
+            </FilterField>
+            <FilterField variant="sheet" label={FILES_COPY.filterLabels.dateTo}>
+              {({ controlId }) => (
+                <AppDateField
+                  id={controlId}
+                  value={toDate}
+                  onChange={(value) =>
+                    onToChange(formatLocalDateInputValue(value))
+                  }
+                  minDate={fromDate ?? undefined}
+                />
+              )}
+            </FilterField>
             {from || to ? (
               <Button
                 type="button"

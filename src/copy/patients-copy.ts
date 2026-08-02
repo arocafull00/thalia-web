@@ -10,4 +10,8 @@ export const PATIENTS_COPY = {
     active: "Activos",
     inactive: "Inactivos",
   },
+  filterLabels: {
+    search: "Buscar paciente",
+    status: "Estado",
+  },
 } as const;

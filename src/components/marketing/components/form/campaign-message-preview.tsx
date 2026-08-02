@@ -13,6 +13,8 @@ type CampaignMessagePreviewProps = {
  * Reproduce cómo se verá el mensaje en el móvil del paciente. El pie se monta
  * a partir de los tres campos, separados por puntos, y sólo con los que tengan
  * valor: así el editor ve el resultado real y no una plantilla con huecos.
+ *
+ * Debe coincidir con buildBody() de supabase/functions/send-campaign/index.ts.
  */
 export default function CampaignMessagePreview({
   content,
@@ -20,9 +22,15 @@ export default function CampaignMessagePreview({
   footerWebsite,
   footerPhone,
 }: CampaignMessagePreviewProps) {
-  const footerParts = [footerText, footerWebsite, footerPhone]
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0);
+  const footerParts = [
+    footerText.trim(),
+    footerWebsite.trim()
+      ? `${messagePreview.footerWebsiteLabel}: ${footerWebsite.trim()}`
+      : "",
+    footerPhone.trim()
+      ? `${messagePreview.footerPhoneLabel}: ${footerPhone.trim()}`
+      : "",
+  ].filter((part) => part.length > 0);
 
   const trimmedContent = content.trim();
 

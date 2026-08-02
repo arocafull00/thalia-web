@@ -5,6 +5,10 @@ export const CALENDAR_COPY = {
     searchEmployee: "Buscar profesional",
     view: "Vista",
   },
+  filterLabels: {
+    view: "Vista",
+    employee: "Profesional",
+  },
   toolbar: {
     today: "Hoy",
     newAppointment: "Nueva cita",

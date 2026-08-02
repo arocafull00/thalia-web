@@ -1,8 +1,7 @@
+import { compressCampaignImage } from "@/lib/image-compression";
 import { supabase } from "@/lib/supabase";
 
 export const CAMPAIGN_IMAGES_BUCKET = "campaign-images";
-
-export const CAMPAIGN_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
 /**
  * La primera carpeta debe ser el clinic_id: es lo que comprueba la política de
@@ -28,17 +27,48 @@ export async function uploadCampaignImage(
   clinicId: string,
   file: File,
 ): Promise<string> {
-  const key = buildCampaignImageKey(clinicId, extensionFromMimeType(file.type));
+  // Se comprime antes de subir: sin esto una imagen grande se guardaría bien y
+  // el envío fallaría después en Twilio, que rechaza imágenes de más de 5 MB.
+  const compressed = await compressCampaignImage(file);
+  const key = buildCampaignImageKey(
+    clinicId,
+    extensionFromMimeType(compressed.type),
+  );
 
   const { error } = await supabase.storage
     .from(CAMPAIGN_IMAGES_BUCKET)
-    .upload(key, file, { contentType: file.type, upsert: false });
+    .upload(key, compressed, {
+      contentType: compressed.type,
+      upsert: false,
+    });
 
   if (error) {
     throw new Error(error.message);
   }
 
   return key;
+}
+
+/**
+ * Copia el objeto en lugar de reutilizar la clave: si dos campañas apuntaran a
+ * la misma imagen, borrar una dejaría a la otra sin adjunto.
+ */
+export async function copyCampaignImage(
+  sourceKey: string,
+  clinicId: string,
+): Promise<string | null> {
+  const extension = sourceKey.split(".").pop() ?? "jpg";
+  const targetKey = buildCampaignImageKey(clinicId, extension);
+
+  const { error } = await supabase.storage
+    .from(CAMPAIGN_IMAGES_BUCKET)
+    .copy(sourceKey, targetKey);
+
+  if (error) {
+    return null;
+  }
+
+  return targetKey;
 }
 
 export async function removeCampaignImage(key: string): Promise<void> {

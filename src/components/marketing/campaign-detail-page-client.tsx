@@ -1,11 +1,12 @@
 "use client";
 
-import { Send } from "lucide-react";
-import { notFound, useParams } from "next/navigation";
+import { Copy, Send } from "lucide-react";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import CampaignDetailHeader from "@/components/marketing/components/detail/campaign-detail-header";
 import CampaignDetailImage from "@/components/marketing/components/detail/campaign-detail-image";
+import CampaignReachSummary from "@/components/marketing/components/detail/campaign-reach-summary";
 import CampaignRecipientsList from "@/components/marketing/components/detail/campaign-recipients-list";
 import CampaignMessagePreview from "@/components/marketing/components/form/campaign-message-preview";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
@@ -13,13 +14,14 @@ import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useCampaignDetail } from "@/lib/hooks/use-campaign-detail";
-import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 
-const { detail, send } = MARKETING_COPY;
+const { detail, send, duplicate: duplicateCopy } = MARKETING_COPY;
 
 export default function CampaignDetailPageClient() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const {
     campaign,
@@ -30,6 +32,7 @@ export default function CampaignDetailPageClient() {
     isSending,
     sendError,
     send: sendNow,
+    duplicate,
   } = useCampaignDetail(id);
 
   const canSend = campaign?.status === "draft";
@@ -44,15 +47,33 @@ export default function CampaignDetailPageClient() {
       : null,
   );
 
-  // Solo se ofrece enviar mientras es borrador: una campaña ya enviada o
-  // cancelada no debe tener el botón a mano.
-  useTopbarAction(
-    canSend
+  // Enviar solo mientras es borrador; duplicar siempre, porque el caso típico
+  // es partir de una campaña ya enviada que funcionó.
+  useTopbarActions(
+    campaign
       ? {
-          title: send.action,
-          icon: Send,
-          testId: "campaign-send-trigger",
-          onClick: () => setConfirmOpen(true),
+          buttons: canSend
+            ? [
+                {
+                  title: send.action,
+                  icon: Send,
+                  testId: "campaign-send-trigger",
+                  onClick: () => setConfirmOpen(true),
+                },
+              ]
+            : [],
+          menu: {
+            ariaLabel: duplicateCopy.moreActions,
+            actions: [
+              {
+                label: duplicateCopy.action,
+                icon: Copy,
+                onClick: () =>
+                  duplicate((newId) => router.push(`/marketing/${newId}`)),
+                buttonVariant: "ghost",
+              },
+            ],
+          },
         }
       : null,
   );
@@ -85,21 +106,26 @@ export default function CampaignDetailPageClient() {
       <CampaignDetailHeader campaign={campaign} />
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">
         {sendError ? <Notice tone="danger" message={sendError} /> : null}
-        {campaign.image_url ? (
-          <CampaignDetailImage storageKey={campaign.image_url} />
-        ) : null}
-        <CampaignMessagePreview
-          content={campaign.content}
-          footerText={campaign.footer_text ?? ""}
-          footerWebsite={campaign.footer_website ?? ""}
-          footerPhone={campaign.footer_phone ?? ""}
-        />
-        <section className="space-y-3">
-          <h2 className="text-sm font-medium text-ink">
-            {detail.sections.recipients}
-          </h2>
-          <CampaignRecipientsList recipients={recipients} />
-        </section>
+        {/* Imagen y mensaje en columnas a partir de lg: apilados obligaban a
+            bajar hasta los destinatarios en cualquier pantalla de escritorio. */}
+        <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
+          {campaign.image_url ? (
+            <CampaignDetailImage storageKey={campaign.image_url} />
+          ) : null}
+          <CampaignMessagePreview
+            content={campaign.content}
+            footerText={campaign.footer_text ?? ""}
+            footerWebsite={campaign.footer_website ?? ""}
+            footerPhone={campaign.footer_phone ?? ""}
+          />
+          <section className="space-y-3">
+            <h2 className="text-sm font-medium text-ink">
+              {detail.sections.recipients}
+            </h2>
+            <CampaignReachSummary recipients={recipients} />
+            <CampaignRecipientsList recipients={recipients} />
+          </section>
+        </div>
       </div>
       <AppConfirmDialog
         open={confirmOpen}

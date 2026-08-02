@@ -23,6 +23,7 @@ function pad(value: number) {
 }
 
 type AppDateFieldProps = {
+  id?: string;
   value: Date | null;
   onChange: (value: Date) => void;
   mode?: "date" | "datetime-local";
@@ -35,6 +36,7 @@ type AppDateFieldProps = {
 };
 
 export default function AppDateField({
+  id,
   value,
   onChange,
   mode = "date",
@@ -107,12 +109,13 @@ export default function AppDateField({
     <Popover open={open} onOpenChange={setOpen}>
       <div className="relative">
         <Input
+          id={id}
           type="date"
           value={inputValue}
           min={minDate ? format(minDate, "yyyy-MM-dd") : undefined}
           max={maxDate ? format(maxDate, "yyyy-MM-dd") : undefined}
           onChange={(event) => handleManualDateChange(event.target.value)}
-          aria-label="Editar fecha manualmente"
+          aria-label={id ? undefined : "Editar fecha manualmente"}
           className={`${fieldClassName} pr-11 [&::-webkit-calendar-picker-indicator]:hidden`}
         />
         <PopoverTrigger asChild>

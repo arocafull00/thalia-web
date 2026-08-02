@@ -12,6 +12,11 @@ export const EMPLOYEES_COPY = {
     active: "Activos",
     inactive: "Inactivos",
   },
+  filterLabels: {
+    search: "Buscar empleado",
+    role: "Rol",
+    status: "Estado",
+  },
   roles: {
     all: "Todos",
     admin: "Admin",

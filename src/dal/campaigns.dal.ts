@@ -1,3 +1,8 @@
+import {
+  getCampaignSegments,
+  replaceCampaignSegments,
+} from "@/dal/campaign-segments.dal";
+import { copyCampaignImage } from "@/lib/campaign-image-storage";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type { Campaign, CampaignStatus } from "@/types/database.types";
@@ -51,6 +56,58 @@ export async function insertCampaign(input: CampaignInsert): Promise<Campaign> {
     .single();
 
   return unwrapSupabase(data, error) as Campaign;
+}
+
+const MAX_TITLE_LENGTH = 120;
+
+function buildCopyTitle(title: string, prefix: string): string {
+  const candidate = `${prefix} ${title}`;
+
+  if (candidate.length <= MAX_TITLE_LENGTH) {
+    return candidate;
+  }
+
+  return `${candidate.slice(0, MAX_TITLE_LENGTH - 1).trimEnd()}…`;
+}
+
+/**
+ * Clona una campaña en un borrador nuevo, con su mensaje, su imagen y sus
+ * segmentos. Es la alternativa a reenviar: las protecciones antiduplicado de la
+ * campaña original se quedan intactas y el envío nuevo parte de cero.
+ */
+export async function duplicateCampaign(
+  campaignId: string,
+  copyPrefix: string,
+): Promise<Campaign> {
+  const original = await getCampaign(campaignId);
+
+  const imageKey = original.image_url
+    ? await copyCampaignImage(original.image_url, original.clinic_id)
+    : null;
+
+  const duplicated = await insertCampaign({
+    clinic_id: original.clinic_id,
+    title: buildCopyTitle(original.title, copyPrefix),
+    content: original.content,
+    footer_text: original.footer_text,
+    footer_website: original.footer_website,
+    footer_phone: original.footer_phone,
+    image_url: imageKey,
+  });
+
+  const segments = await getCampaignSegments(campaignId);
+
+  if (segments.length > 0) {
+    await replaceCampaignSegments(
+      duplicated.id,
+      segments.map((segment) => ({
+        segment_type: segment.segment_type,
+        config: segment.config,
+      })),
+    );
+  }
+
+  return duplicated;
 }
 
 export type SendCampaignResult = {

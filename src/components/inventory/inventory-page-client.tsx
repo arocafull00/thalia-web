@@ -7,6 +7,7 @@ import InventoryItemCreateForm from "@/components/inventory/components/form/inve
 import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
 import InventoryFilters from "@/components/inventory/components/list/inventory-filters";
 import InventoryFiltersSheet from "@/components/inventory/components/list/inventory-filters-sheet";
+import InventoryStockSummary from "@/components/inventory/components/list/inventory-stock-summary";
 import InventoryTable from "@/components/inventory/components/list/inventory-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
@@ -20,7 +21,6 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
-import { Stat } from "@/components/ui/primitives/stat";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -126,23 +126,11 @@ export default function InventoryPageClient({
           />
         </PageStickyFiltersSection>
         <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          <div className="grid w-full px-3 grid-cols-3 divide-x divide-border-subtle">
-            <Stat
-              label={INVENTORY_COPY.summary.critical}
-              value={summary.critical}
-              tone="danger"
-            />
-            <Stat
-              label={INVENTORY_COPY.summary.low}
-              value={summary.low}
-              tone="warning"
-            />
-            <Stat
-              label={INVENTORY_COPY.summary.optimal}
-              value={summary.optimal}
-              tone="success"
-            />
-          </div>
+          <InventoryStockSummary
+            summary={summary}
+            activeStock={filters.stock}
+            onStockChange={(value) => setFilter("stock", value)}
+          />
           {inventory.isLoading ? <SkeletonList /> : null}
           {inventory.error ? (
             <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />

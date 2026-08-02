@@ -7,7 +7,8 @@ import { useCampaignImageUrl } from "@/lib/hooks/use-campaign-image-url";
 
 const { list, messagePreview } = MARKETING_COPY;
 
-const THUMB_CLASSNAME = "size-12 shrink-0 rounded-lg object-cover";
+// La celda no lleva ancho fijo: la columna crece con la miniatura.
+const THUMB_CLASSNAME = "size-20 shrink-0 rounded-lg object-cover";
 
 type CampaignImageCellProps = {
   storageKey: string | null;

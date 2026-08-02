@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 
@@ -54,39 +55,42 @@ export default function InventoryFiltersSheet({
       onClear={handleClear}
     >
       {categoryOptions.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-ink">
-            {INVENTORY_COPY.filters.category}
-          </p>
+        <FilterField
+          variant="sheet"
+          label={INVENTORY_COPY.filterLabels.category}
+        >
+          {({ controlId }) => (
+            <AppSearchableCombobox
+              id={controlId}
+              value={pending.category || null}
+              onValueChange={(v) =>
+                setPending((prev) => ({ ...prev, category: v ?? "" }))
+              }
+              options={categoryOptions}
+              placeholder={INVENTORY_COPY.filters.all}
+              searchPlaceholder={INVENTORY_COPY.filters.category}
+              allowClear
+              clearLabel={INVENTORY_COPY.filters.all}
+            />
+          )}
+        </FilterField>
+      ) : null}
+      <FilterField variant="sheet" label={INVENTORY_COPY.filterLabels.stock}>
+        {({ controlId }) => (
           <AppSearchableCombobox
-            value={pending.category || null}
+            id={controlId}
+            value={pending.stock || null}
             onValueChange={(v) =>
-              setPending((prev) => ({ ...prev, category: v ?? "" }))
+              setPending((prev) => ({ ...prev, stock: v ?? "" }))
             }
-            options={categoryOptions}
+            options={stockOptions}
             placeholder={INVENTORY_COPY.filters.all}
-            searchPlaceholder={INVENTORY_COPY.filters.category}
+            searchPlaceholder={INVENTORY_COPY.filters.stock}
             allowClear
             clearLabel={INVENTORY_COPY.filters.all}
           />
-        </div>
-      ) : null}
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {INVENTORY_COPY.filters.stock}
-        </p>
-        <AppSearchableCombobox
-          value={pending.stock || null}
-          onValueChange={(v) =>
-            setPending((prev) => ({ ...prev, stock: v ?? "" }))
-          }
-          options={stockOptions}
-          placeholder={INVENTORY_COPY.filters.all}
-          searchPlaceholder={INVENTORY_COPY.filters.stock}
-          allowClear
-          clearLabel={INVENTORY_COPY.filters.all}
-        />
-      </div>
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

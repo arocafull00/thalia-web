@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 
@@ -49,22 +50,22 @@ export default function PatientsFiltersSheet({
       onApply={handleApply}
       onClear={handleClear}
     >
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {PATIENTS_COPY.filters.status}
-        </p>
-        <AppSearchableCombobox
-          value={pending.status || null}
-          onValueChange={(v) =>
-            setPending((prev) => ({ ...prev, status: v ?? "" }))
-          }
-          options={statusOptions}
-          placeholder={PATIENTS_COPY.filters.all}
-          searchPlaceholder={PATIENTS_COPY.filters.status}
-          allowClear
-          clearLabel={PATIENTS_COPY.filters.all}
-        />
-      </div>
+      <FilterField variant="sheet" label={PATIENTS_COPY.filterLabels.status}>
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.status || null}
+            onValueChange={(v) =>
+              setPending((prev) => ({ ...prev, status: v ?? "" }))
+            }
+            options={statusOptions}
+            placeholder={PATIENTS_COPY.filters.all}
+            searchPlaceholder={PATIENTS_COPY.filters.status}
+            allowClear
+            clearLabel={PATIENTS_COPY.filters.all}
+          />
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

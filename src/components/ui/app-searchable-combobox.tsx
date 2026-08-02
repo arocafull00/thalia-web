@@ -30,6 +30,8 @@ export type AppSearchableComboboxOption = {
 };
 
 type AppSearchableComboboxProps = {
+  id?: string;
+  ariaLabel?: string;
   value: string | null;
   onValueChange: (value: string | null) => void;
   options: AppSearchableComboboxOption[];
@@ -58,6 +60,8 @@ const popupClassName =
   "pointer-events-auto z-100 min-w-64 rounded-[14px] border border-border/60 bg-surface p-2 shadow-float ring-0";
 
 export default function AppSearchableCombobox({
+  id,
+  ariaLabel,
   value,
   onValueChange,
   options,
@@ -178,6 +182,8 @@ export default function AppSearchableCombobox({
         disabled={disabled || showInitialLoading}
       >
         <ComboboxTrigger
+          id={id}
+          aria-label={ariaLabel}
           data-testid={testId}
           className={cn(triggerClassName, className)}
         >

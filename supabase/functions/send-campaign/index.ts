@@ -28,6 +28,9 @@ function jsonResponse(payload: unknown, status = 200): Response {
   });
 }
 
+// Debe producir el mismo texto que campaign-message-preview.tsx en la app: son
+// dos implementaciones porque Deno no puede importar del bundle de Next, así
+// que cualquier cambio aquí hay que replicarlo allí.
 function buildBody(campaign: {
   content: string;
   footer_text: string | null;
@@ -35,12 +38,15 @@ function buildBody(campaign: {
   footer_phone: string | null;
 }): string {
   const footer = [
-    campaign.footer_text,
-    campaign.footer_website,
-    campaign.footer_phone,
+    campaign.footer_text?.trim(),
+    campaign.footer_website?.trim()
+      ? `Web: ${campaign.footer_website.trim()}`
+      : "",
+    campaign.footer_phone?.trim()
+      ? `Móvil: ${campaign.footer_phone.trim()}`
+      : "",
   ]
-    .map((part) => part?.trim() ?? "")
-    .filter((part) => part.length > 0)
+    .filter((part): part is string => Boolean(part))
     .join(" · ");
 
   return footer ? `${campaign.content}\n\n${footer}` : campaign.content;

@@ -6,6 +6,8 @@ export const APPOINTMENT_CREATE_COPY = {
     patient: "Paciente",
     employee: "Profesional",
     startsAt: "Fecha y hora",
+    date: "Fecha",
+    time: "Hora",
     treatments: "Tratamientos",
     notes: "Notas",
     requiredMark: "*",

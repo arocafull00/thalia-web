@@ -1,4 +1,4 @@
-import { endOfDay, format, startOfDay } from "date-fns";
+import { endOfDay, startOfDay } from "date-fns";
 import { useMemo } from "react";
 
 import {
@@ -6,6 +6,7 @@ import {
   getDefaultAppointmentDateRange,
   parseAppointmentDateParam,
 } from "@/components/appointments/components/appointment-date-range";
+import { formatClinicDayKey } from "@/lib/format";
 import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
 import { appointmentsKey } from "@/stores/appointments-store";
@@ -102,9 +103,15 @@ export function useAppointmentsPage(
       );
     });
 
+    const sorted = filtered.toSorted(
+      (left, right) =>
+        new Date(right.starts_at).getTime() -
+        new Date(left.starts_at).getTime(),
+    );
+
     const byDay = new Map<string, typeof filtered>();
-    for (const appt of filtered) {
-      const day = format(new Date(appt.starts_at), "yyyy-MM-dd");
+    for (const appt of sorted) {
+      const day = formatClinicDayKey(appt.starts_at);
       if (!byDay.has(day)) {
         byDay.set(day, []);
       }

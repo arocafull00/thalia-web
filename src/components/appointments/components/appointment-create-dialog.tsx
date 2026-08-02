@@ -64,7 +64,7 @@ export default function AppointmentCreateDialog({
             {APPOINTMENT_CREATE_COPY.description}
           </AppDialogDescription>
         </AppDialogHeader>
-        <div className="min-h-0 flex-1 overflow-y-auto px-1">
+        <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-1">
           {loading ? (
             <LoaderInline />
           ) : (

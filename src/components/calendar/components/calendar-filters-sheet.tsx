@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import CalendarViewModeToggle from "@/components/calendar/components/calendar-view-mode-toggle";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { Button } from "@/components/ui/button";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -86,17 +87,23 @@ export default function CalendarFiltersSheet({
       onApply={handleApply}
       onClear={handleClear}
     >
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {CALENDAR_COPY.filters.view}
-        </p>
-        <CalendarViewModeToggle
-          viewMode={pending.viewMode}
-          modes={viewModes}
-          fullWidth
-          onChange={(viewMode) => setPending((prev) => ({ ...prev, viewMode }))}
-        />
-      </div>
+      <FilterField
+        variant="sheet"
+        association="labelledby"
+        label={CALENDAR_COPY.filterLabels.view}
+      >
+        {({ labelId }) => (
+          <CalendarViewModeToggle
+            labelledBy={labelId}
+            viewMode={pending.viewMode}
+            modes={viewModes}
+            fullWidth
+            onChange={(viewMode) =>
+              setPending((prev) => ({ ...prev, viewMode }))
+            }
+          />
+        )}
+      </FilterField>
 
       <Button
         type="button"
@@ -107,24 +114,24 @@ export default function CalendarFiltersSheet({
         {CALENDAR_COPY.toolbar.today}
       </Button>
 
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {CALENDAR_COPY.filters.employee}
-        </p>
-        <AppSearchableCombobox
-          value={pending.employeeId}
-          onValueChange={(value) =>
-            setPending((prev) => ({ ...prev, employeeId: value }))
-          }
-          options={employeeOptions}
-          placeholder={CALENDAR_COPY.filters.all}
-          searchPlaceholder={CALENDAR_COPY.filters.searchEmployee}
-          allowClear
-          clearLabel={CALENDAR_COPY.filters.all}
-          variant="pill"
-          triggerLeading={<Users size={16} />}
-        />
-      </div>
+      <FilterField variant="sheet" label={CALENDAR_COPY.filterLabels.employee}>
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.employeeId}
+            onValueChange={(value) =>
+              setPending((prev) => ({ ...prev, employeeId: value }))
+            }
+            options={employeeOptions}
+            placeholder={CALENDAR_COPY.filters.all}
+            searchPlaceholder={CALENDAR_COPY.filters.searchEmployee}
+            allowClear
+            clearLabel={CALENDAR_COPY.filters.all}
+            variant="pill"
+            triggerLeading={<Users size={16} />}
+          />
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

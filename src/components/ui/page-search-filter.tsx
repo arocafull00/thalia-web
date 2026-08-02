@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type PageSearchFilterProps = {
+  id?: string;
   value: string;
   placeholder: string;
   clearLabel: string;
@@ -13,6 +14,7 @@ type PageSearchFilterProps = {
 };
 
 export default function PageSearchFilter({
+  id,
   value,
   placeholder,
   clearLabel,
@@ -39,11 +41,12 @@ export default function PageSearchFilter({
         aria-hidden
       />
       <input
+        id={id}
         type="search"
         value={inputValue}
         onChange={(event) => handleInputChange(event.target.value)}
         placeholder={placeholder}
-        aria-label={placeholder}
+        aria-label={id ? undefined : placeholder}
         className="w-full rounded-full border border-border-field bg-surface py-2 pl-10 pr-10 text-sm text-ink outline-none ring-primary focus:ring-2"
       />
       {inputValue ? (

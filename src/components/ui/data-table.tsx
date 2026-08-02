@@ -25,12 +25,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+const EMPTY_SORTING: SortingState = [];
+
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   emptyMessage?: string;
   enablePagination?: boolean;
   enableSorting?: boolean;
+  initialSorting?: SortingState;
   onRowClick?: (row: TData) => void;
   pageSize?: number;
   mobileColumns?: MobileCardColumn<TData>[];
@@ -44,13 +47,14 @@ export function DataTable<TData, TValue>({
   emptyMessage = "No hay resultados.",
   enablePagination = false,
   enableSorting = false,
+  initialSorting = EMPTY_SORTING,
   onRowClick,
   pageSize = 10,
   mobileColumns,
   mobileActions,
   getMobileRowKey,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
   const table = useReactTable({
     columns,

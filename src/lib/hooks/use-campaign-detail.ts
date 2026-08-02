@@ -5,7 +5,7 @@ import {
   countCampaignPatients,
   getCampaignRecipients,
 } from "@/dal/campaign-recipients.dal";
-import { sendCampaign } from "@/dal/campaigns.dal";
+import { duplicateCampaign, sendCampaign } from "@/dal/campaigns.dal";
 import { useCampaign } from "@/lib/hooks/use-campaigns";
 import { logger } from "@/lib/logger";
 import { notifySuccess } from "@/lib/sound";
@@ -76,6 +76,31 @@ export function useCampaignDetail(campaignId: string) {
       .finally(() => setIsSending(false));
   }, [campaignId, fetchCampaign, refresh]);
 
+  const [isDuplicating, setIsDuplicating] = useState(false);
+
+  const duplicate = useCallback(
+    (onDuplicated: (newCampaignId: string) => void) => {
+      setIsDuplicating(true);
+      setSendError(null);
+
+      duplicateCampaign(campaignId, MARKETING_COPY.duplicate.copyPrefix)
+        .then((created) => {
+          notifySuccess(MARKETING_COPY.duplicate.success);
+          onDuplicated(created.id);
+        })
+        .catch((cause) => {
+          logger.captureException(cause, {
+            hook: "use-campaign-detail",
+            action: "duplicateCampaign",
+            campaignId,
+          });
+          setSendError(MARKETING_COPY.duplicate.error);
+        })
+        .finally(() => setIsDuplicating(false));
+    },
+    [campaignId],
+  );
+
   return {
     campaign: campaign.data,
     isLoading: campaign.isLoading,
@@ -85,6 +110,8 @@ export function useCampaignDetail(campaignId: string) {
     isSending,
     sendError,
     send,
+    duplicate,
+    isDuplicating,
     refresh,
   };
 }

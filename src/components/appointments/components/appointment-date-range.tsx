@@ -8,10 +8,12 @@ import { useMemo, useState } from "react";
 
 import AppDateField from "@/components/ui/app-date-field";
 import { Button } from "@/components/ui/button";
+import FilterField from "@/components/ui/filter-field";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { formatLocalDateInputValue } from "@/lib/date-input";
 
 type AppointmentDateRangeProps = {
+  id?: string;
   from: Date;
   to: Date;
   onFromChange: (value: Date) => void;
@@ -46,6 +48,7 @@ export function formatAppointmentDateRangeLabel(from: Date, to: Date) {
 }
 
 export default function AppointmentDateRange({
+  id,
   from,
   to,
   onFromChange,
@@ -61,6 +64,7 @@ export default function AppointmentDateRange({
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <Button
+          id={id}
           type="button"
           variant="outline"
           className="inline-flex w-full min-w-0 justify-between gap-2 rounded-full px-4 py-2 text-sm motion-reduce:transition-none"
@@ -79,14 +83,26 @@ export default function AppointmentDateRange({
           align="start"
         >
           <div className="flex flex-col gap-3">
-            <label className="flex flex-col gap-1.5 text-sm text-ink-secondary">
-              <span>{APPOINTMENTS_COPY.filters.dateFrom}</span>
-              <AppDateField value={from} onChange={onFromChange} />
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm text-ink-secondary">
-              <span>{APPOINTMENTS_COPY.filters.dateTo}</span>
-              <AppDateField value={to} onChange={onToChange} />
-            </label>
+            <FilterField
+              variant="sheet"
+              label={APPOINTMENTS_COPY.filters.dateFrom}
+            >
+              {({ controlId }) => (
+                <AppDateField
+                  id={controlId}
+                  value={from}
+                  onChange={onFromChange}
+                />
+              )}
+            </FilterField>
+            <FilterField
+              variant="sheet"
+              label={APPOINTMENTS_COPY.filters.dateTo}
+            >
+              {({ controlId }) => (
+                <AppDateField id={controlId} value={to} onChange={onToChange} />
+              )}
+            </FilterField>
           </div>
         </Popover.Content>
       </Popover.Portal>

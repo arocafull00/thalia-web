@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import AppDateField from "@/components/ui/app-date-field";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
+import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { FILES_COPY } from "@/copy/files-copy";
 import { PATIENT_FILE_CATEGORY_OPTIONS } from "@/copy/patient-files-copy";
@@ -61,77 +62,78 @@ export default function FilesFiltersSheet({
       onClear={handleClear}
       contentClassName="min-h-[72dvh]"
     >
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {FILES_COPY.filters.category}
-        </p>
-        <AppSearchableCombobox
-          value={pending.category || null}
-          onValueChange={(value) =>
-            setPending((current) => ({
-              ...current,
-              category: value ?? "",
-            }))
-          }
-          options={PATIENT_FILE_CATEGORY_OPTIONS}
-          placeholder={FILES_COPY.filters.allCategories}
-          searchPlaceholder={FILES_COPY.filters.category}
-          clearLabel={FILES_COPY.filters.allCategories}
-          allowClear
-          showSearch={false}
-        />
-      </div>
+      <FilterField variant="sheet" label={FILES_COPY.filterLabels.category}>
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.category || null}
+            onValueChange={(value) =>
+              setPending((current) => ({
+                ...current,
+                category: value ?? "",
+              }))
+            }
+            options={PATIENT_FILE_CATEGORY_OPTIONS}
+            placeholder={FILES_COPY.filters.allCategories}
+            searchPlaceholder={FILES_COPY.filters.category}
+            clearLabel={FILES_COPY.filters.allCategories}
+            allowClear
+            showSearch={false}
+          />
+        )}
+      </FilterField>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium text-ink">
-          {FILES_COPY.filters.date}
-        </p>
-        <label className="block space-y-1.5 text-sm text-ink-secondary">
-          <span>{FILES_COPY.filters.dateFrom}</span>
-          <AppDateField
-            value={pendingFrom}
-            onChange={(value) =>
-              setPending((current) => ({
-                ...current,
-                from: formatLocalDateInputValue(value),
-              }))
-            }
-            maxDate={pendingTo ?? undefined}
-          />
-        </label>
-        <label className="block space-y-1.5 text-sm text-ink-secondary">
-          <span>{FILES_COPY.filters.dateTo}</span>
-          <AppDateField
-            value={pendingTo}
-            onChange={(value) =>
-              setPending((current) => ({
-                ...current,
-                to: formatLocalDateInputValue(value),
-              }))
-            }
-            minDate={pendingFrom ?? undefined}
-          />
-        </label>
+        <FilterField variant="sheet" label={FILES_COPY.filterLabels.dateFrom}>
+          {({ controlId }) => (
+            <AppDateField
+              id={controlId}
+              value={pendingFrom}
+              onChange={(value) =>
+                setPending((current) => ({
+                  ...current,
+                  from: formatLocalDateInputValue(value),
+                }))
+              }
+              maxDate={pendingTo ?? undefined}
+            />
+          )}
+        </FilterField>
+        <FilterField variant="sheet" label={FILES_COPY.filterLabels.dateTo}>
+          {({ controlId }) => (
+            <AppDateField
+              id={controlId}
+              value={pendingTo}
+              onChange={(value) =>
+                setPending((current) => ({
+                  ...current,
+                  to: formatLocalDateInputValue(value),
+                }))
+              }
+              minDate={pendingFrom ?? undefined}
+            />
+          )}
+        </FilterField>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-ink">
-          {FILES_COPY.filters.sort}
-        </p>
-        <AppSearchableCombobox
-          value={pending.sort}
-          onValueChange={(value) =>
-            setPending((current) => ({
-              ...current,
-              sort: value ?? "newest",
-            }))
-          }
-          options={sortOptions}
-          placeholder={FILES_COPY.filters.sort}
-          searchPlaceholder={FILES_COPY.filters.sort}
-          showSearch={false}
-        />
-      </div>
+      <FilterField variant="sheet" label={FILES_COPY.filterLabels.sort}>
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={pending.sort}
+            onValueChange={(value) =>
+              setPending((current) => ({
+                ...current,
+                sort: value ?? "newest",
+              }))
+            }
+            options={sortOptions}
+            placeholder={FILES_COPY.filters.sort}
+            searchPlaceholder={FILES_COPY.filters.sort}
+            showSearch={false}
+          />
+        )}
+      </FilterField>
     </FiltersSheet>
   );
 }

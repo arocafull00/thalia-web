@@ -14,7 +14,6 @@ import {
   DropzoneTrigger,
   useDropzone,
 } from "@/components/ui/dropzone";
-import { CAMPAIGN_IMAGE_MAX_BYTES } from "@/lib/campaign-image-storage";
 
 const { image } = MARKETING_COPY;
 
@@ -31,8 +30,8 @@ export default function CampaignImageField({
       result: URL.createObjectURL(file),
     }),
     validation: {
+      // Sin tope de tamaño: las grandes se comprimen al subir.
       accept: { "image/*": [".png", ".jpg", ".jpeg", ".webp"] },
-      maxSize: CAMPAIGN_IMAGE_MAX_BYTES,
       maxFiles: 1,
     },
   });

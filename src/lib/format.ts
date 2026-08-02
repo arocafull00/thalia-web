@@ -5,7 +5,9 @@ import {
   parseISO,
 } from "date-fns";
 import { es } from "date-fns/locale";
+import { toZonedTime } from "date-fns-tz";
 
+import { CLINIC_TIME_ZONE } from "@/lib/constants";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -16,20 +18,19 @@ import type {
   TransactionType,
 } from "@/types/database.types";
 
-function toLocalDate(value: string | Date) {
-  if (value instanceof Date) {
-    return value;
-  }
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+function toClinicDate(value: string | Date) {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return parseISO(value);
   }
 
-  return new Date(value);
+  return toZonedTime(
+    value instanceof Date ? value : new Date(value),
+    CLINIC_TIME_ZONE,
+  );
 }
 
 export function formatInputDate(value: string | Date) {
-  return format(toLocalDate(value), "d MMM yyyy", { locale: es });
+  return format(toClinicDate(value), "d MMM yyyy", { locale: es });
 }
 
 export function formatBirthDateWithAge(birthDate: string | null) {
@@ -37,7 +38,7 @@ export function formatBirthDateWithAge(birthDate: string | null) {
     return null;
   }
 
-  const age = differenceInYears(new Date(), toLocalDate(birthDate));
+  const age = differenceInYears(new Date(), toClinicDate(birthDate));
 
   return `${formatInputDate(birthDate)} (${age} años)`;
 }
@@ -47,32 +48,36 @@ export function formatAge(birthDate: string | null) {
     return null;
   }
 
-  const age = differenceInYears(new Date(), toLocalDate(birthDate));
+  const age = differenceInYears(new Date(), toClinicDate(birthDate));
 
   return `${age} años`;
 }
 
 export function formatPatientReferenceId(id: string, createdAt: string | null) {
   const year = createdAt
-    ? new Date(createdAt).getFullYear()
-    : new Date().getFullYear();
+    ? toClinicDate(createdAt).getFullYear()
+    : toClinicDate(new Date()).getFullYear();
   const suffix = id.replace(/-/g, "").slice(0, 4).toUpperCase();
 
   return `#PAC-${year}-${suffix}`;
 }
 
 export function formatAppointmentDay(value: string | Date) {
-  return format(toLocalDate(value), "d", { locale: es });
+  return format(toClinicDate(value), "d", { locale: es });
 }
 
 export function formatAppointmentMonth(value: string | Date) {
-  return format(toLocalDate(value), "MMM", { locale: es })
+  return format(toClinicDate(value), "MMM", { locale: es })
     .replace(".", "")
     .toUpperCase();
 }
 
 export function formatInputDateTime(value: string | Date) {
-  return format(toLocalDate(value), "d MMM yyyy, HH:mm", { locale: es });
+  return format(toClinicDate(value), "d MMM yyyy, HH:mm", { locale: es });
+}
+
+export function formatClinicDayKey(value: string | Date) {
+  return format(toClinicDate(value), "yyyy-MM-dd");
 }
 
 export function formatCurrency(value: number) {
@@ -100,6 +105,7 @@ export function formatDateTime(value: string | Date) {
     hour: "2-digit",
     minute: "2-digit",
     month: "short",
+    timeZone: CLINIC_TIME_ZONE,
   }).format(new Date(value));
 }
 
@@ -107,6 +113,7 @@ export function formatTime(value: string | Date) {
   return new Intl.DateTimeFormat("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: CLINIC_TIME_ZONE,
   }).format(new Date(value));
 }
 
@@ -117,7 +124,7 @@ export function formatAppointmentReferenceId(id: string) {
 }
 
 export function formatAppointmentDetailDay(value: string | Date) {
-  return format(toLocalDate(value), "d MMMM", { locale: es });
+  return format(toClinicDate(value), "d MMMM", { locale: es });
 }
 
 export function formatAppointmentTimeRange(
@@ -146,7 +153,7 @@ export function formatPatientLastVisitLabel(lastVisitAt: string | Date | null) {
     return null;
   }
 
-  const distance = formatDistanceToNow(toLocalDate(lastVisitAt), {
+  const distance = formatDistanceToNow(new Date(lastVisitAt), {
     addSuffix: false,
     locale: es,
   });
@@ -158,6 +165,7 @@ export function formatDate(value: string | Date) {
   return new Intl.DateTimeFormat("es-ES", {
     day: "2-digit",
     month: "long",
+    timeZone: CLINIC_TIME_ZONE,
     year: "numeric",
   }).format(new Date(value));
 }
@@ -218,7 +226,7 @@ export function appointmentStatusVariant(status: AppointmentStatus | null) {
 }
 
 export function formatAppointmentMonthGroup(value: string | Date) {
-  return format(toLocalDate(value), "MMM yyyy", { locale: es }).replace(
+  return format(toClinicDate(value), "MMM yyyy", { locale: es }).replace(
     ".",
     "",
   );

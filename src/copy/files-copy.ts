@@ -21,6 +21,14 @@ export const FILES_COPY = {
     clearDate: "Limpiar fechas",
     sort: "Orden",
   },
+  filterLabels: {
+    search: "Buscar por paciente",
+    category: "Categoría",
+    date: "Fecha",
+    dateFrom: "Desde",
+    dateTo: "Hasta",
+    sort: "Orden",
+  },
   sort: {
     newest: "Más recientes",
     oldest: "Más antiguos",

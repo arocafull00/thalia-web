@@ -6,6 +6,10 @@ export const TREATMENTS_COPY = {
     loadError: "No se pudo cargar el catálogo de tratamientos.",
     allCategories: "Todos",
   },
+  filterLabels: {
+    search: "Buscar tratamiento",
+    category: "Categoría",
+  },
   row: {
     duration: "min",
     materials: "materiales",

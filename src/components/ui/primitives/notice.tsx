@@ -12,7 +12,7 @@ export function Notice({ message, tone = "neutral" }: NoticeProps) {
     tone === "danger" ? "red" : tone === "warning" ? "amber" : "gray";
 
   return (
-    <Callout.Root color={color} size="1">
+    <Callout.Root color={color} size="1" className="px-3 py-2.5">
       <Callout.Text>{message}</Callout.Text>
     </Callout.Root>
   );

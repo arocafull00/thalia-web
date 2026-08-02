@@ -3030,8 +3030,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/appointments.spec.ts": {
-    "mtime": 1785253345.108233,
-    "ast_hash": "b75025d2c933c9aa334a0bd7ca25f291",
+    "mtime": 1785701456.1689408,
+    "ast_hash": "0832c2363b94774a4285b4895576f54d",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/lib/schemas/appointment-materials-schema.ts": {
@@ -4225,8 +4225,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/gallery.spec.ts": {
-    "mtime": 1785699527.2023335,
-    "ast_hash": "35d4fc4594244567b9fbb4b94413e86e",
+    "mtime": 1785701387.7980082,
+    "ast_hash": "b555b60533b47400d9b2e9ad5919580f",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/ui/app-date-popover-field.tsx": {
@@ -5825,8 +5825,8 @@
     "semantic_hash": ""
   },
   "src/tests/e2e/auth.spec.ts": {
-    "mtime": 1785699527.186301,
-    "ast_hash": "e20f1a5a59487f0bde6a42e2fb382033",
+    "mtime": 1785701387.7970033,
+    "ast_hash": "1a6508cee1f380307d4fc662e870c226",
     "semantic_hash": ""
   },
   "src/stores/calendar-store.ts": {
@@ -5855,8 +5855,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/button.tsx": {
-    "mtime": 1785700922.1268158,
-    "ast_hash": "e0bcbeb950c4ad761198bb90daf5bcb1",
+    "mtime": 1785701377.878684,
+    "ast_hash": "158a7e6032c2ee3edb707a00f1bc4490",
     "semantic_hash": ""
   },
   "src/lib/owner-clinic-form.ts": {

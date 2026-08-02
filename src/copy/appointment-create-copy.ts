@@ -33,8 +33,7 @@ export const APPOINTMENT_CREATE_COPY = {
     invalidLocalTime:
       "Esa hora no existe o se repite por el cambio horario. Elige otra hora.",
   },
-  pastAppointmentWarning:
-    "Esta cita ya ha ocurrido. Puedes editarla, pero revisa bien los cambios.",
+  pastAppointmentWarning: "Esta cita ya ha ocurrido.",
   findSlots: {
     button: "Buscar hueco",
     loading: "Buscando...",

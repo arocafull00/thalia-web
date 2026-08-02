@@ -4,7 +4,6 @@ import PatientAvatarField from "@/components/patients/components/shared/patient-
 import { Badge } from "@/components/ui/badge";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { ProfileIdentitySummary } from "@/components/ui/profile/profile-identity-summary";
-import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import type { Employee } from "@/types/database.types";
 
@@ -24,7 +23,6 @@ export default function SettingsDetailHeader({
   onAvatarFileSelected,
 }: SettingsDetailHeaderProps) {
   const initials = getProfileInitials(profile.full_name);
-  const isAdmin = profile.role === "admin";
 
   return (
     <header className="shrink-0 border-b border-border-subtle bg-surface">
@@ -43,16 +41,7 @@ export default function SettingsDetailHeader({
             phone={profile.phone}
             email={userEmail}
             badges={
-              <>
-                <Badge variant="purple">
-                  {employeeRoleLabel(profile.role)}
-                </Badge>
-                {isAdmin ? (
-                  <Badge variant="default">
-                    {SETTINGS_COPY.profile.adminBadge}
-                  </Badge>
-                ) : null}
-              </>
+              <Badge variant="purple">{employeeRoleLabel(profile.role)}</Badge>
             }
           />
         </div>

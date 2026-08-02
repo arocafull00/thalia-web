@@ -6,7 +6,6 @@ import type { Employee } from "@/types/database.types";
 type SettingsProfileSidebarProps = {
   canViewClinicRequests: boolean;
   displayUri: string | null;
-  isAdmin: boolean;
   onEdit: () => void;
   onPickAvatar: () => void;
   pendingRequestsCount: number;
@@ -18,7 +17,6 @@ type SettingsProfileSidebarProps = {
 export default function SettingsProfileSidebar({
   canViewClinicRequests,
   displayUri,
-  isAdmin,
   onEdit,
   onPickAvatar,
   pendingRequestsCount,
@@ -30,7 +28,6 @@ export default function SettingsProfileSidebar({
     <aside className="order-1 flex flex-col border-b border-border-subtle lg:order-1 lg:h-full lg:min-h-0 lg:border-b-0 lg:border-r">
       <SettingsProfileHeader
         displayUri={displayUri}
-        isAdmin={isAdmin}
         onPickAvatar={onPickAvatar}
         profile={profile}
         uploadPending={uploadPending}

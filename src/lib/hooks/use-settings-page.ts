@@ -107,7 +107,15 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
 
     const previewUrl = URL.createObjectURL(compressedFile);
     setLocalAvatarUri(previewUrl);
-    uploadAvatar.mutate({ file: compressedFile });
+    uploadAvatar.mutate(
+      { file: compressedFile },
+      {
+        onSuccess: () => {
+          URL.revokeObjectURL(previewUrl);
+          setLocalAvatarUri(null);
+        },
+      },
+    );
   };
 
   return {

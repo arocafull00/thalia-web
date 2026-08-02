@@ -7,13 +7,11 @@ import { Button } from "@/components/ui/button";
 import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { ProfileIdentitySummary } from "@/components/ui/profile/profile-identity-summary";
-import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import type { Employee } from "@/types/database.types";
 
 type SettingsProfileHeaderProps = {
   displayUri: string | null;
-  isAdmin: boolean;
   onPickAvatar: () => void;
   profile: Employee;
   uploadPending: boolean;
@@ -22,7 +20,6 @@ type SettingsProfileHeaderProps = {
 
 export default function SettingsProfileHeader({
   displayUri,
-  isAdmin,
   onPickAvatar,
   profile,
   uploadPending,
@@ -59,14 +56,7 @@ export default function SettingsProfileHeader({
         phone={profile.phone}
         email={userEmail}
         badges={
-          <>
-            <Badge variant="purple">{employeeRoleLabel(profile.role)}</Badge>
-            {isAdmin ? (
-              <Badge variant="default">
-                {SETTINGS_COPY.profile.adminBadge}
-              </Badge>
-            ) : null}
-          </>
+          <Badge variant="purple">{employeeRoleLabel(profile.role)}</Badge>
         }
       />
     </div>

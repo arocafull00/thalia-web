@@ -10,6 +10,7 @@ type ProfileAvatarImageProps = {
   avatarStyle?: CSSProperties;
   className?: string;
   fallbackClassName?: string;
+  priority?: boolean;
 };
 
 const sizeClasses = {
@@ -18,10 +19,10 @@ const sizeClasses = {
   xl: "size-24",
 } as const;
 
-const sizePixels = {
-  md: 128,
-  lg: 160,
-  xl: 192,
+const sizeHints = {
+  md: "128px",
+  lg: "160px",
+  xl: "192px",
 } as const;
 
 export function ProfileAvatarImage({
@@ -31,8 +32,8 @@ export function ProfileAvatarImage({
   avatarStyle,
   className,
   fallbackClassName,
+  priority = false,
 }: ProfileAvatarImageProps) {
-  const dimension = sizePixels[size];
   const sizeClass = sizeClasses[size];
 
   return (
@@ -44,11 +45,11 @@ export function ProfileAvatarImage({
         <Image
           src={src}
           alt=""
-          width={dimension}
-          height={dimension}
-          sizes={`${dimension / 2}px`}
+          fill
+          sizes={sizeHints[size]}
+          priority={priority}
           unoptimized
-          className="size-full object-cover"
+          className="object-cover"
         />
       ) : (
         <span

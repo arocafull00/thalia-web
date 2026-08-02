@@ -9,6 +9,7 @@ import { ProfileIdentitySummary } from "@/components/ui/profile/profile-identity
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
+import { resolveAvatarDisplayUri } from "@/lib/storage";
 import type { Employee } from "@/types/database.types";
 
 type EmployeeProfileHeaderProps = {
@@ -33,6 +34,10 @@ export default function EmployeeProfileHeader({
 }: EmployeeProfileHeaderProps) {
   const isInactive = employee.active === false;
   const resolvedAvatarUrl = useFileUrl(employee.avatar_url ?? null);
+  const displayUri = resolveAvatarDisplayUri(
+    resolvedAvatarUrl,
+    employee.updated_at,
+  );
   const avatarStyle = getAvatarStyle(employee.color);
   const hasCustomColor = Boolean(employee.color);
   const initials = getProfileInitials(employee.full_name);
@@ -41,7 +46,7 @@ export default function EmployeeProfileHeader({
     <div className="flex flex-col items-center gap-3 px-4 py-6 text-center lg:gap-4 lg:px-6 lg:py-8">
       <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
         <ProfileAvatarImage
-          src={resolvedAvatarUrl}
+          src={displayUri}
           initials={initials}
           size="lg"
           avatarStyle={avatarStyle}

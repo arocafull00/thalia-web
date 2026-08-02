@@ -20,6 +20,7 @@ import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useSettingsPageActions } from "@/lib/hooks/use-settings-page";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { getSettingsSectionFromPathname } from "@/lib/settings-sections";
+import { resolveAvatarDisplayUri } from "@/lib/storage";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 import type { Employee } from "@/types/database.types";
 
@@ -40,7 +41,11 @@ export default function SettingsLayoutClient({
   const { profile, user } = useAuth();
   const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
-  const displayUri = localAvatarUri ?? resolvedAvatarUrl;
+  const displayUri = resolveAvatarDisplayUri(
+    resolvedAvatarUrl,
+    profile?.updated_at,
+    localAvatarUri,
+  );
   const {
     activeEmployeesCount,
     handleAvatarPress,

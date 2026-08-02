@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import { useUploadPatientAvatar } from "@/lib/hooks/use-patients";
 import { compressAvatarImage } from "@/lib/image-compression";
-import { withFileUrlCacheBust } from "@/lib/storage";
+import { resolveAvatarDisplayUri } from "@/lib/storage";
 import type { Patient } from "@/types/database.types";
 
 function getPatientAvatarKey(
@@ -37,7 +37,10 @@ export function usePatientAvatar(patient: Patient | null | undefined) {
       return activeLocalUri;
     }
 
-    return withFileUrlCacheBust(resolvedAvatarUrl, patient?.updated_at ?? null);
+    return resolveAvatarDisplayUri(
+      resolvedAvatarUrl,
+      patient?.updated_at ?? null,
+    );
   }, [activeLocalUri, patient?.updated_at, resolvedAvatarUrl]);
 
   useEffect(() => {

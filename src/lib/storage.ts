@@ -27,6 +27,18 @@ export function withFileUrlCacheBust(
   return `${url}${separator}v=${encodeURIComponent(version)}`;
 }
 
+export function resolveAvatarDisplayUri(
+  resolvedUrl: string | null,
+  version: string | null | undefined,
+  localPreviewUri?: string | null,
+) {
+  if (localPreviewUri) {
+    return localPreviewUri;
+  }
+
+  return withFileUrlCacheBust(resolvedUrl, version ?? null);
+}
+
 export function peekCachedFileUrl(key: string | null) {
   if (!key) {
     return null;

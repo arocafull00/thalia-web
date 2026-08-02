@@ -675,8 +675,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/sidebar-profile-footer.tsx": {
-    "mtime": 1785690407.7721727,
-    "ast_hash": "072a21afceb0e9de81690bffe952cfc1",
+    "mtime": 1785700758.0411959,
+    "ast_hash": "380d56c39ddf18e70c9ec228376dde24",
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaigns-columns.tsx": {
@@ -1945,8 +1945,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-avatar.ts": {
-    "mtime": 1783878313.424771,
-    "ast_hash": "14ed8266e0a285430dee8e77432e7316",
+    "mtime": 1785700763.7194562,
+    "ast_hash": "90009ab2be045bec0fe1128cbf763841",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/cleanup-demo.sql": {
@@ -2390,8 +2390,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-header.tsx": {
-    "mtime": 1785700525.1754153,
-    "ast_hash": "364a76069ced046be0528e61bc3712fb",
+    "mtime": 1785700674.56665,
+    "ast_hash": "d317bd1223eaf594b0e385af5e0c438b",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/.ci-artifact/playwright-report/data/d56a32c6036a6e5a53779702de756006383db397.webm": {
@@ -3375,8 +3375,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-profile-sidebar.tsx": {
-    "mtime": 1785690407.7335675,
-    "ast_hash": "39bd079af19ffa318b89f454806c94fe",
+    "mtime": 1785700690.291427,
+    "ast_hash": "de832c559c692ad8fc57eb632a5615aa",
     "semantic_hash": ""
   },
   "supabase/seed.sql": {
@@ -3790,8 +3790,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-header.tsx": {
-    "mtime": 1785700541.2324288,
-    "ast_hash": "bef941dfed95110d9094e2c5b46b5b8e",
+    "mtime": 1785700642.0523562,
+    "ast_hash": "75e479e819fc44a4fb8cda0fa1ab6fec",
     "semantic_hash": ""
   },
   "src/lib/supabase/server.ts": {
@@ -4320,8 +4320,8 @@
     "semantic_hash": ""
   },
   "src/lib/image-compression.ts": {
-    "mtime": 1785692952.3779113,
-    "ast_hash": "d823137ee9b366890863bf05f244a063",
+    "mtime": 1785700751.0208395,
+    "ast_hash": "f89ab36e8e412e102308d084449429ec",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.thumbnails/v4_v3_5044183634d44a94_jpeg_compositions_frames_01-no-deberias-recordarlo-todo.html_1920x1080_1785511118219_2.20.jpg": {
@@ -4990,8 +4990,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-settings-page.ts": {
-    "mtime": 1785699526.841276,
-    "ast_hash": "74ab8336c9ae3bdc0f82d29f4fb610fc",
+    "mtime": 1785700764.233868,
+    "ast_hash": "a87b43a52ed6cb7160c09daddf208512",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/instrumentation-client.ts": {
@@ -5325,8 +5325,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/detail/employee-profile-header.tsx": {
-    "mtime": 1785700550.275223,
-    "ast_hash": "19a01e92ef66646e07e5d1f026e01a56",
+    "mtime": 1785700756.5537436,
+    "ast_hash": "629e6d173759dd4c617c16f68dc69f80",
     "semantic_hash": ""
   },
   "src/stores/patient-images-store.ts": {
@@ -5535,8 +5535,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/settings-profile-panel.tsx": {
-    "mtime": 1785700542.8184054,
-    "ast_hash": "0b59c856340ff1ed0785ec06ed7edc55",
+    "mtime": 1785700756.5642653,
+    "ast_hash": "dee18f8ccbc568e59a6d2b566269b9ec",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/auth/login/components/login-form-panel.tsx": {
@@ -5570,8 +5570,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/detail/employee-avatar-display.tsx": {
-    "mtime": 1785700526.276904,
-    "ast_hash": "edd0bc36c25d41a4c09f91314dd4011f",
+    "mtime": 1785700756.0459516,
+    "ast_hash": "841b071c299e9c56ce77e59e16ccb297",
     "semantic_hash": ""
   },
   "src/components/ui/toggle-group.tsx": {
@@ -6875,8 +6875,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-profile-header.tsx": {
-    "mtime": 1785700534.253649,
-    "ast_hash": "7351087245d39ffe36d0e91726add76e",
+    "mtime": 1785700678.5322587,
+    "ast_hash": "58a7100ffc80b3ee62ff59278a21de02",
     "semantic_hash": ""
   },
   "pnpm-workspace.yaml": {
@@ -7075,8 +7075,8 @@
     "semantic_hash": ""
   },
   "src/lib/storage.ts": {
-    "mtime": 1785690407.769662,
-    "ast_hash": "855de9d7894d6b1cd1060b59ccb98c21",
+    "mtime": 1785700749.6825533,
+    "ast_hash": "14a01fd1d227253ff1c9d5e3d4cac817",
     "semantic_hash": ""
   },
   "src/components/ui/app-sidebar-nav-section.tsx": {
@@ -8000,8 +8000,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/settings-layout-client.tsx": {
-    "mtime": 1785699527.5298529,
-    "ast_hash": "2b7365a8d9be5705aca107897b639501",
+    "mtime": 1785700751.6545756,
+    "ast_hash": "39edcfeba1776fbfc91e04bfdf4cf544",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-density-toggle.tsx": {
@@ -8050,8 +8050,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-avatar-image.tsx": {
-    "mtime": 1785700540.7308078,
-    "ast_hash": "33179976b48eac86c163607d500649b5",
+    "mtime": 1785700750.1547098,
+    "ast_hash": "1b2341ec2a534335be06b8167acfaaaf",
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-identity-summary.tsx": {

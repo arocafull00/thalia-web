@@ -3,11 +3,11 @@ import imageCompression from "browser-image-compression";
 export async function compressAvatarImage(file: File): Promise<File> {
   try {
     return await imageCompression(file, {
-      maxSizeMB: 0.4,
-      maxWidthOrHeight: 1024,
+      maxSizeMB: 0.75,
+      maxWidthOrHeight: 768,
       useWebWorker: true,
       fileType: "image/webp",
-      initialQuality: 0.9,
+      initialQuality: 0.92,
     });
   } catch (error) {
     console.error("Avatar compression failed, using original file:", error);

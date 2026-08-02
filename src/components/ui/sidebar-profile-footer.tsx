@@ -1,38 +1,39 @@
 "use client";
 
-import { LogOut, Users } from "lucide-react";
-import Image from "next/image";
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
+import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import SidebarSignOutConfirmDialog from "@/components/ui/sidebar-sign-out-confirm-dialog";
 import { SIDEBAR_COPY } from "@/copy/sidebar-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
+import { resolveAvatarDisplayUri } from "@/lib/storage";
 
 export default function SidebarProfileFooter() {
   const { profile } = useAuth();
-  const avatarUrl = useFileUrl(profile?.avatar_url ?? null);
+  const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
+  const displayUri = resolveAvatarDisplayUri(
+    resolvedAvatarUrl,
+    profile?.updated_at,
+  );
   const [signOutOpen, setSignOutOpen] = useState(false);
+  const initials = profile?.full_name
+    ? getProfileInitials(profile.full_name)
+    : "?";
 
   return (
     <>
       <div className="flex items-center gap-3 px-6 py-5">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-subtle/40">
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt=""
-              width={40}
-              height={40}
-              unoptimized
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <Users size={16} className="text-ink-muted" />
-          )}
-        </div>
+        <ProfileAvatarImage
+          src={displayUri}
+          initials={initials}
+          size="md"
+          fallbackClassName="bg-primary-subtle/40 text-ink-muted"
+        />
         <div className="min-w-0 flex-1">
           <p
             className="truncate text-sm font-medium text-ink"

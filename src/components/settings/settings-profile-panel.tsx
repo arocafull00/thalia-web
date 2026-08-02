@@ -6,6 +6,7 @@ import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
+import { resolveAvatarDisplayUri } from "@/lib/storage";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 
 type SettingsProfilePanelProps = {
@@ -21,7 +22,11 @@ export default function SettingsProfilePanel({
   const { profile } = useAuth();
   const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
-  const displayUri = localAvatarUri ?? resolvedAvatarUrl;
+  const displayUri = resolveAvatarDisplayUri(
+    resolvedAvatarUrl,
+    profile?.updated_at,
+    localAvatarUri,
+  );
   const isAdmin = profile?.role === "admin";
 
   if (!profile) {

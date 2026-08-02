@@ -1945,8 +1945,8 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-avatar.ts": {
-    "mtime": 1785700763.7194562,
-    "ast_hash": "90009ab2be045bec0fe1128cbf763841",
+    "mtime": 1785700934.3249793,
+    "ast_hash": "7e932d49822c47f2edc60b53bd68f984",
     "semantic_hash": ""
   },
   "videos/thalia-product-promo/.hyperframes/cleanup-demo.sql": {
@@ -2390,8 +2390,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-detail-header.tsx": {
-    "mtime": 1785700674.56665,
-    "ast_hash": "d317bd1223eaf594b0e385af5e0c438b",
+    "mtime": 1785700934.2337587,
+    "ast_hash": "6893c22e4cd902d82e445b262b7b508b",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/.ci-artifact/playwright-report/data/d56a32c6036a6e5a53779702de756006383db397.webm": {
@@ -3375,8 +3375,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/components/settings-profile-sidebar.tsx": {
-    "mtime": 1785700690.291427,
-    "ast_hash": "de832c559c692ad8fc57eb632a5615aa",
+    "mtime": 1785700934.2555645,
+    "ast_hash": "13553f5641c924b4b379a933e70352d4",
     "semantic_hash": ""
   },
   "supabase/seed.sql": {
@@ -5855,8 +5855,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/button.tsx": {
-    "mtime": 1783846432.0743582,
-    "ast_hash": "6ee8e5d9f20ac8b3a9502b17166b8db9",
+    "mtime": 1785701201.116199,
+    "ast_hash": "9b6edb0db082d6c8ac4c5de93282b787",
     "semantic_hash": ""
   },
   "src/lib/owner-clinic-form.ts": {
@@ -8000,8 +8000,8 @@
     "semantic_hash": ""
   },
   "src/components/settings/settings-layout-client.tsx": {
-    "mtime": 1785700751.6545756,
-    "ast_hash": "39edcfeba1776fbfc91e04bfdf4cf544",
+    "mtime": 1785700933.894946,
+    "ast_hash": "6d22143d5c4e8a0b1bf8d2dd0eec8442",
     "semantic_hash": ""
   },
   "src/components/patients/components/gallery/patient-gallery-density-toggle.tsx": {
@@ -8050,8 +8050,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-avatar-image.tsx": {
-    "mtime": 1785700750.1547098,
-    "ast_hash": "1b2341ec2a534335be06b8167acfaaaf",
+    "mtime": 1785700873.212865,
+    "ast_hash": "841c3c587e7331c6ab029a84f705fd6f",
     "semantic_hash": ""
   },
   "src/components/ui/profile/profile-identity-summary.tsx": {

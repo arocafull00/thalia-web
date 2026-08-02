@@ -5,7 +5,10 @@ test("protege las rutas privadas y permite cerrar sesión", async ({ page }) => 
   await expect(page).toHaveURL(/\/dashboard$/);
 
   await page.goto("/settings/usuario");
-  await page.getByRole("button", { name: /^Cerrar sesión/ }).click();
+  await page
+    .getByRole("region", { name: "Cuenta" })
+    .getByRole("button", { name: /^Cerrar sesión/ })
+    .click();
 
   await expect(page).toHaveURL(/\/login$/);
   await page.goto("/patients");

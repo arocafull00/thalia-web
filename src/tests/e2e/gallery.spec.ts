@@ -63,7 +63,7 @@ test("sube imágenes y abre la comparativa before/after", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("mantiene editables los metadatos con 24 imÃ¡genes pendientes", async ({
+test("mantiene editables los metadatos con 24 imágenes pendientes", async ({
   context,
   page,
 }) => {
@@ -72,10 +72,10 @@ test("mantiene editables los metadatos con 24 imÃ¡genes pendientes", async ({
 
   await page.goto(`/patients/${E2E_DATA.patientId}`);
   await expect(page.getByTestId("patient-detail-page")).toBeVisible();
-  await page.getByRole("tab", { name: "GalerÃ­a", exact: true }).click();
+  await page.getByRole("tab", { name: "Galería", exact: true }).click();
   await page.getByTestId("patient-gallery-upload-trigger").click();
 
-  const dialog = page.getByRole("dialog", { name: "Subir imÃ¡genes" });
+  const dialog = page.getByRole("dialog", { name: "Subir imágenes" });
   const files = Array.from({ length: 24 }, (_, index) => ({
     name: `e2e-batch-${index + 1}.png`,
     mimeType: "image/png",
@@ -93,11 +93,11 @@ test("mantiene editables los metadatos con 24 imÃ¡genes pendientes", async ({
   );
   const capturedAtInput = dialog.locator('input[type="date"]');
 
-  await selectComboboxOption(page, phaseCombobox, "DespuÃ©s");
+  await selectComboboxOption(page, phaseCombobox, "Después");
   await selectComboboxOption(page, treatmentCombobox, E2E_DATA.treatment);
   await capturedAtInput.fill("2025-02-03");
 
-  await expect(phaseCombobox).toContainText("DespuÃ©s");
+  await expect(phaseCombobox).toContainText("Después");
   await expect(treatmentCombobox).toContainText(E2E_DATA.treatment);
   await expect(capturedAtInput).toHaveValue("2025-02-03");
 });

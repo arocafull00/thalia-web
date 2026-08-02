@@ -110,7 +110,7 @@ test("crea una cita y abre su detalle", async ({ page }) => {
 test("edita una cita existente", async ({ page }) => {
   await createAndGoToAppointmentDetail(page);
 
-  await clickTopbarTrigger(page, "appointment-edit-trigger");
+  await clickTopbarMenuAction(page, "Editar cita");
 
   const editDialog = page.getByRole("dialog", { name: "Editar cita" });
   await expect(editDialog).toBeVisible();

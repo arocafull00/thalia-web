@@ -2575,8 +2575,8 @@
     "semantic_hash": ""
   },
   "vitest.config.ts": {
-    "mtime": 1784671446.965324,
-    "ast_hash": "2157e1bc538f2a5618a20c2ca3902e23",
+    "mtime": 1785577351.3858435,
+    "ast_hash": "84012dee231bccaea93cbca34f345622",
     "semantic_hash": ""
   },
   "src/tests/stores/inventory-store.test.ts": {

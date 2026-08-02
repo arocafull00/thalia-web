@@ -2030,8 +2030,8 @@
     "semantic_hash": ""
   },
   "src/copy/inventory-item-detail-copy.ts": {
-    "mtime": 1785699526.2748098,
-    "ast_hash": "5874b9f7b12fe7f673e3146604c2ac11",
+    "mtime": 1785699582.7247455,
+    "ast_hash": "5556c5010d262340434634b9282c0de4",
     "semantic_hash": ""
   },
   "src/components/marketing/components/list/campaigns-date-range-filter.tsx": {
@@ -2150,8 +2150,8 @@
     "semantic_hash": ""
   },
   "src/components/employees/components/detail/employee-quick-actions.tsx": {
-    "mtime": 1785699528.1081288,
-    "ast_hash": "6e80170ad5126db0f5bd79ea5a2b1a5d",
+    "mtime": 1785699626.039044,
+    "ast_hash": "2b87b3c0bc89b893c51930e0c283e44d",
     "semantic_hash": ""
   },
   "src/components/auth/register/components/owner-registration-progress.tsx": {

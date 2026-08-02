@@ -8,6 +8,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { PATIENT_EDIT_COPY } from "@/copy/patient-edit-copy";
 import { usePatientEditDialog } from "@/lib/hooks/use-patient-edit-dialog";
 import type { Patient } from "@/types/database.types";
@@ -77,6 +81,10 @@ export default function PatientEditDialog({
               onClick={onViewDetail}
               className="mr-auto rounded-button px-3 py-1.5 text-sm"
             >
+              <FORM_ACTION_ICONS.viewDetail
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {PATIENT_EDIT_COPY.actions.viewDetail}
             </Button>
           ) : null}
@@ -86,9 +94,14 @@ export default function PatientEditDialog({
             onClick={handleCancel}
             className="rounded-button px-3 py-1.5 text-sm"
           >
+            <FORM_ACTION_ICONS.cancel
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
             {PATIENT_EDIT_COPY.actions.cancel}
           </Button>
           <ActionButton
+            icon={FORM_ACTION_ICONS.save}
             title={
               dialog.isPending
                 ? PATIENT_EDIT_COPY.actions.saving

@@ -12,6 +12,10 @@ import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useInventoryAdjustStockDialog } from "@/lib/hooks/use-inventory-adjust-stock-dialog";
 import type { InventoryItem } from "@/types/database.types";
@@ -148,9 +152,14 @@ export default function InventoryItemAdjustStockDialog({
             onClick={() => handleOpenChange(false)}
             className="rounded-button px-3 py-1.5 text-sm"
           >
+            <FORM_ACTION_ICONS.cancel
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
             {INVENTORY_ITEM_DETAIL_COPY.adjustStock.actions.cancel}
           </Button>
           <ActionButton
+            icon={FORM_ACTION_ICONS.save}
             title={
               dialog.isPending
                 ? INVENTORY_ITEM_DETAIL_COPY.adjustStock.actions.saving

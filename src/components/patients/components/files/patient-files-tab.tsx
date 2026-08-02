@@ -101,7 +101,7 @@ export default function PatientFilesTab({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0 w-full sm:max-w-xs">
             <PatientFileCategoryFilter
               value={category}

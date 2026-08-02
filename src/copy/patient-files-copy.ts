@@ -24,6 +24,9 @@ export const PATIENT_FILES_COPY = {
     category: "Categoría",
     categoryPlaceholder: "Filtrar por categoría",
   },
+  filterLabels: {
+    category: "Categoría",
+  },
   empty: "No hay archivos que coincidan con el filtro seleccionado.",
   emptyFiles: "Este paciente aún no tiene archivos.",
   errors: {

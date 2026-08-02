@@ -10,6 +10,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { useTreatment } from "@/lib/hooks/use-treatment";
 
 type TreatmentDialogProps = {
@@ -74,6 +78,10 @@ export default function TreatmentDialog({
               onClick={onViewDetail}
               className="mr-auto rounded-button px-3 py-1.5 text-sm"
             >
+              <FORM_ACTION_ICONS.viewDetail
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {TREATMENTS_COPY.dialog.viewDetail}
             </Button>
           ) : null}
@@ -83,9 +91,14 @@ export default function TreatmentDialog({
             onClick={handleCancel}
             className="rounded-button px-3 py-1.5 text-sm"
           >
+            <FORM_ACTION_ICONS.cancel
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
             {TREATMENTS_COPY.dialog.cancel}
           </Button>
           <ActionButton
+            icon={FORM_ACTION_ICONS.save}
             title={
               dialog.isPending
                 ? TREATMENTS_COPY.dialog.saving

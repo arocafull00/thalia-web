@@ -9,6 +9,10 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";
 import { usePatientFileUploader } from "@/lib/hooks/use-patient-file-uploader";
 
@@ -94,6 +98,10 @@ export default function PatientFileUploaderDialog({
               disabled={isPending}
               className="rounded-button px-3 py-1.5 text-sm"
             >
+              <FORM_ACTION_ICONS.cancel
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {PATIENT_FILES_COPY.delete.cancel}
             </Button>
             <Button
@@ -101,6 +109,10 @@ export default function PatientFileUploaderDialog({
               disabled={isPending}
               data-testid="patient-file-upload-submit"
             >
+              <FORM_ACTION_ICONS.upload
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {isPending
                 ? PATIENT_FILES_COPY.uploader.pending
                 : PATIENT_FILES_COPY.uploader.submit}

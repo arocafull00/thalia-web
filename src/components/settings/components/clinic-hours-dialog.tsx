@@ -10,6 +10,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";
 import { useClinicHoursDialog } from "@/lib/hooks/use-clinic-hours-dialog";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
@@ -38,6 +42,10 @@ export default function ClinicHoursDialog({
   };
 
   const hasConflicts = dialog.conflicts !== null && dialog.conflicts.length > 0;
+
+  const DismissIcon = hasConflicts
+    ? FORM_ACTION_ICONS.back
+    : FORM_ACTION_ICONS.cancel;
 
   return (
     <AppDialog open={open} onOpenChange={handleOpenChange}>
@@ -76,11 +84,16 @@ export default function ClinicHoursDialog({
             }
             className="rounded-button px-3 py-1.5 text-sm"
           >
+            <DismissIcon
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
             {hasConflicts
               ? CLINIC_HOURS_COPY.conflicts.back
               : CLINIC_HOURS_COPY.actions.cancel}
           </Button>
           <ActionButton
+            icon={FORM_ACTION_ICONS.save}
             title={
               dialog.isPending
                 ? CLINIC_HOURS_COPY.actions.saving

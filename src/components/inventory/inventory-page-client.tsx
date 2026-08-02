@@ -18,6 +18,10 @@ import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -161,9 +165,14 @@ export default function InventoryPageClient({
               onClick={handleCancelCreate}
               className="rounded-button px-3 py-1.5 text-sm"
             >
+              <FORM_ACTION_ICONS.cancel
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {INVENTORY_ITEM_CREATE_COPY.actions.cancel}
             </Button>
             <ActionButton
+              icon={FORM_ACTION_ICONS.save}
               title={
                 dialog.isPending
                   ? INVENTORY_ITEM_CREATE_COPY.actions.saving

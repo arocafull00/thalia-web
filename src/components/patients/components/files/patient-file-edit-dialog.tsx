@@ -14,6 +14,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { Button } from "@/components/ui/button";
 import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
+import {
   PATIENT_FILE_CATEGORY_OPTIONS,
   PATIENT_FILES_COPY,
 } from "@/copy/patient-files-copy";
@@ -172,9 +176,17 @@ export default function PatientFileEditDialog({
               onClick={() => handleOpenChange(false)}
               disabled={isPending}
             >
+              <FORM_ACTION_ICONS.cancel
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {PATIENT_FILES_COPY.edit.cancel}
             </Button>
             <Button type="submit" disabled={isPending}>
+              <FORM_ACTION_ICONS.save
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {isPending
                 ? PATIENT_FILES_COPY.edit.pending
                 : PATIENT_FILES_COPY.edit.submit}

@@ -8,6 +8,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import type { AppointmentInventoryItemWithInventory } from "@/types/database.types";
 
@@ -77,9 +81,14 @@ export default function AppointmentMaterialsOverrideDialog({
             onClick={() => handleOpenChange(false)}
             className="rounded-button px-3 py-1.5 text-sm"
           >
+            <FORM_ACTION_ICONS.cancel
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
             {APPOINTMENT_DETAIL_COPY.materialsCancel}
           </Button>
           <ActionButton
+            icon={FORM_ACTION_ICONS.save}
             title={
               dialog.isPending
                 ? APPOINTMENT_DETAIL_COPY.materialsSaving

@@ -7,6 +7,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import { useInventoryItemEditDialog } from "@/lib/hooks/use-inventory-item-edit-dialog";
@@ -113,14 +117,27 @@ export default function InventoryItemEditDialog({
               onClick={onViewDetail}
               className="mr-auto rounded-button px-3 py-1.5 text-sm"
             >
+              <FORM_ACTION_ICONS.viewDetail
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {INVENTORY_ITEM_DETAIL_COPY.actions.viewDetail}
             </Button>
           ) : null}
           <Button type="button" variant="outline" onClick={handleCancel}>
-            Cancelar
+            <FORM_ACTION_ICONS.cancel
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
+            {INVENTORY_ITEM_CREATE_COPY.actions.cancel}
           </Button>
           <ActionButton
-            title={dialog.isPending ? "Guardando..." : "Guardar"}
+            icon={FORM_ACTION_ICONS.save}
+            title={
+              dialog.isPending
+                ? INVENTORY_ITEM_CREATE_COPY.actions.saving
+                : INVENTORY_ITEM_CREATE_COPY.actions.save
+            }
             disabled={dialog.isPending}
             testId="inventory-edit-submit"
             onClick={dialog.handleSubmit}

@@ -19,6 +19,10 @@ import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -75,6 +79,10 @@ export default function MarketingPageClient() {
     dialog.reset();
     setDialogOpen(false);
   };
+
+  const DismissStepIcon = dialog.isFirstStep
+    ? FORM_ACTION_ICONS.cancel
+    : FORM_ACTION_ICONS.back;
 
   // Estable para que las columnas no se reconstruyan en cada render.
   const handleOpenImage = useCallback((key: string) => setImageKey(key), []);
@@ -162,12 +170,17 @@ export default function MarketingPageClient() {
               onClick={dialog.isFirstStep ? handleCancelCreate : dialog.goBack}
               className="rounded-button px-3 py-1.5 text-sm"
             >
+              <DismissStepIcon
+                className={FORM_ACTION_ICON_CLASS}
+                aria-hidden="true"
+              />
               {dialog.isFirstStep
                 ? MARKETING_COPY.createDialog.actions.cancel
                 : MARKETING_COPY.createDialog.actions.back}
             </Button>
             {dialog.isLastStep ? (
               <ActionButton
+                icon={FORM_ACTION_ICONS.save}
                 title={
                   dialog.isPending
                     ? MARKETING_COPY.createDialog.actions.saving

@@ -9,6 +9,10 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
+import {
+  FORM_ACTION_ICONS,
+  FORM_ACTION_ICON_CLASS,
+} from "@/components/ui/primitives/form-action-icons";
 import { PROFILE_EDIT_COPY } from "@/copy/profile-edit-copy";
 import { useProfileEditDialog } from "@/lib/hooks/use-profile-edit-dialog";
 import type { Employee } from "@/types/database.types";
@@ -63,9 +67,14 @@ export default function ProfileEditDialog({
             onClick={handleCancel}
             className="rounded-button px-3 py-1.5 text-sm"
           >
+            <FORM_ACTION_ICONS.cancel
+              className={FORM_ACTION_ICON_CLASS}
+              aria-hidden="true"
+            />
             {PROFILE_EDIT_COPY.actions.cancel}
           </Button>
           <ActionButton
+            icon={FORM_ACTION_ICONS.save}
             title={
               dialog.isPending
                 ? PROFILE_EDIT_COPY.actions.saving

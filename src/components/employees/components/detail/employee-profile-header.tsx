@@ -1,11 +1,11 @@
 "use client";
 
-import { Phone } from "lucide-react";
-import Image from "next/image";
 import type { CSSProperties } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
+import { ProfileIdentitySummary } from "@/components/ui/profile/profile-identity-summary";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
@@ -39,58 +39,36 @@ export default function EmployeeProfileHeader({
 
   return (
     <div className="flex flex-col items-center gap-3 px-4 py-6 text-center lg:gap-4 lg:px-6 lg:py-8">
-      <div
-        className={`flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full lg:size-20 ${
-          hasCustomColor
-            ? "text-on-primary"
-            : "bg-primary-subtle text-primary ring-2 ring-border ring-offset-2"
-        }`}
-        style={avatarStyle}
-      >
-        {resolvedAvatarUrl ? (
-          <Image
-            src={resolvedAvatarUrl}
-            alt=""
-            width={80}
-            height={80}
-            unoptimized
-            className="size-full object-cover"
-          />
-        ) : (
-          <span className="text-xl font-semibold">{initials}</span>
-        )}
+      <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+        <ProfileAvatarImage
+          src={resolvedAvatarUrl}
+          initials={initials}
+          size="lg"
+          avatarStyle={avatarStyle}
+          fallbackClassName={
+            hasCustomColor
+              ? "text-on-primary"
+              : "bg-primary-subtle text-primary"
+          }
+        />
       </div>
 
-      <div className="min-w-0 space-y-3">
-        <h1 className="text-xl font-semibold text-ink text-wrap-balance">
-          {employee.full_name}
-        </h1>
-
-        <div className="flex flex-wrap justify-center gap-2">
-          <Badge variant="muted">{employeeRoleLabel(employee.role)}</Badge>
-          {employee.specialty ? (
-            <Badge variant="default">{employee.specialty}</Badge>
-          ) : null}
-          <Badge variant={isInactive ? "danger" : "success"}>
-            {isInactive
-              ? EMPLOYEE_DETAIL_COPY.status.inactive
-              : EMPLOYEE_DETAIL_COPY.status.active}
-          </Badge>
-        </div>
-
-        {employee.phone ? (
-          <a
-            href={`tel:${employee.phone}`}
-            className="inline-flex items-center justify-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
-          >
-            <Phone
-              className="size-4 shrink-0 text-ink-muted"
-              aria-hidden="true"
-            />
-            <span>{employee.phone}</span>
-          </a>
-        ) : null}
-      </div>
+      <ProfileIdentitySummary
+        centered
+        name={employee.full_name}
+        specialty={employee.specialty}
+        phone={employee.phone}
+        badges={
+          <>
+            <Badge variant="purple">{employeeRoleLabel(employee.role)}</Badge>
+            <Badge variant={isInactive ? "danger" : "success"}>
+              {isInactive
+                ? EMPLOYEE_DETAIL_COPY.status.inactive
+                : EMPLOYEE_DETAIL_COPY.status.active}
+            </Badge>
+          </>
+        }
+      />
     </div>
   );
 }

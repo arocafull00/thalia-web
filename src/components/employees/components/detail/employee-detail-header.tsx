@@ -1,5 +1,7 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { ProfileIdentitySummary } from "@/components/ui/profile/profile-identity-summary";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import type { Employee } from "@/types/database.types";
@@ -14,31 +16,32 @@ export default function EmployeeDetailHeader({
   employee,
 }: EmployeeDetailHeaderProps) {
   const isInactive = employee.active === false;
-  const subtitleParts = [
-    employeeRoleLabel(employee.role),
-    employee.specialty,
-    employee.phone,
-    isInactive
-      ? EMPLOYEE_DETAIL_COPY.status.inactive
-      : EMPLOYEE_DETAIL_COPY.status.active,
-  ].filter(Boolean);
 
   return (
-    <div className="flex shrink-0 items-center justify-between gap-4 px-4 pt-6 pb-6 lg:px-8">
-      <div className="flex items-center gap-4">
-        <EmployeeAvatarDisplay employee={employee} />
+    <header className="shrink-0 border-b border-border-subtle bg-surface">
+      <div className="flex flex-col gap-5 px-4 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+        <div className="flex min-w-0 items-center gap-4">
+          <EmployeeAvatarDisplay employee={employee} />
 
-        <div className="min-w-0 space-y-1">
-          <h1 className="text-xl font-semibold text-ink">
-            {employee.full_name}
-          </h1>
-          {subtitleParts.length > 0 ? (
-            <p className="text-sm text-ink-secondary">
-              {subtitleParts.join(" · ")}
-            </p>
-          ) : null}
+          <ProfileIdentitySummary
+            name={employee.full_name}
+            specialty={employee.specialty}
+            phone={employee.phone}
+            badges={
+              <>
+                <Badge variant="purple">
+                  {employeeRoleLabel(employee.role)}
+                </Badge>
+                <Badge variant={isInactive ? "danger" : "success"}>
+                  {isInactive
+                    ? EMPLOYEE_DETAIL_COPY.status.inactive
+                    : EMPLOYEE_DETAIL_COPY.status.active}
+                </Badge>
+              </>
+            }
+          />
         </div>
       </div>
-    </div>
+    </header>
   );
 }

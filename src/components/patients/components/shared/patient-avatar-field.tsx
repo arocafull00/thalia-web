@@ -1,10 +1,10 @@
 "use client";
 
 import { Pencil } from "lucide-react";
-import Image from "next/image";
 import { useRef } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 
 type PatientAvatarFieldProps = {
@@ -23,7 +23,7 @@ export default function PatientAvatarField({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex justify-center">
+    <div className="flex shrink-0 justify-center">
       <input
         ref={fileInputRef}
         type="file"
@@ -46,23 +46,16 @@ export default function PatientAvatarField({
         disabled={uploadPending}
         aria-label={PATIENT_CREATE_COPY.fields.avatarLabel}
         onClick={() => fileInputRef.current?.click()}
-        className="relative size-20 shrink-0 overflow-visible rounded-full p-0"
+        className="relative overflow-visible rounded-full p-0"
       >
-        <span className="relative flex size-20 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 ring-offset-canvas">
-          {displayUri ? (
-            <Image
-              src={displayUri}
-              alt=""
-              fill
-              sizes="80px"
-              priority
-              unoptimized
-              className="object-cover"
-            />
-          ) : (
-            <span className="text-xl font-semibold">{initials}</span>
-          )}
-        </span>
+        <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+          <ProfileAvatarImage
+            src={displayUri}
+            initials={initials}
+            size="lg"
+            fallbackClassName="bg-primary-subtle text-primary"
+          />
+        </div>
         <span className="absolute right-0 bottom-0 flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-primary text-on-primary">
           <Pencil className="size-3.5" aria-hidden="true" />
         </span>

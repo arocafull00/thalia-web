@@ -8030,18 +8030,23 @@
     "semantic_hash": ""
   },
   "src/lib/hooks/use-patient-gallery-density.ts": {
-    "mtime": 1785699526.792158,
-    "ast_hash": "218abfbc6009c7cc3e6546b8c2445da3",
+    "mtime": 1785700324.5344613,
+    "ast_hash": "df232df2825e5a15d613d215ab783565",
     "semantic_hash": ""
   },
   "src/lib/patient-gallery-density.ts": {
-    "mtime": 1785699292.0942454,
-    "ast_hash": "8d8ac54cf77ddbb79ee285a37e7c2193",
+    "mtime": 1785700324.5128503,
+    "ast_hash": "8c0429d91f5fa0fd37b24c98374d4567",
     "semantic_hash": ""
   },
   "src/tests/unit/appointment-datetime.test.ts": {
     "mtime": 1785699527.2585678,
     "ast_hash": "e9f8d8ee07a6e4aca30ba420e9e83aaa",
+    "semantic_hash": ""
+  },
+  "src/stores/patient-gallery-preferences-store.ts": {
+    "mtime": 1785700324.5011413,
+    "ast_hash": "709138da85925a97ba83430b13127318",
     "semantic_hash": ""
   }
 }

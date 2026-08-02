@@ -1,12 +1,11 @@
 "use client";
 
-import Image from "next/image";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
+import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
-import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 
 type SettingsProfilePanelProps = {
@@ -29,6 +28,8 @@ export default function SettingsProfilePanel({
     return null;
   }
 
+  const initials = getProfileInitials(profile.full_name);
+
   return (
     <div className="space-y-6">
       <Button
@@ -36,28 +37,22 @@ export default function SettingsProfilePanel({
         variant="ghost"
         disabled={uploadingAvatar}
         onClick={onPickAvatar}
-        className="h-20 w-20 overflow-hidden rounded-full border border-border/60 bg-primary-subtle/40 p-0"
+        className="overflow-visible rounded-full p-0"
       >
-        {displayUri ? (
-          <div className="relative size-20 shrink-0 overflow-hidden rounded-full bg-primary-subtle">
-            <Image
-              src={displayUri}
-              alt={`Avatar de ${profile.full_name}`}
-              fill
-              sizes="160px"
-              quality={90}
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <span className="text-sm text-ink-muted">Foto</span>
-        )}
+        <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+          <ProfileAvatarImage
+            src={displayUri}
+            initials={initials}
+            size="lg"
+            fallbackClassName="bg-primary-subtle text-primary"
+          />
+        </div>
       </Button>
       <div>
         <p className="text-lg font-medium text-ink">{profile.full_name}</p>
-        <p className="mt-1 text-xs text-ink-muted">
-          {buildProfileSubtitle(profile.specialty, profile.role)}
-        </p>
+        {profile.specialty ? (
+          <p className="mt-1 text-sm text-ink-secondary">{profile.specialty}</p>
+        ) : null}
       </div>
       <div className="flex flex-wrap gap-2">
         {isAdmin ? (

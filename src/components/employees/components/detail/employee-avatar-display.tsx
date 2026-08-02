@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 import type { Employee } from "@/types/database.types";
@@ -20,7 +20,7 @@ function getAvatarStyle(
 
   return {
     backgroundColor: color,
-    boxShadow: `0 0 0 2px var(--canvas), 0 0 0 4px ${color}`,
+    boxShadow: `0 0 0 2px var(--surface), 0 0 0 4px ${color}`,
   };
 }
 
@@ -33,26 +33,16 @@ export default function EmployeeAvatarDisplay({
   const initials = getProfileInitials(employee.full_name);
 
   return (
-    <div
-      className={`flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full ${
-        hasCustomColor
-          ? "text-on-primary"
-          : "bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 ring-offset-canvas"
-      }`}
-      style={avatarStyle}
-    >
-      {resolvedAvatarUrl ? (
-        <Image
-          src={resolvedAvatarUrl}
-          alt=""
-          width={80}
-          height={80}
-          unoptimized
-          className="size-full object-cover"
-        />
-      ) : (
-        <span className="text-xl font-semibold">{initials}</span>
-      )}
+    <div className="shrink-0 rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+      <ProfileAvatarImage
+        src={resolvedAvatarUrl}
+        initials={initials}
+        size="lg"
+        avatarStyle={avatarStyle}
+        fallbackClassName={
+          hasCustomColor ? "text-on-primary" : "bg-primary-subtle text-primary"
+        }
+      />
     </div>
   );
 }

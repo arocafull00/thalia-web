@@ -1,13 +1,14 @@
 "use client";
 
-import { Mail, Pencil, Phone } from "lucide-react";
-import Image from "next/image";
+import { Pencil } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
 import { getProfileInitials } from "@/components/ui/profile/profile-header";
+import { ProfileIdentitySummary } from "@/components/ui/profile/profile-identity-summary";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
-import { buildProfileSubtitle } from "@/lib/hooks/use-settings-page";
+import { employeeRoleLabel } from "@/lib/format";
 import type { Employee } from "@/types/database.types";
 
 type SettingsProfileHeaderProps = {
@@ -27,7 +28,6 @@ export default function SettingsProfileHeader({
   uploadPending,
   userEmail,
 }: SettingsProfileHeaderProps) {
-  const profileSubtitle = buildProfileSubtitle(profile.specialty, profile.role);
   const initials = getProfileInitials(profile.full_name);
 
   return (
@@ -37,67 +37,38 @@ export default function SettingsProfileHeader({
         variant="ghost"
         disabled={uploadPending}
         onClick={onPickAvatar}
-        className="relative size-14 shrink-0 overflow-visible rounded-full p-0 lg:size-20"
+        className="relative shrink-0 overflow-visible rounded-full p-0"
       >
-        <span className="flex size-14 items-center justify-center overflow-hidden rounded-full bg-primary-subtle text-primary ring-2 ring-border ring-offset-2 ring-offset-canvas lg:size-20">
-          {displayUri ? (
-            <Image
-              src={displayUri}
-              alt=""
-              width={80}
-              height={80}
-              unoptimized
-              className="size-full object-cover"
-            />
-          ) : (
-            <span className="text-xl font-semibold">{initials}</span>
-          )}
-        </span>
+        <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+          <ProfileAvatarImage
+            src={displayUri}
+            initials={initials}
+            size="lg"
+            fallbackClassName="bg-primary-subtle text-primary"
+          />
+        </div>
         <span className="absolute right-0 bottom-0 flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-primary text-on-primary">
           <Pencil className="size-3.5" aria-hidden="true" />
         </span>
       </Button>
 
-      <div className="min-w-0 space-y-3">
-        <h1 className="text-xl font-semibold text-ink text-wrap-balance">
-          {profile.full_name}
-        </h1>
-
-        <p className="text-xs text-ink-muted">{profileSubtitle}</p>
-
-        {isAdmin ? (
-          <div className="flex flex-wrap justify-center gap-2">
-            <Badge variant="default">{SETTINGS_COPY.profile.adminBadge}</Badge>
-          </div>
-        ) : null}
-
-        <div className="flex flex-col items-center gap-2">
-          {profile.phone ? (
-            <a
-              href={`tel:${profile.phone}`}
-              className="inline-flex items-center justify-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
-            >
-              <Phone
-                className="size-4 shrink-0 text-ink-muted"
-                aria-hidden="true"
-              />
-              <span>{profile.phone}</span>
-            </a>
-          ) : null}
-          {userEmail ? (
-            <a
-              href={`mailto:${userEmail}`}
-              className="inline-flex max-w-full items-center justify-center gap-1.5 text-sm text-ink-secondary hover:text-ink"
-            >
-              <Mail
-                className="size-4 shrink-0 text-ink-muted"
-                aria-hidden="true"
-              />
-              <span className="truncate">{userEmail}</span>
-            </a>
-          ) : null}
-        </div>
-      </div>
+      <ProfileIdentitySummary
+        centered
+        name={profile.full_name}
+        specialty={profile.specialty}
+        phone={profile.phone}
+        email={userEmail}
+        badges={
+          <>
+            <Badge variant="purple">{employeeRoleLabel(profile.role)}</Badge>
+            {isAdmin ? (
+              <Badge variant="default">
+                {SETTINGS_COPY.profile.adminBadge}
+              </Badge>
+            ) : null}
+          </>
+        }
+      />
     </div>
   );
 }

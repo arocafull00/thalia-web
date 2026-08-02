@@ -1,9 +1,9 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 
+import { ProfileAvatarImage } from "@/components/ui/profile/profile-avatar-image";
 import { useFileUrl } from "@/lib/hooks/use-file-url";
 
 export type ProfileContactItem = {
@@ -50,26 +50,20 @@ export function ProfileHeader({
     <header className="border-b border-border bg-surface px-8 py-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <div
-            className={`flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full ${
-              hasCustomColor
-                ? "text-on-primary"
-                : "bg-primary-subtle text-primary ring-2 ring-border ring-offset-2"
-            }`}
-            style={avatarStyle}
-          >
-            {resolvedAvatarUrl ? (
-              <Image
-                src={resolvedAvatarUrl}
-                alt=""
-                width={96}
-                height={96}
-                unoptimized
-                className="size-full object-cover"
-              />
-            ) : (
-              <span className="text-2xl font-semibold">{initials}</span>
-            )}
+          <div className="shrink-0 rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+            <ProfileAvatarImage
+              src={resolvedAvatarUrl}
+              initials={
+                <span className="text-2xl font-semibold">{initials}</span>
+              }
+              size="xl"
+              avatarStyle={avatarStyle}
+              fallbackClassName={
+                hasCustomColor
+                  ? "text-on-primary"
+                  : "bg-primary-subtle text-primary"
+              }
+            />
           </div>
 
           <div className="min-w-0 space-y-3 text-center sm:text-left">

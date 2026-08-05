@@ -3,26 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
-import CampaignCreateForm from "@/components/marketing/components/form/campaign-create-form";
+import CampaignFormDialog from "@/components/marketing/components/form/campaign-form-dialog";
 import CampaignImageDialog from "@/components/marketing/components/list/campaign-image-dialog";
 import CampaignsEmptyState from "@/components/marketing/components/list/campaigns-empty-state";
 import CampaignsFilters from "@/components/marketing/components/list/campaigns-filters";
 import CampaignsFiltersSheet from "@/components/marketing/components/list/campaigns-filters-sheet";
 import CampaignsTable from "@/components/marketing/components/list/campaigns-table";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
-import AppDialog from "@/components/ui/app-dialog";
-import AppDialogDescription from "@/components/ui/app-dialog-description";
-import AppDialogFooter from "@/components/ui/app-dialog-footer";
-import AppDialogHeader from "@/components/ui/app-dialog-header";
-import AppDialogTitle from "@/components/ui/app-dialog-title";
-import AppSheetContent from "@/components/ui/app-sheet-content";
-import { Button } from "@/components/ui/button";
 import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
-import { ActionButton } from "@/components/ui/primitives/action-button";
-import {
-  FORM_ACTION_ICONS,
-  FORM_ACTION_ICON_CLASS,
-} from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -80,10 +68,6 @@ export default function MarketingPageClient() {
     setDialogOpen(false);
   };
 
-  const DismissStepIcon = dialog.isFirstStep
-    ? FORM_ACTION_ICONS.cancel
-    : FORM_ACTION_ICONS.back;
-
   // Estable para que las columnas no se reconstruyan en cada render.
   const handleOpenImage = useCallback((key: string) => setImageKey(key), []);
 
@@ -135,71 +119,13 @@ export default function MarketingPageClient() {
           ) : null}
         </div>
       </div>
-      <AppDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <AppSheetContent>
-          <AppDialogHeader>
-            <AppDialogTitle>{MARKETING_COPY.createDialog.title}</AppDialogTitle>
-            <AppDialogDescription>
-              {MARKETING_COPY.createDialog.description}
-            </AppDialogDescription>
-          </AppDialogHeader>
-          <div className="min-h-0 flex-1 overflow-y-auto px-1">
-            <CampaignCreateForm
-              step={dialog.step}
-              stepIndex={dialog.stepIndex}
-              register={dialog.register}
-              errors={dialog.errors}
-              segmentInputs={dialog.segmentInputs}
-              segmentErrors={dialog.segmentErrors}
-              treatments={treatmentOptions}
-              onSegmentChange={dialog.setSegmentInput}
-              onImageChange={dialog.setImage}
-              previewContent={dialog.watch("content") ?? ""}
-              previewFooterText={dialog.watch("footer_text") ?? ""}
-              previewFooterWebsite={dialog.watch("footer_website") ?? ""}
-              previewFooterPhone={dialog.watch("footer_phone") ?? ""}
-              recipientCount={dialog.preview.count}
-              recipientsLoading={dialog.preview.isLoading}
-              recipientsError={dialog.preview.error != null}
-            />
-          </div>
-          <AppDialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={dialog.isFirstStep ? handleCancelCreate : dialog.goBack}
-              className="rounded-button px-3 py-1.5 text-sm"
-            >
-              <DismissStepIcon
-                className={FORM_ACTION_ICON_CLASS}
-                aria-hidden="true"
-              />
-              {dialog.isFirstStep
-                ? MARKETING_COPY.createDialog.actions.cancel
-                : MARKETING_COPY.createDialog.actions.back}
-            </Button>
-            {dialog.isLastStep ? (
-              <ActionButton
-                icon={FORM_ACTION_ICONS.save}
-                title={
-                  dialog.isPending
-                    ? MARKETING_COPY.createDialog.actions.saving
-                    : MARKETING_COPY.createDialog.actions.save
-                }
-                disabled={dialog.isPending}
-                testId="campaign-create-submit"
-                onClick={dialog.handleSubmit}
-              />
-            ) : (
-              <ActionButton
-                title={MARKETING_COPY.createDialog.actions.next}
-                testId="campaign-create-next"
-                onClick={() => void dialog.goNext()}
-              />
-            )}
-          </AppDialogFooter>
-        </AppSheetContent>
-      </AppDialog>
+      <CampaignFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        dialog={dialog}
+        treatments={treatmentOptions}
+        onCancel={handleCancelCreate}
+      />
       <CampaignsFiltersSheet
         key={sheetKey}
         open={sheetOpen}

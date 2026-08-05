@@ -350,3 +350,26 @@ export function buildSegmentsFromFilters(
 
   return segments;
 }
+
+/**
+ * Camino inverso de `parseCampaignSegmentInputs`: pasa los filtros de una
+ * campaña guardada a las cadenas que espera el formulario.
+ *
+ * Hace falta para editar un borrador, porque los segmentos viven en filas
+ * aparte y hay que devolverlos a los inputs tal y como se escribieron.
+ */
+export function campaignSegmentInputsFromFilters(
+  filters: CampaignSegmentFilters,
+): CampaignSegmentInputs {
+  const toInput = (value: number | null) =>
+    value == null ? "" : String(value);
+
+  return {
+    treatmentId: filters.treatmentId ?? "",
+    monthsSinceLastVisit: toInput(filters.monthsSinceLastVisit),
+    minVisits: toInput(filters.minVisits),
+    maxVisits: toInput(filters.maxVisits),
+    minAge: toInput(filters.minAge),
+    maxAge: toInput(filters.maxAge),
+  };
+}

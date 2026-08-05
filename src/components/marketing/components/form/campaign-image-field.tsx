@@ -19,10 +19,13 @@ const { image } = MARKETING_COPY;
 
 type CampaignImageFieldProps = {
   onFileChange: (file: File | null) => void;
+  /** Imagen ya guardada en el borrador; null al crear una campaña nueva. */
+  currentImageUrl: string | null;
 };
 
 export default function CampaignImageField({
   onFileChange,
+  currentImageUrl,
 }: CampaignImageFieldProps) {
   const dropzone = useDropzone({
     onDropFile: async (file: File) => ({
@@ -72,22 +75,42 @@ export default function CampaignImageField({
             ))}
           </DropzoneFileList>
         ) : (
-          <DropZoneArea className="rounded-2xl border border-dashed border-border bg-canvas px-4 py-2">
-            <DropzoneTrigger className="flex w-full flex-col items-center gap-3 rounded-2xl bg-transparent p-6 text-center text-sm shadow-none hover:bg-transparent">
-              <CloudUpload
-                className="size-8 text-ink-muted"
-                aria-hidden="true"
-              />
-              <div>
-                <p className="font-medium text-ink">{image.chooseFile}</p>
-                <p className="text-sm text-ink-secondary">
-                  {dropzone.isDragActive
-                    ? image.dropzoneActive
-                    : image.dropzone}
-                </p>
-              </div>
-            </DropzoneTrigger>
-          </DropZoneArea>
+          <div className="space-y-3">
+            {/* Editando un borrador que ya tenía imagen: sin esto el paso
+                parecía vacío y daba a entender que se había perdido. */}
+            {currentImageUrl ? (
+              <figure className="space-y-1">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={currentImageUrl}
+                  alt={MARKETING_COPY.messagePreview.imageAlt}
+                  data-testid="campaign-current-image"
+                  className="max-h-64 w-full rounded-xl object-contain"
+                />
+                <figcaption className="text-xs text-ink-secondary">
+                  {image.current} · {image.replaceHint}
+                </figcaption>
+              </figure>
+            ) : null}
+            <DropZoneArea className="rounded-2xl border border-dashed border-border bg-canvas px-4 py-2">
+              <DropzoneTrigger className="flex w-full flex-col items-center gap-3 rounded-2xl bg-transparent p-6 text-center text-sm shadow-none hover:bg-transparent">
+                <CloudUpload
+                  className="size-8 text-ink-muted"
+                  aria-hidden="true"
+                />
+                <div>
+                  <p className="font-medium text-ink">
+                    {currentImageUrl ? image.chooseAnother : image.chooseFile}
+                  </p>
+                  <p className="text-sm text-ink-secondary">
+                    {dropzone.isDragActive
+                      ? image.dropzoneActive
+                      : image.dropzone}
+                  </p>
+                </div>
+              </DropzoneTrigger>
+            </DropZoneArea>
+          </div>
         )}
       </Dropzone>
     </div>

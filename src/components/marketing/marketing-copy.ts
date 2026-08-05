@@ -127,6 +127,9 @@ export const MARKETING_COPY = {
     dropzone: "JPG, PNG o WEBP. Se optimizan al guardarlas.",
     dropzoneActive: "Suelta la imagen aquí.",
     uploadError: "No se pudo subir la imagen.",
+    current: "Imagen actual",
+    chooseAnother: "Elegir otra imagen",
+    replaceHint: "Si eliges otra, sustituirá a esta.",
   },
   detail: {
     breadcrumbRoot: "Marketing",
@@ -151,6 +154,17 @@ export const MARKETING_COPY = {
       pending: "Pendientes",
       total: "Total",
     },
+  },
+  editDialog: {
+    action: "Editar campaña",
+    title: "Editar borrador",
+    description:
+      "Cambia el mensaje, la imagen o los destinatarios antes de enviarlo.",
+    save: "Guardar cambios",
+    saving: "Guardando...",
+    success: "Borrador actualizado.",
+    error: "No se pudo actualizar la campaña.",
+    segmentsError: "No se pudieron cargar los destinatarios de la campaña.",
   },
   duplicate: {
     action: "Duplicar campaña",

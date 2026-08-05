@@ -7,6 +7,8 @@ type CampaignMessagePreviewProps = {
   footerText: string;
   footerWebsite: string;
   footerPhone: string;
+  /** URL efímera de la imagen elegida; null si la campaña no lleva. */
+  imageUrl: string | null;
 };
 
 /**
@@ -21,6 +23,7 @@ export default function CampaignMessagePreview({
   footerText,
   footerWebsite,
   footerPhone,
+  imageUrl,
 }: CampaignMessagePreviewProps) {
   const footerParts = [
     footerText.trim(),
@@ -44,6 +47,15 @@ export default function CampaignMessagePreview({
           data-testid="campaign-message-preview"
           className="max-w-sm rounded-2xl rounded-tl-sm bg-primary-subtle px-4 py-3"
         >
+          {imageUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={imageUrl}
+              alt={messagePreview.imageAlt}
+              data-testid="campaign-message-preview-image"
+              className="mb-2 max-h-64 w-full rounded-xl object-contain"
+            />
+          ) : null}
           {trimmedContent ? (
             <p className="whitespace-pre-wrap text-sm text-ink">
               {trimmedContent}

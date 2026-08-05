@@ -1045,8 +1045,8 @@
     "semantic_hash": ""
   },
   "src/components/appointments/appointments-page-client.tsx": {
-    "mtime": 1785934773.2770016,
-    "ast_hash": "19235fb4e64dce68e708af03480c2303",
+    "mtime": 1785936035.7579963,
+    "ast_hash": "377d7c9e1dba626e8d9ce0d1ff67eeea",
     "semantic_hash": ""
   },
   "src/tests/stores/auth-store.test.ts": {
@@ -4207,11 +4207,6 @@
   "src/components/appointments/appointment-glow.ts": {
     "mtime": 1785934441.594028,
     "ast_hash": "0ec11303f3c2af2483802998d030b337",
-    "semantic_hash": ""
-  },
-  "src/components/appointments/components/appointments-aurora-backdrop.tsx": {
-    "mtime": 1785934434.822469,
-    "ast_hash": "0e06f44a0cbe1caad5332f57dba9bab1",
     "semantic_hash": ""
   },
   "src/components/appointments/components/appointments-panel-footer.tsx": {

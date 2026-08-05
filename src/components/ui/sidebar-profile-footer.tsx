@@ -27,22 +27,23 @@ export default function SidebarProfileFooter() {
 
   return (
     <>
-      <div className="flex items-center gap-3 px-6 py-5">
+      <div className="flex items-center gap-2.5 px-1.5 py-3.5">
         <ProfileAvatarImage
           src={displayUri}
           initials={initials}
-          size="md"
-          fallbackClassName="bg-primary-subtle/40 text-ink-muted"
+          size="sm"
+          avatarStyle={{ borderRadius: "var(--radius-button)" }}
+          fallbackClassName="bg-[image:var(--gradient-avatar)] text-[12.5px] font-semibold text-primary-hover"
         />
         <div className="min-w-0 flex-1">
           <p
-            className="truncate text-sm font-medium text-ink"
+            className="truncate text-[13.5px] font-medium text-ink"
             title={profile?.full_name ?? undefined}
           >
             {profile?.full_name ?? SIDEBAR_COPY.profileFallback}
           </p>
           {profile?.role ? (
-            <p className="truncate text-xs text-ink-muted">
+            <p className="truncate text-[11px] text-ink-muted">
               {employeeRoleLabel(profile.role)}
             </p>
           ) : null}

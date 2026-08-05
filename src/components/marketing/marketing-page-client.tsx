@@ -17,7 +17,7 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -101,9 +101,9 @@ export default function MarketingPageClient() {
 
   return (
     <div data-testid="marketing-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {hasCampaigns ? (
-          <PageStickyFiltersSection>
+      <PageCard
+        filters={
+          hasCampaigns ? (
             <CampaignsFilters
               search={filters.q}
               status={filters.status}
@@ -116,25 +116,22 @@ export default function MarketingPageClient() {
               onClearDates={() => setFilters({ from: "", to: "" })}
               onOpenSheet={handleOpenFiltersSheet}
             />
-          </PageStickyFiltersSection>
+          ) : null
+        }
+      >
+        {campaigns.isLoading ? <SkeletonList /> : null}
+        {campaigns.error ? (
+          <Notice tone="danger" message={MARKETING_COPY.page.loadError} />
         ) : null}
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {campaigns.isLoading ? <SkeletonList /> : null}
-          {campaigns.error ? (
-            <Notice tone="danger" message={MARKETING_COPY.page.loadError} />
-          ) : null}
-          {showEmptyState ? <CampaignsEmptyState /> : null}
-          {!campaigns.isLoading && hasCampaigns ? (
-            <CampaignsTable
-              campaigns={filteredCampaigns}
-              onRowClick={(campaignId) =>
-                router.push(`/marketing/${campaignId}`)
-              }
-              onOpenImage={handleOpenImage}
-            />
-          ) : null}
-        </div>
-      </div>
+        {showEmptyState ? <CampaignsEmptyState /> : null}
+        {!campaigns.isLoading && hasCampaigns ? (
+          <CampaignsTable
+            campaigns={filteredCampaigns}
+            onRowClick={(campaignId) => router.push(`/marketing/${campaignId}`)}
+            onOpenImage={handleOpenImage}
+          />
+        ) : null}
+      </PageCard>
       <AppDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AppSheetContent>
           <AppDialogHeader>

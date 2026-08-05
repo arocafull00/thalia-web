@@ -16,7 +16,7 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -116,8 +116,8 @@ export default function InventoryPageClient({
 
   return (
     <div data-testid="inventory-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
+      <PageCard
+        filters={
           <InventoryFilters
             category={filters.category}
             categoryOptions={categoryOptions}
@@ -128,22 +128,21 @@ export default function InventoryPageClient({
             onStockChange={(value) => setFilter("stock", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
-        </PageStickyFiltersSection>
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          <InventoryStockSummary
-            summary={summary}
-            activeStock={filters.stock}
-            onStockChange={(value) => setFilter("stock", value)}
-          />
-          {inventory.isLoading ? <SkeletonList /> : null}
-          {inventory.error ? (
-            <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
-          ) : null}
-          {!inventory.isLoading ? (
-            <InventoryTable items={filteredItems} onRowClick={handleRowClick} />
-          ) : null}
-        </div>
-      </div>
+        }
+      >
+        <InventoryStockSummary
+          summary={summary}
+          activeStock={filters.stock}
+          onStockChange={(value) => setFilter("stock", value)}
+        />
+        {inventory.isLoading ? <SkeletonList /> : null}
+        {inventory.error ? (
+          <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
+        ) : null}
+        {!inventory.isLoading ? (
+          <InventoryTable items={filteredItems} onRowClick={handleRowClick} />
+        ) : null}
+      </PageCard>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>

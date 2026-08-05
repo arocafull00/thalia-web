@@ -30,10 +30,10 @@ export default function AppSidebarNavItem({
   const submenuOpen = submenuOpenOverride ?? active;
 
   const buttonClassName = cn(
-    "h-10 rounded-xl px-3 text-[14px] font-medium transition-colors",
-    "[&_svg]:size-[18px] [&_svg]:stroke-[1.75]",
-    "text-ink-secondary hover:bg-primary-subtle hover:text-primary",
-    "data-active:bg-primary data-active:font-semibold data-active:text-on-primary data-active:hover:bg-primary-hover data-active:hover:text-on-primary data-active:[&_svg]:text-on-primary",
+    "h-9 rounded-button px-[11px] text-[14px] font-normal transition-colors",
+    "[&_svg]:size-[18px] [&_svg]:stroke-[1.6]",
+    "text-ink-secondary hover:bg-(--hover-overlay) hover:text-primary-hover",
+    "data-active:bg-[image:var(--gradient-primary)] data-active:font-medium data-active:text-on-primary data-active:shadow-nav-active data-active:hover:text-on-primary data-active:[&_svg]:text-on-primary",
   );
 
   if (hasSubmenu && item.subItems) {

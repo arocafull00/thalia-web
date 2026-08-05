@@ -9,7 +9,7 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { type CSSProperties, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import MobileCardView, {
@@ -35,6 +35,8 @@ type DataTableProps<TData, TValue> = {
   enableSorting?: boolean;
   initialSorting?: SortingState;
   onRowClick?: (row: TData) => void;
+  /** Estilo por fila; lo usa la pantalla de citas para tintar el barrido con --glow. */
+  getRowStyle?: (row: TData) => CSSProperties | undefined;
   pageSize?: number;
   mobileColumns?: MobileCardColumn<TData>[];
   mobileActions?: MobileCardAction<TData>[];
@@ -49,6 +51,7 @@ export function DataTable<TData, TValue>({
   enableSorting = false,
   initialSorting = EMPTY_SORTING,
   onRowClick,
+  getRowStyle,
   pageSize = 10,
   mobileColumns,
   mobileActions,
@@ -109,11 +112,14 @@ export function DataTable<TData, TValue>({
         <Table className="border-separate border-spacing-0">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+              <TableRow
+                key={headerGroup.id}
+                className="border-b border-border hover:bg-transparent"
+              >
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="border-y border-primary-light bg-primary-subtle px-4 first:rounded-l-[10px] first:border-l last:rounded-r-[10px] last:border-r"
+                    className="h-auto border-0 bg-transparent px-3.5 pb-2.5 pt-3.5"
                   >
                     {header.isPlaceholder
                       ? null
@@ -133,15 +139,16 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   className={
                     onRowClick
-                      ? "cursor-pointer hover:bg-[var(--hover-overlay)]"
+                      ? "table-row-wash cursor-pointer"
                       : "hover:bg-transparent"
                   }
+                  style={getRowStyle?.(row.original)}
                   onClick={
                     onRowClick ? () => onRowClick(row.original) : undefined
                   }
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-4">
+                    <TableCell key={cell.id} className="px-3.5 py-3.5 text-sm">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

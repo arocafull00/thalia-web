@@ -184,9 +184,12 @@ export default function CalendarPageClient({
   });
 
   return (
+    // No usa PageCard: schedule-x gestiona su propio scroll y el
+    // `overflow-y-auto` de la tarjeta se lo rompería. Lleva la superficie
+    // directamente.
     <div
       data-testid="calendar-page"
-      className="flex h-dvh flex-col overflow-hidden"
+      className="surface-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog"
     >
       <CalendarToolbar
         rangeLabel={rangeLabel}
@@ -199,7 +202,7 @@ export default function CalendarPageClient({
         onChangeViewMode={onChangeViewMode}
         onOpenFiltersSheet={handleOpenFiltersSheet}
       />
-      <div ref={calendarWrapperRef} className="min-h-0 flex-1 bg-surface">
+      <div ref={calendarWrapperRef} className="min-h-0 flex-1">
         {isMobile && viewMode === "month" ? (
           <CalendarMobileMonthView />
         ) : isMobile && viewMode === "day" ? (

@@ -7,8 +7,10 @@ import AppointmentCreateDialog from "@/components/appointments/components/appoin
 import AppointmentFilters from "@/components/appointments/components/appointment-filters";
 import AppointmentFiltersSheet from "@/components/appointments/components/appointment-filters-sheet";
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
+import AppointmentsPanelFooter from "@/components/appointments/components/appointments-panel-footer";
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
+import PageEmptyState from "@/components/ui/page-empty-state";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -129,10 +131,12 @@ export default function AppointmentsPageClient({
   return (
     <div
       data-testid="appointments-page"
-      className="flex min-h-0 flex-1 flex-col"
+      className="relative flex min-h-0 flex-1 flex-col"
     >
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
+      {/* Diálogos y FAB quedan fuera de la tarjeta: el FAB es fixed y el
+          overflow-hidden de la tarjeta lo recortaría. */}
+      <PageCard
+        filters={
           <AppointmentFilters
             employeeId={filters.employeeId}
             from={filters.from}
@@ -147,28 +151,28 @@ export default function AppointmentsPageClient({
             onToChange={(value) => setFilter("to", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
-        </PageStickyFiltersSection>
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {appointments.isLoading && !appointments.data ? (
-            <SkeletonList />
-          ) : null}
-          {appointments.error ? (
-            <Notice tone="danger" message={APPOINTMENTS_COPY.page.loadError} />
-          ) : null}
-          {showEmptyState ? (
-            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
-              {APPOINTMENTS_COPY.page.empty}
-            </div>
-          ) : null}
-          {!showEmptyState && appointments.data ? (
-            <AppointmentsTable
-              appointments={flatAppointments}
-              onRowClick={handleRowClick}
-              onStatusChange={handleStatusChange}
-            />
-          ) : null}
-        </div>
-      </div>
+        }
+        footer={
+          !showEmptyState && appointments.data ? (
+            <AppointmentsPanelFooter count={flatAppointments.length} />
+          ) : null
+        }
+      >
+        {appointments.isLoading && !appointments.data ? <SkeletonList /> : null}
+        {appointments.error ? (
+          <Notice tone="danger" message={APPOINTMENTS_COPY.page.loadError} />
+        ) : null}
+        {showEmptyState ? (
+          <PageEmptyState message={APPOINTMENTS_COPY.page.empty} />
+        ) : null}
+        {!showEmptyState && appointments.data ? (
+          <AppointmentsTable
+            appointments={flatAppointments}
+            onRowClick={handleRowClick}
+            onStatusChange={handleStatusChange}
+          />
+        ) : null}
+      </PageCard>
       <AppointmentCreateDialog
         open={dialogOpen}
         onOpenChange={handleDialogOpenChange}

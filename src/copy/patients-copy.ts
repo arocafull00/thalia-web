@@ -14,4 +14,18 @@ export const PATIENTS_COPY = {
     search: "Buscar paciente",
     status: "Estado",
   },
+  list: {
+    columns: {
+      patient: "Paciente",
+      phone: "Teléfono",
+      email: "Email",
+      marketingOptIn: "Comunicaciones",
+    },
+    noPhone: "Sin teléfono",
+    noEmail: "—",
+  },
+  marketingOptIn: {
+    granted: "Activo",
+    denied: "No activo",
+  },
 } as const;

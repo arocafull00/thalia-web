@@ -30,7 +30,7 @@ export default function CalendarToolbar({
   onOpenFiltersSheet,
 }: CalendarToolbarProps) {
   return (
-    <div className="flex shrink-0 items-center border-b border-border-subtle bg-surface px-4 py-3">
+    <div className="flex shrink-0 items-center border-border-subtle bg-surface px-4 py-3">
       <div className="flex min-w-0 flex-1 items-center justify-start gap-2">
         <div className="hidden items-center gap-2 md:flex">
           <CalendarViewModeToggle

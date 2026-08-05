@@ -144,7 +144,7 @@ export default function EmployeeDetailPageClient({
   const appointments = appointmentsQuery.data ?? [];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <div className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog">
       <EmployeeDetailHeader employee={employee} />
 
       <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">

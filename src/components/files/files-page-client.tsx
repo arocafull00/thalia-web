@@ -5,7 +5,7 @@ import FilesFiltersSheet from "@/components/files/components/files-filters-sheet
 import FilesResults from "@/components/files/components/files-results";
 import PatientFileDeleteConfirmDialog from "@/components/patients/components/files/patient-file-delete-confirm-dialog";
 import PatientFileViewer from "@/components/patients/components/files/patient-file-viewer";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
 import { useFilesPage } from "@/lib/hooks/use-files-page";
 
 export default function FilesPageClient() {
@@ -13,8 +13,8 @@ export default function FilesPageClient() {
 
   return (
     <div data-testid="files-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
+      <PageCard
+        filters={
           <FilesFilters
             search={page.searchQuery}
             category={page.filters.category}
@@ -36,24 +36,23 @@ export default function FilesPageClient() {
               })
             }
           />
-        </PageStickyFiltersSection>
-        <main className="px-4 py-5 lg:px-8 lg:py-7">
-          <FilesResults
-            files={page.files}
-            total={page.total}
-            page={page.page}
-            totalPages={page.totalPages}
-            hasActiveFilters={page.hasActiveFilters}
-            isLoading={page.filesQuery.isLoading}
-            isRefreshing={page.filesQuery.isRefreshing}
-            error={page.filesQuery.error}
-            onView={page.handleView}
-            onDownload={page.handleDownload}
-            onDelete={page.handleDelete}
-            onPageChange={page.setPage}
-          />
-        </main>
-      </div>
+        }
+      >
+        <FilesResults
+          files={page.files}
+          total={page.total}
+          page={page.page}
+          totalPages={page.totalPages}
+          hasActiveFilters={page.hasActiveFilters}
+          isLoading={page.filesQuery.isLoading}
+          isRefreshing={page.filesQuery.isRefreshing}
+          error={page.filesQuery.error}
+          onView={page.handleView}
+          onDownload={page.handleDownload}
+          onDelete={page.handleDelete}
+          onPageChange={page.setPage}
+        />
+      </PageCard>
 
       <PatientFileViewer
         file={page.viewerFile}

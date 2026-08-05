@@ -52,12 +52,12 @@ export default function TopbarClinicSelector() {
       triggerLeading={<Building2 size={14} />}
       triggerTrailing={
         membershipRoleLabel ? (
-          <span className="shrink-0 rounded-full bg-success/15 px-1.5 py-0.5 text-[10px] font-medium text-success">
+          <span className="shrink-0 rounded-sm bg-primary-subtle px-[7px] py-0.5 text-[10.5px] font-medium text-primary-hover">
             {membershipRoleLabel}
           </span>
         ) : null
       }
-      className="w-64 min-w-0 shrink-0"
+      className="control-chip w-64 min-w-0 shrink-0 rounded-button px-3 py-[9px] text-[13.5px]"
     />
   );
 }

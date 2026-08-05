@@ -7,6 +7,7 @@ import DashboardAgenda from "@/components/dashboard/components/dashboard-agenda"
 import DashboardHeader from "@/components/dashboard/components/dashboard-header";
 import DashboardRecentActivity from "@/components/dashboard/components/dashboard-recent-activity";
 import { DASHBOARD_COPY } from "@/components/dashboard/dashboard-copy";
+import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { toAgendaAppointments } from "@/lib/calendar-agenda";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -46,8 +47,8 @@ export default function DashboardPageClient({
 
   return (
     <div data-testid="dashboard-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="space-y-8 p-4 lg:p-8">
+      <PageCard>
+        <div className="space-y-8 pt-3.5">
           <DashboardHeader
             firstName={firstName}
             appointmentsCount={appointments.length}
@@ -62,7 +63,7 @@ export default function DashboardPageClient({
             <DashboardRecentActivity appointments={appointments} />
           </div>
         </div>
-      </div>
+      </PageCard>
       <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <MobileFab
         label={DASHBOARD_COPY.actions.newAppointmentLabel}

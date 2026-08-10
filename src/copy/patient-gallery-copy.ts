@@ -1,6 +1,8 @@
 export const PATIENT_GALLERY_COPY = {
   title: "Galería",
   photosCount: (count: number) => `${count} imágenes`,
+  photosProgress: (loaded: number, total: number) =>
+    `${loaded} de ${total} imágenes`,
   actions: {
     upload: "Subir imágenes",
     beforeAfter: "Crear antes y después",
@@ -12,9 +14,15 @@ export const PATIENT_GALLERY_COPY = {
   filters: {
     all: "Todas",
     allPhases: "Todas las fases",
+    allTreatments: "Todos los tratamientos",
     search: "Buscar imágenes...",
     searchClear: "Limpiar búsqueda",
     phase: "Fase",
+    treatment: "Tratamiento",
+    anyDate: "Cualquier fecha",
+    dateFrom: "Desde",
+    dateTo: "Hasta",
+    clearDate: "Limpiar fechas",
     sort: "Orden",
     sortRecent: "Más recientes",
     sortOldest: "Más antiguas",
@@ -22,6 +30,10 @@ export const PATIENT_GALLERY_COPY = {
   filterLabels: {
     search: "Buscar imagen",
     phase: "Fase",
+    treatment: "Tratamiento",
+    date: "Fecha",
+    dateFrom: "Fecha desde",
+    dateTo: "Fecha hasta",
     sort: "Orden",
   },
   density: {
@@ -42,9 +54,12 @@ export const PATIENT_GALLERY_COPY = {
   },
   empty: "No hay imágenes que coincidan con los filtros seleccionados.",
   emptyGallery: "Este paciente aún no tiene imágenes en la galería.",
+  loading: "Cargando imágenes",
   loadMore: "Cargar más",
   errors: {
     load: "No se pudieron cargar las imágenes del paciente.",
+    loadMore: "No se pudieron cargar más imágenes.",
+    retry: "Reintentar",
   },
   selection: {
     title: "Selecciona dos imágenes",

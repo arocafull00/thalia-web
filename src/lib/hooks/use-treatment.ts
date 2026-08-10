@@ -35,11 +35,20 @@ export function useTreatments(initialData?: TreatmentWithInventory[]) {
   }, [clinicId, fetchTreatments, hasClientData, seededData]);
 
   const data = entry.data ?? seededData;
+  const refresh = useCallback(() => {
+    if (useTreatmentStore.getState().list.loading) {
+      return Promise.resolve();
+    }
+
+    return fetchTreatments();
+  }, [fetchTreatments]);
 
   return {
     data,
     isLoading: data == null && isInitialLoading(entry),
+    isRefreshing: entry.loading,
     error: entry.error,
+    refresh,
   };
 }
 

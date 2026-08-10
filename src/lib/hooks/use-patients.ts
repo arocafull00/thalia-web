@@ -32,11 +32,20 @@ export function usePatients(search: string, initialData?: Patient[]) {
   }, [clinicId, fetchPatients, hasClientData, search, seededData]);
 
   const data = entry?.data ?? seededData;
+  const refresh = useCallback(() => {
+    if (usePatientsStore.getState().listBySearch[key]?.loading) {
+      return Promise.resolve();
+    }
+
+    return fetchPatients(search);
+  }, [fetchPatients, key, search]);
 
   return {
     data,
     isLoading: data == null && isInitialLoading(entry),
+    isRefreshing: entry?.loading ?? false,
     error: entry?.error,
+    refresh,
   };
 }
 

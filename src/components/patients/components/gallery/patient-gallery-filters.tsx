@@ -5,31 +5,49 @@ import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 
+import PatientGalleryDateRangeFilter from "./patient-gallery-date-range-filter";
+
 const sortOptions = [
   { label: PATIENT_GALLERY_COPY.filters.sortRecent, value: "recent" },
   { label: PATIENT_GALLERY_COPY.filters.sortOldest, value: "oldest" },
 ];
 
 type PatientGalleryFiltersProps = {
+  from: string;
   phase: string;
   phaseOptions: Array<{ label: string; value: string }>;
   search: string;
   sort: string;
+  to: string;
+  treatmentId: string;
+  treatmentOptions: Array<{ label: string; value: string }>;
+  onClearDates: () => void;
+  onFromChange: (value: string) => void;
   onOpenSheet: () => void;
   onPhaseChange: (value: string) => void;
   onSearchChange: (value: string) => void;
   onSortChange: (value: string) => void;
+  onToChange: (value: string) => void;
+  onTreatmentChange: (value: string) => void;
 };
 
 export default function PatientGalleryFilters({
+  from,
   phase,
   phaseOptions,
   search,
   sort,
+  to,
+  treatmentId,
+  treatmentOptions,
+  onClearDates,
+  onFromChange,
   onOpenSheet,
   onPhaseChange,
   onSearchChange,
   onSortChange,
+  onToChange,
+  onTreatmentChange,
 }: PatientGalleryFiltersProps) {
   return (
     <PageFiltersBar
@@ -42,7 +60,7 @@ export default function PatientGalleryFilters({
     >
       <FilterField
         label={PATIENT_GALLERY_COPY.filterLabels.phase}
-        className="w-40 shrink-0"
+        className="w-36 shrink-0"
       >
         {({ controlId }) => (
           <AppSearchableCombobox
@@ -60,8 +78,42 @@ export default function PatientGalleryFilters({
         )}
       </FilterField>
       <FilterField
+        label={PATIENT_GALLERY_COPY.filterLabels.treatment}
+        className="w-44 shrink-0"
+      >
+        {({ controlId }) => (
+          <AppSearchableCombobox
+            id={controlId}
+            value={treatmentId || null}
+            onValueChange={(value) => onTreatmentChange(value ?? "")}
+            options={treatmentOptions}
+            placeholder={PATIENT_GALLERY_COPY.filters.allTreatments}
+            searchPlaceholder={PATIENT_GALLERY_COPY.filters.treatment}
+            allowClear
+            clearLabel={PATIENT_GALLERY_COPY.filters.allTreatments}
+            variant="pill"
+            className="w-full"
+          />
+        )}
+      </FilterField>
+      <FilterField
+        label={PATIENT_GALLERY_COPY.filterLabels.date}
+        className="w-44 shrink-0"
+      >
+        {({ controlId }) => (
+          <PatientGalleryDateRangeFilter
+            id={controlId}
+            from={from}
+            to={to}
+            onFromChange={onFromChange}
+            onToChange={onToChange}
+            onClear={onClearDates}
+          />
+        )}
+      </FilterField>
+      <FilterField
         label={PATIENT_GALLERY_COPY.filterLabels.sort}
-        className="w-40 shrink-0"
+        className="w-36 shrink-0"
       >
         {({ controlId }) => (
           <AppSearchableCombobox

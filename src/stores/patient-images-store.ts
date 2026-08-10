@@ -4,8 +4,11 @@ import { create } from "zustand";
 import {
   createPatientImage,
   deletePatientImage as deletePatientImageDal,
-  getPatientImages,
+  getPatientImagesPage,
+  PATIENT_IMAGES_PAGE_SIZE,
+  type PatientImagesFilters,
 } from "@/dal/patient-images.dal";
+import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { CLINIC_TIME_ZONE } from "@/lib/constants";
 import {
   compressTreatmentImage,
@@ -17,12 +20,6 @@ import {
   uploadPatientImageObject,
 } from "@/lib/patient-image-storage";
 import type { PatientImageUploadInput } from "@/lib/schemas/patient-image-schema";
-import {
-  errorQueryEntry,
-  loadingQueryEntry,
-  successQueryEntry,
-  type QueryEntry,
-} from "@/stores/query-state";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientImageDeleteConfirmState = {
@@ -44,8 +41,22 @@ type UploadPatientImagesInput = {
   metadata: PatientImageUploadInput;
 };
 
+export type PatientImagesEntry = {
+  clinicId: string;
+  queryKey: string;
+  requestId: string;
+  filters: PatientImagesFilters;
+  data: PatientImage[] | null;
+  total: number;
+  loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
+  error: Error | null;
+  loadMoreError: Error | null;
+};
+
 type PatientImagesStore = {
-  imagesByPatientId: Record<string, QueryEntry<PatientImage[]>>;
+  imagesByPatientId: Record<string, PatientImagesEntry>;
   uploading: boolean;
   uploadProgress: number;
   uploadCurrentFile: number;
@@ -54,7 +65,13 @@ type PatientImagesStore = {
   deletingId: string | null;
   deleteError: Error | null;
   deleteConfirm: PatientImageDeleteConfirmState | null;
-  fetchPatientImages: (patientId: string) => Promise<void>;
+  fetchPatientImages: (
+    patientId: string,
+    filters: PatientImagesFilters,
+    force?: boolean,
+  ) => Promise<void>;
+  loadMorePatientImages: (patientId: string) => Promise<void>;
+  refreshPatientImages: (patientId: string) => Promise<void>;
   uploadPatientImage: (input: UploadPatientImageInput) => Promise<PatientImage>;
   uploadPatientImages: (
     input: UploadPatientImagesInput,
@@ -63,6 +80,18 @@ type PatientImagesStore = {
   openDeleteConfirm: (image: PatientImage, onSuccess?: () => void) => void;
   closeDeleteConfirm: () => void;
 };
+
+function patientImagesQueryKey(
+  clinicId: string,
+  patientId: string,
+  filters: PatientImagesFilters,
+) {
+  return JSON.stringify({ clinicId, patientId, ...filters });
+}
+
+function toError(cause: unknown) {
+  return cause instanceof Error ? cause : new Error(String(cause));
+}
 
 async function uploadSinglePatientImage(
   { clinicId, patientId, file, metadata }: UploadPatientImageInput,
@@ -119,39 +148,191 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   deleteError: null,
   deleteConfirm: null,
 
-  fetchPatientImages: async (patientId) => {
-    const previous = get().imagesByPatientId[patientId];
+  fetchPatientImages: async (patientId, filters, force = false) => {
+    const clinicId = getActiveClinicId();
+
+    if (!clinicId) {
+      return;
+    }
+
+    const queryKey = patientImagesQueryKey(clinicId, patientId, filters);
+    const requestId = crypto.randomUUID();
+    const current = get().imagesByPatientId[patientId];
+    const previous = current?.queryKey === queryKey ? current : undefined;
+
+    if (previous?.loading && !force) {
+      return;
+    }
+
     set({
       imagesByPatientId: {
         ...get().imagesByPatientId,
-        [patientId]: loadingQueryEntry(previous),
+        [patientId]: {
+          clinicId,
+          queryKey,
+          requestId,
+          filters,
+          data: previous?.data ?? null,
+          total: previous?.total ?? 0,
+          loading: true,
+          loadingMore: false,
+          hasMore: previous?.hasMore ?? false,
+          error: null,
+          loadMoreError: null,
+        },
       },
     });
 
     try {
-      const images = await getPatientImages(patientId);
+      const page = await getPatientImagesPage({
+        clinicId,
+        patientId,
+        ...filters,
+        offset: 0,
+        limit: PATIENT_IMAGES_PAGE_SIZE,
+      });
+      const latest = get().imagesByPatientId[patientId];
+
+      if (latest?.queryKey !== queryKey || latest.requestId !== requestId) {
+        return;
+      }
+
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
-          [patientId]: successQueryEntry(images),
+          [patientId]: {
+            ...latest,
+            data: page.images,
+            total: page.total,
+            loading: false,
+            hasMore: page.hasMore,
+            error: null,
+          },
         },
       });
     } catch (cause) {
-      logger.captureException(cause, {
+      const error = toError(cause);
+      logger.captureException(error, {
         store: "patient-images-store",
         action: "fetchPatientImages",
+        clinicId,
         patientId,
       });
+      const latest = get().imagesByPatientId[patientId];
+
+      if (latest?.queryKey !== queryKey || latest.requestId !== requestId) {
+        return;
+      }
+
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
-          [patientId]: errorQueryEntry(
-            cause instanceof Error ? cause : new Error(String(cause)),
-            previous,
-          ),
+          [patientId]: {
+            ...latest,
+            loading: false,
+            error,
+          },
         },
       });
     }
+  },
+
+  loadMorePatientImages: async (patientId) => {
+    const current = get().imagesByPatientId[patientId];
+
+    if (
+      !current ||
+      current.data === null ||
+      current.loading ||
+      current.loadingMore ||
+      !current.hasMore
+    ) {
+      return;
+    }
+
+    const { clinicId, queryKey, requestId, filters } = current;
+    set({
+      imagesByPatientId: {
+        ...get().imagesByPatientId,
+        [patientId]: {
+          ...current,
+          loadingMore: true,
+          loadMoreError: null,
+        },
+      },
+    });
+
+    try {
+      const page = await getPatientImagesPage({
+        clinicId,
+        patientId,
+        ...filters,
+        offset: current.data.length,
+        limit: PATIENT_IMAGES_PAGE_SIZE,
+      });
+      const latest = get().imagesByPatientId[patientId];
+
+      if (
+        latest?.queryKey !== queryKey ||
+        latest.requestId !== requestId ||
+        latest.data === null
+      ) {
+        return;
+      }
+
+      const existingIds = new Set(latest.data.map((image) => image.id));
+      const newImages = page.images.filter(
+        (image) => !existingIds.has(image.id),
+      );
+
+      set({
+        imagesByPatientId: {
+          ...get().imagesByPatientId,
+          [patientId]: {
+            ...latest,
+            data: [...latest.data, ...newImages],
+            total: page.total,
+            loadingMore: false,
+            hasMore: page.hasMore,
+            loadMoreError: null,
+          },
+        },
+      });
+    } catch (cause) {
+      const error = toError(cause);
+      logger.captureException(error, {
+        store: "patient-images-store",
+        action: "loadMorePatientImages",
+        clinicId,
+        patientId,
+      });
+      const latest = get().imagesByPatientId[patientId];
+
+      if (latest?.queryKey !== queryKey || latest.requestId !== requestId) {
+        return;
+      }
+
+      set({
+        imagesByPatientId: {
+          ...get().imagesByPatientId,
+          [patientId]: {
+            ...latest,
+            loadingMore: false,
+            loadMoreError: error,
+          },
+        },
+      });
+    }
+  },
+
+  refreshPatientImages: async (patientId) => {
+    const current = get().imagesByPatientId[patientId];
+
+    if (!current) {
+      return;
+    }
+
+    await get().fetchPatientImages(patientId, current.filters, true);
   },
 
   uploadPatientImage: async ({ clinicId, patientId, file, metadata }) => {
@@ -171,7 +352,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         (progress) => set({ uploadProgress: progress }),
       );
 
-      await get().fetchPatientImages(patientId);
+      await get().refreshPatientImages(patientId);
       set({
         uploading: false,
         uploadProgress: 100,
@@ -227,7 +408,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         images.push(image);
       }
 
-      await get().fetchPatientImages(patientId);
+      await get().refreshPatientImages(patientId);
       set({
         uploading: false,
         uploadProgress: 100,
@@ -259,7 +440,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
 
     try {
       await deletePatientImageDal(image.id, image.storage_key);
-      await get().fetchPatientImages(patientId);
+      await get().refreshPatientImages(patientId);
       set({ deletingId: null });
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));

@@ -1,3 +1,5 @@
+import { Notice } from "@/components/ui/primitives/notice";
+
 type AppDialogErrorProps = {
   message: string | undefined;
 };
@@ -7,13 +9,5 @@ export default function AppDialogError({ message }: AppDialogErrorProps) {
     return null;
   }
 
-  return (
-    <p
-      role="alert"
-      aria-live="polite"
-      className="rounded-xl bg-danger/10 px-3 py-2.5 text-sm text-danger"
-    >
-      {message}
-    </p>
-  );
+  return <Notice tone="danger" message={message} />;
 }

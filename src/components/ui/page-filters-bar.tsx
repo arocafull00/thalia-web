@@ -16,6 +16,7 @@ type PageFiltersBarProps = {
   onOpenSheet: () => void;
   children?: ReactNode;
   showMobileSheetButton?: boolean;
+  trailingAction?: ReactNode;
 };
 
 export default function PageFiltersBar({
@@ -27,6 +28,7 @@ export default function PageFiltersBar({
   onOpenSheet,
   children,
   showMobileSheetButton = true,
+  trailingAction,
 }: PageFiltersBarProps) {
   return (
     <div className="flex items-end gap-2">
@@ -59,6 +61,7 @@ export default function PageFiltersBar({
       {children ? (
         <div className="hidden items-end gap-2 sm:flex">{children}</div>
       ) : null}
+      {trailingAction}
     </div>
   );
 }

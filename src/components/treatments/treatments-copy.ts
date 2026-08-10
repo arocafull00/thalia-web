@@ -5,6 +5,8 @@ export const TREATMENTS_COPY = {
     empty: "No hay tratamientos configurados.",
     loadError: "No se pudo cargar el catálogo de tratamientos.",
     allCategories: "Todos",
+    refresh: "Recargar tratamientos",
+    refreshing: "Recargando tratamientos",
   },
   filterLabels: {
     search: "Buscar tratamiento",

@@ -92,9 +92,11 @@ export default function TreatmentsPageClient({
             categoryOptions={categoryOptions}
             search={filters.q}
             showCategoryFilter={showCategoryFilter}
+            isRefreshing={treatments.isRefreshing}
             onCategoryChange={(value) => setFilter("category", value)}
             onSearchChange={handleSearchChange}
             onOpenSheet={handleOpenFiltersSheet}
+            onRefresh={() => void treatments.refresh()}
           />
         }
       >

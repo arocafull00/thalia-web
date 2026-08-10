@@ -128,9 +128,11 @@ export default function PatientsPageClient({
           <PatientsFilters
             search={filters.q}
             status={filters.status}
+            isRefreshing={patients.isRefreshing}
             onSearchChange={handleSearchChange}
             onStatusChange={(value) => setFilter("status", value)}
             onOpenSheet={handleOpenFiltersSheet}
+            onRefresh={() => void patients.refresh()}
           />
         }
       >

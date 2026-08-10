@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
-import { getImageUrl } from "@/dal/patient-images.dal";
+import {
+  getImageUrl,
+  type PatientImagesFilters,
+} from "@/dal/patient-images.dal";
+import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { peekCachedPatientImageUrl } from "@/lib/patient-image-storage";
 import { usePatientImagesStore } from "@/stores/patient-images-store";
-import { isInitialLoading } from "@/stores/query-state";
 import type { PatientImage } from "@/types/database.types";
 
 export type PatientImageViewerSlide = {
@@ -12,12 +15,22 @@ export type PatientImageViewerSlide = {
   alt: string;
 };
 
-export function usePatientImages(patientId: string) {
+export function usePatientImages(
+  patientId: string,
+  filters: PatientImagesFilters,
+) {
+  const clinicId = useClinicId();
   const entry = usePatientImagesStore(
     (state) => state.imagesByPatientId[patientId],
   );
   const fetchPatientImages = usePatientImagesStore(
     (state) => state.fetchPatientImages,
+  );
+  const loadMorePatientImages = usePatientImagesStore(
+    (state) => state.loadMorePatientImages,
+  );
+  const refreshPatientImages = usePatientImagesStore(
+    (state) => state.refreshPatientImages,
   );
 
   useEffect(() => {
@@ -25,13 +38,27 @@ export function usePatientImages(patientId: string) {
       return;
     }
 
-    void fetchPatientImages(patientId);
-  }, [fetchPatientImages, patientId]);
+    void fetchPatientImages(patientId, filters);
+  }, [clinicId, fetchPatientImages, filters, patientId]);
+
+  const matchesCurrentQuery =
+    entry?.clinicId === clinicId &&
+    JSON.stringify(entry.filters) === JSON.stringify(filters);
+  const currentEntry = matchesCurrentQuery ? entry : undefined;
 
   return {
-    data: entry?.data ?? undefined,
-    isLoading: isInitialLoading(entry),
-    error: entry?.error,
+    data: currentEntry?.data ?? undefined,
+    total: currentEntry?.total ?? 0,
+    hasMore: currentEntry?.hasMore ?? false,
+    isLoading:
+      currentEntry == null ||
+      (currentEntry.loading && currentEntry.data === null),
+    isRefreshing: currentEntry?.loading ?? false,
+    isLoadingMore: currentEntry?.loadingMore ?? false,
+    error: currentEntry?.error,
+    loadMoreError: currentEntry?.loadMoreError,
+    loadMore: () => loadMorePatientImages(patientId),
+    refresh: () => refreshPatientImages(patientId),
   };
 }
 

@@ -95,7 +95,9 @@ try {
   });
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);
-  process.stderr.write(`No se pudo preparar el usuario E2E local: ${message}\n`);
+  process.stderr.write(
+    `No se pudo preparar el usuario E2E local: ${message}\n`,
+  );
   process.exit(1);
 }
 
@@ -108,6 +110,8 @@ const playwrightResult = spawnSync(
       NEXT_PUBLIC_SUPABASE_URL: apiUrl,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: publishableKey,
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey,
+      E2E_SUPABASE_URL: apiUrl,
+      E2E_SUPABASE_SECRET_KEY: secretKey,
       PORT: "3001",
       E2E_BASE_URL: "http://127.0.0.1:3001",
     },

@@ -3,6 +3,8 @@ export const PATIENTS_COPY = {
     title: "Pacientes",
     empty: "Todavía no hay pacientes registrados.",
     loadError: "No se pudieron cargar los pacientes.",
+    refresh: "Recargar pacientes",
+    refreshing: "Recargando pacientes",
   },
   filters: {
     status: "Estado del paciente",

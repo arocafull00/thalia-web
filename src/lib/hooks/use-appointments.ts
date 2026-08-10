@@ -92,11 +92,24 @@ export function useAppointments(
   }, [clinicId, employeeId, end, fetchAppointments, seededData, start]);
 
   const data = entry?.data ?? seededData;
+  const refresh = useCallback(() => {
+    if (useAppointmentsStore.getState().byRange[key]?.loading) {
+      return Promise.resolve();
+    }
+
+    return fetchAppointments({
+      start: new Date(start),
+      end: new Date(end),
+      employeeId,
+    });
+  }, [employeeId, end, fetchAppointments, key, start]);
 
   return {
     data,
     isLoading: data == null && isInitialLoading(entry),
+    isRefreshing: entry?.loading ?? false,
     error: entry?.error,
+    refresh,
   };
 }
 

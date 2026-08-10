@@ -150,12 +150,14 @@ export default function AppointmentsPageClient({
             search={searchQuery}
             status={filters.status}
             to={filters.to}
+            isRefreshing={appointments.isRefreshing}
             onEmployeeIdChange={(value) => setFilter("employeeId", value)}
             onFromChange={(value) => setFilter("from", value)}
             onSearchChange={handleSearchChange}
             onStatusChange={(value) => setFilter("status", value)}
             onToChange={(value) => setFilter("to", value)}
             onOpenSheet={handleOpenFiltersSheet}
+            onRefresh={() => void appointments.refresh()}
           />
         }
         footer={

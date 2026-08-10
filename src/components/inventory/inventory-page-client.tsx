@@ -145,7 +145,11 @@ export default function InventoryPageClient({
           <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
         ) : null}
         {!inventory.isLoading ? (
-          <InventoryTable items={filteredItems} onRowClick={handleRowClick} />
+          <InventoryTable
+            items={filteredItems}
+            onRowClick={handleRowClick}
+            onEdit={handleRowClick}
+          />
         ) : null}
       </PageCard>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>

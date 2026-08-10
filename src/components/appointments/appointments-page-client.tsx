@@ -4,11 +4,13 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
+import AppointmentDeleteDialog from "@/components/appointments/components/appointment-delete-dialog";
 import AppointmentFilters from "@/components/appointments/components/appointment-filters";
 import AppointmentFiltersSheet from "@/components/appointments/components/appointment-filters-sheet";
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import AppointmentsPanelFooter from "@/components/appointments/components/appointments-panel-footer";
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
+import { useAppointmentListDelete } from "@/components/appointments/hooks/use-appointment-list-delete";
 import PageCard from "@/components/ui/page-card";
 import PageEmptyState from "@/components/ui/page-empty-state";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
@@ -54,6 +56,7 @@ export default function AppointmentsPageClient({
   >(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
+  const appointmentDelete = useAppointmentListDelete();
   const filterDefaults = useMemo(
     () => ({
       employeeId: initialRange.employeeId,
@@ -175,6 +178,8 @@ export default function AppointmentsPageClient({
             appointments={flatAppointments}
             onRowClick={handleRowClick}
             onStatusChange={handleStatusChange}
+            onEdit={handleRowClick}
+            onDelete={appointmentDelete.openDialog}
           />
         ) : null}
       </PageCard>
@@ -190,6 +195,20 @@ export default function AppointmentsPageClient({
               }
             : undefined
         }
+      />
+      <AppointmentDeleteDialog
+        open={Boolean(appointmentDelete.appointment)}
+        onOpenChange={(open) => {
+          if (!open) {
+            appointmentDelete.closeDialog();
+          }
+        }}
+        canRestoreStock={appointmentDelete.canRestoreStock}
+        restoreStock={appointmentDelete.restoreStock}
+        onRestoreStockChange={appointmentDelete.setRestoreStock}
+        isPending={appointmentDelete.isPending}
+        errorMessage={appointmentDelete.errorMessage ?? undefined}
+        onConfirm={appointmentDelete.confirmDelete}
       />
       <AppointmentFiltersSheet
         key={sheetKey}

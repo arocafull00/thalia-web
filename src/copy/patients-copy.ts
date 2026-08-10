@@ -15,11 +15,17 @@ export const PATIENTS_COPY = {
     status: "Estado",
   },
   list: {
+    actions: {
+      label: "Acciones del paciente",
+      edit: "Editar paciente",
+      view: "Ver detalle",
+    },
     columns: {
       patient: "Paciente",
       phone: "Teléfono",
       email: "Email",
       marketingOptIn: "Comunicaciones",
+      actions: "Acciones",
     },
     noPhone: "Sin teléfono",
     noEmail: "—",

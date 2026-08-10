@@ -206,9 +206,9 @@ export default function CalendarPageClient({
         {isMobile && viewMode === "month" ? (
           <CalendarMobileMonthView />
         ) : isMobile && viewMode === "day" ? (
-          <CalendarMobileDayView />
+          <CalendarMobileDayView clinic={clinic} />
         ) : (
-          <ScheduleXCalendar />
+          <ScheduleXCalendar clinic={clinic} />
         )}
       </div>
       <AppointmentCreateDialog

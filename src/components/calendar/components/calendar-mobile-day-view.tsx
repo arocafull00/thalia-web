@@ -2,12 +2,28 @@
 
 import DayAgendaList from "@/components/calendar/components/day-agenda-list";
 import { useCalendarDayAgenda } from "@/components/calendar/hooks/use-calendar-day-agenda";
-import { formatFullDayLabel } from "@/lib/calendar-grid";
+import {
+  formatFullDayLabel,
+  getAgendaHours,
+  getClinicCalendarHourRange,
+} from "@/lib/calendar-grid";
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useCalendarStore } from "@/stores/calendar-store";
 
-export default function CalendarMobileDayView() {
+type CalendarMobileDayViewProps = {
+  clinic: ClinicInfo | null;
+};
+
+export default function CalendarMobileDayView({
+  clinic,
+}: CalendarMobileDayViewProps) {
   const { day, agenda } = useCalendarDayAgenda();
   const openEditDialog = useCalendarStore((state) => state.openEditDialog);
+  const hourRange = getClinicCalendarHourRange(
+    clinic?.opening_time,
+    clinic?.closing_time,
+  );
+  const hours = getAgendaHours(hourRange);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -18,6 +34,7 @@ export default function CalendarMobileDayView() {
       </div>
       <DayAgendaList
         day={day}
+        hours={hours}
         appointments={agenda}
         onAppointmentClick={openEditDialog}
       />

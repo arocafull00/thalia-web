@@ -5,6 +5,9 @@ export function useTreatmentsPage() {
   const [selectedTreatmentId, setSelectedTreatmentId] = useState<string | null>(
     null,
   );
+  const [deleteTreatmentId, setDeleteTreatmentId] = useState<string | null>(
+    null,
+  );
 
   const openCreateDialog = useCallback(() => {
     setSelectedTreatmentId(null);
@@ -20,11 +23,22 @@ export function useTreatmentsPage() {
     setDialogOpen(false);
   }, []);
 
+  const openDeleteDialog = useCallback((id: string) => {
+    setDeleteTreatmentId(id);
+  }, []);
+
+  const closeDeleteDialog = useCallback(() => {
+    setDeleteTreatmentId(null);
+  }, []);
+
   return {
     dialogOpen,
+    deleteTreatmentId,
     selectedTreatmentId,
     openCreateDialog,
     openEditDialog,
     closeDialog,
+    openDeleteDialog,
+    closeDeleteDialog,
   };
 }

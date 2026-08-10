@@ -26,7 +26,7 @@ export default function EmployeeDetailTabBar({
       aria-label={EMPLOYEE_DETAIL_COPY.breadcrumbRoot}
       className="shrink-0 border-b border-border-subtle bg-surface"
     >
-      <div className="flex gap-2 overflow-x-auto px-4">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
         {EMPLOYEE_DETAIL_TAB_ITEMS.map((tab) => (
           <EmployeeDetailTabButton
             key={tab.id}

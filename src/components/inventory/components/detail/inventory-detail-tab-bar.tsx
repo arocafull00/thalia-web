@@ -26,7 +26,7 @@ export default function InventoryDetailTabBar({
       aria-label={INVENTORY_ITEM_DETAIL_COPY.breadcrumbRoot}
       className="shrink-0 border-b border-border-subtle bg-surface"
     >
-      <div className="flex gap-2 overflow-x-auto px-4">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
         {INVENTORY_DETAIL_TAB_ITEMS.map((tab) => (
           <InventoryDetailTabButton
             key={tab.id}

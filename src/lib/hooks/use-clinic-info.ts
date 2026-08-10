@@ -25,7 +25,6 @@ export function useClinicInfo(initialClinic?: ClinicInfo | null) {
   const [clinic, setClinic] = useState<ClinicInfo | null>(
     initialClinic ?? null,
   );
-  const [loading, setLoading] = useState(!initialClinic);
   const [version, setVersion] = useState(0);
   const initialClinicMatches = initialClinic?.id === activeClinicId;
   const resolvedClinic =
@@ -40,19 +39,24 @@ export function useClinicInfo(initialClinic?: ClinicInfo | null) {
       return;
     }
 
-    if (initialClinicMatches && version === 0) {
-      return;
-    }
+    let cancelled = false;
 
     void getClinicById(activeClinicId).then((data) => {
+      if (cancelled) {
+        return;
+      }
+
       setClinic(data);
-      setLoading(false);
     });
-  }, [activeClinicId, initialClinicMatches, version]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeClinicId, version]);
 
   return {
     clinic: resolvedClinic,
-    loading: Boolean(activeClinicId && !resolvedClinic) || loading,
+    loading: Boolean(activeClinicId && !resolvedClinic),
     refetch: () => setVersion((v) => v + 1),
   };
 }

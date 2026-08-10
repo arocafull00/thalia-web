@@ -147,6 +147,7 @@ export default function PatientsPageClient({
           <PatientsTable
             patients={filteredPatients}
             onRowClick={handleRowClick}
+            onEdit={handleRowClick}
           />
         ) : null}
       </PageCard>

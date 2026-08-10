@@ -16,6 +16,9 @@ export const TREATMENTS_COPY = {
     noMaterials: "Sin materiales",
     edit: "Editar",
     delete: "Eliminar",
+    view: "Ver detalle",
+    actions: "Acciones",
+    actionsLabel: "Acciones del tratamiento",
   },
   dialog: {
     createTitle: "Nuevo tratamiento",

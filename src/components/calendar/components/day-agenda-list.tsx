@@ -10,11 +10,13 @@ import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 
 type DayAgendaListProps = {
   day: Date;
+  hours?: number[];
   appointments: AgendaAppointment[];
   onAppointmentClick: (appointmentId: string) => void;
 };
 
 export default function DayAgendaList({
+  hours = getAgendaHours(),
   appointments,
   onAppointmentClick,
 }: DayAgendaListProps) {
@@ -27,7 +29,6 @@ export default function DayAgendaList({
     );
   }
 
-  const hours = getAgendaHours();
   const appointmentsByHour = groupAppointmentsByHour(appointments, timezone);
 
   return (

@@ -9,7 +9,7 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { type CSSProperties, useState } from "react";
+import { type CSSProperties, type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import MobileCardView, {
@@ -40,6 +40,7 @@ type DataTableProps<TData, TValue> = {
   pageSize?: number;
   mobileColumns?: MobileCardColumn<TData>[];
   mobileActions?: MobileCardAction<TData>[];
+  renderMobileActions?: (row: TData) => ReactNode;
   getMobileRowKey?: (row: TData, index: number) => string;
 };
 
@@ -55,6 +56,7 @@ export function DataTable<TData, TValue>({
   pageSize = 10,
   mobileColumns,
   mobileActions,
+  renderMobileActions,
   getMobileRowKey,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
@@ -102,6 +104,7 @@ export function DataTable<TData, TValue>({
             data={pageRows}
             columns={mobileColumns}
             actions={mobileActions}
+            renderActions={renderMobileActions}
             onRowClick={onRowClick}
             emptyMessage={emptyMessage}
             getRowKey={resolveMobileRowKey}

@@ -61,7 +61,7 @@ export const PATIENT_GALLERY_COPY = {
     fields: {
       phase: "Fase",
       treatment: "Tratamiento",
-      capturedAt: "Fecha de captura",
+      capturedAt: "Fecha de la imagen",
       notes: "Notas",
     },
     phasePlaceholder: "Sin fase",
@@ -85,7 +85,7 @@ export const PATIENT_GALLERY_COPY = {
     close: "Cerrar visor",
     delete: "Eliminar imagen",
     metadata: {
-      capturedAt: "Fecha",
+      capturedAt: "Fecha de la imagen",
       phase: "Fase",
       notes: "Notas",
     },

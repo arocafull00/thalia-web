@@ -4,6 +4,9 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
+import ListRowActions from "@/components/ui/list-row-actions";
+import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
 import { formatTime } from "@/lib/format";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
@@ -11,11 +14,13 @@ import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 type AppointmentRowProps = {
   appointment: AgendaAppointment;
   onClick?: () => void;
+  actions?: ProfileAction[];
 };
 
 export default function AppointmentRow({
   appointment,
   onClick,
+  actions,
 }: AppointmentRowProps) {
   const timezone = useActiveClinicTimezone();
   const content = (
@@ -62,6 +67,13 @@ export default function AppointmentRow({
         </Link>
       )}
       <AppointmentStockButton issue={appointment.stockIssue} />
+      {actions ? (
+        <ListRowActions
+          actions={actions}
+          label={APPOINTMENTS_COPY.list.actions.label}
+          variant="menu"
+        />
+      ) : null}
       <ChevronRight className="size-4 shrink-0 text-ink-muted" aria-hidden />
     </div>
   );

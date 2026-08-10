@@ -21,6 +21,7 @@ type MobileCardViewProps<T> = {
   data: T[];
   columns: MobileCardColumn<T>[];
   actions?: MobileCardAction<T>[];
+  renderActions?: (row: T) => ReactNode;
   onRowClick?: (row: T) => void;
   emptyMessage?: string;
   getRowKey: (row: T, index: number) => string;
@@ -30,6 +31,7 @@ export default function MobileCardView<T>({
   data,
   columns,
   actions,
+  renderActions,
   onRowClick,
   emptyMessage = "No hay resultados.",
   getRowKey,
@@ -50,6 +52,7 @@ export default function MobileCardView<T>({
           row={row}
           columns={columns}
           actions={actions}
+          renderActions={renderActions}
           onRowClick={onRowClick}
         />
       ))}

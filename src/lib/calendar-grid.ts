@@ -31,6 +31,73 @@ export const TOTAL_SLOTS =
   ((CALENDAR_END_HOUR - CALENDAR_START_HOUR) * 60) / SLOT_MINUTES;
 export const GRID_HEIGHT = TOTAL_SLOTS * SLOT_HEIGHT;
 
+export type CalendarHourRange = {
+  startHour: number;
+  endHour: number;
+  dayBoundaries: {
+    start: string;
+    end: string;
+  };
+};
+
+const DEFAULT_CALENDAR_HOUR_RANGE: CalendarHourRange = {
+  startHour: CALENDAR_START_HOUR,
+  endHour: CALENDAR_END_HOUR,
+  dayBoundaries: {
+    start: `${String(CALENDAR_START_HOUR).padStart(2, "0")}:00`,
+    end: `${String(CALENDAR_END_HOUR).padStart(2, "0")}:00`,
+  },
+};
+
+export function parseCalendarTimeToMinutes(
+  time: string | null | undefined,
+): number | null {
+  const match = /^(\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?$/.exec(time ?? "");
+  if (!match) {
+    return null;
+  }
+
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours > 23 || minutes > 59) {
+    return null;
+  }
+
+  return hours * 60 + minutes;
+}
+
+export function getClinicCalendarHourRange(
+  openingTime: string | null | undefined,
+  closingTime: string | null | undefined,
+): CalendarHourRange {
+  const openingMinutes = parseCalendarTimeToMinutes(openingTime);
+  const closingMinutes = parseCalendarTimeToMinutes(closingTime);
+
+  if (
+    openingMinutes === null ||
+    closingMinutes === null ||
+    openingMinutes >= closingMinutes
+  ) {
+    return DEFAULT_CALENDAR_HOUR_RANGE;
+  }
+
+  const startHour = Math.floor(openingMinutes / 60);
+  const endHour = Math.ceil(closingMinutes / 60);
+
+  return {
+    startHour,
+    endHour,
+    dayBoundaries: {
+      start: `${String(startHour).padStart(2, "0")}:00`,
+      end: `${String(endHour).padStart(2, "0")}:00`,
+    },
+  };
+}
+
+export function getMinWeekGridHeight(range: CalendarHourRange): number {
+  return (range.endHour - range.startHour) * MIN_HOUR_HEIGHT;
+}
+
 export function getWeekDays(anchorDate: Date): Date[] {
   const weekStart = startOfWeek(anchorDate, { weekStartsOn: 1 });
   return Array.from({ length: 7 }, (_, index) => addDays(weekStart, index));
@@ -63,10 +130,12 @@ export function getMonthGridDays(anchorDate: Date): Date[] {
   return eachDayOfInterval({ start: gridStart, end: gridEnd });
 }
 
-export function getAgendaHours(): number[] {
+export function getAgendaHours(
+  range: CalendarHourRange = DEFAULT_CALENDAR_HOUR_RANGE,
+): number[] {
   return Array.from(
-    { length: CALENDAR_END_HOUR - CALENDAR_START_HOUR },
-    (_, index) => CALENDAR_START_HOUR + index,
+    { length: range.endHour - range.startHour },
+    (_, index) => range.startHour + index,
   );
 }
 

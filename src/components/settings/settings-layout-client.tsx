@@ -39,7 +39,11 @@ export default function SettingsLayoutClient({
   const pathname = usePathname();
   const activeSection = getSettingsSectionFromPathname(pathname);
   const { profile, user } = useAuth();
+  const hoursDialogOpen = useSettingsUiStore((state) => state.hoursDialogOpen);
   const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
+  const setHoursDialogOpen = useSettingsUiStore(
+    (state) => state.setHoursDialogOpen,
+  );
   const resolvedAvatarUrl = useFileUrl(profile?.avatar_url ?? null);
   const displayUri = resolveAvatarDisplayUri(
     resolvedAvatarUrl,
@@ -59,7 +63,6 @@ export default function SettingsLayoutClient({
   } = useSettingsPageActions(initialEmployees);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [clinicEditDialogOpen, setClinicEditDialogOpen] = useState(false);
-  const [hoursDialogOpen, setHoursDialogOpen] = useState(false);
   const {
     clinic,
     loading: clinicLoading,

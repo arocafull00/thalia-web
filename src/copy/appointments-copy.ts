@@ -31,4 +31,15 @@ export const APPOINTMENTS_COPY = {
     countSingular: "1 cita",
     countPlural: "{count} citas",
   },
+  list: {
+    actions: {
+      label: "Acciones de la cita",
+      view: "Ver detalle",
+      edit: "Editar cita",
+      delete: "Eliminar cita",
+    },
+    columns: {
+      actions: "Acciones",
+    },
+  },
 } as const;

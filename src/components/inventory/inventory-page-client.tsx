@@ -24,7 +24,10 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -135,7 +138,9 @@ export default function InventoryPageClient({
           activeStock={filters.stock}
           onStockChange={(value) => setFilter("stock", value)}
         />
-        {inventory.isLoading ? <SkeletonList /> : null}
+        {inventory.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
         {inventory.error ? (
           <Notice tone="danger" message={INVENTORY_COPY.page.loadError} />
         ) : null}

@@ -5,7 +5,10 @@ import { FileSearch } from "lucide-react";
 import FilesPagination from "@/components/files/components/files-pagination";
 import FilesTable from "@/components/files/components/files-table";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { FILES_COPY } from "@/copy/files-copy";
 import type { PatientFileWithPatient } from "@/types/database.types";
 
@@ -55,7 +58,7 @@ export default function FilesResults({
         </div>
       </div>
 
-      {isLoading ? <SkeletonList /> : null}
+      {isLoading ? <SkeletonList count={PAGE_LIST_SKELETON_ROWS} /> : null}
       {error ? (
         <Notice tone="danger" message={FILES_COPY.page.loadError} />
       ) : null}

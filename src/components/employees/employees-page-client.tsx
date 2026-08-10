@@ -17,6 +17,7 @@ import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import PageCard from "@/components/ui/page-card";
 import PageEmptyState from "@/components/ui/page-empty-state";
+import PageSurface from "@/components/ui/page-surface";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -24,7 +25,10 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
@@ -149,9 +153,9 @@ export default function EmployeesPageClient({
 
   if (!canManage) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={EMPLOYEES_COPY.page.permissions} />
-      </div>
+      </PageSurface>
     );
   }
 
@@ -170,7 +174,9 @@ export default function EmployeesPageClient({
           />
         }
       >
-        {employees.isLoading ? <SkeletonList /> : null}
+        {employees.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
         {employees.error ? (
           <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
         ) : null}

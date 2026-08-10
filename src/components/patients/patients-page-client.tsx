@@ -24,7 +24,10 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -131,7 +134,9 @@ export default function PatientsPageClient({
           />
         }
       >
-        {patients.isLoading ? <SkeletonList /> : null}
+        {patients.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
         {patients.error ? (
           <Notice tone="danger" message={PATIENTS_COPY.page.loadError} />
         ) : null}

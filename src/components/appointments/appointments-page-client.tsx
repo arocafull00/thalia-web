@@ -13,7 +13,10 @@ import PageCard from "@/components/ui/page-card";
 import PageEmptyState from "@/components/ui/page-empty-state";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -158,7 +161,9 @@ export default function AppointmentsPageClient({
           ) : null
         }
       >
-        {appointments.isLoading && !appointments.data ? <SkeletonList /> : null}
+        {appointments.isLoading && !appointments.data ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
         {appointments.error ? (
           <Notice tone="danger" message={APPOINTMENTS_COPY.page.loadError} />
         ) : null}

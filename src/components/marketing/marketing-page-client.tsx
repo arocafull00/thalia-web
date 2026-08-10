@@ -25,7 +25,10 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { useCampaignCreateDialog } from "@/lib/hooks/use-campaign-create-dialog";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useMarketingPage } from "@/lib/hooks/use-marketing-page";
@@ -119,7 +122,9 @@ export default function MarketingPageClient() {
           ) : null
         }
       >
-        {campaigns.isLoading ? <SkeletonList /> : null}
+        {campaigns.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
         {campaigns.error ? (
           <Notice tone="danger" message={MARKETING_COPY.page.loadError} />
         ) : null}

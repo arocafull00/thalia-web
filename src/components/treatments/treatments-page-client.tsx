@@ -13,7 +13,10 @@ import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
@@ -87,7 +90,9 @@ export default function TreatmentsPageClient({
           />
         }
       >
-        {treatments.isLoading ? <SkeletonList /> : null}
+        {treatments.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
         {treatments.error ? (
           <Notice tone="danger" message={TREATMENTS_COPY.page.loadError} />
         ) : null}

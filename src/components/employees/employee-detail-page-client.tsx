@@ -12,6 +12,7 @@ import {
   getEmployeeDetailMenuSections,
   getEmployeeDetailPrimaryAction,
 } from "@/components/employees/employee-detail-actions";
+import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -110,9 +111,9 @@ export default function EmployeeDetailPageClient({
 
   if ((authLoading || clinicLoading || employeeQuery.isLoading) && !employee) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList />
-      </div>
+      </PageSurface>
     );
   }
 
@@ -129,12 +130,12 @@ export default function EmployeeDetailPageClient({
   }
   if (!canManage) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice
           tone="danger"
           message={EMPLOYEE_DETAIL_COPY.errors.permissions}
         />
-      </div>
+      </PageSurface>
     );
   }
   if (!employee) {

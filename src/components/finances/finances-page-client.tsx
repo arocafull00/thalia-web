@@ -22,6 +22,7 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import PageCard from "@/components/ui/page-card";
+import PageSurface from "@/components/ui/page-surface";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -180,9 +181,9 @@ export default function FinancesPageClient({
 
   if (!isAdmin) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={FINANCES_COPY.errors.permissions} />
-      </div>
+      </PageSurface>
     );
   }
 

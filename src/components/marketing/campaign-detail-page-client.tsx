@@ -11,6 +11,7 @@ import CampaignRecipientsList from "@/components/marketing/components/detail/cam
 import CampaignMessagePreview from "@/components/marketing/components/form/campaign-message-preview";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
+import PageSurface from "@/components/ui/page-surface";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useCampaignDetail } from "@/lib/hooks/use-campaign-detail";
@@ -95,17 +96,17 @@ export default function CampaignDetailPageClient() {
 
   if (isLoading) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList />
-      </div>
+      </PageSurface>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={detail.loadError} />
-      </div>
+      </PageSurface>
     );
   }
 

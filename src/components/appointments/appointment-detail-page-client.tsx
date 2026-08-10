@@ -14,6 +14,7 @@ import AppointmentHeader from "@/components/appointments/components/appointment-
 import AppointmentMaterialsSection from "@/components/appointments/components/appointment-materials-section";
 import AppointmentTreatmentsSection from "@/components/appointments/components/appointment-treatments-section";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
+import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -147,9 +148,9 @@ export default function AppointmentDetailPageClient({
 
   if (isLoading) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList count={4} />
-      </div>
+      </PageSurface>
     );
   }
 

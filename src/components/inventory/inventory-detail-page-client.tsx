@@ -12,6 +12,7 @@ import {
   getInventoryDetailMenuSections,
   getInventoryDetailPrimaryAction,
 } from "@/components/inventory/inventory-detail-actions";
+import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -88,9 +89,9 @@ export default function InventoryDetailPageClient({
 
   if (itemQuery.isLoading) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList />
-      </div>
+      </PageSurface>
     );
   }
 

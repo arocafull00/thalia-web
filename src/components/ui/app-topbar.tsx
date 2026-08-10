@@ -5,10 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import PwaInstallDialog from "@/components/pwa/components/pwa-install-dialog";
 import { usePwaInstall } from "@/components/pwa/hooks/use-pwa-install";
-import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import AppDialog from "@/components/ui/app-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,7 +14,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -25,29 +22,11 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
-import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
-import { EMPLOYEES_COPY } from "@/copy/employees-copy";
-import { FILES_COPY } from "@/copy/files-copy";
-import { FINANCES_COPY } from "@/copy/finances-copy";
-import { INVENTORY_COPY } from "@/copy/inventory-copy";
-import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
-import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { appNavItemTitle } from "@/lib/hooks/use-app-nav-items";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useTopbarActionStore } from "@/stores/topbar-action-store";
-
-const PAGE_TITLES_BY_ROUTE: Record<string, string> = {
-  "/appointments": APPOINTMENTS_COPY.page.title,
-  "/employees": EMPLOYEES_COPY.page.title,
-  "/files": FILES_COPY.page.title,
-  "/finances": FINANCES_COPY.title,
-  "/inventory": INVENTORY_COPY.page.title,
-  "/marketing": MARKETING_COPY.page.title,
-  "/patients": PATIENTS_COPY.page.title,
-  "/settings": SETTINGS_COPY.page.title,
-  "/treatments": TREATMENTS_COPY.page.title,
-};
 
 export default function AppTopbar() {
   const pathname = usePathname();
@@ -60,9 +39,7 @@ export default function AppTopbar() {
   const unreadCount = useInventoryAlertsStore((state) => state.unreadCount);
   const markAsRead = useInventoryAlertsStore((state) => state.markAsRead);
   const { canPromptInstall, handleInstall, showInstallCta } = usePwaInstall();
-  const title =
-    PAGE_TITLES_BY_ROUTE[pathname] ??
-    (pathname.startsWith("/settings") ? SETTINGS_COPY.page.title : undefined);
+  const title = appNavItemTitle(pathname);
   const primaryAction = action ?? actions[0] ?? null;
   const hasOverflowMenu =
     menu?.sections.some((section) => section.actions.length > 0) ?? false;
@@ -77,37 +54,34 @@ export default function AppTopbar() {
   };
 
   return (
-    <header data-testid="app-topbar" className="sticky top-0 z-40 mb-6">
-      <div className="flex flex-wrap items-center gap-x-2 px-6 lg:grid lg:h-12 lg:grid-cols-[1fr_auto_1fr]">
-        <div className="order-1 flex h-12 min-w-0 flex-1 items-center gap-2">
+    <header data-testid="app-topbar" className="sticky top-0 z-40 mb-3.5">
+      <div className="surface-card flex flex-wrap items-center gap-x-2.5 rounded-dialog px-4 lg:flex-nowrap lg:px-5">
+        <div className="order-1 flex min-w-0 flex-1 items-center gap-2 py-2">
           <SidebarTrigger
             variant="ghost"
             size="icon"
             className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
           />
           {breadcrumb ? (
-            <Breadcrumb
-              aria-label={breadcrumb.rootLabel}
-              className="min-w-0 flex-1"
-            >
-              <BreadcrumbList className="min-w-0 flex-nowrap">
-                <BreadcrumbItem className="shrink-0">
-                  <BreadcrumbLink asChild>
-                    <Link href={breadcrumb.rootHref}>
-                      {breadcrumb.rootLabel}
-                    </Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="shrink-0" />
-                <BreadcrumbItem className="min-w-0">
-                  <BreadcrumbPage className="truncate">
-                    {breadcrumb.currentLabel}
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <div className="min-w-0 flex-1">
+              <Breadcrumb aria-label={breadcrumb.rootLabel} className="min-w-0">
+                <BreadcrumbList className="min-w-0 flex-nowrap text-xs text-ink-muted">
+                  <BreadcrumbItem className="shrink-0">
+                    <BreadcrumbLink asChild>
+                      <Link href={breadcrumb.rootHref}>
+                        {breadcrumb.rootLabel}
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="shrink-0" />
+                </BreadcrumbList>
+              </Breadcrumb>
+              <h1 className="truncate text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
+                {breadcrumb.currentLabel}
+              </h1>
+            </div>
           ) : title ? (
-            <h1 className="truncate text-sm font-medium text-ink-secondary">
+            <h1 className="truncate text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
               {title}
             </h1>
           ) : null}
@@ -115,7 +89,7 @@ export default function AppTopbar() {
         <div className="order-3 flex w-full items-center justify-center border-t border-border-subtle py-2 lg:order-2 lg:w-auto lg:border-t-0 lg:py-0">
           <TopbarClinicSelector />
         </div>
-        <div className="order-2 flex h-12 items-center justify-end gap-2 lg:order-3">
+        <div className="order-2 flex items-center justify-end gap-2.5 py-2 lg:order-3">
           <AppDialog
             open={notificationsOpen}
             onOpenChange={setNotificationsOpen}
@@ -125,7 +99,7 @@ export default function AppTopbar() {
               variant="ghost"
               size="icon"
               aria-label="Notificaciones"
-              className="relative size-9 text-ink-secondary hover:text-ink"
+              className="control-chip relative size-[38px] rounded-button text-ink-secondary hover:text-ink"
               onClick={() => {
                 setNotificationsOpen(true);
                 const clinicId = getActiveClinicId();
@@ -151,6 +125,7 @@ export default function AppTopbar() {
               variant="ghost"
               testId="pwa-install-topbar"
               onClick={handlePwaInstallClick}
+              className="control-chip h-[38px] rounded-button text-[13.5px]"
             />
           ) : null}
           {primaryAction ? (
@@ -161,6 +136,11 @@ export default function AppTopbar() {
               variant={primaryAction.variant}
               testId={primaryAction.testId}
               onClick={primaryAction.onClick}
+              className={
+                primaryAction.variant === "ghost"
+                  ? "control-chip h-[38px] rounded-button text-[13.5px]"
+                  : "h-[38px] rounded-button bg-[image:var(--gradient-primary)] text-[13.5px] shadow-glow transition-shadow hover:shadow-glow-strong"
+              }
             />
           ) : null}
           {hasOverflowMenu && menu ? (

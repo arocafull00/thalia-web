@@ -12,6 +12,7 @@ import CampaignFormDialog from "@/components/marketing/components/form/campaign-
 import CampaignMessagePreview from "@/components/marketing/components/form/campaign-message-preview";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
+import PageSurface from "@/components/ui/page-surface";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { useCampaignCreateDialog } from "@/lib/hooks/use-campaign-create-dialog";
@@ -122,17 +123,17 @@ export default function CampaignDetailPageClient() {
 
   if (isLoading) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList />
-      </div>
+      </PageSurface>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={detail.loadError} />
-      </div>
+      </PageSurface>
     );
   }
 
@@ -143,7 +144,7 @@ export default function CampaignDetailPageClient() {
   return (
     <div
       data-testid="campaign-detail-page"
-      className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+      className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
     >
       <CampaignDetailHeader campaign={campaign} />
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">

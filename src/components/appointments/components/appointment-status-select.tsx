@@ -1,5 +1,6 @@
 "use client";
 
+import { APPOINTMENT_STATUS_COLOR } from "@/components/appointments/appointment-status-color";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { appointmentStatusLabel } from "@/lib/format";
 import type { AppointmentStatus } from "@/types/database.types";
@@ -19,22 +20,13 @@ const allStatuses: AppointmentStatus[] = [
   "no_show",
 ];
 
-const statusColors: Record<AppointmentStatus, string> = {
-  scheduled: "#6366f1",
-  confirmed: "#eab308",
-  in_progress: "#f97316",
-  completed: "#14b8a6",
-  cancelled: "#f43f5e",
-  no_show: "#64748b",
-};
-
 const statusOptions = allStatuses.map((s) => ({
   value: s,
   label: appointmentStatusLabel(s),
   leading: (
     <span
       className="h-2 w-2 shrink-0 rounded-full"
-      style={{ backgroundColor: statusColors[s] }}
+      style={{ backgroundColor: APPOINTMENT_STATUS_COLOR[s] }}
     />
   ),
 }));
@@ -59,7 +51,7 @@ export default function AppointmentStatusSelect({
       triggerLeading={
         <span
           className="h-2 w-2 shrink-0 rounded-full"
-          style={{ backgroundColor: statusColors[resolvedStatus] }}
+          style={{ backgroundColor: APPOINTMENT_STATUS_COLOR[resolvedStatus] }}
         />
       }
     />

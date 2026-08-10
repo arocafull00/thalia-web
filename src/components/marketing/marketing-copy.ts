@@ -63,7 +63,7 @@ export const MARKETING_COPY = {
       message: "Mensaje",
       footer: "Pie del mensaje",
       segment: "Destinatarios",
-      preview: "Vista previa",
+      preview: "Texto",
     },
     fields: {
       title: "Título",

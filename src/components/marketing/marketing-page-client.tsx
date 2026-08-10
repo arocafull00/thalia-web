@@ -10,10 +10,13 @@ import CampaignsFilters from "@/components/marketing/components/list/campaigns-f
 import CampaignsFiltersSheet from "@/components/marketing/components/list/campaigns-filters-sheet";
 import CampaignsTable from "@/components/marketing/components/list/campaigns-table";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { useCampaignCreateDialog } from "@/lib/hooks/use-campaign-create-dialog";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useMarketingPage } from "@/lib/hooks/use-marketing-page";
@@ -85,9 +88,9 @@ export default function MarketingPageClient() {
 
   return (
     <div data-testid="marketing-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {hasCampaigns ? (
-          <PageStickyFiltersSection>
+      <PageCard
+        filters={
+          hasCampaigns ? (
             <CampaignsFilters
               search={filters.q}
               status={filters.status}
@@ -100,25 +103,24 @@ export default function MarketingPageClient() {
               onClearDates={() => setFilters({ from: "", to: "" })}
               onOpenSheet={handleOpenFiltersSheet}
             />
-          </PageStickyFiltersSection>
+          ) : null
+        }
+      >
+        {campaigns.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
         ) : null}
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {campaigns.isLoading ? <SkeletonList /> : null}
-          {campaigns.error ? (
-            <Notice tone="danger" message={MARKETING_COPY.page.loadError} />
-          ) : null}
-          {showEmptyState ? <CampaignsEmptyState /> : null}
-          {!campaigns.isLoading && hasCampaigns ? (
-            <CampaignsTable
-              campaigns={filteredCampaigns}
-              onRowClick={(campaignId) =>
-                router.push(`/marketing/${campaignId}`)
-              }
-              onOpenImage={handleOpenImage}
-            />
-          ) : null}
-        </div>
-      </div>
+        {campaigns.error ? (
+          <Notice tone="danger" message={MARKETING_COPY.page.loadError} />
+        ) : null}
+        {showEmptyState ? <CampaignsEmptyState /> : null}
+        {!campaigns.isLoading && hasCampaigns ? (
+          <CampaignsTable
+            campaigns={filteredCampaigns}
+            onRowClick={(campaignId) => router.push(`/marketing/${campaignId}`)}
+            onOpenImage={handleOpenImage}
+          />
+        ) : null}
+      </PageCard>
       <CampaignFormDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}

@@ -20,7 +20,7 @@ export default function SortableTableHead<TData>({
     <Button
       type="button"
       variant="link"
-      className={`inline-flex h-auto items-center p-0 text-xs uppercase tracking-wide text-ink-muted hover:text-ink ${className ?? ""}`}
+      className={`inline-flex h-auto items-center p-0 text-[10px] uppercase tracking-[0.14em] text-ink-muted no-underline hover:text-ink-secondary hover:no-underline ${className ?? ""}`}
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
     >
       {title}

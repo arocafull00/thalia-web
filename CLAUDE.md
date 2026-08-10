@@ -5,12 +5,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm dev       # start dev server on localhost:3000
-pnpm build     # production build
-pnpm lint      # run ESLint
+pnpm dev            # dev server on localhost:3000
+pnpm build          # production build
+pnpm lint           # ESLint
+pnpm typecheck      # tsc --noEmit
+pnpm test           # Vitest, watch mode
+pnpm test:run       # Vitest, single run
+pnpm test:e2e       # Playwright; boots a local Supabase first
+pnpm validate:push  # typecheck + unit tests (what pre-push runs)
 ```
 
-No test suite is currently configured.
+There **is** a test suite: 16 Vitest files under `src/tests/` and 10 Playwright specs in `src/tests/e2e/`. E2E needs a local Supabase (`pnpm exec supabase start`, which needs Docker); `run-with-local-supabase.mjs` refuses to run without it.
+
+Git hooks: `pre-commit` runs `lint-staged`, `pre-push` runs `validate:push`. Type errors used to surface only at push time, which is why the pre-push hook exists — run `pnpm lint` and `pnpm typecheck` before calling anything done.
 
 Always use `pnpm` (not npm or yarn).
 
@@ -31,7 +38,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 
 - `app/(auth)/` — public login / employee registration
 - `app/(onboarding)/` — clinic creation, team invite
-- `app/(app)/` — authenticated app shell (dashboard, calendar, appointments, patients, employees, inventory, finances, settings)
+- `app/(app)/` — authenticated app shell: dashboard, calendar, appointments, patients, treatments, employees, inventory, finances, marketing, files, settings
 
 The `(app)` layout delegates to `AppLayoutClient`, which checks auth and active clinic, then redirects unauthenticated users to `/login` and users without a clinic to `/create-clinic`.
 
@@ -40,10 +47,12 @@ The `(app)` layout delegates to `AppLayoutClient`, which checks auth and active 
 Every feature follows a strict three-layer split:
 
 1. **Custom hook** (`src/lib/hooks/use-[feature].ts`) — all state, derivations, handlers, and data effects
-2. **Subcomponents** (`src/components/[domain]/[feature]/components/`) — pure JSX, props only, no store access
-3. **Page client** (`src/components/[domain]/[feature]/page.client.tsx`) — composes hook + subcomponents, minimal JSX
+2. **Subcomponents** (`src/components/[domain]/components/`) — pure JSX, props only, no store access
+3. **Page client** (`src/components/[domain]/[domain]-page-client.tsx`) — composes hook + subcomponents, minimal JSX
 
-Page files in `app/` are thin Server Components that import the `*.page.client.tsx` wrapper.
+Page files in `app/` are thin Server Components that import the page client.
+
+Naming is inconsistent for historical reasons: app screens use `[domain]-page-client.tsx`, while auth and onboarding still use `page.client.tsx`. Follow the hyphenated form for anything new.
 
 Rules:
 - One React component per file; extract any JSX with its own logic to a separate file.
@@ -75,7 +84,23 @@ Use `useShallow` from `zustand/react/shallow` when selecting multiple fields to 
 - Types: `src/types/database.types.ts` — generated Supabase DB schema
 - Helper: `unwrapSupabase` / `unwrapSupabaseList` in `src/lib/supabase-query.ts` — throws on Supabase error or null data
 
-All Supabase queries live in stores or hooks, never directly in components.
+**Queries live in `src/dal/`, not in stores or components.** Every domain has a `[domain].dal.ts` with the browser client, and those that seed a Server Component also have `[domain].server.dal.ts` using the server client. Stores and hooks call the DAL; they never build a query themselves.
+
+Server pagination, where it exists (`patient-files.dal.ts`, `patient-images.dal.ts`), uses `.range()` plus `count: "exact"` and returns `{ rows, total }`. Copy that shape rather than inventing another.
+
+### Server seeding
+
+Several screens fetch their first page in the Server Component and hand it to the client as `initialX`, which `useServerSeed` injects into the store so the list paints without a client round-trip. The seed is keyed: if the filters in the URL do not match the ones the server used, it is discarded and the client refetches. Eight screens do this — keep the key in sync when adding filters.
+
+### Edge functions
+
+`supabase/functions/`: `send-campaign` and `send-reminders` (WhatsApp via Twilio, sharing `_shared/whatsapp.ts`), plus `create-clinic`, `invite-employee` and `accept-invitation`.
+
+`WHATSAPP_MODE` controls the adapter: `mock` (default, sends nothing), `sandbox` (real, free text) and `production` (requires a Meta-approved template). Defaulting to `mock` means a deploy without configuration sends nothing rather than messaging real patients by accident.
+
+WhatsApp only accepts **JPEG and PNG** as image attachments. Campaign images are compressed to JPEG for that reason, unlike avatars and treatment images which use WebP — sending WebP returns Twilio `63021 Channel invalid content error`.
+
+Deploy with `pnpm exec supabase functions deploy <name>`; the project is linked to `pbbjmwldvkjxntcqlwdz`.
 
 ### Design system
 
@@ -96,7 +121,36 @@ Design tokens are CSS variables defined in `app/globals.css` under `:root`, expo
 
 The one exception: dynamic colors persisted in the database (e.g. employee color) may use `style` with the data value; the absent fallback must be a theme class, not a hex.
 
-Button shapes are full pill (`rounded-full`). Inputs and cards use `rounded-xl` / `rounded-2xl`. No glassmorphism, heavy gradients, or drop shadows on standard app surfaces.
+Radii are contained: buttons and inputs `rounded-button` (8px), cards `rounded-card` (10px), panels and dialogs `rounded-dialog` (14px).
+
+Brand gradients and glows come from tokens derived from `--primary` with `color-mix` (`--gradient-primary`, `--gradient-avatar`, `shadow-glow`, `shadow-nav-active`). Never write the teal by hand — change `--primary` and everything recalibrates.
+
+#### Aurora layout
+
+White opaque cards floating on a beige canvas, separated by a 14px gutter that is the only place the background shows through:
+
+```
+z-0   AppBackdrop    --backdrop-tint with a conic sweep, opacity .2
+z-10  Sidebar        floating card
+z-20  SidebarInset   navbar card + content card
+z-30  AppBottomNav   mobile bar
+```
+
+Every screen inside the shell puts its content in a card:
+
+- `PageCard` for lists — owns the scroll, the sticky filter bar and an optional footer
+- `PageSurface` for full-screen states that are not a list — loading, error, no permission
+- `.surface-card rounded-dialog` directly only when the screen manages its own scrolling, as the calendar does with schedule-x
+
+No glassmorphism and no `backdrop-filter`: surfaces are opaque, and blurring behind something opaque is cost with no effect.
+
+Three constraints that are easy to get wrong, each of which cost real debugging time:
+
+- `backdrop-filter` creates a containing block for `fixed` children. Keep `MobileFab` **outside** the card or `overflow-hidden` clips it.
+- A `sticky` element with a background inside a rounded container is promoted to its own layer and its square corners escape the radius. `PageStickyFiltersSection` carries its own `rounded-t-dialog` for that reason.
+- Two `box-shadow`s with zero offset accumulate at the corners and draw grey wedges outside the radius. Use one shadow with an offset.
+
+Typography is Geist. Outfit and Inter were trialled to match the Aurora prototype and rejected: Outfit is geometric, has less x-height and read worse in dense form and dialog text. Numbers in columns or totals use `font-numeric tabular-nums`.
 
 Icons: Lucide React only. No emojis.
 
@@ -114,13 +168,3 @@ Use `react-toastify` exclusively (`toast.success(...)` / `toast.error(...)`). No
 ### Next.js
 
 Default to Server Components. Add `"use client"` only for interactivity, state hooks, or browser-only APIs. Consult `node_modules/next/dist/docs/` for version-specific API details before writing Next.js code.
-
-## graphify
-
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
-
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

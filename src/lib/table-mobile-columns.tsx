@@ -2,8 +2,10 @@
 
 import { format } from "date-fns";
 
+import PatientMarketingBadge from "@/components/patients/components/list/patient-marketing-badge";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import type { MobileCardColumn } from "@/components/ui/mobile-card-view";
+import { PATIENTS_COPY } from "@/copy/patients-copy";
 import {
   appointmentStatusLabel,
   employeeRoleLabel,
@@ -34,7 +36,7 @@ function getTreatmentName(appointment: AppointmentWithRelations) {
 export const patientsMobileColumns: MobileCardColumn<Patient>[] = [
   {
     key: "full_name",
-    label: "Paciente",
+    label: PATIENTS_COPY.list.columns.patient,
     priority: "primary",
     render: (patient) => (
       <span className="font-medium text-ink">{patient.full_name}</span>
@@ -42,15 +44,23 @@ export const patientsMobileColumns: MobileCardColumn<Patient>[] = [
   },
   {
     key: "phone",
-    label: "Telefono",
+    label: PATIENTS_COPY.list.columns.phone,
     priority: "secondary",
-    render: (patient) => patient.phone ?? "Sin telefono",
+    render: (patient) => patient.phone ?? PATIENTS_COPY.list.noPhone,
   },
   {
     key: "email",
-    label: "Email",
+    label: PATIENTS_COPY.list.columns.email,
     priority: "secondary",
-    render: (patient) => patient.email ?? "-",
+    render: (patient) => patient.email ?? PATIENTS_COPY.list.noEmail,
+  },
+  {
+    key: "marketing_opt_in",
+    label: PATIENTS_COPY.list.columns.marketingOptIn,
+    priority: "secondary",
+    render: (patient) => (
+      <PatientMarketingBadge optedIn={patient.marketing_opt_in} />
+    ),
   },
 ];
 

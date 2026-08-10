@@ -5,22 +5,37 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --primary: #3D8FA0;
-  --primary-hover: #2E7A8C;
-  --primary-light: #E0F0F4;
-  --primary-subtle: #F2F8FA;
-  --canvas: #F7F9FA;
+  /* Aurora: teal profundo sobre papel crema. */
+  --primary: #2F7D74;
+  --primary-hover: #1B4F4A;
+  --primary-light: #C6DACF;
+  --primary-subtle: #E9F1EC;
+  --canvas: #FBFAF8;
+  /* Beige del fondo, visible por los huecos entre las tarjetas. */
+  --backdrop-tint: #cdc0ad;
   --surface: #FFFFFF;
-  --surface-secondary: #F4F7F8;
-  --ink: #1F2933;
-  --ink-secondary: #687682;
-  --ink-muted: #9BAAB4;
-  --border: #EAEEF1;
-  --border-strong: #D8DEE3;
-  --border-subtle: #F0F3F5;
-  --border-highlight: #f6f7f8;
+  --surface-secondary: #F3F6F4;
+  --ink: #24322E;
+  --ink-secondary: #5C6B66;
+  --ink-muted: #96A09B;
+  --border: rgba(28, 48, 44, 0.08);
+  --border-strong: rgba(28, 48, 44, 0.16);
+  --border-subtle: rgba(28, 48, 44, 0.05);
+  --border-highlight: rgba(28, 48, 44, 0.04);
   --border-field: var(--border-strong);
   --on-primary: #FFFFFF;
+  /* Degradados de marca: derivados de --primary para que se recalibren solos
+     si cambia el color principal. */
+  --gradient-primary: linear-gradient(
+    112deg,
+    var(--primary),
+    color-mix(in srgb, var(--primary) 72%, var(--surface))
+  );
+  --gradient-avatar: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--primary) 16%, var(--surface)),
+    color-mix(in srgb, var(--primary) 34%, var(--surface))
+  );
   --success: #E8F5EF;
   --success-text: #3A9970;
   --success-subtle: var(--success);
@@ -30,16 +45,22 @@
   --danger: #FAECEC;
   --danger-text: #B54848;
   --danger-subtle: var(--danger);
-  --hover-overlay: rgba(0, 0, 0, 0.03);
+  --hover-overlay: color-mix(in srgb, var(--primary) 7%, transparent);
   --disabled-opacity: 0.45;
-  --shadow-float: 0 4px 16px -4px rgba(0, 0, 0, 0.08),
-    0 1px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-dialog: 0 8px 32px -8px rgba(0, 0, 0, 0.12),
-    0 2px 8px -2px rgba(0, 0, 0, 0.06);
-  --radius-button: 10px;
-  --radius-input: 10px;
-  --radius-card: 16px;
-  --radius-dialog: 18px;
+  /* Halo homogéneo en los cuatro lados, sin dirección de luz. */
+  --shadow-float: 0 0 20px rgba(28, 48, 44, 0.055),
+    0 0 2px rgba(28, 48, 44, 0.04);
+  --shadow-panel: 0 0 24px rgba(28, 48, 44, 0.05),
+    0 0 2px rgba(28, 48, 44, 0.035);
+  --shadow-dialog: 0 0 28px rgba(28, 48, 44, 0.14),
+    0 0 2px rgba(28, 48, 44, 0.08);
+  --shadow-glow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
+  --shadow-glow-strong: 0 0 26px color-mix(in srgb, var(--primary) 50%, transparent);
+  --shadow-nav-active: 0 0 16px color-mix(in srgb, var(--primary) 28%, transparent);
+  --radius-button: 8px;
+  --radius-input: 8px;
+  --radius-card: 10px;
+  --radius-dialog: 14px;
   --radius-badge: 999px;
   --badge-primary: var(--primary-subtle);
   --badge-primary-text: var(--primary-hover);
@@ -66,7 +87,7 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.75rem;
+  --radius: 0.625rem;
   --sidebar: var(--surface);
   --topbar: var(--surface);
   --sidebar-foreground: var(--ink);
@@ -76,8 +97,6 @@
   --sidebar-accent-foreground: var(--ink);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--primary);
-  --sidebar-grid-line: var(--border-highlight);
-  --sidebar-grid-size: 20px;
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
@@ -116,6 +135,9 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);
+  /* Las cifras usan la misma familia: Geist ya trae cifras tabulares, así que
+     `font-numeric` sólo sigue existiendo como gancho semántico. */
+  --font-numeric: var(--font-geist-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -153,15 +175,20 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --radius-button: 10px;
-  --radius-input: 10px;
-  --radius-card: 16px;
-  --radius-dialog: 18px;
+  --radius-button: 8px;
+  --radius-input: 8px;
+  --radius-card: 10px;
+  --radius-dialog: 14px;
   --radius-badge: 999px;
-  --shadow-float: 0 4px 16px -4px rgba(0, 0, 0, 0.08),
-    0 1px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-dialog: 0 8px 32px -8px rgba(0, 0, 0, 0.12),
-    0 2px 8px -2px rgba(0, 0, 0, 0.06);
+  --shadow-float: 0 0 20px rgba(28, 48, 44, 0.055),
+    0 0 2px rgba(28, 48, 44, 0.04);
+  --shadow-panel: 0 0 24px rgba(28, 48, 44, 0.05),
+    0 0 2px rgba(28, 48, 44, 0.035);
+  --shadow-dialog: 0 0 28px rgba(28, 48, 44, 0.14),
+    0 0 2px rgba(28, 48, 44, 0.08);
+  --shadow-glow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
+  --shadow-glow-strong: 0 0 26px color-mix(in srgb, var(--primary) 50%, transparent);
+  --shadow-nav-active: 0 0 16px color-mix(in srgb, var(--primary) 28%, transparent);
   --spacing-safe-top: var(--safe-area-top);
   --spacing-safe-bottom: var(--safe-area-bottom);
   --spacing-safe-left: var(--safe-area-left);
@@ -376,7 +403,7 @@
 }
 
 body {
-  @apply bg-surface text-ink font-sans;
+  @apply bg-canvas text-ink font-sans;
 }
 
 .sx-react-calendar-wrapper {
@@ -449,17 +476,121 @@ body {
   user-select: none;
 }
 
-/* Cuadrícula suave para la sidebar: se aplica sobre el fondo blanco existente,
-   tanto en el contenedor móvil (Sheet) como en el panel interno de escritorio. */
-.sidebar-grid,
-.sidebar-grid [data-slot="sidebar-inner"] {
+/* ===================== Sistema Aurora =====================
+   Tarjetas blancas opacas flotando sobre el lienzo beige, separadas por un
+   marco de 14px que es lo único por donde asoma el fondo. */
+
+/* Cifras con anchos tabulares: importes y horas no bailan al cambiar. */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Superficie opaca: sin borde y sin backdrop-filter, que sobre algo opaco es
+   coste de GPU sin efecto. La recorta el halo, y es una sola sombra a
+   propósito: dos halos de desplazamiento cero se suman en las esquinas, donde
+   se solapan los de dos lados, y dibujan cuñas grises fuera del radio. */
+.surface-card {
+  background: var(--surface);
+  border: 0;
+  box-shadow: 0 2px 18px rgba(28, 48, 44, 0.07);
+}
+
+.control-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-float);
+}
+
+/* ---------- shell: sidebar flotante, opaco como las tarjetas ---------- */
+[data-slot="sidebar-inner"] {
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--radius-dialog);
+  box-shadow: 0 2px 18px rgba(28, 48, 44, 0.07);
+}
+
+/* En móvil es un cajón a pantalla completa: mismo blanco, sin esquinas. */
+[data-slot="sidebar"][data-mobile="true"] {
+  background: var(--surface);
+}
+
+/* ---------- shell: fondo del beige ----------
+   Barrido cónico centrado en la pantalla. Como lo único que se ve del fondo es
+   el marco entre tarjetas, el ángulo se traduce directamente en posición
+   alrededor del borde: cada lado recibe un tono distinto del mismo beige.
+   Abre y cierra en el mismo color, así que no hay costura en los 0°/360°. */
+.app-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: conic-gradient(
+    from 160deg at 50% 50%,
+    var(--backdrop-tint) 0deg,
+    color-mix(in srgb, var(--backdrop-tint) 55%, var(--surface)) 85deg,
+    var(--backdrop-tint) 170deg,
+    color-mix(in srgb, var(--backdrop-tint) 82%, var(--ink-muted)) 255deg,
+    var(--backdrop-tint) 360deg
+  );
+  opacity: 0.2;
+}
+
+/* Alfa del barrido de fila: registrada para poder transicionarla. */
+@property --wash-alpha {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* ---------- controles de filtro dentro de una tarjeta ---------- */
+input[type="search"],
+[data-slot="combobox-trigger"] {
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+}
+
+/* ---------- barrido de fila de tabla ----------
+   El tinte lo aporta `--glow`, que cada fila puede fijar por estilo en línea
+   (lo hace citas, con el color de su estado). Sin `--glow` cae al color de
+   marca, así que cualquier tabla clicable tiene barrido sin configurar nada. */
+.table-row-wash {
+  background-color: transparent;
   background-image: linear-gradient(
-      to right,
-      var(--sidebar-grid-line) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, var(--sidebar-grid-line) 1px, transparent 1px);
-  background-size: var(--sidebar-grid-size) var(--sidebar-grid-size);
+    100deg,
+    color-mix(
+        in srgb,
+        var(--glow, var(--primary)) calc(var(--wash-alpha) * 100%),
+        transparent
+      )
+      0%,
+    transparent 58%
+  );
+  transition: --wash-alpha 0.22s ease;
+}
+
+.table-row-wash:hover {
+  --wash-alpha: 0.12;
+}
+
+/* Orbe de estado: punto con doble halo, tintado por fila vía --glow. */
+.status-orb {
+  width: 11px;
+  height: 11px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--glow, var(--ink-muted));
+  box-shadow:
+    0 0 0 3.5px color-mix(in srgb, var(--glow, transparent) 16%, transparent),
+    0 0 10px var(--glow, transparent);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .table-row-wash {
+    transition: none;
+  }
 }
 
 .dark {

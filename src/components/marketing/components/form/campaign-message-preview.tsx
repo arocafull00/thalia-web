@@ -42,11 +42,10 @@ export default function CampaignMessagePreview({
       <h3 className="text-sm font-medium text-ink">
         {createDialog.sections.preview}
       </h3>
+      {/* Un solo fondo: el contenedor exterior. La burbuja interior tenía el
+          suyo propio y se veían dos superficies anidadas. */}
       <div className="rounded-2xl bg-surface-secondary p-4">
-        <div
-          data-testid="campaign-message-preview"
-          className="max-w-sm rounded-2xl rounded-tl-sm bg-primary-subtle px-4 py-3"
-        >
+        <div data-testid="campaign-message-preview" className="max-w-sm">
           {imageUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img

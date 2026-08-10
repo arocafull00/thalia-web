@@ -6,7 +6,7 @@ import type { CSSProperties, ReactNode } from "react";
 type ProfileAvatarImageProps = {
   src: string | null;
   initials: ReactNode;
-  size?: "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl";
   avatarStyle?: CSSProperties;
   className?: string;
   fallbackClassName?: string;
@@ -14,12 +14,14 @@ type ProfileAvatarImageProps = {
 };
 
 const sizeClasses = {
+  sm: "size-9",
   md: "size-16",
   lg: "size-20",
   xl: "size-24",
 } as const;
 
 const sizeHints = {
+  sm: "72px",
   md: "128px",
   lg: "160px",
   xl: "192px",

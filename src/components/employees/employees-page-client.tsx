@@ -15,7 +15,9 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
+import PageEmptyState from "@/components/ui/page-empty-state";
+import PageSurface from "@/components/ui/page-surface";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -23,7 +25,10 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
@@ -148,16 +153,16 @@ export default function EmployeesPageClient({
 
   if (!canManage) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={EMPLOYEES_COPY.page.permissions} />
-      </div>
+      </PageSurface>
     );
   }
 
   return (
     <div data-testid="employees-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
+      <PageCard
+        filters={
           <EmployeesFilters
             role={filters.role}
             search={filters.q}
@@ -167,25 +172,24 @@ export default function EmployeesPageClient({
             onStatusChange={(value) => setFilter("status", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
-        </PageStickyFiltersSection>
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {employees.isLoading ? <SkeletonList /> : null}
-          {employees.error ? (
-            <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
-          ) : null}
-          {showEmptyState ? (
-            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
-              {EMPLOYEES_COPY.page.empty}
-            </div>
-          ) : null}
-          {!showEmptyState && !employees.isLoading ? (
-            <EmployeesTable
-              employees={filteredEmployees}
-              onRowClick={handleRowClick}
-            />
-          ) : null}
-        </div>
-      </div>
+        }
+      >
+        {employees.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
+        {employees.error ? (
+          <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
+        ) : null}
+        {showEmptyState ? (
+          <PageEmptyState message={EMPLOYEES_COPY.page.empty} />
+        ) : null}
+        {!showEmptyState && !employees.isLoading ? (
+          <EmployeesTable
+            employees={filteredEmployees}
+            onRowClick={handleRowClick}
+          />
+        ) : null}
+      </PageCard>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>

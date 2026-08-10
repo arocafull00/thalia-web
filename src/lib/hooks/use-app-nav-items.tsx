@@ -185,3 +185,21 @@ export function useAppNavItems() {
     secondaryMobileItems,
   };
 }
+
+/**
+ * Título de pantalla para la navbar, tomado del propio menú.
+ *
+ * Antes había un mapa aparte en la topbar que repetía estos nombres; se
+ * quedaba desactualizado en cuanto se añadía una entrada al menú, que es lo
+ * que pasaba con Inicio y Agenda. Derivarlo de aquí lo hace imposible.
+ *
+ * No aplica el filtro de permisos: si estás en la pantalla, su título se
+ * muestra sin importar si la entrada del menú está oculta para tu rol.
+ */
+export function appNavItemTitle(pathname: string): string | undefined {
+  const match = BASE_NAV_ITEMS.find(
+    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+  );
+
+  return match?.label;
+}

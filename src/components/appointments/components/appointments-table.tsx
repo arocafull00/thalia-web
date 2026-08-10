@@ -1,8 +1,9 @@
 "use client";
 
 import type { SortingState } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 
+import { appointmentStatusColor } from "@/components/appointments/appointment-status-color";
 import { buildAppointmentsColumns } from "@/components/appointments/components/appointments-columns";
 import AppointmentsMobileList from "@/components/appointments/components/appointments-mobile-list";
 import { DataTable } from "@/components/ui/data-table";
@@ -46,6 +47,11 @@ export default function AppointmentsTable({
           enableSorting
           initialSorting={APPOINTMENTS_INITIAL_SORTING}
           onRowClick={(appointment) => onRowClick(appointment.id)}
+          getRowStyle={(appointment) =>
+            ({
+              "--glow": appointmentStatusColor(appointment.status),
+            }) as CSSProperties
+          }
         />
       </div>
     </>

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Gestión de clínicas estéticas",
     start_url: "/",
     display: "standalone",
-    background_color: "#fcfffe",
-    theme_color: "#3cac8e",
+    background_color: "#FBFAF8",
+    theme_color: "#2F7D74",
     icons: [
       {
         src: "/icon-192x192.png",

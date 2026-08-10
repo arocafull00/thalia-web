@@ -1,28 +1,33 @@
 "use client";
 
-import { Copy, Send } from "lucide-react";
+import { Copy, Pencil, Send } from "lucide-react";
 import { notFound, useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import CampaignDetailHeader from "@/components/marketing/components/detail/campaign-detail-header";
 import CampaignDetailImage from "@/components/marketing/components/detail/campaign-detail-image";
 import CampaignReachSummary from "@/components/marketing/components/detail/campaign-reach-summary";
 import CampaignRecipientsList from "@/components/marketing/components/detail/campaign-recipients-list";
+import CampaignFormDialog from "@/components/marketing/components/form/campaign-form-dialog";
 import CampaignMessagePreview from "@/components/marketing/components/form/campaign-message-preview";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
+import PageSurface from "@/components/ui/page-surface";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import { useCampaignCreateDialog } from "@/lib/hooks/use-campaign-create-dialog";
 import { useCampaignDetail } from "@/lib/hooks/use-campaign-detail";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
+import { useTreatments } from "@/lib/hooks/use-treatment";
 
-const { detail, send, duplicate: duplicateCopy } = MARKETING_COPY;
+const { detail, send, duplicate: duplicateCopy, editDialog } = MARKETING_COPY;
 
 export default function CampaignDetailPageClient() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const {
     campaign,
     isLoading,
@@ -36,6 +41,22 @@ export default function CampaignDetailPageClient() {
   } = useCampaignDetail(id);
 
   const canSend = campaign?.status === "draft";
+  // Sólo se edita el borrador: una vez enviada, el mensaje ya salió y cambiarlo
+  // dejaría el detalle contando algo distinto de lo que recibieron.
+  const isDraft = canSend;
+  const treatments = useTreatments();
+  const treatmentOptions = useMemo(
+    () =>
+      (treatments.data ?? []).map((treatment) => ({
+        id: treatment.id,
+        name: treatment.name,
+      })),
+    [treatments.data],
+  );
+  const editDialogState = useCampaignCreateDialog(
+    () => setEditOpen(false),
+    isDraft ? campaign : null,
+  );
 
   useTopbarBreadcrumb(
     campaign
@@ -70,11 +91,18 @@ export default function CampaignDetailPageClient() {
                 },
               ],
           menu: {
+            // Editar acompaña a duplicar en el menú del borrador: la acción
+            // principal ahí es enviar, y no conviene competir con ella.
             sections: canSend
               ? [
                   {
                     label: duplicateCopy.menuSections.campaign,
                     actions: [
+                      {
+                        label: editDialog.action,
+                        icon: Pencil,
+                        onClick: () => setEditOpen(true),
+                      },
                       {
                         label: duplicateCopy.action,
                         icon: Copy,
@@ -95,17 +123,17 @@ export default function CampaignDetailPageClient() {
 
   if (isLoading) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList />
-      </div>
+      </PageSurface>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={detail.loadError} />
-      </div>
+      </PageSurface>
     );
   }
 
@@ -116,7 +144,7 @@ export default function CampaignDetailPageClient() {
   return (
     <div
       data-testid="campaign-detail-page"
-      className="flex min-h-0 flex-1 flex-col overflow-y-auto"
+      className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
     >
       <CampaignDetailHeader campaign={campaign} />
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">
@@ -127,11 +155,14 @@ export default function CampaignDetailPageClient() {
           {campaign.image_url ? (
             <CampaignDetailImage storageKey={campaign.image_url} />
           ) : null}
+          {/* Sin imagen: aquí ya tiene columna propia y duplicarla dentro de
+              la burbuja sólo repetiría lo mismo al lado. */}
           <CampaignMessagePreview
             content={campaign.content}
             footerText={campaign.footer_text ?? ""}
             footerWebsite={campaign.footer_website ?? ""}
             footerPhone={campaign.footer_phone ?? ""}
+            imageUrl={null}
           />
           <section className="space-y-3">
             <h2 className="text-sm font-medium text-ink">
@@ -142,6 +173,15 @@ export default function CampaignDetailPageClient() {
           </section>
         </div>
       </div>
+      {isDraft ? (
+        <CampaignFormDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          dialog={editDialogState}
+          treatments={treatmentOptions}
+          onCancel={() => setEditOpen(false)}
+        />
+      ) : null}
       <AppConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}

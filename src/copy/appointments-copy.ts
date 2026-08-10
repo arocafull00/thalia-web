@@ -27,4 +27,8 @@ export const APPOINTMENTS_COPY = {
     dateRange: "Rango de fechas",
     status: "Estado",
   },
+  panel: {
+    countSingular: "1 cita",
+    countPlural: "{count} citas",
+  },
 } as const;

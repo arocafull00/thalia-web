@@ -1,24 +1,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
-import { replaceCampaignSegments } from "@/dal/campaign-segments.dal";
+import {
+  getCampaignSegments,
+  replaceCampaignSegments,
+} from "@/dal/campaign-segments.dal";
 import { uploadCampaignImage } from "@/lib/campaign-image-storage";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import { useCampaignImageUrl } from "@/lib/hooks/use-campaign-image-url";
 import { useCampaignSegmentPreview } from "@/lib/hooks/use-campaign-segment-preview";
-import { useCreateCampaign } from "@/lib/hooks/use-campaigns";
+import {
+  useCreateCampaign,
+  useUpdateCampaign,
+} from "@/lib/hooks/use-campaigns";
 import { logger } from "@/lib/logger";
 import { campaignSchema } from "@/lib/schemas/campaign-schema";
 import {
+  buildCampaignSegmentFilters,
   buildSegmentsFromFilters,
+  campaignSegmentInputsFromFilters,
   EMPTY_CAMPAIGN_SEGMENT_INPUTS,
   parseCampaignSegmentInputs,
   type CampaignSegmentInputs,
 } from "@/lib/schemas/campaign-segment-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { notifySuccess } from "@/lib/sound";
+import type { Campaign } from "@/types/database.types";
 
 const campaignFormSchema = campaignSchema.omit({ clinic_id: true });
 
@@ -44,9 +54,32 @@ const defaultValues: CampaignFormValues = {
   image_url: "",
 };
 
-export function useCampaignCreateDialog(onSuccess: () => void) {
+function formValuesFromCampaign(campaign: Campaign): CampaignFormValues {
+  return {
+    title: campaign.title,
+    content: campaign.content,
+    footer_text: campaign.footer_text ?? "",
+    footer_website: campaign.footer_website ?? "",
+    footer_phone: campaign.footer_phone ?? "",
+    image_url: campaign.image_url ?? "",
+  };
+}
+
+/**
+ * Asistente de campaña, en creación o en edición de un borrador.
+ *
+ * Con `campaign` precarga sus valores y sus segmentos, y al guardar actualiza
+ * en lugar de insertar. Sólo se abre para borradores: una campaña enviada no
+ * se toca, porque el mensaje ya salió.
+ */
+export function useCampaignCreateDialog(
+  onSuccess: () => void,
+  campaign?: Campaign | null,
+) {
   const clinicId = useClinicId();
   const { mutate, isPending } = useCreateCampaign();
+  const { mutate: mutateUpdate, isPending: isUpdating } = useUpdateCampaign();
+  const editingId = campaign?.id ?? null;
   const [segmentInputs, setSegmentInputs] = useState<CampaignSegmentInputs>(
     EMPTY_CAMPAIGN_SEGMENT_INPUTS,
   );
@@ -67,10 +100,50 @@ export function useCampaignCreateDialog(onSuccess: () => void) {
   } = useForm<CampaignFormValues>({
     resolver: zodResolver(campaignFormSchema),
     defaultValues,
+    // Precarga en edición. Se usa `values` y no un reset en efecto: react-hook-form
+    // sincroniza el formulario cuando cambia, sin setState síncrono en un efecto.
+    ...(campaign ? { values: formValuesFromCampaign(campaign) } : {}),
     // Sin esto, al pulsar "Siguiente" el paso 1 se valida pero los errores no
     // se repintan hasta el submit final.
     mode: "onTouched",
   });
+
+  // Los segmentos viven en filas aparte, así que hay que traerlos. Depende del
+  // id y no del objeto para no repisar lo que el usuario esté escribiendo cada
+  // vez que se refresque la campaña en la caché.
+  useEffect(() => {
+    if (!editingId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    getCampaignSegments(editingId)
+      .then((segments) => {
+        if (cancelled) {
+          return;
+        }
+
+        setSegmentInputs(
+          campaignSegmentInputsFromFilters(
+            buildCampaignSegmentFilters(segments),
+          ),
+        );
+      })
+      .catch((cause) => {
+        logger.captureException(cause, {
+          hook: "use-campaign-create-dialog",
+          action: "getCampaignSegments",
+          campaignId: editingId,
+        });
+        setError("root", { message: MARKETING_COPY.editDialog.segmentsError });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId]);
 
   const {
     filters,
@@ -134,8 +207,9 @@ export function useCampaignCreateDialog(onSuccess: () => void) {
     }
 
     // La imagen se sube antes de crear la campaña: si falla, no queda un
-    // borrador apuntando a una imagen que no existe.
-    let imageKey: string | null = null;
+    // borrador apuntando a una imagen que no existe. Editando sin elegir
+    // archivo nuevo se conserva la que ya tenía.
+    let imageKey: string | null = campaign?.image_url ?? null;
 
     if (imageFile) {
       try {
@@ -161,30 +235,53 @@ export function useCampaignCreateDialog(onSuccess: () => void) {
       return;
     }
 
-    mutate(parsed.data, {
-      onSuccess: (campaignId) => {
-        // Los segmentos se guardan aparte de la campaña. Si esto falla, la
-        // campaña ya existe como borrador, así que se avisa sin perder el texto
-        // en lugar de fingir que todo fue bien.
-        replaceCampaignSegments(campaignId, buildSegmentsFromFilters(filters))
-          .then(() => {
-            notifySuccess(MARKETING_COPY.createDialog.success);
+    // Los segmentos se guardan aparte de la campaña. Si esto falla, la campaña
+    // ya está guardada como borrador, así que se avisa sin perder el texto en
+    // lugar de fingir que todo fue bien.
+    const saveSegments = (campaignId: string) =>
+      replaceCampaignSegments(campaignId, buildSegmentsFromFilters(filters))
+        .then(() => {
+          notifySuccess(
+            editingId
+              ? MARKETING_COPY.editDialog.success
+              : MARKETING_COPY.createDialog.success,
+          );
+
+          // Editando se conservan los valores: la campaña sigue existiendo y
+          // el diálogo puede reabrirse sobre ella.
+          if (!editingId) {
             reset(defaultValues);
             setSegmentInputs(EMPTY_CAMPAIGN_SEGMENT_INPUTS);
-            setImageFile(null);
-            setStepIndex(0);
-            onSuccess();
-          })
-          .catch((cause) => {
-            logger.captureException(cause, {
-              hook: "use-campaign-create-dialog",
-              action: "replaceCampaignSegments",
-              campaignId,
-            });
-            setError("root", {
-              message: MARKETING_COPY.createDialog.error,
-            });
+          }
+
+          setImageFile(null);
+          setStepIndex(0);
+          onSuccess();
+        })
+        .catch((cause) => {
+          logger.captureException(cause, {
+            hook: "use-campaign-create-dialog",
+            action: "replaceCampaignSegments",
+            campaignId,
           });
+          setError("root", { message: MARKETING_COPY.createDialog.error });
+        });
+
+    if (editingId) {
+      mutateUpdate(editingId, parsed.data, {
+        onSuccess: () => void saveSegments(editingId),
+        onError: (cause) => {
+          setError("root", {
+            message: cause.message || MARKETING_COPY.editDialog.error,
+          });
+        },
+      });
+      return;
+    }
+
+    mutate(parsed.data, {
+      onSuccess: (campaignId) => {
+        void saveSegments(campaignId);
       },
       onError: (cause) => {
         setError("root", {
@@ -197,6 +294,32 @@ export function useCampaignCreateDialog(onSuccess: () => void) {
   // Estable para que el efecto del Dropzone no se dispare en cada render.
   const setImage = useCallback((file: File | null) => setImageFile(file), []);
 
+  // URL efímera para que la revisión enseñe la imagen elegida. Se crea aquí,
+  // donde vive el File, para que la vista previa siga recibiendo sólo props.
+  // Es un valor derivado, así que va en useMemo y no en estado; el efecto sólo
+  // se ocupa de liberar la URL anterior.
+  const objectUrl = useMemo(
+    () => (imageFile ? URL.createObjectURL(imageFile) : null),
+    [imageFile],
+  );
+
+  // Imagen ya guardada en el borrador. El bucket es privado, así que hay que
+  // pedir una URL firmada; no basta con la clave.
+  const { url: storedImageUrl } = useCampaignImageUrl(
+    campaign?.image_url ?? null,
+  );
+
+  // El archivo recién elegido manda sobre el guardado: es lo que se subirá.
+  const imagePreviewUrl = objectUrl ?? storedImageUrl;
+
+  useEffect(() => {
+    if (!objectUrl) {
+      return;
+    }
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [objectUrl]);
+
   return {
     register,
     errors,
@@ -206,6 +329,8 @@ export function useCampaignCreateDialog(onSuccess: () => void) {
     isSegmentValid,
     setSegmentInput,
     setImage,
+    imagePreviewUrl,
+    storedImageUrl,
     preview,
     step,
     stepIndex,
@@ -214,7 +339,8 @@ export function useCampaignCreateDialog(onSuccess: () => void) {
     isLastStep: stepIndex === CAMPAIGN_STEPS.length - 1,
     goNext,
     goBack,
-    isPending: isPending || isSubmitting,
+    isEditing: editingId != null,
+    isPending: isPending || isUpdating || isSubmitting,
     reset: () => {
       reset(defaultValues);
       setSegmentInputs(EMPTY_CAMPAIGN_SEGMENT_INPUTS);

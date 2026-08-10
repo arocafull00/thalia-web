@@ -29,7 +29,7 @@ export default function AppSidebarNavSection({
     <SidebarGroup className="p-0">
       <SidebarGroupLabel
         className={cn(
-          "h-auto px-3 pb-2 pt-0 text-[11px] font-semibold uppercase tracking-wide text-ink-muted",
+          "h-auto px-2.5 pb-1.5 pt-3.5 text-[9.5px] font-medium uppercase tracking-[0.17em] text-ink-muted",
         )}
       >
         {section.label}

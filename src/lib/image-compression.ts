@@ -36,8 +36,11 @@ export async function compressTreatmentImage(file: File): Promise<File> {
 /**
  * WhatsApp rechaza imágenes de más de 5 MB, así que en lugar de impedir subir
  * las grandes se comprimen a un tamaño que el envío acepte. El margen hasta el
- * límite real es amplio a propósito: WebP a 1600 px basta de sobra para lo que
- * se ve en un móvil.
+ * límite real es amplio a propósito: 1600 px basta de sobra para un móvil.
+ *
+ * JPEG y no WebP, a diferencia de avatares y tratamientos: esta imagen sale
+ * hacia Twilio, y WhatsApp sólo admite WebP para stickers. Como adjunto normal
+ * lo rechaza con «63021 Channel invalid content error».
  */
 export async function compressCampaignImage(file: File): Promise<File> {
   try {
@@ -45,7 +48,7 @@ export async function compressCampaignImage(file: File): Promise<File> {
       maxSizeMB: 2,
       maxWidthOrHeight: 1600,
       useWebWorker: true,
-      fileType: "image/webp",
+      fileType: "image/jpeg",
       initialQuality: 0.9,
     });
   } catch (error) {

@@ -135,13 +135,13 @@ export default function SettingsLayoutClient({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:overflow-hidden">
+    <div className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog lg:overflow-hidden">
       <div className="flex min-h-0 flex-1 flex-col">
         <SettingsNav
           activeSection={activeSection}
           canManageClinic={canManageClinic}
         />
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-8 pt-6 lg:px-8">
+        <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-8 pt-6 lg:px-8">
           <SettingsSectionContent
             section={activeSection}
             profile={profile}

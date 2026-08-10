@@ -26,7 +26,7 @@ Board: https://github.com/users/arocafull00/projects/2/views/1
 gh issue list --repo arocafull00/thalia-web --state open --search "<keywords>" --limit 10
 ```
 
-4. If the task touches code, locate relevant paths with `graphify query` before writing **Archivos relevantes**. Do not invent file paths.
+4. If the task touches code, locate relevant paths by searching the repository before writing **Archivos relevantes**. Do not invent file paths.
 
 ## Issue body template
 

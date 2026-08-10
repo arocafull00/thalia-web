@@ -21,7 +21,8 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
+import PageSurface from "@/components/ui/page-surface";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -180,58 +181,60 @@ export default function FinancesPageClient({
 
   if (!isAdmin) {
     return (
-      <div className="p-8">
+      <PageSurface>
         <Notice tone="danger" message={FINANCES_COPY.errors.permissions} />
-      </div>
+      </PageSurface>
     );
   }
 
   return (
     <div data-testid="finances-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 items-center justify-center border-b border-border-subtle bg-surface px-4 py-3 lg:px-8 lg:py-4">
-        <FinancesMonthSelector
-          month={parseFinancesMonthParam(filters.month)}
-          onMonthChange={handleMonthChange}
+      <PageCard
+        filters={
+          <div className="space-y-3">
+            {/* El mes también es un filtro: va en la zona fija, no scrollea. */}
+            <div className="flex items-center justify-center border-b border-border-subtle pb-3">
+              <FinancesMonthSelector
+                month={parseFinancesMonthParam(filters.month)}
+                onMonthChange={handleMonthChange}
+              />
+            </div>
+            <FinancesFilters
+              category={filters.category}
+              categoryOptions={comboboxCategoryOptions}
+              search={filters.q}
+              onCategoryChange={(value) => setFilter("category", value)}
+              onSearchChange={handleSearchChange}
+              onOpenSheet={handleOpenFiltersSheet}
+            />
+          </div>
+        }
+      >
+        {summary.error ? (
+          <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
+        ) : null}
+
+        {summary.data ? (
+          <>
+            <FinancesSummaryMetrics summary={summary.data} />
+            <div className="grid gap-8 py-4 xl:grid-cols-[1.8fr_1fr]">
+              <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
+              <FinancesCategoryBreakdown items={categoryBreakdown} />
+            </div>
+          </>
+        ) : null}
+
+        <FinancesMovementsSection
+          tab={tab}
+          onTabChange={handleTabChange}
+          transactions={visibleTransactions}
+          isLoading={transactions.isLoading && !transactions.data}
+          error={transactions.error}
+          hasMore={hasMore}
+          onLoadMore={loadMore}
+          onRowClick={handleRowClick}
         />
-      </div>
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
-          <FinancesFilters
-            category={filters.category}
-            categoryOptions={comboboxCategoryOptions}
-            search={filters.q}
-            onCategoryChange={(value) => setFilter("category", value)}
-            onSearchChange={handleSearchChange}
-            onOpenSheet={handleOpenFiltersSheet}
-          />
-        </PageStickyFiltersSection>
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {summary.error ? (
-            <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
-          ) : null}
-
-          {summary.data ? (
-            <>
-              <FinancesSummaryMetrics summary={summary.data} />
-              <div className="grid gap-8 py-8 xl:grid-cols-[1.8fr_1fr]">
-                <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
-                <FinancesCategoryBreakdown items={categoryBreakdown} />
-              </div>
-            </>
-          ) : null}
-
-          <FinancesMovementsSection
-            tab={tab}
-            onTabChange={handleTabChange}
-            transactions={visibleTransactions}
-            isLoading={transactions.isLoading && !transactions.data}
-            error={transactions.error}
-            hasMore={hasMore}
-            onLoadMore={loadMore}
-            onRowClick={handleRowClick}
-          />
-        </div>
-      </div>
+      </PageCard>
 
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>

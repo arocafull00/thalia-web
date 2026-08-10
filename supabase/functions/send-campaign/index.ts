@@ -15,6 +15,15 @@ const BATCH_PAUSE_MS = 1000;
 
 const IMAGE_URL_TTL_SECONDS = 60 * 60 * 24 * 7;
 
+// WhatsApp sólo acepta JPEG y PNG como imagen adjunta. WebP está reservado a
+// stickers, y enviarlo como adjunto normal devuelve 63021.
+const SENDABLE_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"];
+
+function isSendableImageKey(key: string): boolean {
+  const extension = key.split(".").pop()?.toLowerCase() ?? "";
+  return SENDABLE_IMAGE_EXTENSIONS.includes(extension);
+}
+
 type SegmentPatient = {
   id: string;
   full_name: string;
@@ -214,7 +223,7 @@ Deno.serve(async (req) => {
 
   let mediaUrl: string | null = null;
 
-  if (campaign.image_url) {
+  if (campaign.image_url && isSendableImageKey(campaign.image_url)) {
     // El bucket es privado: Twilio necesita una URL firmada para descargarla.
     const { data: signed, error: signedError } = await supabase.storage
       .from("campaign-images")
@@ -230,6 +239,14 @@ Deno.serve(async (req) => {
         error: signedError?.message,
       });
     }
+  } else if (campaign.image_url) {
+    // Campañas guardadas antes de que las imágenes se comprimieran a JPEG.
+    // Se envía el texto sin adjunto en lugar de que Twilio tumbe la campaña
+    // entera con «63021 Channel invalid content error».
+    console.warn("[send-campaign] formato de imagen no admitido por WhatsApp", {
+      key: campaign.image_url,
+      admitidos: SENDABLE_IMAGE_EXTENSIONS.join(", "),
+    });
   }
 
   const body = buildBody(campaign);

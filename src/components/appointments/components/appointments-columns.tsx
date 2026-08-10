@@ -31,7 +31,8 @@ export function buildAppointmentsColumns(
       ),
       cell: ({ row }) => {
         return (
-          <span className="text-sm text-ink-secondary">
+          <span className="flex items-center gap-3 text-sm text-ink-secondary">
+            <i className="status-orb" aria-hidden="true" />
             {formatDateTime(row.original.starts_at, timezone).split(",")[0]}
           </span>
         );
@@ -47,7 +48,7 @@ export function buildAppointmentsColumns(
         <SortableTableHead column={column} title="Hora" />
       ),
       cell: ({ row }) => (
-        <span className="font-medium tabular-nums text-ink">
+        <span className="font-numeric font-medium tabular-nums text-ink">
           {formatTime(row.original.starts_at, timezone)}
         </span>
       ),

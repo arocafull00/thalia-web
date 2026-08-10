@@ -36,27 +36,28 @@ export default function AppSidebar() {
   };
 
   return (
-    <Sidebar
-      collapsible="offcanvas"
-      className="sidebar-grid border-border bg-canvas"
-    >
-      <SidebarHeader className="border-border-subtle px-4 py-4">
+    <Sidebar collapsible="offcanvas" variant="floating" className="p-3.5">
+      <SidebarHeader className="px-1.5 pb-5 pt-5">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/icon.png"
             alt="Thalia"
-            width={40}
-            height={40}
-            className="shrink-0 rounded-lg"
+            width={52}
+            height={52}
+            className="size-13 shrink-0 rounded-card shadow-[inset_0_-5px_12px_color-mix(in_srgb,var(--primary)_14%,transparent)]"
           />
           <div className="flex flex-col gap-0.5">
-            <p className="text-lg font-medium leading-none text-ink">Thalia</p>
-            <p className="text-[10px] text-ink-muted">Aesthetic Excellence</p>
+            <p className="text-[18.5px] font-semibold leading-none tracking-[-0.01em] text-ink">
+              Thalia
+            </p>
+            <p className="text-[8px] uppercase tracking-[0.15em] text-ink-muted">
+              Aesthetic Excellence
+            </p>
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="flex flex-col gap-6 px-3 py-4">
+      <SidebarContent className="flex flex-col gap-1.5 px-1.5 pb-2">
         {sections.map((section) => (
           <AppSidebarNavSection
             key={section.id}
@@ -66,7 +67,7 @@ export default function AppSidebar() {
           />
         ))}
       </SidebarContent>
-      <SidebarFooter className="border-border-subtle p-0">
+      <SidebarFooter className="mx-3.5 border-t border-border p-0">
         <SidebarProfileFooter />
       </SidebarFooter>
     </Sidebar>

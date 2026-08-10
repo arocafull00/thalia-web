@@ -25,10 +25,12 @@ type CampaignCreateFormProps = {
   treatments: TreatmentOption[];
   onSegmentChange: (field: keyof CampaignSegmentInputs, value: string) => void;
   onImageChange: (file: File | null) => void;
+  currentImageUrl: string | null;
   previewContent: string;
   previewFooterText: string;
   previewFooterWebsite: string;
   previewFooterPhone: string;
+  previewImageUrl: string | null;
   recipientCount: number | null;
   recipientsLoading: boolean;
   recipientsError: boolean;
@@ -44,10 +46,12 @@ export default function CampaignCreateForm({
   treatments,
   onSegmentChange,
   onImageChange,
+  currentImageUrl,
   previewContent,
   previewFooterText,
   previewFooterWebsite,
   previewFooterPhone,
+  previewImageUrl,
   recipientCount,
   recipientsLoading,
   recipientsError,
@@ -65,7 +69,10 @@ export default function CampaignCreateForm({
       </div>
 
       <div className={step === "image" ? "space-y-6" : "hidden"}>
-        <CampaignImageField onFileChange={onImageChange} />
+        <CampaignImageField
+          onFileChange={onImageChange}
+          currentImageUrl={currentImageUrl}
+        />
       </div>
 
       <div className={step === "segment" ? "space-y-6" : "hidden"}>
@@ -89,6 +96,7 @@ export default function CampaignCreateForm({
           footerText={previewFooterText}
           footerWebsite={previewFooterWebsite}
           footerPhone={previewFooterPhone}
+          imageUrl={previewImageUrl}
         />
         <CampaignRecipientsPreview
           count={recipientCount}

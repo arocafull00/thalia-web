@@ -10,10 +10,13 @@ import TreatmentsTable from "@/components/treatments/components/treatments-table
 import { useTreatmentCatalog } from "@/components/treatments/hooks/use-treatment-catalog";
 import { useTreatmentsPage } from "@/components/treatments/hooks/use-treatments-page";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
@@ -74,8 +77,8 @@ export default function TreatmentsPageClient({
 
   return (
     <div data-testid="treatments-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
+      <PageCard
+        filters={
           <TreatmentsFilters
             category={category}
             categoryOptions={categoryOptions}
@@ -85,20 +88,21 @@ export default function TreatmentsPageClient({
             onSearchChange={handleSearchChange}
             onOpenSheet={handleOpenFiltersSheet}
           />
-        </PageStickyFiltersSection>
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {treatments.isLoading ? <SkeletonList /> : null}
-          {treatments.error ? (
-            <Notice tone="danger" message={TREATMENTS_COPY.page.loadError} />
-          ) : null}
-          {!treatments.isLoading && !treatments.error ? (
-            <TreatmentsTable
-              treatments={filteredTreatments}
-              onRowClick={page.openEditDialog}
-            />
-          ) : null}
-        </div>
-      </div>
+        }
+      >
+        {treatments.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
+        {treatments.error ? (
+          <Notice tone="danger" message={TREATMENTS_COPY.page.loadError} />
+        ) : null}
+        {!treatments.isLoading && !treatments.error ? (
+          <TreatmentsTable
+            treatments={filteredTreatments}
+            onRowClick={page.openEditDialog}
+          />
+        ) : null}
+      </PageCard>
       <TreatmentDialog
         open={page.dialogOpen}
         treatmentId={page.selectedTreatmentId}

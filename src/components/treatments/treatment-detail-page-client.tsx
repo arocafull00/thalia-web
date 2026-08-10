@@ -12,6 +12,7 @@ import {
   getTreatmentDetailMenuSections,
   getTreatmentDetailPrimaryAction,
 } from "@/components/treatments/treatment-detail-actions";
+import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -72,9 +73,9 @@ export default function TreatmentDetailPageClient({
 
   if (isLoading) {
     return (
-      <div className="p-8" aria-busy="true">
+      <PageSurface busy>
         <SkeletonList count={4} />
-      </div>
+      </PageSurface>
     );
   }
 
@@ -95,7 +96,7 @@ export default function TreatmentDetailPageClient({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+    <div className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog">
       <TreatmentDetailHeader treatment={treatment} />
 
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">

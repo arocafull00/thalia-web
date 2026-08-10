@@ -1,30 +1,31 @@
+import PageSurface from "@/components/ui/page-surface";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * Carga de ruta de toda la zona autenticada. Es lo primero que se ve al
+ * navegar, antes de que el page client llegue a montarse.
+ *
+ * Imita la forma de un listado —barra de filtros y filas— porque es lo que hay
+ * detrás en la mayoría de pantallas. Reutiliza `SkeletonList` con la misma
+ * constante que los listados para que ambos pinten el mismo número de filas:
+ * antes tenía sus propios bloques y al cambiar uno el otro se quedaba atrás.
+ */
 export default function AppRouteLoading() {
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8"
-    >
-      <span className="sr-only">Cargando pantalla</span>
-      <div className="shrink-0 border-b border-border-subtle pb-5">
-        <Skeleton className="h-7 w-44 bg-primary-subtle/60" />
-        <Skeleton className="mt-2 h-4 w-72 max-w-full bg-primary-subtle/40" />
-      </div>
-      <div className="grid min-h-0 flex-1 gap-6 pt-6 lg:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)]">
-        <div className="flex min-h-0 flex-col gap-3">
-          <Skeleton className="h-10 w-full bg-primary-subtle/40" />
-          <Skeleton className="h-16 w-full bg-primary-subtle/40" />
-          <Skeleton className="h-16 w-full bg-primary-subtle/40" />
-          <Skeleton className="h-16 w-full bg-primary-subtle/40" />
-          <Skeleton className="h-16 w-full bg-primary-subtle/40" />
+    <PageSurface busy className="gap-3 p-3.5">
+      <div role="status" aria-live="polite" className="contents">
+        <span className="sr-only">Cargando pantalla</span>
+        <div className="flex shrink-0 items-end gap-2">
+          <Skeleton className="h-9 w-full max-w-sm bg-primary-subtle/40" />
+          <Skeleton className="hidden h-9 w-40 bg-primary-subtle/40 sm:block" />
+          <Skeleton className="hidden h-9 w-48 bg-primary-subtle/40 sm:block" />
         </div>
-        <div className="flex flex-col gap-3">
-          <Skeleton className="h-24 w-full bg-primary-subtle/40" />
-          <Skeleton className="h-24 w-full bg-primary-subtle/40" />
-        </div>
+        <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
       </div>
-    </div>
+    </PageSurface>
   );
 }

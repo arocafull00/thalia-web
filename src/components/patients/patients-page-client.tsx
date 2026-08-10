@@ -15,7 +15,8 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
-import PageStickyFiltersSection from "@/components/ui/page-sticky-filters-section";
+import PageCard from "@/components/ui/page-card";
+import PageEmptyState from "@/components/ui/page-empty-state";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import {
   FORM_ACTION_ICONS,
@@ -23,7 +24,10 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import {
+  PAGE_LIST_SKELETON_ROWS,
+  SkeletonList,
+} from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -119,8 +123,8 @@ export default function PatientsPageClient({
 
   return (
     <div data-testid="patients-page" className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <PageStickyFiltersSection>
+      <PageCard
+        filters={
           <PatientsFilters
             search={filters.q}
             status={filters.status}
@@ -128,25 +132,24 @@ export default function PatientsPageClient({
             onStatusChange={(value) => setFilter("status", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
-        </PageStickyFiltersSection>
-        <div className="space-y-6 px-4 py-4 lg:px-8 lg:py-6">
-          {patients.isLoading ? <SkeletonList /> : null}
-          {patients.error ? (
-            <Notice tone="danger" message={PATIENTS_COPY.page.loadError} />
-          ) : null}
-          {showEmptyState ? (
-            <div className="rounded-2xl border border-dashed border-border p-10 text-center text-ink-secondary">
-              {PATIENTS_COPY.page.empty}
-            </div>
-          ) : null}
-          {!showEmptyState && !patients.isLoading ? (
-            <PatientsTable
-              patients={filteredPatients}
-              onRowClick={handleRowClick}
-            />
-          ) : null}
-        </div>
-      </div>
+        }
+      >
+        {patients.isLoading ? (
+          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+        ) : null}
+        {patients.error ? (
+          <Notice tone="danger" message={PATIENTS_COPY.page.loadError} />
+        ) : null}
+        {showEmptyState ? (
+          <PageEmptyState message={PATIENTS_COPY.page.empty} />
+        ) : null}
+        {!showEmptyState && !patients.isLoading ? (
+          <PatientsTable
+            patients={filteredPatients}
+            onRowClick={handleRowClick}
+          />
+        ) : null}
+      </PageCard>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>

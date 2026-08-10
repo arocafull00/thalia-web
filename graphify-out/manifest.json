@@ -625,8 +625,8 @@
     "semantic_hash": ""
   },
   "src/copy/appointment-create-copy.ts": {
-    "mtime": 1785701991.3366816,
-    "ast_hash": "8dd794393315c3906c5798a171c9b74c",
+    "mtime": 1785702099.584378,
+    "ast_hash": "9faf1d53f4e8cc87a096fc7fac22e849",
     "semantic_hash": ""
   },
   ".codex-worktrees/e2e-fix/src/components/auth/register-employee/components/register-employee-sidebar.tsx": {
@@ -5480,8 +5480,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/primitives/notice.tsx": {
-    "mtime": 1785702015.4805274,
-    "ast_hash": "a8e9170b5e76ed453ae9dba588acd7c3",
+    "mtime": 1785702099.5692234,
+    "ast_hash": "c75fb1e949693059a4e3d046db78a1cd",
     "semantic_hash": ""
   },
   "src/lib/hooks/use-server-seed.ts": {

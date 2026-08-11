@@ -7,7 +7,6 @@ import AppointmentCreateDialog from "@/components/appointments/components/appoin
 import AppointmentFilters from "@/components/appointments/components/appointment-filters";
 import AppointmentFiltersSheet from "@/components/appointments/components/appointment-filters-sheet";
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
-import AppointmentsPanelFooter from "@/components/appointments/components/appointments-panel-footer";
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
 import PageCard from "@/components/ui/page-card";
 import PageEmptyState from "@/components/ui/page-empty-state";
@@ -18,12 +17,16 @@ import {
   SkeletonList,
 } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { notifySuccess } from "@/lib/sound";
-import { useAppointmentsStore } from "@/stores/appointments-store";
+import {
+  useAppointmentsStore,
+  type AppointmentsPageQuery,
+} from "@/stores/appointments-store";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -32,7 +35,8 @@ import type {
 
 type AppointmentsPageClientProps = {
   initialAppointments: AppointmentWithRelations[];
-  initialAppointmentsKey: string;
+  initialTotal: number;
+  initialQuery: AppointmentsPageQuery;
   initialEmployees: Employee[];
   initialRange: {
     employeeId: string;
@@ -43,7 +47,8 @@ type AppointmentsPageClientProps = {
 
 export default function AppointmentsPageClient({
   initialAppointments,
-  initialAppointmentsKey,
+  initialTotal,
+  initialQuery,
   initialEmployees,
   initialRange,
 }: AppointmentsPageClientProps) {
@@ -56,13 +61,20 @@ export default function AppointmentsPageClient({
   const [sheetKey, setSheetKey] = useState(0);
   const filterDefaults = useMemo(
     () => ({
-      employeeId: initialRange.employeeId,
+      // Vacío, y no `initialRange.employeeId`: al borrar un filtro de la URL,
+      // `useUrlFilters` lo devuelve a su valor por defecto. Si el defecto fuera
+      // el profesional con el que se cargó la página, elegir «Todos» volvería a
+      // seleccionarlo y el filtro no se podría quitar.
+      employeeId: "",
+      // Las fechas sí son un defecto real: la semana en curso de la clínica,
+      // que es lo que se muestra cuando la URL no trae rango.
       from: initialRange.from,
+      page: "",
       q: "",
       status: "",
       to: initialRange.to,
     }),
-    [initialRange.employeeId, initialRange.from, initialRange.to],
+    [initialRange.from, initialRange.to],
   );
   const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
   const { searchQuery, handleSearchChange } = useFilterSearch(
@@ -70,24 +82,44 @@ export default function AppointmentsPageClient({
     setFilter,
   );
 
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // Parsear aquí con tope a 0 evita que un `?page=-3` escrito a mano llegue al
+  // offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
+
   const pageFilters = useMemo(
     () => ({
       employeeId: filters.employeeId,
       from: filters.from,
+      page: pageIndex,
       search: searchQuery,
       status: filters.status,
       to: filters.to,
     }),
-    [filters.employeeId, filters.from, filters.status, filters.to, searchQuery],
+    [
+      filters.employeeId,
+      filters.from,
+      filters.status,
+      filters.to,
+      pageIndex,
+      searchQuery,
+    ],
   );
 
-  const { appointments, flatAppointments, showEmptyState } =
+  const { appointments, flatAppointments, showEmptyState, total } =
     useAppointmentsPage(pageFilters, {
       initialAppointments,
-      initialAppointmentsKey,
+      initialTotal,
+      initialQuery,
       initialEmployees,
       initialRange,
     });
+
+  // Cualquier cambio de filtro vuelve a la página 1: quedarse en la 5 tras
+  // filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = (key: string, value: string) => {
+    setFilters({ [key]: value, page: "" });
+  };
 
   const editingAppointment = useMemo(
     () =>
@@ -147,18 +179,15 @@ export default function AppointmentsPageClient({
             search={searchQuery}
             status={filters.status}
             to={filters.to}
-            onEmployeeIdChange={(value) => setFilter("employeeId", value)}
-            onFromChange={(value) => setFilter("from", value)}
+            onEmployeeIdChange={(value) =>
+              setFilterAndResetPage("employeeId", value)
+            }
+            onFromChange={(value) => setFilterAndResetPage("from", value)}
             onSearchChange={handleSearchChange}
-            onStatusChange={(value) => setFilter("status", value)}
-            onToChange={(value) => setFilter("to", value)}
+            onStatusChange={(value) => setFilterAndResetPage("status", value)}
+            onToChange={(value) => setFilterAndResetPage("to", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
-        }
-        footer={
-          !showEmptyState && appointments.data ? (
-            <AppointmentsPanelFooter count={flatAppointments.length} />
-          ) : null
         }
       >
         {appointments.isLoading && !appointments.data ? (
@@ -175,6 +204,13 @@ export default function AppointmentsPageClient({
             appointments={flatAppointments}
             onRowClick={handleRowClick}
             onStatusChange={handleStatusChange}
+            pagination={{
+              pageIndex,
+              pageSize: APPOINTMENTS_PAGE_SIZE,
+              total,
+              onPageChange: (next) =>
+                setFilter("page", next === 0 ? "" : String(next)),
+            }}
           />
         ) : null}
       </PageCard>

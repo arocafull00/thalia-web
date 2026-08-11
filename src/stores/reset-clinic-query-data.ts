@@ -10,6 +10,7 @@ import { useTreatmentStore } from "@/stores/treatment-store";
 export function resetClinicQueryData() {
   useAppointmentsStore.setState({
     byRange: {},
+    byPage: {},
     byId: {},
     appointmentInventoryById: {},
     defaultMaterialsByKey: {},

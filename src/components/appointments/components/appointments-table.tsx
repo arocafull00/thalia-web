@@ -1,6 +1,5 @@
 "use client";
 
-import type { SortingState } from "@tanstack/react-table";
 import { type CSSProperties, useMemo } from "react";
 
 import { appointmentStatusColor } from "@/components/appointments/appointment-status-color";
@@ -13,18 +12,28 @@ import type {
   AppointmentWithRelations,
 } from "@/types/database.types";
 
-const APPOINTMENTS_INITIAL_SORTING: SortingState = [{ desc: true, id: "date" }];
-
 type AppointmentsTableProps = {
   appointments: AppointmentWithRelations[];
   onRowClick: (id: string) => void;
   onStatusChange: (id: string, status: AppointmentStatus) => void;
+  /**
+   * Paginación en servidor: `appointments` es ya la página visible. Se omite
+   * donde la tabla muestra una lista corta y completa, como el tab de citas de
+   * la ficha del paciente.
+   */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
 };
 
 export default function AppointmentsTable({
   appointments,
   onRowClick,
   onStatusChange,
+  pagination,
 }: AppointmentsTableProps) {
   const timezone = useActiveClinicTimezone();
   const columns = useMemo(
@@ -44,8 +53,7 @@ export default function AppointmentsTable({
         <DataTable
           columns={columns}
           data={appointments}
-          enableSorting
-          initialSorting={APPOINTMENTS_INITIAL_SORTING}
+          manualPagination={pagination}
           onRowClick={(appointment) => onRowClick(appointment.id)}
           getRowStyle={(appointment) =>
             ({

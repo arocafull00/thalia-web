@@ -72,6 +72,7 @@ vi.mock("@/stores/inventory-store", () => ({
 
 const initialState = {
   byRange: {},
+  byPage: {},
   byId: {},
   appointmentInventoryById: {},
   defaultMaterialsByKey: {},

@@ -80,6 +80,92 @@ export async function getAppointments(
   return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
 }
 
+export type AppointmentPageParams = AppointmentRangeParams & {
+  status: AppointmentStatus | null;
+  search: string;
+  page: number;
+  pageSize: number;
+};
+
+export type AppointmentPageResult = {
+  appointments: AppointmentWithRelations[];
+  total: number;
+};
+
+/**
+ * Página del listado de citas, filtrada y ordenada en servidor.
+ *
+ * Son dos consultas a propósito. La vista `appointments_search` resuelve qué
+ * citas cumplen los filtros —incluida la búsqueda, que cruza tres tablas— y en
+ * qué orden, devolviendo sólo ids y el total. El payload completo se lee
+ * después de `appointments` con su select anidado, porque una vista no tiene
+ * claves foráneas y PostgREST no puede embeber relaciones desde ella.
+ *
+ * La segunda consulta trae como mucho `pageSize` filas, así que el coste del
+ * viaje extra es pequeño frente a traerse el listado entero como hasta ahora.
+ */
+export async function getAppointmentsPage(
+  params: AppointmentPageParams,
+): Promise<AppointmentPageResult> {
+  const offset = params.page * params.pageSize;
+
+  let idsQuery = supabase
+    .from("appointments_search")
+    .select("id", { count: "exact" })
+    .gte("starts_at", params.startIso)
+    .lte("starts_at", params.endIso)
+    // Descendente: en un listado de citas interesa lo más reciente arriba.
+    .order("starts_at", { ascending: false })
+    // Desempate estable: sin esto, dos citas a la misma hora pueden cambiar de
+    // orden entre páginas y una fila se repetiría o se perdería.
+    .order("id", { ascending: false })
+    .range(offset, offset + params.pageSize - 1);
+
+  if (params.employeeId) {
+    idsQuery = idsQuery.eq("employee_id", params.employeeId);
+  }
+
+  if (params.clinicId) {
+    idsQuery = idsQuery.eq("clinic_id", params.clinicId);
+  }
+
+  if (params.status) {
+    idsQuery = idsQuery.eq("status", params.status);
+  }
+
+  const search = params.search.trim().toLowerCase();
+
+  if (search) {
+    idsQuery = idsQuery.ilike("search_text", `%${search}%`);
+  }
+
+  const { data: idRows, error: idsError, count } = await idsQuery;
+  const ids = (unwrapSupabaseList(idRows, idsError) as { id: string }[]).map(
+    (row) => row.id,
+  );
+
+  if (ids.length === 0) {
+    return { appointments: [], total: count ?? 0 };
+  }
+
+  const { data, error } = await supabase
+    .from("appointments")
+    .select(APPOINTMENT_LIST_SELECT)
+    .in("id", ids);
+
+  const rows = unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+
+  // `in` no conserva el orden de la lista, así que se reordena según los ids
+  // que devolvió la vista, que son los que llevan el orden bueno.
+  const position = new Map(ids.map((id, index) => [id, index]));
+  const appointments = rows.toSorted(
+    (left, right) =>
+      (position.get(left.id) ?? 0) - (position.get(right.id) ?? 0),
+  );
+
+  return { appointments, total: count ?? 0 };
+}
+
 export async function getAppointment(
   appointmentId: string,
 ): Promise<AppointmentWithRelations> {

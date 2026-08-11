@@ -1,5 +1,5 @@
 import { endOfDay, startOfDay } from "date-fns";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   formatAppointmentDateParam,
@@ -10,11 +10,17 @@ import {
   formatClinicDayKey,
   getClinicRangeIso,
 } from "@/lib/appointment-datetime";
+import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
-import { useAppointments } from "@/lib/hooks/use-appointments";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
-import { appointmentsKey } from "@/stores/appointments-store";
+import {
+  appointmentsPageKey,
+  useAppointmentsStore,
+  type AppointmentsPageQuery,
+} from "@/stores/appointments-store";
+import { isInitialLoading } from "@/stores/query-state";
 import type {
+  AppointmentStatus,
   AppointmentWithRelations,
   Employee,
 } from "@/types/database.types";
@@ -22,6 +28,7 @@ import type {
 type AppointmentPageFilters = {
   employeeId: string;
   from: string;
+  page: number;
   search: string;
   status: string;
   to: string;
@@ -29,7 +36,8 @@ type AppointmentPageFilters = {
 
 type AppointmentsPageSeed = {
   initialAppointments?: AppointmentWithRelations[];
-  initialAppointmentsKey?: string;
+  initialTotal?: number;
+  initialQuery?: AppointmentsPageQuery;
   initialEmployees?: Employee[];
   initialRange?: {
     employeeId: string;
@@ -38,6 +46,13 @@ type AppointmentsPageSeed = {
   };
 };
 
+/**
+ * Listado de citas paginado en servidor.
+ *
+ * Filtros, búsqueda y orden viajan al servidor: filtrar en cliente sobre una
+ * página ya recortada daría recuentos falsos —pedirías 20 filas y mostrarías
+ * 6— y la paginación dejaría de ser correcta.
+ */
 export function useAppointmentsPage(
   filters: AppointmentPageFilters,
   seed?: AppointmentsPageSeed,
@@ -66,77 +81,119 @@ export function useAppointmentsPage(
     [defaults.to, filters.to],
   );
 
-  const employeeId = filters.employeeId || null;
   const { startIso, endIso } = getClinicRangeIso(
     rangeStart,
     rangeEnd,
     timezone,
   );
-  const appointmentsKeyValue = appointmentsKey(startIso, endIso, employeeId);
-  const seededAppointments = useServerSeed(
-    appointmentsKeyValue,
-    seed?.initialAppointmentsKey ?? "",
-    seed?.initialAppointments,
-  );
-  const appointments = useAppointments(
-    { end: rangeEnd, start: rangeStart },
-    employeeId,
-    seededAppointments,
+
+  const query = useMemo<AppointmentsPageQuery>(
+    () => ({
+      startIso,
+      endIso,
+      employeeId: filters.employeeId || null,
+      status: (filters.status || null) as AppointmentStatus | null,
+      search: filters.search,
+      page: filters.page,
+      pageSize: APPOINTMENTS_PAGE_SIZE,
+    }),
+    [
+      endIso,
+      filters.employeeId,
+      filters.page,
+      filters.search,
+      filters.status,
+      startIso,
+    ],
   );
 
+  const key = appointmentsPageKey(query);
+  const entry = useAppointmentsStore((state) => state.byPage[key]);
+  const fetchAppointmentsPage = useAppointmentsStore(
+    (state) => state.fetchAppointmentsPage,
+  );
+  const seedAppointmentsPage = useAppointmentsStore(
+    (state) => state.seedAppointmentsPage,
+  );
+  const subscribeRealtime = useAppointmentsStore(
+    (state) => state.subscribeRealtime,
+  );
+  const unsubscribeRealtime = useAppointmentsStore(
+    (state) => state.unsubscribeRealtime,
+  );
+
+  // La siembra del servidor sólo vale para la consulta exacta que resolvió: si
+  // los filtros de la URL no coinciden, se descarta y el cliente vuelve a pedir.
+  const seededResult = useServerSeed(
+    key,
+    seed?.initialQuery ? appointmentsPageKey(seed.initialQuery) : "",
+    seed?.initialAppointments
+      ? {
+          appointments: seed.initialAppointments,
+          total: seed.initialTotal ?? seed.initialAppointments.length,
+        }
+      : undefined,
+  );
+  const hasClientData = entry?.data != null;
+
+  useEffect(() => {
+    subscribeRealtime();
+    return () => unsubscribeRealtime();
+  }, [subscribeRealtime, unsubscribeRealtime]);
+
+  useEffect(() => {
+    if (seededResult === undefined || hasClientData) {
+      return;
+    }
+
+    seedAppointmentsPage(query, seededResult);
+  }, [hasClientData, query, seedAppointmentsPage, seededResult]);
+
+  useEffect(() => {
+    if (seededResult !== undefined) {
+      return;
+    }
+
+    void fetchAppointmentsPage(query);
+  }, [fetchAppointmentsPage, query, seededResult]);
+
+  const resolved = entry?.data ?? seededResult ?? null;
+
+  const appointments = {
+    data: resolved,
+    error: entry?.error ?? null,
+    isLoading: isInitialLoading(entry),
+  };
+
+  const flatAppointments = useMemo(
+    () => resolved?.appointments ?? [],
+    [resolved],
+  );
+
+  const total = resolved?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / APPOINTMENTS_PAGE_SIZE));
+
+  // La lista móvil agrupa por día. La página puede empezar a media jornada, así
+  // que la cabecera del día se repite en la siguiente en lugar de perderse.
   const groupedAppointments = useMemo(() => {
-    const items = appointments.data ?? [];
-    const normalizedSearch = filters.search.trim().toLowerCase();
+    const byDay = new Map<string, AppointmentWithRelations[]>();
 
-    const filtered = items.filter((appt) => {
-      if (filters.status && appt.status !== filters.status) {
-        return false;
-      }
-
-      if (!normalizedSearch) {
-        return true;
-      }
-
-      const patientName = appt.patients?.full_name?.toLowerCase() ?? "";
-      const patientPhone = appt.patients?.phone?.toLowerCase() ?? "";
-      const treatment =
-        appt.appointment_treatments[0]?.treatment?.name?.toLowerCase() ?? "";
-
-      return (
-        patientName.includes(normalizedSearch) ||
-        patientPhone.includes(normalizedSearch) ||
-        treatment.includes(normalizedSearch)
-      );
-    });
-
-    const sorted = filtered.toSorted(
-      (left, right) =>
-        new Date(right.starts_at).getTime() -
-        new Date(left.starts_at).getTime(),
-    );
-
-    const byDay = new Map<string, typeof filtered>();
-    for (const appt of sorted) {
-      const day = formatClinicDayKey(appt.starts_at, timezone);
+    for (const appointment of flatAppointments) {
+      const day = formatClinicDayKey(appointment.starts_at, timezone);
       if (!byDay.has(day)) {
         byDay.set(day, []);
       }
 
-      byDay.get(day)!.push(appt);
+      byDay.get(day)!.push(appointment);
     }
 
     return Array.from(byDay.entries()).map(([day, dayAppointments]) => ({
       appointments: dayAppointments,
       date: new Date(`${day}T00:00:00`),
     }));
-  }, [appointments.data, filters.search, filters.status, timezone]);
+  }, [flatAppointments, timezone]);
 
-  const flatAppointments = useMemo(
-    () => groupedAppointments.flatMap((group) => group.appointments),
-    [groupedAppointments],
-  );
-
-  const hasResults = groupedAppointments.length > 0;
+  const hasResults = flatAppointments.length > 0;
   const showEmptyState =
     !appointments.isLoading && !appointments.error && !hasResults;
   const listData =
@@ -152,9 +209,11 @@ export function useAppointmentsPage(
     hasResults,
     initialEmployees: seed?.initialEmployees,
     listData,
+    pageCount,
     rangeEnd,
     rangeStart,
     showEmptyState,
+    total,
   };
 }
 

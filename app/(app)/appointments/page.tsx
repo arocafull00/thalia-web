@@ -1,6 +1,7 @@
 import AppointmentsPageClient from "@/components/appointments/appointments-page-client";
-import { getAppointments } from "@/dal/appointments.server.dal";
+import { getAppointmentsPage } from "@/dal/appointments.server.dal";
 import { getEmployees } from "@/dal/employees.server.dal";
+import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
 import {
   getServerActiveClinicId,
   getServerActiveClinicTimezone,
@@ -9,7 +10,7 @@ import {
   getClinicIsoDateRange,
   getClinicIsoWeekDateParams,
 } from "@/lib/server/clinic-timezone";
-import { appointmentsKey } from "@/stores/appointments-store";
+import type { AppointmentStatus } from "@/types/database.types";
 
 export default async function AppointmentsPage({
   searchParams,
@@ -17,6 +18,9 @@ export default async function AppointmentsPage({
   searchParams: Promise<{
     employeeId?: string;
     from?: string;
+    page?: string;
+    q?: string;
+    status?: string;
     to?: string;
   }>;
 }) {
@@ -41,21 +45,29 @@ export default async function AppointmentsPage({
     toParam,
   );
   const employeeId = params.employeeId?.trim() || null;
+  // Se siembra la consulta tal y como viene en la URL. Si no coincide con la
+  // que el cliente calcula, `useServerSeed` la descarta y refetchea; sembrar
+  // una página distinta de la que se va a mostrar sería peor que no sembrar.
+  const query = {
+    startIso,
+    endIso,
+    employeeId,
+    status: (params.status?.trim() || null) as AppointmentStatus | null,
+    search: params.q?.trim() ?? "",
+    page: Math.max(0, Number.parseInt(params.page ?? "", 10) || 0),
+    pageSize: APPOINTMENTS_PAGE_SIZE,
+  };
 
-  const [appointments, employees] = await Promise.all([
-    getAppointments({
-      startIso,
-      endIso,
-      clinicId,
-      employeeId,
-    }),
+  const [page, employees] = await Promise.all([
+    getAppointmentsPage({ ...query, clinicId }),
     getEmployees(clinicId),
   ]);
 
   return (
     <AppointmentsPageClient
-      initialAppointments={appointments}
-      initialAppointmentsKey={appointmentsKey(startIso, endIso, employeeId)}
+      initialAppointments={page.appointments}
+      initialTotal={page.total}
+      initialQuery={query}
       initialEmployees={employees}
       initialRange={{
         from: fromParam,

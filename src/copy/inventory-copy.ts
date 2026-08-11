@@ -1,4 +1,14 @@
 export const INVENTORY_COPY = {
+  list: {
+    actions: {
+      label: "Acciones del material",
+      view: "Ver detalle",
+      edit: "Editar material",
+    },
+    columns: {
+      actions: "Acciones",
+    },
+  },
   page: {
     title: "Inventario de Materiales",
     loadError: "No se pudo cargar el inventario.",

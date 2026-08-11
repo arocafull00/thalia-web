@@ -27,6 +27,8 @@ type AppointmentsTableProps = {
     total: number;
     onPageChange: (pageIndex: number) => void;
   };
+  onDelete?: (appointment: AppointmentWithRelations) => void;
+  onEdit?: (id: string) => void;
 };
 
 export default function AppointmentsTable({
@@ -34,11 +36,17 @@ export default function AppointmentsTable({
   onRowClick,
   onStatusChange,
   pagination,
+  onDelete,
+  onEdit,
 }: AppointmentsTableProps) {
   const timezone = useActiveClinicTimezone();
+  const actionHandlers = useMemo(
+    () => ({ onDelete, onEdit }),
+    [onDelete, onEdit],
+  );
   const columns = useMemo(
-    () => buildAppointmentsColumns(onStatusChange, timezone),
-    [onStatusChange, timezone],
+    () => buildAppointmentsColumns(onStatusChange, timezone, actionHandlers),
+    [actionHandlers, onStatusChange, timezone],
   );
 
   return (
@@ -47,6 +55,7 @@ export default function AppointmentsTable({
         <AppointmentsMobileList
           appointments={appointments}
           onRowClick={onRowClick}
+          actionHandlers={actionHandlers}
         />
       </div>
       <div className="hidden md:block">

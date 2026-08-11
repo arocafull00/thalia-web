@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import TreatmentDeleteConfirmDialog from "@/components/treatments/components/treatment-delete-confirm-dialog";
 import TreatmentDialog from "@/components/treatments/components/treatment-dialog";
 import TreatmentsFilters from "@/components/treatments/components/treatments-filters";
 import TreatmentsFiltersSheet from "@/components/treatments/components/treatments-filters-sheet";
@@ -63,6 +64,13 @@ export default function TreatmentsPageClient({
   );
 
   const showCategoryFilter = categories.length > 1;
+  const deleteTreatment = useMemo(
+    () =>
+      filteredTreatments.find(
+        (treatment) => treatment.id === page.deleteTreatmentId,
+      ) ?? null,
+    [filteredTreatments, page.deleteTreatmentId],
+  );
 
   const handleOpenFiltersSheet = () => {
     setSheetKey((key) => key + 1);
@@ -84,9 +92,11 @@ export default function TreatmentsPageClient({
             categoryOptions={categoryOptions}
             search={filters.q}
             showCategoryFilter={showCategoryFilter}
+            isRefreshing={treatments.isRefreshing}
             onCategoryChange={(value) => setFilter("category", value)}
             onSearchChange={handleSearchChange}
             onOpenSheet={handleOpenFiltersSheet}
+            onRefresh={() => void treatments.refresh()}
           />
         }
       >
@@ -100,6 +110,8 @@ export default function TreatmentsPageClient({
           <TreatmentsTable
             treatments={filteredTreatments}
             onRowClick={page.openEditDialog}
+            onEdit={page.openEditDialog}
+            onDelete={page.openDeleteDialog}
           />
         ) : null}
       </PageCard>
@@ -120,6 +132,18 @@ export default function TreatmentsPageClient({
             : undefined
         }
       />
+      {deleteTreatment ? (
+        <TreatmentDeleteConfirmDialog
+          treatment={deleteTreatment}
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              page.closeDeleteDialog();
+            }
+          }}
+          onSuccess={page.closeDeleteDialog}
+        />
+      ) : null}
       {showCategoryFilter ? (
         <TreatmentsFiltersSheet
           key={sheetKey}

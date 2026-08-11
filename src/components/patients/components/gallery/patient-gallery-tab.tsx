@@ -1,26 +1,13 @@
 "use client";
 
-import { Columns2, Upload } from "lucide-react";
-import { useMemo, useState } from "react";
-
-import { ActionButton } from "@/components/ui/primitives/action-button";
-import { Notice } from "@/components/ui/primitives/notice";
+import BeforeAfterComparison from "@/components/patients/components/before-after-comparison/before-after-comparison";
+import { usePatientGallery } from "@/components/patients/components/gallery/hooks/use-patient-gallery";
 import { Separator } from "@/components/ui/separator";
-import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
-import { usePatientGalleryDensity } from "@/lib/hooks/use-patient-gallery-density";
-import {
-  usePatientImageViewerSlides,
-  usePatientImages,
-} from "@/lib/hooks/use-patient-images";
-import { groupImagesByDate } from "@/lib/patient-gallery-grouping";
-import type { Patient, PatientImage } from "@/types/database.types";
+import type { Patient } from "@/types/database.types";
 
-import BeforeAfterComparison from "../before-after-comparison/before-after-comparison";
-
-import PatientGalleryDateGroup from "./patient-gallery-date-group";
-import PatientGalleryDensityToggle from "./patient-gallery-density-toggle";
-import PatientGalleryFilters from "./patient-gallery-filters";
 import PatientGalleryFiltersSheet from "./patient-gallery-filters-sheet";
+import PatientGalleryResults from "./patient-gallery-results";
+import PatientGalleryToolbar from "./patient-gallery-toolbar";
 import PatientImageViewer from "./patient-image-viewer";
 
 type PatientGalleryTabProps = {
@@ -28,274 +15,83 @@ type PatientGalleryTabProps = {
   onOpenUploader: () => void;
 };
 
-function filterImages(
-  images: PatientImage[],
-  search: string,
-  phase: string,
-  sortOrder: string,
-) {
-  const normalizedSearch = search.trim().toLowerCase();
-
-  const filtered = images.filter((image) => {
-    if (phase && image.phase !== phase) {
-      return false;
-    }
-
-    if (!normalizedSearch) {
-      return true;
-    }
-
-    const filename = image.original_filename?.toLowerCase() ?? "";
-    const notes = image.notes?.toLowerCase() ?? "";
-
-    return (
-      filename.includes(normalizedSearch) || notes.includes(normalizedSearch)
-    );
-  });
-
-  return filtered.toSorted((left, right) => {
-    const leftDate = new Date(
-      left.captured_at ?? left.created_at ?? 0,
-    ).getTime();
-    const rightDate = new Date(
-      right.captured_at ?? right.created_at ?? 0,
-    ).getTime();
-
-    return sortOrder === "recent" ? rightDate - leftDate : leftDate - rightDate;
-  });
-}
-
 export default function PatientGalleryTab({
   patient,
   onOpenUploader,
 }: PatientGalleryTabProps) {
-  const [search, setSearch] = useState("");
-  const [phase, setPhase] = useState("");
-  const [sortOrder, setSortOrder] = useState("recent");
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [sheetKey, setSheetKey] = useState(0);
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
-  const [comparisonOpen, setComparisonOpen] = useState(false);
-  const [viewerOpen, setViewerOpen] = useState(false);
-  const [viewerIndex, setViewerIndex] = useState(0);
-  const { density, setDensity } = usePatientGalleryDensity();
-  const imagesQuery = usePatientImages(patient.id);
-
-  const images = useMemo(() => imagesQuery.data ?? [], [imagesQuery.data]);
-
-  const phaseOptions = [
-    { label: PATIENT_GALLERY_COPY.phases.antes, value: "antes" },
-    { label: PATIENT_GALLERY_COPY.phases.durante, value: "durante" },
-    { label: PATIENT_GALLERY_COPY.phases.despues, value: "despues" },
-  ];
-
-  const filteredImages = useMemo(
-    () => filterImages(images, search, phase, sortOrder),
-    [images, search, phase, sortOrder],
-  );
-
-  const viewerSlides = usePatientImageViewerSlides(filteredImages);
-
-  const visibleGroups = useMemo(
-    () =>
-      groupImagesByDate(
-        filteredImages,
-        sortOrder === "oldest" ? "oldest" : "recent",
-      ),
-    [filteredImages, sortOrder],
-  );
-
-  const eagerImageIds = useMemo(
-    () => new Set(filteredImages.slice(0, 4).map((image) => image.id)),
-    [filteredImages],
-  );
-
-  const totalPhotos = filteredImages.length;
-
-  const selectedImages = useMemo(
-    () =>
-      images.filter((image) => selectedImageIds.includes(image.id)).slice(0, 2),
-    [images, selectedImageIds],
-  );
-
-  const handleToggleSelect = (image: PatientImage) => {
-    setSelectedImageIds((current) => {
-      if (current.includes(image.id)) {
-        return current.filter((id) => id !== image.id);
-      }
-
-      if (current.length >= 2) {
-        return [current[1]!, image.id];
-      }
-
-      return [...current, image.id];
-    });
-  };
-
-  const handleOpenViewer = (image: PatientImage) => {
-    const index = filteredImages.findIndex((entry) => entry.id === image.id);
-
-    if (index === -1) {
-      return;
-    }
-
-    setViewerIndex(index);
-    setViewerOpen(true);
-  };
-
-  const handleCloseSelectionMode = () => {
-    setSelectionMode(false);
-    setSelectedImageIds([]);
-  };
-
-  const handleOpenFiltersSheet = () => {
-    setSheetKey((key) => key + 1);
-    setSheetOpen(true);
-  };
-
-  const handleApplyFilters = (updates: { phase: string; sort: string }) => {
-    setPhase(updates.phase);
-    setSortOrder(updates.sort);
-  };
-
-  const handleClearFilters = () => {
-    setPhase("");
-    setSortOrder("recent");
-  };
+  const gallery = usePatientGallery(patient.id);
 
   return (
     <>
       <div data-testid="patient-gallery" className="space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-ink">
-              {PATIENT_GALLERY_COPY.title}
-            </h2>
-            <p className="text-sm text-ink-secondary">
-              {PATIENT_GALLERY_COPY.photosCount(totalPhotos)}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 w-full sm:flex-1">
-            <PatientGalleryFilters
-              search={search}
-              phase={phase}
-              phaseOptions={phaseOptions}
-              sort={sortOrder}
-              onSearchChange={setSearch}
-              onPhaseChange={setPhase}
-              onSortChange={setSortOrder}
-              onOpenSheet={handleOpenFiltersSheet}
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <PatientGalleryDensityToggle
-              density={density}
-              onChange={setDensity}
-            />
-            <ActionButton
-              title={PATIENT_GALLERY_COPY.actions.upload}
-              icon={Upload}
-              testId="patient-gallery-upload-trigger"
-              onClick={onOpenUploader}
-            />
-            {selectionMode ? (
-              <>
-                <ActionButton
-                  title={PATIENT_GALLERY_COPY.actions.compare}
-                  icon={Columns2}
-                  disabled={selectedImageIds.length !== 2}
-                  testId="patient-gallery-compare-trigger"
-                  onClick={() => setComparisonOpen(true)}
-                />
-                <ActionButton
-                  title={PATIENT_GALLERY_COPY.actions.cancelSelection}
-                  variant="ghost"
-                  onClick={handleCloseSelectionMode}
-                />
-              </>
-            ) : (
-              <ActionButton
-                title={PATIENT_GALLERY_COPY.actions.beforeAfter}
-                icon={Columns2}
-                variant="ghost"
-                testId="patient-gallery-before-after-trigger"
-                onClick={() => setSelectionMode(true)}
-              />
-            )}
-          </div>
-        </div>
-
-        {selectionMode ? (
-          <p className="text-sm text-ink-secondary">
-            {PATIENT_GALLERY_COPY.selection.title} ·{" "}
-            {PATIENT_GALLERY_COPY.selection.hint(selectedImageIds.length)}
-          </p>
-        ) : null}
+        <PatientGalleryToolbar
+          filters={gallery.filters}
+          search={gallery.search}
+          loaded={gallery.images.length}
+          total={gallery.imagesQuery.total}
+          density={gallery.density}
+          selectionMode={gallery.selectionMode}
+          selectedCount={gallery.selectedImageIds.length}
+          phaseOptions={gallery.phaseOptions}
+          treatmentOptions={gallery.treatmentOptions}
+          onSearchChange={gallery.handleSearchChange}
+          onFiltersChange={gallery.setFilters}
+          onOpenFiltersSheet={gallery.handleOpenFiltersSheet}
+          onDensityChange={gallery.setDensity}
+          onOpenUploader={onOpenUploader}
+          onStartSelection={() => gallery.setSelectionMode(true)}
+          onCancelSelection={gallery.handleCloseSelectionMode}
+          onCompare={() => gallery.setComparisonOpen(true)}
+        />
 
         <Separator />
 
-        <div className="space-y-8">
-          {imagesQuery.error ? (
-            <Notice tone="danger" message={PATIENT_GALLERY_COPY.errors.load} />
-          ) : null}
-
-          {!imagesQuery.isLoading &&
-          !imagesQuery.error &&
-          visibleGroups.length === 0 ? (
-            <p className="py-8 text-center text-sm text-ink-secondary">
-              {images.length === 0
-                ? PATIENT_GALLERY_COPY.emptyGallery
-                : PATIENT_GALLERY_COPY.empty}
-            </p>
-          ) : null}
-
-          {!imagesQuery.isLoading && !imagesQuery.error
-            ? visibleGroups.map((group) => (
-                <PatientGalleryDateGroup
-                  key={group.dateGroupLabel}
-                  label={group.dateGroupLabel}
-                  images={group.images}
-                  density={density}
-                  selectionMode={selectionMode}
-                  selectedImageIds={selectedImageIds}
-                  eagerImageIds={eagerImageIds}
-                  onViewImage={handleOpenViewer}
-                  onToggleSelect={handleToggleSelect}
-                />
-              ))
-            : null}
-        </div>
+        <PatientGalleryResults
+          groups={gallery.visibleGroups}
+          density={gallery.density}
+          images={gallery.images}
+          selectionMode={gallery.selectionMode}
+          selectedImageIds={gallery.selectedImageIds}
+          eagerImageIds={gallery.eagerImageIds}
+          isLoading={gallery.imagesQuery.isLoading}
+          isLoadingMore={gallery.imagesQuery.isLoadingMore}
+          hasMore={gallery.imagesQuery.hasMore}
+          hasActiveFilters={gallery.hasActiveFilters}
+          hasError={Boolean(gallery.imagesQuery.error)}
+          hasLoadMoreError={Boolean(gallery.imagesQuery.loadMoreError)}
+          onViewImage={gallery.handleOpenViewer}
+          onToggleSelect={gallery.handleToggleSelect}
+          onLoadMore={() => void gallery.imagesQuery.loadMore()}
+          onRetry={() => void gallery.imagesQuery.refresh()}
+        />
       </div>
 
       <PatientImageViewer
-        slides={viewerSlides}
-        activeIndex={viewerIndex}
-        open={viewerOpen}
-        onOpenChange={setViewerOpen}
-        onActiveIndexChange={setViewerIndex}
+        slides={gallery.viewerSlides}
+        activeIndex={gallery.viewerIndex}
+        open={gallery.viewerOpen}
+        onOpenChange={gallery.setViewerOpen}
+        onActiveIndexChange={gallery.setViewerIndex}
       />
 
-      {selectedImages.length === 2 ? (
+      {gallery.selectedImages.length === 2 ? (
         <BeforeAfterComparison
-          beforeImage={selectedImages[0]!}
-          afterImage={selectedImages[1]!}
-          open={comparisonOpen}
-          onOpenChange={setComparisonOpen}
+          beforeImage={gallery.selectedImages[0]!}
+          afterImage={gallery.selectedImages[1]!}
+          open={gallery.comparisonOpen}
+          onOpenChange={gallery.setComparisonOpen}
         />
       ) : null}
 
       <PatientGalleryFiltersSheet
-        key={sheetKey}
-        open={sheetOpen}
-        filters={{ phase, sort: sortOrder }}
-        phaseOptions={phaseOptions}
-        onApply={handleApplyFilters}
-        onClear={handleClearFilters}
-        onDismiss={() => setSheetOpen(false)}
+        key={gallery.sheetKey}
+        open={gallery.sheetOpen}
+        filters={gallery.filters}
+        phaseOptions={gallery.phaseOptions}
+        treatmentOptions={gallery.treatmentOptions}
+        onApply={gallery.handleApplyFilters}
+        onClear={gallery.handleClearFilters}
+        onDismiss={() => gallery.setSheetOpen(false)}
       />
     </>
   );

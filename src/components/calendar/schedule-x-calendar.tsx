@@ -3,23 +3,30 @@
 import "@schedule-x/theme-default/dist/index.css";
 
 import { ScheduleXCalendarInner } from "@/components/calendar/components/schedule-x-calendar-inner";
-import { DAY_HEADER_HEIGHT, MIN_WEEK_GRID_HEIGHT } from "@/lib/calendar-grid";
+import { DAY_HEADER_HEIGHT } from "@/lib/calendar-grid";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
+import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useElementHeight } from "@/lib/hooks/use-element-height";
 
-export default function ScheduleXCalendar() {
-  const timezone = useActiveClinicTimezone();
+type ScheduleXCalendarProps = {
+  clinic: ClinicInfo | null;
+};
+
+export default function ScheduleXCalendar({ clinic }: ScheduleXCalendarProps) {
+  const activeClinicTimezone = useActiveClinicTimezone();
+  const timezone = clinic?.timezone ?? activeClinicTimezone;
   const { ref, height } = useElementHeight<HTMLDivElement>();
-  const gridHeight = height
-    ? Math.max(height - DAY_HEADER_HEIGHT, MIN_WEEK_GRID_HEIGHT)
+  const availableGridHeight = height
+    ? Math.max(height - DAY_HEADER_HEIGHT, 0)
     : null;
 
   return (
     <div ref={ref} className="sx-react-calendar-wrapper h-full w-full">
-      {gridHeight ? (
+      {availableGridHeight ? (
         <ScheduleXCalendarInner
-          key={`${gridHeight}-${timezone}`}
-          gridHeight={gridHeight}
+          key={timezone}
+          availableGridHeight={availableGridHeight}
+          clinic={clinic}
         />
       ) : null}
     </div>

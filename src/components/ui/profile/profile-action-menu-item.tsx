@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import type { ProfileAction } from "@/components/ui/profile/profile-action";
 
@@ -17,10 +19,10 @@ export default function ProfileActionMenuItem({
         data-testid={action.testId}
         asChild
       >
-        <a href={action.href}>
+        <Link href={action.href}>
           <Icon aria-hidden="true" />
           {action.label}
-        </a>
+        </Link>
       </DropdownMenuItem>
     );
   }

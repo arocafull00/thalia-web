@@ -3,6 +3,8 @@ export const APPOINTMENTS_COPY = {
     title: "Citas",
     empty: "No hay citas programadas.",
     loadError: "No se pudieron cargar las citas.",
+    refresh: "Recargar citas",
+    refreshing: "Recargando citas",
   },
   filters: {
     status: "Estado de la cita",
@@ -26,5 +28,16 @@ export const APPOINTMENTS_COPY = {
     employee: "Profesional",
     dateRange: "Rango de fechas",
     status: "Estado",
+  },
+  list: {
+    actions: {
+      label: "Acciones de la cita",
+      view: "Ver detalle",
+      edit: "Editar cita",
+      delete: "Eliminar cita",
+    },
+    columns: {
+      actions: "Acciones",
+    },
   },
 } as const;

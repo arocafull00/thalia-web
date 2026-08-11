@@ -35,10 +35,12 @@ import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { getClinicRangeIso } from "@/lib/appointment-datetime";
 import { computeDayStatsForRange } from "@/lib/calendar-day-stats";
 import {
-  CALENDAR_END_HOUR,
-  CALENDAR_START_HOUR,
+  getClinicCalendarHourRange,
+  getMinWeekGridHeight,
   getWeekDays,
+  parseCalendarTimeToMinutes,
   roundToNearestSlot,
+  type CalendarHourRange,
 } from "@/lib/calendar-grid";
 import { isOverlapGroupEventId } from "@/lib/calendar-overlap-groups";
 import {
@@ -47,7 +49,6 @@ import {
 } from "@/lib/calendar-week-events";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import { useAppointments } from "@/lib/hooks/use-appointments";
-import { useClinicInfo } from "@/lib/hooks/use-clinic-info";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { buildEmployeeCalendars } from "@/lib/schedule-x-employee-calendars";
@@ -88,19 +89,43 @@ function isBlockedSlot(
   );
 }
 
-function parseHHMM(time: string): [number, number] {
-  const parts = time.split(":");
-  return [Number(parts[0]), Number(parts[1] ?? 0)];
+function zonedDateTimeAtMinute(
+  year: number,
+  month: number,
+  day: number,
+  minuteOfDay: number,
+  timeZone: string,
+) {
+  const dayStart = Temporal.ZonedDateTime.from({
+    year,
+    month,
+    day,
+    hour: 0,
+    minute: 0,
+    second: 0,
+    timeZone,
+  });
+
+  if (minuteOfDay === 24 * 60) {
+    return dayStart.add({ days: 1 });
+  }
+
+  return dayStart.add({ minutes: minuteOfDay });
 }
 
 function buildClinicBackgroundEvents(
   clinic: ClinicInfo,
+  hourRange: CalendarHourRange,
   rangeStart: Date,
   rangeEnd: Date,
 ): BackgroundEvent[] {
   const tz = clinic.timezone;
-  const [openH, openM] = parseHHMM(clinic.opening_time);
-  const [closeH, closeM] = parseHHMM(clinic.closing_time);
+  const openingMinutes = parseCalendarTimeToMinutes(clinic.opening_time);
+  const closingMinutes = parseCalendarTimeToMinutes(clinic.closing_time);
+  const hasValidHours =
+    openingMinutes !== null &&
+    closingMinutes !== null &&
+    openingMinutes < closingMinutes;
   const events: BackgroundEvent[] = [];
 
   let current = startOfDay(rangeStart);
@@ -120,50 +145,30 @@ function buildClinicBackgroundEvents(
         end: Temporal.PlainDate.from({ year, month, day }),
         style: CLOSED_DAY_STYLE,
       });
-    } else {
-      if (CALENDAR_START_HOUR * 60 < openH * 60 + openM) {
+    } else if (hasValidHours) {
+      if (hourRange.startHour * 60 < openingMinutes) {
         events.push({
-          start: Temporal.ZonedDateTime.from({
+          start: zonedDateTimeAtMinute(
             year,
             month,
             day,
-            hour: CALENDAR_START_HOUR,
-            minute: 0,
-            second: 0,
-            timeZone: tz,
-          }),
-          end: Temporal.ZonedDateTime.from({
-            year,
-            month,
-            day,
-            hour: openH,
-            minute: openM,
-            second: 0,
-            timeZone: tz,
-          }),
+            hourRange.startHour * 60,
+            tz,
+          ),
+          end: zonedDateTimeAtMinute(year, month, day, openingMinutes, tz),
           style: DIMMED_STYLE,
         });
       }
-      if (closeH * 60 + closeM < CALENDAR_END_HOUR * 60) {
+      if (closingMinutes < hourRange.endHour * 60) {
         events.push({
-          start: Temporal.ZonedDateTime.from({
+          start: zonedDateTimeAtMinute(year, month, day, closingMinutes, tz),
+          end: zonedDateTimeAtMinute(
             year,
             month,
             day,
-            hour: closeH,
-            minute: closeM,
-            second: 0,
-            timeZone: tz,
-          }),
-          end: Temporal.ZonedDateTime.from({
-            year,
-            month,
-            day,
-            hour: CALENDAR_END_HOUR,
-            minute: 0,
-            second: 0,
-            timeZone: tz,
-          }),
+            hourRange.endHour * 60,
+            tz,
+          ),
           style: DIMMED_STYLE,
         });
       }
@@ -256,16 +261,27 @@ function getInitialCalendarConfig(timezone: string) {
   };
 }
 
-export function useScheduleXCalendar(gridHeight: number) {
+export function useScheduleXCalendar(
+  availableGridHeight: number,
+  clinic: ClinicInfo | null,
+) {
   const weekAnchor = useCalendarStore((state) => state.weekAnchor);
   const viewMode = useCalendarStore((state) => state.viewMode);
   const employeeId = useCalendarStore((state) => state.employeeId);
   const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
   const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
-  const { clinic } = useClinicInfo();
   const activeClinicTimezone = useActiveClinicTimezone();
   const timezone = clinic?.timezone ?? activeClinicTimezone;
+  const hourRange = useMemo(
+    () =>
+      getClinicCalendarHourRange(clinic?.opening_time, clinic?.closing_time),
+    [clinic?.closing_time, clinic?.opening_time],
+  );
+  const gridHeight = Math.max(
+    availableGridHeight,
+    getMinWeekGridHeight(hourRange),
+  );
 
   const { start: rangeStart, end: rangeEnd } = getRangeForViewMode(
     viewMode,
@@ -277,10 +293,18 @@ export function useScheduleXCalendar(gridHeight: number) {
 
   const backgroundEvents = useMemo(
     () =>
-      clinic ? buildClinicBackgroundEvents(clinic, rangeStart, rangeEnd) : [],
+      clinic
+        ? buildClinicBackgroundEvents(clinic, hourRange, rangeStart, rangeEnd)
+        : [],
     // rangeStartIso/rangeEndIso are stable string deps for Date objects
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [clinic, rangeStartIso, rangeEndIso],
+    [
+      clinic,
+      hourRange.endHour,
+      hourRange.startHour,
+      rangeStartIso,
+      rangeEndIso,
+    ],
   );
 
   const appointments = useAppointments(
@@ -408,10 +432,7 @@ export function useScheduleXCalendar(gridHeight: number) {
       gridHeight,
     },
     selectedDate: initialConfig.selectedDate,
-    dayBoundaries: {
-      start: `${String(CALENDAR_START_HOUR).padStart(2, "0")}:00`,
-      end: `${String(CALENDAR_END_HOUR).padStart(2, "0")}:00`,
-    },
+    dayBoundaries: hourRange.dayBoundaries,
     events: initialConfig.events,
     calendars: {},
     backgroundEvents,
@@ -456,6 +477,13 @@ export function useScheduleXCalendar(gridHeight: number) {
 
     eventsService.set(scheduleEvents);
   }, [calendarApp, eventsService, scheduleEvents]);
+
+  useEffect(() => {
+    if (!calendarApp) return;
+
+    calendarControls.setDayBoundaries(hourRange.dayBoundaries);
+    calendarControls.setWeekOptions({ gridHeight });
+  }, [calendarApp, calendarControls, gridHeight, hourRange.dayBoundaries]);
 
   useEffect(() => {
     if (!calendarApp) return;
@@ -529,6 +557,7 @@ export function useScheduleXCalendar(gridHeight: number) {
   return {
     calendarApp,
     customComponents,
+    gridHeight,
     isLoading: appointments.isLoading,
   };
 }

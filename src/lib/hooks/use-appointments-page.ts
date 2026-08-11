@@ -1,5 +1,5 @@
 import { endOfDay, startOfDay } from "date-fns";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import {
   formatAppointmentDateParam,
@@ -159,10 +159,20 @@ export function useAppointmentsPage(
 
   const resolved = entry?.data ?? seededResult ?? null;
 
+  // El botón de refrescar de la barra de filtros vuelve a pedir la página
+  // actual sin pasar por la siembra del servidor.
+  const refresh = useCallback(
+    () => fetchAppointmentsPage(query),
+    [fetchAppointmentsPage, query],
+  );
+
   const appointments = {
     data: resolved,
     error: entry?.error ?? null,
     isLoading: isInitialLoading(entry),
+    // `loading` con datos ya en pantalla es un refresco, no una carga inicial.
+    isRefreshing: entry?.loading ?? false,
+    refresh,
   };
 
   const flatAppointments = useMemo(

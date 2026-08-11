@@ -17,6 +17,18 @@ export const EMPLOYEES_COPY = {
     role: "Rol",
     status: "Estado",
   },
+  list: {
+    actions: {
+      label: "Acciones del empleado",
+      view: "Ver detalle",
+      edit: "Editar empleado",
+      activate: "Activar empleado",
+      deactivate: "Desactivar empleado",
+    },
+    columns: {
+      actions: "Acciones",
+    },
+  },
   roles: {
     all: "Todos",
     admin: "Admin",

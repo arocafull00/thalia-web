@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import type {
@@ -13,6 +13,7 @@ type MobileCardViewItemProps<T> = {
   row: T;
   columns: MobileCardColumn<T>[];
   actions?: MobileCardAction<T>[];
+  renderActions?: (row: T) => ReactNode;
   onRowClick?: (row: T) => void;
 };
 
@@ -28,6 +29,7 @@ export default function MobileCardViewItem<T>({
   row,
   columns,
   actions,
+  renderActions,
   onRowClick,
 }: MobileCardViewItemProps<T>) {
   const primaryColumns = columns.filter(
@@ -79,6 +81,7 @@ export default function MobileCardViewItem<T>({
           ) : null}
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          {renderActions ? renderActions(row) : null}
           {actions && actions.length > 0
             ? actions.map((action) => (
                 <Button

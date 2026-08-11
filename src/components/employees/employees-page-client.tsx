@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeInviteForm from "@/components/employees/components/form/employee-invite-form";
+import EmployeeStatusConfirmDialog from "@/components/employees/components/form/employee-status-confirm-dialog";
 import EmployeesFilters from "@/components/employees/components/list/employees-filters";
 import EmployeesFiltersSheet from "@/components/employees/components/list/employees-filters-sheet";
 import EmployeesTable from "@/components/employees/components/list/employees-table";
@@ -55,6 +56,7 @@ export default function EmployeesPageClient({
   const [editingEmployeeId, setEditingEmployeeId] = useState<string | null>(
     null,
   );
+  const [statusEmployeeId, setStatusEmployeeId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { profile } = useAuth();
@@ -106,6 +108,11 @@ export default function EmployeesPageClient({
     () =>
       filteredEmployees.find((employee) => employee.id === editingEmployeeId),
     [editingEmployeeId, filteredEmployees],
+  );
+  const statusEmployee = useMemo(
+    () =>
+      filteredEmployees.find((employee) => employee.id === statusEmployeeId),
+    [filteredEmployees, statusEmployeeId],
   );
 
   const hasEmployees = employeeData.length > 0;
@@ -187,6 +194,8 @@ export default function EmployeesPageClient({
           <EmployeesTable
             employees={filteredEmployees}
             onRowClick={handleRowClick}
+            onEdit={handleRowClick}
+            onToggleStatus={setStatusEmployeeId}
           />
         ) : null}
       </PageCard>
@@ -242,6 +251,18 @@ export default function EmployeesPageClient({
             handleEditDialogOpenChange(false);
             router.push(`/employees/${editingEmployee.id}`);
           }}
+        />
+      ) : null}
+      {statusEmployee ? (
+        <EmployeeStatusConfirmDialog
+          employee={statusEmployee}
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              setStatusEmployeeId(null);
+            }
+          }}
+          onSuccess={() => setStatusEmployeeId(null)}
         />
       ) : null}
       <EmployeesFiltersSheet

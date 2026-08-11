@@ -30,7 +30,7 @@ export default function PatientDetailTabBar({
       aria-label={PATIENT_DETAIL_COPY.breadcrumbRoot}
       className="shrink-0 border-b border-border-subtle bg-surface"
     >
-      <div className="flex overflow-x-auto gap-2 px-4">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
         {PATIENT_DETAIL_TAB_ITEMS.map((tab) => (
           <PatientDetailTabButton
             key={tab.id}

@@ -22,6 +22,7 @@ export const CLINIC_HOURS_COPY = {
     { value: "America/Buenos_Aires", label: "America/Buenos_Aires (ART)" },
   ],
   actions: {
+    edit: "Editar",
     cancel: "Cancelar",
     save: "Guardar cambios",
     saving: "Guardando...",

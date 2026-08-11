@@ -1,13 +1,47 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
+import ListRowActions from "@/components/ui/list-row-actions";
+import type { ProfileAction } from "@/components/ui/profile/profile-action";
 import SortableTableHead from "@/components/ui/sortable-table-head";
 import { formatCurrency } from "@/lib/format";
 import type { TreatmentWithInventory } from "@/types/database.types";
 
-export function getTreatmentsColumns(): ColumnDef<TreatmentWithInventory>[] {
+export type TreatmentListActionHandlers = {
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+};
+
+export function getTreatmentRowActions(
+  treatment: TreatmentWithInventory,
+  handlers: TreatmentListActionHandlers,
+): ProfileAction[] {
+  return [
+    {
+      label: TREATMENTS_COPY.row.view,
+      icon: Eye,
+      href: `/treatments/${treatment.id}`,
+    },
+    {
+      label: TREATMENTS_COPY.row.edit,
+      icon: Pencil,
+      onClick: () => handlers.onEdit(treatment.id),
+    },
+    {
+      label: TREATMENTS_COPY.row.delete,
+      icon: Trash2,
+      onClick: () => handlers.onDelete(treatment.id),
+      variant: "danger",
+    },
+  ];
+}
+
+export function getTreatmentsColumns(
+  handlers: TreatmentListActionHandlers,
+): ColumnDef<TreatmentWithInventory>[] {
   return [
     {
       accessorKey: "name",
@@ -88,6 +122,17 @@ export function getTreatmentsColumns(): ColumnDef<TreatmentWithInventory>[] {
           </span>
         );
       },
+    },
+    {
+      id: "actions",
+      header: () => TREATMENTS_COPY.row.actions,
+      cell: ({ row }) => (
+        <ListRowActions
+          actions={getTreatmentRowActions(row.original, handlers)}
+          label={TREATMENTS_COPY.row.actionsLabel}
+        />
+      ),
+      enableSorting: false,
     },
   ];
 }

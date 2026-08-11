@@ -6,24 +6,24 @@
 
 :root {
   /* Aurora: teal profundo sobre papel crema. */
-  --primary: #2F7D74;
-  --primary-hover: #1B4F4A;
-  --primary-light: #C6DACF;
-  --primary-subtle: #E9F1EC;
-  --canvas: #FBFAF8;
+  --primary: #2f7d74;
+  --primary-hover: #1b4f4a;
+  --primary-light: #c6dacf;
+  --primary-subtle: #e9f1ec;
+  --canvas: #fbfaf8;
   /* Beige del fondo, visible por los huecos entre las tarjetas. */
   --backdrop-tint: #cdc0ad;
-  --surface: #FFFFFF;
-  --surface-secondary: #F3F6F4;
-  --ink: #24322E;
-  --ink-secondary: #5C6B66;
-  --ink-muted: #96A09B;
+  --surface: #ffffff;
+  --surface-secondary: #f3f6f4;
+  --ink: #24322e;
+  --ink-secondary: #5c6b66;
+  --ink-muted: #96a09b;
   --border: rgba(28, 48, 44, 0.08);
   --border-strong: rgba(28, 48, 44, 0.16);
   --border-subtle: rgba(28, 48, 44, 0.05);
   --border-highlight: rgba(28, 48, 44, 0.04);
   --border-field: var(--border-strong);
-  --on-primary: #FFFFFF;
+  --on-primary: #ffffff;
   /* Degradados de marca: derivados de --primary para que se recalibren solos
      si cambia el color principal. */
   --gradient-primary: linear-gradient(
@@ -36,27 +36,29 @@
     color-mix(in srgb, var(--primary) 16%, var(--surface)),
     color-mix(in srgb, var(--primary) 34%, var(--surface))
   );
-  --success: #E8F5EF;
-  --success-text: #3A9970;
+  --success: #e8f5ef;
+  --success-text: #3a9970;
   --success-subtle: var(--success);
-  --warning: #FAF3E4;
-  --warning-text: #A07520;
+  --warning: #faf3e4;
+  --warning-text: #a07520;
   --warning-subtle: var(--warning);
-  --danger: #FAECEC;
-  --danger-text: #B54848;
+  --danger: #faecec;
+  --danger-text: #b54848;
   --danger-subtle: var(--danger);
   --hover-overlay: color-mix(in srgb, var(--primary) 7%, transparent);
   --disabled-opacity: 0.45;
   /* Halo homogéneo en los cuatro lados, sin dirección de luz. */
-  --shadow-float: 0 0 20px rgba(28, 48, 44, 0.055),
-    0 0 2px rgba(28, 48, 44, 0.04);
-  --shadow-panel: 0 0 24px rgba(28, 48, 44, 0.05),
-    0 0 2px rgba(28, 48, 44, 0.035);
-  --shadow-dialog: 0 0 28px rgba(28, 48, 44, 0.14),
-    0 0 2px rgba(28, 48, 44, 0.08);
+  --shadow-float:
+    0 0 20px rgba(28, 48, 44, 0.055), 0 0 2px rgba(28, 48, 44, 0.04);
+  --shadow-panel:
+    0 0 24px rgba(28, 48, 44, 0.05), 0 0 2px rgba(28, 48, 44, 0.035);
+  --shadow-dialog:
+    0 0 28px rgba(28, 48, 44, 0.14), 0 0 2px rgba(28, 48, 44, 0.08);
   --shadow-glow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
-  --shadow-glow-strong: 0 0 26px color-mix(in srgb, var(--primary) 50%, transparent);
-  --shadow-nav-active: 0 0 16px color-mix(in srgb, var(--primary) 28%, transparent);
+  --shadow-glow-strong: 0 0 26px
+    color-mix(in srgb, var(--primary) 50%, transparent);
+  --shadow-nav-active: 0 0 16px
+    color-mix(in srgb, var(--primary) 28%, transparent);
   --radius-button: 8px;
   --radius-input: 8px;
   --radius-card: 10px;
@@ -180,15 +182,17 @@
   --radius-card: 10px;
   --radius-dialog: 14px;
   --radius-badge: 999px;
-  --shadow-float: 0 0 20px rgba(28, 48, 44, 0.055),
-    0 0 2px rgba(28, 48, 44, 0.04);
-  --shadow-panel: 0 0 24px rgba(28, 48, 44, 0.05),
-    0 0 2px rgba(28, 48, 44, 0.035);
-  --shadow-dialog: 0 0 28px rgba(28, 48, 44, 0.14),
-    0 0 2px rgba(28, 48, 44, 0.08);
+  --shadow-float:
+    0 0 20px rgba(28, 48, 44, 0.055), 0 0 2px rgba(28, 48, 44, 0.04);
+  --shadow-panel:
+    0 0 24px rgba(28, 48, 44, 0.05), 0 0 2px rgba(28, 48, 44, 0.035);
+  --shadow-dialog:
+    0 0 28px rgba(28, 48, 44, 0.14), 0 0 2px rgba(28, 48, 44, 0.08);
   --shadow-glow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
-  --shadow-glow-strong: 0 0 26px color-mix(in srgb, var(--primary) 50%, transparent);
-  --shadow-nav-active: 0 0 16px color-mix(in srgb, var(--primary) 28%, transparent);
+  --shadow-glow-strong: 0 0 26px
+    color-mix(in srgb, var(--primary) 50%, transparent);
+  --shadow-nav-active: 0 0 16px
+    color-mix(in srgb, var(--primary) 28%, transparent);
   --spacing-safe-top: var(--safe-area-top);
   --spacing-safe-bottom: var(--safe-area-bottom);
   --spacing-safe-left: var(--safe-area-left);
@@ -208,7 +212,8 @@
   --animate-boot-spin-reverse: bootOrbitSpin 2.4s linear infinite reverse;
   --animate-boot-breathe: bootBreathe 2.8s ease-in-out infinite;
   --animate-boot-pulse: bootPulse 1.6s ease-in-out infinite;
-  --animate-boot-progress: bootProgress 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-boot-progress: bootProgress 3.2s cubic-bezier(0.22, 1, 0.36, 1)
+    infinite;
   --animate-boot-travel: bootTravel 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   --animate-boot-reveal-check: bootRevealCheck 2.6s ease-in-out infinite;
 }
@@ -406,6 +411,73 @@ body {
   @apply bg-canvas text-ink font-sans;
 }
 
+@media (pointer: fine) {
+  * {
+    scrollbar-color: color-mix(in srgb, var(--ink-muted) 52%, transparent)
+      transparent;
+    scrollbar-width: thin;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    min-height: 32px;
+    border: 2px solid transparent;
+    border-radius: var(--radius-badge);
+    background: color-mix(in srgb, var(--ink-muted) 52%, transparent);
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--primary) 72%, transparent);
+    background-clip: content-box;
+  }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-selector {
+  scrollbar-color: color-mix(in srgb, var(--primary) 60%, var(--surface))
+    transparent;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+.scrollbar-selector::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-selector::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-selector::-webkit-scrollbar-thumb {
+  min-height: 36px;
+  border: 3px solid transparent;
+  border-radius: var(--radius-badge);
+  background: color-mix(in srgb, var(--primary) 60%, var(--surface));
+  background-clip: content-box;
+}
+
+.scrollbar-selector::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--primary) 82%, var(--surface));
+  background-clip: content-box;
+}
+
 .sx-react-calendar-wrapper {
   width: 100%;
   height: 100%;
@@ -585,7 +657,6 @@ input[type="search"],
     0 0 0 3.5px color-mix(in srgb, var(--glow, transparent) 16%, transparent),
     0 0 10px var(--glow, transparent);
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .table-row-wash {

@@ -14,7 +14,7 @@ type AppShellProps = {
 
 export default function AppShell({ children }: AppShellProps) {
   return (
-    <SidebarProvider className="relative overflow-hidden">
+    <SidebarProvider className="relative h-svh min-h-0 overflow-hidden">
       <AppBackdrop />
       <AppSidebar />
       {/* En md+ el hueco izquierdo lo aporta el padding del propio sidebar. */}

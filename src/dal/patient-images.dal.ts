@@ -7,24 +7,97 @@ import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type {
   PatientImage,
   PatientImageInsert,
+  PatientImagePhase,
   PatientImageWithPatient,
 } from "@/types/database.types";
+
+export const PATIENT_IMAGES_PAGE_SIZE = 24;
+
+export type PatientImagesSort = "recent" | "oldest";
+
+export type PatientImagesFilters = {
+  search: string;
+  phase: PatientImagePhase | null;
+  treatmentId: string | null;
+  capturedFrom: string | null;
+  capturedTo: string | null;
+  sort: PatientImagesSort;
+};
+
+export type PatientImagesPageParams = PatientImagesFilters & {
+  clinicId: string;
+  patientId: string;
+  offset: number;
+  limit: number;
+};
+
+export type PaginatedPatientImages = {
+  images: PatientImage[];
+  total: number;
+  hasMore: boolean;
+};
 
 export type TreatmentPatientImagesPage = {
   images: PatientImageWithPatient[];
   hasMore: boolean;
 };
 
-export async function getPatientImages(
-  patientId: string,
-): Promise<PatientImage[]> {
-  const { data, error } = await supabase
-    .from("patient_images")
-    .select("*")
-    .eq("patient_id", patientId)
-    .order("captured_at", { ascending: false });
+function escapePostgrestSearch(value: string) {
+  return value.replace(/[\\"%_]/g, (character) => `\\${character}`);
+}
 
-  return unwrapSupabaseList(data, error) as PatientImage[];
+export async function getPatientImagesPage(
+  params: PatientImagesPageParams,
+): Promise<PaginatedPatientImages> {
+  const ascending = params.sort === "oldest";
+  let query = supabase
+    .from("patient_images")
+    .select("*", { count: "exact" })
+    .eq("clinic_id", params.clinicId)
+    .eq("patient_id", params.patientId);
+
+  const search = params.search.trim();
+
+  if (search) {
+    const pattern = `%${escapePostgrestSearch(search)}%`;
+    query = query.or(
+      `original_filename.ilike."${pattern}",notes.ilike."${pattern}"`,
+    );
+  }
+
+  if (params.phase) {
+    query = query.eq("phase", params.phase);
+  }
+
+  if (params.treatmentId) {
+    query = query.eq("treatment_id", params.treatmentId);
+  }
+
+  if (params.capturedFrom) {
+    query = query.gte("captured_at", params.capturedFrom);
+  }
+
+  if (params.capturedTo) {
+    query = query.lte("captured_at", params.capturedTo);
+  }
+
+  const { data, error, count } = await query
+    .order("captured_at", {
+      ascending,
+      nullsFirst: false,
+    })
+    .order("created_at", { ascending, nullsFirst: false })
+    .order("id", { ascending })
+    .range(params.offset, params.offset + params.limit - 1);
+
+  const images = unwrapSupabaseList(data, error) as PatientImage[];
+  const total = count ?? 0;
+
+  return {
+    images,
+    total,
+    hasMore: params.offset + images.length < total,
+  };
 }
 
 export async function getTreatmentPatientImagesPage(

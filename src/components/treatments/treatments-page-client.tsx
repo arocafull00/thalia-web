@@ -21,16 +21,24 @@ import {
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import { TREATMENTS_PAGE_SIZE } from "@/lib/treatment-pagination";
+import type { TreatmentsPageQuery } from "@/stores/treatment-store";
 import type { TreatmentWithInventory } from "@/types/database.types";
 
-const TREATMENT_FILTER_DEFAULTS = { category: "", q: "" };
+const TREATMENT_FILTER_DEFAULTS = { category: "", page: "", q: "" };
 
 type TreatmentsPageClientProps = {
   initialTreatments: TreatmentWithInventory[];
+  initialTotal: number;
+  initialQuery: TreatmentsPageQuery;
+  initialCategories: string[];
 };
 
 export default function TreatmentsPageClient({
   initialTreatments,
+  initialTotal,
+  initialQuery,
+  initialCategories,
 }: TreatmentsPageClientProps) {
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -44,16 +52,32 @@ export default function TreatmentsPageClient({
   );
   const page = useTreatmentsPage();
 
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
+
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
+      page: pageIndex,
       search: searchQuery,
     }),
-    [filters.category, searchQuery],
+    [filters.category, pageIndex, searchQuery],
   );
 
-  const { categories, category, filteredTreatments, treatments } =
-    useTreatmentCatalog(pageFilters, initialTreatments);
+  const { categories, category, filteredTreatments, total, treatments } =
+    useTreatmentCatalog(pageFilters, {
+      initialTreatments,
+      initialTotal,
+      initialQuery,
+      initialCategories,
+    });
+
+  // Cualquier cambio de filtro vuelve a la página 1: quedarse en la 5 tras
+  // filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = (key: string, value: string) => {
+    setFilters({ [key]: value, page: "" });
+  };
 
   const categoryOptions = useMemo(
     () =>
@@ -93,7 +117,9 @@ export default function TreatmentsPageClient({
             search={filters.q}
             showCategoryFilter={showCategoryFilter}
             isRefreshing={treatments.isRefreshing}
-            onCategoryChange={(value) => setFilter("category", value)}
+            onCategoryChange={(value) =>
+              setFilterAndResetPage("category", value)
+            }
             onSearchChange={handleSearchChange}
             onOpenSheet={handleOpenFiltersSheet}
             onRefresh={() => void treatments.refresh()}
@@ -112,6 +138,13 @@ export default function TreatmentsPageClient({
             onRowClick={page.openEditDialog}
             onEdit={page.openEditDialog}
             onDelete={page.openDeleteDialog}
+            pagination={{
+              pageIndex,
+              pageSize: TREATMENTS_PAGE_SIZE,
+              total,
+              onPageChange: (next) =>
+                setFilter("page", next === 0 ? "" : String(next)),
+            }}
           />
         ) : null}
       </PageCard>

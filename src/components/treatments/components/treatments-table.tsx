@@ -17,6 +17,13 @@ type TreatmentsTableProps = {
   onRowClick: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  /** Paginación en servidor: `treatments` es ya la página visible. */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
 };
 
 export default function TreatmentsTable({
@@ -24,6 +31,7 @@ export default function TreatmentsTable({
   onRowClick,
   onDelete,
   onEdit,
+  pagination,
 }: TreatmentsTableProps) {
   const actionHandlers = useMemo(
     () => ({ onDelete, onEdit }),
@@ -38,7 +46,7 @@ export default function TreatmentsTable({
     <DataTable
       columns={columns}
       data={treatments}
-      enableSorting
+      manualPagination={pagination}
       emptyMessage={TREATMENTS_COPY.page.empty}
       mobileColumns={treatmentsMobileColumns}
       renderMobileActions={(treatment) => (

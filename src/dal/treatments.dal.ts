@@ -19,6 +19,19 @@ export type TreatmentInsert = {
 
 export type TreatmentUpdate = Omit<TreatmentInsert, "clinic_id">;
 
+export type TreatmentPageParams = {
+  clinicId: string | null;
+  category: string;
+  search: string;
+  page: number;
+  pageSize: number;
+};
+
+export type TreatmentPageResult = {
+  treatments: TreatmentWithInventory[];
+  total: number;
+};
+
 export async function getTreatments(
   clinicId: string | null,
 ): Promise<TreatmentWithInventory[]> {
@@ -33,6 +46,72 @@ export async function getTreatments(
 
   const { data, error } = await query;
   return unwrapSupabaseList(data, error) as TreatmentWithInventory[];
+}
+
+/**
+ * Página del listado de tratamientos, filtrada y ordenada en servidor.
+ *
+ * Aquí no hace falta vista SQL, a diferencia de citas: la búsqueda mira sólo
+ * `name` y el filtro `category`, ambas columnas de `treatment`.
+ */
+export async function getTreatmentsPage(
+  params: TreatmentPageParams,
+): Promise<TreatmentPageResult> {
+  const offset = params.page * params.pageSize;
+
+  let query = supabase
+    .from("treatment")
+    .select("*, treatment_inventory_items(id)", { count: "exact" })
+    .order("name")
+    // Desempate estable: sin esto, dos tratamientos con el mismo nombre pueden
+    // cambiar de orden entre páginas y una fila se repetiría o se perdería.
+    .order("id")
+    .range(offset, offset + params.pageSize - 1);
+
+  if (params.clinicId) {
+    query = query.eq("clinic_id", params.clinicId);
+  }
+
+  if (params.category) {
+    query = query.eq("category", params.category);
+  }
+
+  const search = params.search.trim();
+
+  if (search) {
+    query = query.ilike("name", `%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  return {
+    treatments: unwrapSupabaseList(data, error) as TreatmentWithInventory[],
+    total: count ?? 0,
+  };
+}
+
+/**
+ * Categorías existentes en la clínica, para el desplegable de filtro.
+ *
+ * Consulta aparte a propósito: derivarlas de la página visible mostraría sólo
+ * las categorías de esas filas, y no se podría filtrar por el resto. Trae una
+ * única columna de texto, así que recorrer toda la clínica es despreciable.
+ */
+export async function getTreatmentCategories(
+  clinicId: string | null,
+): Promise<string[]> {
+  let query = supabase.from("treatment").select("category");
+
+  if (clinicId) {
+    query = query.eq("clinic_id", clinicId);
+  }
+
+  const { data, error } = await query;
+  const rows = unwrapSupabaseList(data, error) as { category: string | null }[];
+
+  return [
+    ...new Set(rows.map((row) => row.category).filter(Boolean) as string[]),
+  ].sort((left, right) => left.localeCompare(right, "es"));
 }
 
 export async function getTreatment(

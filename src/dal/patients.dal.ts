@@ -19,6 +19,20 @@ export type PatientUpdate = Partial<Omit<PatientInsert, "clinic_id">> & {
   avatar_url?: string;
 };
 
+export type PatientPageParams = {
+  clinicId: string | null;
+  search: string;
+  /** `null` es «sin filtrar»; `false` filtra los que no han consentido. */
+  marketingOptIn: boolean | null;
+  page: number;
+  pageSize: number;
+};
+
+export type PatientPageResult = {
+  patients: Patient[];
+  total: number;
+};
+
 export async function getPatients(
   clinicId: string | null,
   search: string,
@@ -37,6 +51,48 @@ export async function getPatients(
 
   const { data, error } = await query;
   return unwrapSupabaseList(data, error) as Patient[];
+}
+
+/**
+ * Página del listado de pacientes, filtrada y ordenada en servidor.
+ *
+ * Sin vista SQL, a diferencia de citas: la búsqueda mira `full_name` y `phone`
+ * y el filtro `marketing_opt_in`, las tres columnas de `patients`.
+ */
+export async function getPatientsPage(
+  params: PatientPageParams,
+): Promise<PatientPageResult> {
+  const offset = params.page * params.pageSize;
+
+  let query = supabase
+    .from("patients")
+    .select("*", { count: "exact" })
+    .order("full_name")
+    // Desempate estable: sin esto, dos pacientes con el mismo nombre pueden
+    // cambiar de orden entre páginas y una fila se repetiría o se perdería.
+    .order("id")
+    .range(offset, offset + params.pageSize - 1);
+
+  if (params.clinicId) {
+    query = query.eq("clinic_id", params.clinicId);
+  }
+
+  if (params.marketingOptIn !== null) {
+    query = query.eq("marketing_opt_in", params.marketingOptIn);
+  }
+
+  const search = params.search.trim();
+
+  if (search) {
+    query = query.or(`full_name.ilike.%${search}%,phone.ilike.%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  return {
+    patients: unwrapSupabaseList(data, error) as Patient[],
+    total: count ?? 0,
+  };
 }
 
 export async function getPatient(patientId: string): Promise<Patient> {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import TreatmentDeleteConfirmDialog from "@/components/treatments/components/treatment-delete-confirm-dialog";
 import TreatmentDialog from "@/components/treatments/components/treatment-dialog";
@@ -46,9 +46,19 @@ export default function TreatmentsPageClient({
   const { filters, setFilter, setFilters } = useUrlFilters(
     TREATMENT_FILTER_DEFAULTS,
   );
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
   const page = useTreatmentsPage();
 
@@ -72,12 +82,6 @@ export default function TreatmentsPageClient({
       initialQuery,
       initialCategories,
     });
-
-  // Cualquier cambio de filtro vuelve a la página 1: quedarse en la 5 tras
-  // filtrar deja la tabla vacía sin explicar por qué.
-  const setFilterAndResetPage = (key: string, value: string) => {
-    setFilters({ [key]: value, page: "" });
-  };
 
   const categoryOptions = useMemo(
     () =>
@@ -183,7 +187,7 @@ export default function TreatmentsPageClient({
           open={sheetOpen}
           filters={filters}
           categoryOptions={categoryOptions}
-          onApply={(updates) => setFilters(updates)}
+          onApply={(updates) => setFilters({ ...updates, page: "" })}
           onClear={() => setFilters(TREATMENT_FILTER_DEFAULTS)}
           onDismiss={() => setSheetOpen(false)}
         />

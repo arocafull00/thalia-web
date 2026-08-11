@@ -17,6 +17,13 @@ type PatientsTableProps = {
   emptyMessage?: string;
   onRowClick: (id: string) => void;
   onEdit: (id: string) => void;
+  /** Paginación en servidor: `patients` es ya la página visible. */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
 };
 
 export default function PatientsTable({
@@ -24,6 +31,7 @@ export default function PatientsTable({
   emptyMessage,
   onRowClick,
   onEdit,
+  pagination,
 }: PatientsTableProps) {
   const actionHandlers = useMemo(() => ({ onEdit }), [onEdit]);
   const columns = useMemo(
@@ -35,7 +43,7 @@ export default function PatientsTable({
     <DataTable
       columns={columns}
       data={patients}
-      enableSorting
+      manualPagination={pagination}
       emptyMessage={emptyMessage ?? "No hay pacientes con ese criterio."}
       mobileColumns={patientsMobileColumns}
       renderMobileActions={(patient) => (

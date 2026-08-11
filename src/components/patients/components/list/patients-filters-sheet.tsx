@@ -7,13 +7,13 @@ import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 
-const statusOptions = [
-  { label: PATIENTS_COPY.filters.active, value: "active" },
-  { label: PATIENTS_COPY.filters.inactive, value: "inactive" },
+const marketingOptions = [
+  { label: PATIENTS_COPY.filters.granted, value: "granted" },
+  { label: PATIENTS_COPY.filters.denied, value: "denied" },
 ];
 
 type PatientFilters = {
-  status: string;
+  marketing: string;
 };
 
 type PatientsFiltersSheetProps = {
@@ -50,17 +50,17 @@ export default function PatientsFiltersSheet({
       onApply={handleApply}
       onClear={handleClear}
     >
-      <FilterField variant="sheet" label={PATIENTS_COPY.filterLabels.status}>
+      <FilterField variant="sheet" label={PATIENTS_COPY.filterLabels.marketing}>
         {({ controlId }) => (
           <AppSearchableCombobox
             id={controlId}
-            value={pending.status || null}
+            value={pending.marketing || null}
             onValueChange={(v) =>
-              setPending((prev) => ({ ...prev, status: v ?? "" }))
+              setPending((prev) => ({ ...prev, marketing: v ?? "" }))
             }
-            options={statusOptions}
+            options={marketingOptions}
             placeholder={PATIENTS_COPY.filters.all}
-            searchPlaceholder={PATIENTS_COPY.filters.status}
+            searchPlaceholder={PATIENTS_COPY.filters.marketing}
             allowClear
             clearLabel={PATIENTS_COPY.filters.all}
           />

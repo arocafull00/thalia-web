@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
 import AppointmentDeleteDialog from "@/components/appointments/components/appointment-delete-dialog";
@@ -80,9 +80,19 @@ export default function AppointmentsPageClient({
     [initialRange.from, initialRange.to],
   );
   const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
 
   // La página vive en la URL para que un enlace compartido abra donde estaba.
@@ -117,12 +127,6 @@ export default function AppointmentsPageClient({
       initialEmployees,
       initialRange,
     });
-
-  // Cualquier cambio de filtro vuelve a la página 1: quedarse en la 5 tras
-  // filtrar deja la tabla vacía sin explicar por qué.
-  const setFilterAndResetPage = (key: string, value: string) => {
-    setFilters({ [key]: value, page: "" });
-  };
 
   const editingAppointment = useMemo(
     () =>
@@ -253,7 +257,7 @@ export default function AppointmentsPageClient({
         open={sheetOpen}
         filters={filters}
         initialEmployees={initialEmployees}
-        onApply={(updates) => setFilters(updates)}
+        onApply={(updates) => setFilters({ ...updates, page: "" })}
         onClear={() => setFilters(filterDefaults)}
         onDismiss={() => setSheetOpen(false)}
       />

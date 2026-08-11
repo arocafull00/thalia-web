@@ -1,19 +1,110 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
   useServerSeed,
 } from "@/lib/hooks/use-server-seed";
+import { PATIENTS_PAGE_SIZE } from "@/lib/patient-pagination";
 import {
   patientsListKey,
+  patientsPageKey,
   usePatientsStore,
   type PatientFormInput,
+  type PatientsPageQuery,
 } from "@/stores/patients-store";
 import { isInitialLoading } from "@/stores/query-state";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
 export type { PatientFormInput };
+
+type PatientsPageFilters = {
+  marketingOptIn: boolean | null;
+  page: number;
+  search: string;
+};
+
+type PatientsPageSeed = {
+  initialPatients?: Patient[];
+  initialTotal?: number;
+  initialQuery?: PatientsPageQuery;
+};
+
+/**
+ * Listado de pacientes paginado en servidor.
+ *
+ * Filtros, búsqueda y orden viajan al servidor: filtrar en cliente sobre una
+ * página ya recortada daría recuentos falsos y rompería la paginación.
+ */
+export function usePatientsPage(
+  filters: PatientsPageFilters,
+  seed?: PatientsPageSeed,
+) {
+  const query = useMemo<PatientsPageQuery>(
+    () => ({
+      search: filters.search,
+      marketingOptIn: filters.marketingOptIn,
+      page: filters.page,
+      pageSize: PATIENTS_PAGE_SIZE,
+    }),
+    [filters.marketingOptIn, filters.page, filters.search],
+  );
+
+  const key = patientsPageKey(query);
+  const entry = usePatientsStore((state) => state.byPage[key]);
+  const fetchPatientsPage = usePatientsStore(
+    (state) => state.fetchPatientsPage,
+  );
+  const seedPatientsPage = usePatientsStore((state) => state.seedPatientsPage);
+
+  // La siembra sólo vale para la consulta exacta que resolvió el servidor: si
+  // los filtros de la URL no coinciden, se descarta y el cliente vuelve a pedir.
+  const seededResult = useServerSeed(
+    key,
+    seed?.initialQuery ? patientsPageKey(seed.initialQuery) : "",
+    seed?.initialPatients
+      ? {
+          patients: seed.initialPatients,
+          total: seed.initialTotal ?? seed.initialPatients.length,
+        }
+      : undefined,
+  );
+  const hasClientData = entry?.data != null;
+
+  useEffect(() => {
+    if (seededResult === undefined || hasClientData) {
+      return;
+    }
+
+    seedPatientsPage(query, seededResult);
+  }, [hasClientData, query, seedPatientsPage, seededResult]);
+
+  useEffect(() => {
+    if (seededResult !== undefined) {
+      return;
+    }
+
+    void fetchPatientsPage(query);
+  }, [fetchPatientsPage, query, seededResult]);
+
+  const refresh = useCallback(
+    () => fetchPatientsPage(query),
+    [fetchPatientsPage, query],
+  );
+
+  const resolved = entry?.data ?? seededResult ?? null;
+  const patients = useMemo(() => resolved?.patients ?? [], [resolved]);
+
+  return {
+    patients,
+    total: resolved?.total ?? 0,
+    error: entry?.error ?? null,
+    isLoading: resolved == null && isInitialLoading(entry),
+    // `loading` con datos ya en pantalla es un refresco, no una carga inicial.
+    isRefreshing: entry?.loading ?? false,
+    refresh,
+  };
+}
 
 export function usePatients(search: string, initialData?: Patient[]) {
   const key = patientsListKey(search);

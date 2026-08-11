@@ -77,6 +77,9 @@ export function DataTable<TData, TValue>({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+    // Explícito para que `column.getCanSort()` sea falso y las cabeceras se
+    // pinten como texto plano en vez de botones de ordenar inertes.
+    enableSorting,
     ...(enableSorting
       ? {
           getSortedRowModel: getSortedRowModel(),

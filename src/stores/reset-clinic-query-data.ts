@@ -30,9 +30,15 @@ export function resetClinicQueryData() {
   });
   usePatientsStore.setState({
     listBySearch: {},
+    byPage: {},
     byId: {},
     appointmentsByPatientId: {},
     upcomingByPatientId: {},
   });
-  useTreatmentStore.setState({ list: emptyQueryEntry(), byId: {} });
+  useTreatmentStore.setState({
+    list: emptyQueryEntry(),
+    byPage: {},
+    categories: emptyQueryEntry(),
+    byId: {},
+  });
 }

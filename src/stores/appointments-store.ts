@@ -8,6 +8,7 @@ import {
   getAppointment,
   getAppointmentInventoryItems,
   getAppointments,
+  getAppointmentsPage,
   getDefaultMaterials,
   insertAppointment,
   insertAppointmentTreatments,
@@ -16,6 +17,7 @@ import {
   updateAppointment,
   updateAppointmentStatus,
   type AppointmentInventoryLinkInput,
+  type AppointmentPageResult,
   type EffectiveAppointmentMaterial,
 } from "@/dal/appointments.dal";
 import { getTreatmentsByIds } from "@/dal/treatments.dal";
@@ -74,6 +76,28 @@ function appointmentsKey(
   });
 }
 
+export type AppointmentsPageQuery = {
+  startIso: string;
+  endIso: string;
+  employeeId: string | null;
+  status: AppointmentStatus | null;
+  search: string;
+  page: number;
+  pageSize: number;
+};
+
+export function appointmentsPageKey(query: AppointmentsPageQuery) {
+  return JSON.stringify({
+    start: new Date(query.startIso).toISOString(),
+    end: new Date(query.endIso).toISOString(),
+    employeeId: query.employeeId,
+    status: query.status,
+    search: query.search.trim().toLowerCase(),
+    page: query.page,
+    pageSize: query.pageSize,
+  });
+}
+
 let appointmentsRealtimeChannel: RealtimeChannel | null = null;
 let appointmentsRealtimeSubscribers = 0;
 
@@ -86,9 +110,33 @@ function calculateEndDate(startsAtIso: string, treatments: Treatment[]) {
 }
 
 async function refreshAllAppointmentEntries() {
-  const { byRange, fetchAppointments } = useAppointmentsStore.getState();
-  await Promise.all(
-    Object.keys(byRange).map((key) => {
+  const { byRange, byPage, fetchAppointments, fetchAppointmentsPage } =
+    useAppointmentsStore.getState();
+  await Promise.all([
+    // Las páginas se refrescan además de los rangos: un alta o una baja cambia
+    // qué citas caen en la página visible y también el total, así que no basta
+    // con parchear la fila en memoria.
+    ...Object.keys(byPage).map((key) => {
+      const query = JSON.parse(key) as {
+        start: string;
+        end: string;
+        employeeId: string | null;
+        status: AppointmentStatus | null;
+        search: string;
+        page: number;
+        pageSize: number;
+      };
+      return fetchAppointmentsPage({
+        startIso: query.start,
+        endIso: query.end,
+        employeeId: query.employeeId,
+        status: query.status,
+        search: query.search,
+        page: query.page,
+        pageSize: query.pageSize,
+      });
+    }),
+    ...Object.keys(byRange).map((key) => {
       const { start, end, employeeId } = JSON.parse(key) as {
         start: string;
         end: string;
@@ -100,7 +148,7 @@ async function refreshAllAppointmentEntries() {
         employeeId,
       });
     }),
-  );
+  ]);
 }
 
 function subscribeAppointmentsRealtime() {
@@ -171,6 +219,10 @@ function updateAppointmentInRangeEntries(
 
 type AppointmentsStore = {
   byRange: Record<string, QueryEntry<AppointmentWithRelations[]>>;
+  // Caché aparte de byRange: el calendario necesita todas las citas de un
+  // rango para pintar la rejilla, así que no puede compartir una entrada
+  // paginada.
+  byPage: Record<string, QueryEntry<AppointmentPageResult>>;
   byId: Record<string, QueryEntry<AppointmentWithRelations>>;
   appointmentInventoryById: Record<
     string,
@@ -199,6 +251,11 @@ type AppointmentsStore = {
     end: Date;
     employeeId: string | null;
   }) => Promise<void>;
+  fetchAppointmentsPage: (query: AppointmentsPageQuery) => Promise<void>;
+  seedAppointmentsPage: (
+    query: AppointmentsPageQuery,
+    result: AppointmentPageResult,
+  ) => void;
   seedAppointments: (params: {
     start: string;
     end: string;
@@ -228,6 +285,7 @@ type AppointmentsStore = {
 
 export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   byRange: {},
+  byPage: {},
   byId: {},
   appointmentInventoryById: {},
   defaultMaterialsByKey: {},
@@ -262,6 +320,56 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         },
       };
     });
+  },
+
+  seedAppointmentsPage: (query, result) => {
+    const key = appointmentsPageKey(query);
+
+    set((state) => {
+      // La siembra sólo rellena huecos: si ya hay datos de cliente para esta
+      // página, son más frescos que los que trajo el servidor.
+      if (state.byPage[key]?.data != null) {
+        return state;
+      }
+
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+    });
+  },
+
+  fetchAppointmentsPage: async (query) => {
+    const key = appointmentsPageKey(query);
+    const previous = get().byPage[key];
+    set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
+
+    try {
+      const result = await getAppointmentsPage({
+        startIso: query.startIso,
+        endIso: query.endIso,
+        clinicId: getActiveClinicId(),
+        employeeId: query.employeeId,
+        status: query.status,
+        search: query.search,
+        page: query.page,
+        pageSize: query.pageSize,
+      });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+    } catch (cause) {
+      logger.captureException(cause, {
+        store: "appointments-store",
+        action: "fetchAppointmentsPage",
+        clinicId: getActiveClinicId(),
+        employeeId: query.employeeId,
+      });
+      set({
+        byPage: {
+          ...get().byPage,
+          [key]: errorQueryEntry(
+            cause instanceof Error ? cause : new Error(String(cause)),
+            previous,
+          ),
+        },
+      });
+    }
   },
 
   fetchAppointments: async ({ start, end, employeeId }) => {

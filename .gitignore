@@ -67,3 +67,5 @@ videos/**/.hyperframes/*.log
 videos/**/.hyperframes/*.wav
 # Sentry Config File
 .env.sentry-build-plugin
+
+.mcp.json

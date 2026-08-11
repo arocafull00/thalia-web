@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import PatientCreateForm from "@/components/patients/components/form/patient-create-form";
 import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
@@ -33,21 +33,28 @@ import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
-import { usePatients } from "@/lib/hooks/use-patients";
+import { usePatientsPage } from "@/lib/hooks/use-patients";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import {
+  parseMarketingFilter,
+  PATIENTS_PAGE_SIZE,
+} from "@/lib/patient-pagination";
+import type { PatientsPageQuery } from "@/stores/patients-store";
 import type { Patient } from "@/types/database.types";
 
-const PATIENT_FILTER_DEFAULTS = { q: "", status: "" };
+const PATIENT_FILTER_DEFAULTS = { marketing: "", page: "", q: "" };
 
 type PatientsPageClientProps = {
   initialPatients: Patient[];
-  initialSearch: string;
+  initialTotal: number;
+  initialQuery: PatientsPageQuery;
 };
 
 export default function PatientsPageClient({
   initialPatients,
-  initialSearch,
+  initialTotal,
+  initialQuery,
 }: PatientsPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -58,39 +65,52 @@ export default function PatientsPageClient({
   const { filters, setFilter, setFilters } = useUrlFilters(
     PATIENT_FILTER_DEFAULTS,
   );
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
-  const patients = usePatients(
-    searchQuery,
-    searchQuery === initialSearch ? initialPatients : undefined,
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
+
+  const pageFilters = useMemo(
+    () => ({
+      marketingOptIn: parseMarketingFilter(filters.marketing),
+      page: pageIndex,
+      search: searchQuery,
+    }),
+    [filters.marketing, pageIndex, searchQuery],
   );
+
+  const patients = usePatientsPage(pageFilters, {
+    initialPatients,
+    initialTotal,
+    initialQuery,
+  });
   const dialog = usePatientCreateDialog(() => setDialogOpen(false));
-  const patientData = useMemo(() => patients.data ?? [], [patients.data]);
-
-  const filteredPatients = useMemo(() => {
-    if (!filters.status) {
-      return patientData;
-    }
-
-    if (filters.status === "inactive") {
-      return [];
-    }
-
-    return patientData;
-  }, [filters.status, patientData]);
 
   const editingPatient = useMemo(
-    () => filteredPatients.find((patient) => patient.id === editingPatientId),
-    [editingPatientId, filteredPatients],
+    () => patients.patients.find((patient) => patient.id === editingPatientId),
+    [editingPatientId, patients.patients],
   );
   const editingPatientAvatar = usePatientAvatar(editingPatient);
 
-  const hasPatients = patientData.length > 0;
-  const hasActiveFilters = Boolean(searchQuery.trim() || filters.status);
+  const hasActiveFilters = Boolean(searchQuery.trim() || filters.marketing);
   const showEmptyState =
-    !patients.isLoading && !patients.error && !hasActiveFilters && !hasPatients;
+    !patients.isLoading &&
+    !patients.error &&
+    !hasActiveFilters &&
+    patients.total === 0;
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
     setDialogOpen(nextOpen);
@@ -127,10 +147,12 @@ export default function PatientsPageClient({
         filters={
           <PatientsFilters
             search={filters.q}
-            status={filters.status}
+            marketing={filters.marketing}
             isRefreshing={patients.isRefreshing}
             onSearchChange={handleSearchChange}
-            onStatusChange={(value) => setFilter("status", value)}
+            onMarketingChange={(value) =>
+              setFilterAndResetPage("marketing", value)
+            }
             onOpenSheet={handleOpenFiltersSheet}
             onRefresh={() => void patients.refresh()}
           />
@@ -147,9 +169,16 @@ export default function PatientsPageClient({
         ) : null}
         {!showEmptyState && !patients.isLoading ? (
           <PatientsTable
-            patients={filteredPatients}
+            patients={patients.patients}
             onRowClick={handleRowClick}
             onEdit={handleRowClick}
+            pagination={{
+              pageIndex,
+              pageSize: PATIENTS_PAGE_SIZE,
+              total: patients.total,
+              onPageChange: (next) =>
+                setFilter("page", next === 0 ? "" : String(next)),
+            }}
           />
         ) : null}
       </PageCard>
@@ -218,7 +247,7 @@ export default function PatientsPageClient({
         key={sheetKey}
         open={sheetOpen}
         filters={filters}
-        onApply={(updates) => setFilters(updates)}
+        onApply={(updates) => setFilters({ ...updates, page: "" })}
         onClear={() => setFilters(PATIENT_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
       />

@@ -4,9 +4,12 @@ import {
   getPatient,
   getPatientAppointments,
   getPatients,
+  getPatientsPage,
   getUpcomingPatientAppointments,
   insertPatient,
   updatePatient,
+  type PatientPageParams,
+  type PatientPageResult,
 } from "@/dal/patients.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
@@ -40,8 +43,20 @@ function patientsListKey(search: string) {
   return search.trim() || "__all__";
 }
 
+export type PatientsPageQuery = Omit<PatientPageParams, "clinicId">;
+
+export function patientsPageKey(query: PatientsPageQuery) {
+  return JSON.stringify({
+    search: query.search.trim().toLowerCase(),
+    marketingOptIn: query.marketingOptIn,
+    page: query.page,
+    pageSize: query.pageSize,
+  });
+}
+
 type PatientsStore = {
   listBySearch: Record<string, QueryEntry<Patient[]>>;
+  byPage: Record<string, QueryEntry<PatientPageResult>>;
   byId: Record<string, QueryEntry<Patient>>;
   appointmentsByPatientId: Record<
     string,
@@ -55,6 +70,11 @@ type PatientsStore = {
   uploadingAvatar: boolean;
   uploadAvatarError: Error | null;
   fetchPatients: (search: string) => Promise<void>;
+  fetchPatientsPage: (query: PatientsPageQuery) => Promise<void>;
+  seedPatientsPage: (
+    query: PatientsPageQuery,
+    result: PatientPageResult,
+  ) => void;
   fetchPatient: (patientId: string) => Promise<void>;
   fetchPatientAppointments: (patientId: string) => Promise<void>;
   fetchUpcomingPatientAppointments: (patientId: string) => Promise<void>;
@@ -66,8 +86,30 @@ type PatientsStore = {
   uploadPatientAvatar: (patientId: string, file: File) => Promise<Patient>;
 };
 
+/**
+ * Refresco tras crear, editar o subir avatar. Vuelve a pedir las páginas en
+ * caché y las listas completas que siguen usando otras pantallas (el selector
+ * de paciente al crear una cita, por ejemplo).
+ *
+ * Hace falta releer el total: si se da de alta un paciente, «1-10 de 40» pasa
+ * a «de 41», y parchear el elemento en memoria no lo actualizaría.
+ */
+async function refreshPatientQueries(get: () => PatientsStore) {
+  const { byPage, listBySearch, fetchPatients, fetchPatientsPage } = get();
+
+  await Promise.all([
+    ...Object.keys(listBySearch).map((key) =>
+      fetchPatients(key === "__all__" ? "" : key),
+    ),
+    ...Object.keys(byPage).map((key) =>
+      fetchPatientsPage(JSON.parse(key) as PatientsPageQuery),
+    ),
+  ]);
+}
+
 export const usePatientsStore = create<PatientsStore>((set, get) => ({
   listBySearch: {},
+  byPage: {},
   byId: {},
   appointmentsByPatientId: {},
   upcomingByPatientId: {},
@@ -107,6 +149,49 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       set({
         listBySearch: {
           ...get().listBySearch,
+          [key]: errorQueryEntry(
+            cause instanceof Error ? cause : new Error(String(cause)),
+            previous,
+          ),
+        },
+      });
+    }
+  },
+
+  seedPatientsPage: (query, result) => {
+    const key = patientsPageKey(query);
+
+    set((state) => {
+      // La siembra sólo rellena huecos: si ya hay datos de cliente para esta
+      // página, son más frescos que los del servidor.
+      if (state.byPage[key]?.data != null) {
+        return state;
+      }
+
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+    });
+  },
+
+  fetchPatientsPage: async (query) => {
+    const key = patientsPageKey(query);
+    const previous = get().byPage[key];
+    set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
+
+    try {
+      const result = await getPatientsPage({
+        ...query,
+        clinicId: getActiveClinicId(),
+      });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+    } catch (cause) {
+      logger.captureException(cause, {
+        store: "patients-store",
+        action: "fetchPatientsPage",
+        clinicId: getActiveClinicId(),
+      });
+      set({
+        byPage: {
+          ...get().byPage,
           [key]: errorQueryEntry(
             cause instanceof Error ? cause : new Error(String(cause)),
             previous,
@@ -223,10 +308,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
 
       const patient = await insertPatient(parsed.data);
 
-      const keys = Object.keys(get().listBySearch);
-      await Promise.all(
-        keys.map((key) => get().fetchPatients(key === "__all__" ? "" : key)),
-      );
+      await refreshPatientQueries(get);
       set({ creating: false });
       return patient;
     } catch (cause) {
@@ -253,10 +335,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
 
       const patient = await updatePatient(id, parsed.data);
 
-      const keys = Object.keys(get().listBySearch);
-      await Promise.all(
-        keys.map((key) => get().fetchPatients(key === "__all__" ? "" : key)),
-      );
+      await refreshPatientQueries(get);
       await get().fetchPatient(id);
       set({ updating: false });
       return patient;
@@ -283,12 +362,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       );
       const patient = await updatePatient(patientId, { avatar_url: key });
 
-      const keys = Object.keys(get().listBySearch);
-      await Promise.all(
-        keys.map((searchKey) =>
-          get().fetchPatients(searchKey === "__all__" ? "" : searchKey),
-        ),
-      );
+      await refreshPatientQueries(get);
       await get().fetchPatient(patientId);
       set({ uploadingAvatar: false });
       return patient;

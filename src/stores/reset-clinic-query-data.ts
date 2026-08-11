@@ -10,6 +10,7 @@ import { useTreatmentStore } from "@/stores/treatment-store";
 export function resetClinicQueryData() {
   useAppointmentsStore.setState({
     byRange: {},
+    byPage: {},
     byId: {},
     appointmentInventoryById: {},
     defaultMaterialsByKey: {},
@@ -29,9 +30,15 @@ export function resetClinicQueryData() {
   });
   usePatientsStore.setState({
     listBySearch: {},
+    byPage: {},
     byId: {},
     appointmentsByPatientId: {},
     upcomingByPatientId: {},
   });
-  useTreatmentStore.setState({ list: emptyQueryEntry(), byId: {} });
+  useTreatmentStore.setState({
+    list: emptyQueryEntry(),
+    byPage: {},
+    categories: emptyQueryEntry(),
+    byId: {},
+  });
 }

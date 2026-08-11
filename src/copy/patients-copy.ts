@@ -7,14 +7,14 @@ export const PATIENTS_COPY = {
     refreshing: "Recargando pacientes",
   },
   filters: {
-    status: "Estado del paciente",
-    all: "Todos",
-    active: "Activos",
-    inactive: "Inactivos",
+    marketing: "Consentimiento de comunicaciones",
+    all: "Todas",
+    granted: "Activas",
+    denied: "No activas",
   },
   filterLabels: {
     search: "Buscar paciente",
-    status: "Estado",
+    marketing: "Comunicaciones",
   },
   list: {
     actions: {
@@ -33,7 +33,7 @@ export const PATIENTS_COPY = {
     noEmail: "—",
   },
   marketingOptIn: {
-    granted: "Activo",
-    denied: "No activo",
+    granted: "Activas",
+    denied: "No activas",
   },
 } as const;

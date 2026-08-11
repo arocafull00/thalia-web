@@ -38,6 +38,17 @@ type DataTableProps<TData, TValue> = {
   /** Estilo por fila; lo usa la pantalla de citas para tintar el barrido con --glow. */
   getRowStyle?: (row: TData) => CSSProperties | undefined;
   pageSize?: number;
+  /**
+   * Paginación en servidor: `data` es ya la página visible y el recuento
+   * total llega aparte. Sin esto la tabla pagina en cliente sobre el array
+   * completo, que es lo que siguen haciendo inventario y campañas.
+   */
+  manualPagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
   mobileColumns?: MobileCardColumn<TData>[];
   mobileActions?: MobileCardAction<TData>[];
   renderMobileActions?: (row: TData) => ReactNode;
@@ -54,6 +65,7 @@ export function DataTable<TData, TValue>({
   onRowClick,
   getRowStyle,
   pageSize = 10,
+  manualPagination,
   mobileColumns,
   mobileActions,
   renderMobileActions,
@@ -65,6 +77,9 @@ export function DataTable<TData, TValue>({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+    // Explícito para que `column.getCanSort()` sea falso y las cabeceras se
+    // pinten como texto plano en vez de botones de ordenar inertes.
+    enableSorting,
     ...(enableSorting
       ? {
           getSortedRowModel: getSortedRowModel(),
@@ -72,15 +87,31 @@ export function DataTable<TData, TValue>({
           state: { sorting },
         }
       : {}),
-    ...(enablePagination
+    // Manual manda sobre la de cliente: si el servidor ya paginó, volver a
+    // recortar aquí dejaría la página en blanco a partir de la segunda.
+    ...(manualPagination
       ? {
-          getPaginationRowModel: getPaginationRowModel(),
-          initialState: { pagination: { pageSize } },
+          manualPagination: true,
+          rowCount: manualPagination.total,
+          state: {
+            ...(enableSorting ? { sorting } : {}),
+            pagination: {
+              pageIndex: manualPagination.pageIndex,
+              pageSize: manualPagination.pageSize,
+            },
+          },
         }
-      : {}),
+      : enablePagination
+        ? {
+            getPaginationRowModel: getPaginationRowModel(),
+            initialState: { pagination: { pageSize } },
+          }
+        : {}),
   });
 
-  const totalRows = table.getFilteredRowModel().rows.length;
+  const totalRows = manualPagination
+    ? manualPagination.total
+    : table.getFilteredRowModel().rows.length;
   const pagination = table.getState().pagination;
   const pageStart =
     totalRows === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
@@ -173,7 +204,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {enablePagination ? (
+      {enablePagination || manualPagination ? (
         <div className="flex items-center justify-between px-4 pt-4 text-sm text-ink-secondary">
           <span className="hidden md:inline">
             {totalRows === 0 ? 0 : pageStart}-{pageEnd} de {totalRows}
@@ -187,7 +218,13 @@ export function DataTable<TData, TValue>({
               variant="outline"
               size="sm"
               disabled={!table.getCanPreviousPage()}
-              onClick={() => table.previousPage()}
+              onClick={() =>
+                manualPagination
+                  ? manualPagination.onPageChange(
+                      manualPagination.pageIndex - 1,
+                    )
+                  : table.previousPage()
+              }
             >
               Anterior
             </Button>
@@ -196,7 +233,13 @@ export function DataTable<TData, TValue>({
               variant="outline"
               size="sm"
               disabled={!table.getCanNextPage()}
-              onClick={() => table.nextPage()}
+              onClick={() =>
+                manualPagination
+                  ? manualPagination.onPageChange(
+                      manualPagination.pageIndex + 1,
+                    )
+                  : table.nextPage()
+              }
             >
               Siguiente
             </Button>

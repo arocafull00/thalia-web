@@ -7,29 +7,31 @@ import PageRefreshButton from "@/components/ui/page-refresh-button";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import { SEARCH_COPY } from "@/copy/search-copy";
 
-const statusOptions = [
-  { label: PATIENTS_COPY.filters.active, value: "active" },
-  { label: PATIENTS_COPY.filters.inactive, value: "inactive" },
+// Filtra la columna `marketing_opt_in`: sin consentimiento el paciente no
+// entra en ninguna campaña, así que interesa poder aislar unos y otros.
+const marketingOptions = [
+  { label: PATIENTS_COPY.filters.granted, value: "granted" },
+  { label: PATIENTS_COPY.filters.denied, value: "denied" },
 ];
 
 type PatientsFiltersProps = {
   search: string;
-  status: string;
+  marketing: string;
   isRefreshing: boolean;
   onOpenSheet: () => void;
   onRefresh: () => void;
   onSearchChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onMarketingChange: (value: string) => void;
 };
 
 export default function PatientsFilters({
   search,
-  status,
+  marketing,
   isRefreshing,
   onOpenSheet,
   onRefresh,
   onSearchChange,
-  onStatusChange,
+  onMarketingChange,
 }: PatientsFiltersProps) {
   return (
     <PageFiltersBar
@@ -48,16 +50,19 @@ export default function PatientsFilters({
         />
       }
     >
-      <FilterField label={PATIENTS_COPY.filterLabels.status} className="w-40">
+      <FilterField
+        label={PATIENTS_COPY.filterLabels.marketing}
+        className="w-40"
+      >
         {({ controlId }) => (
           <AppSearchableCombobox
             id={controlId}
-            testId="patients-status-combobox"
-            value={status || null}
-            onValueChange={(value) => onStatusChange(value ?? "")}
-            options={statusOptions}
+            testId="patients-marketing-combobox"
+            value={marketing || null}
+            onValueChange={(value) => onMarketingChange(value ?? "")}
+            options={marketingOptions}
             placeholder={PATIENTS_COPY.filters.all}
-            searchPlaceholder={PATIENTS_COPY.filters.status}
+            searchPlaceholder={PATIENTS_COPY.filters.marketing}
             allowClear
             clearLabel={PATIENTS_COPY.filters.all}
             variant="pill"

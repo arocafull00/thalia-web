@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { PatientPageParams, PatientPageResult } from "@/dal/patients.dal";
 import { APPOINTMENT_LIST_SELECT } from "@/dal/selects";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -7,6 +8,48 @@ import {
   unwrapSupabaseNullable,
 } from "@/lib/supabase-query";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
+
+/**
+ * Misma consulta que `getPatientsPage` del DAL de navegador, con el cliente de
+ * servidor, para sembrar la primera página desde el Server Component.
+ *
+ * Se duplica en lugar de compartirse porque cada uno usa un cliente distinto;
+ * cualquier cambio en el filtrado hay que replicarlo en los dos.
+ */
+export async function getPatientsPage(
+  params: PatientPageParams,
+): Promise<PatientPageResult> {
+  const supabase = await createClient();
+  const offset = params.page * params.pageSize;
+
+  let query = supabase
+    .from("patients")
+    .select("*", { count: "exact" })
+    .order("full_name")
+    .order("id")
+    .range(offset, offset + params.pageSize - 1);
+
+  if (params.clinicId) {
+    query = query.eq("clinic_id", params.clinicId);
+  }
+
+  if (params.marketingOptIn !== null) {
+    query = query.eq("marketing_opt_in", params.marketingOptIn);
+  }
+
+  const search = params.search.trim();
+
+  if (search) {
+    query = query.or(`full_name.ilike.%${search}%,phone.ilike.%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  return {
+    patients: unwrapSupabaseList(data, error) as Patient[],
+    total: count ?? 0,
+  };
+}
 
 export async function getPatients(
   clinicId: string | null,

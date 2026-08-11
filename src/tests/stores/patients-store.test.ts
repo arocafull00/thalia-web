@@ -1,11 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import * as patientsDal from "@/dal/patients.dal";
-import { usePatientsStore } from "@/stores/patients-store";
+import {
+  patientsPageKey,
+  usePatientsStore,
+  type PatientsPageQuery,
+} from "@/stores/patients-store";
 import { mockPatient, CLINIC_ID, PATIENT_ID } from "@/tests/mocks";
 
 vi.mock("@/dal/patients.dal", () => ({
   getPatients: vi.fn(),
+  getPatientsPage: vi.fn(),
   getPatient: vi.fn(),
   insertPatient: vi.fn(),
   updatePatient: vi.fn(),
@@ -25,8 +30,16 @@ vi.mock("@/lib/storage", () => ({
   uploadFile: vi.fn(),
 }));
 
+const PAGE_QUERY: PatientsPageQuery = {
+  search: "",
+  marketingOptIn: null,
+  page: 0,
+  pageSize: 10,
+};
+
 const initialState = {
   listBySearch: {},
+  byPage: {},
   byId: {},
   appointmentsByPatientId: {},
   upcomingByPatientId: {},
@@ -73,6 +86,93 @@ describe("patients-store", () => {
     const entry = usePatientsStore.getState().listBySearch["__all__"];
     expect(entry.error).toBeTruthy();
     expect(entry.data).toBeNull();
+  });
+
+  it("fetchPatientsPage stores the page and its total under the query key", async () => {
+    vi.mocked(patientsDal.getPatientsPage).mockResolvedValue({
+      patients: [mockPatient as never],
+      total: 42,
+    });
+
+    await usePatientsStore.getState().fetchPatientsPage(PAGE_QUERY);
+
+    const entry =
+      usePatientsStore.getState().byPage[patientsPageKey(PAGE_QUERY)];
+    expect(entry.data).toEqual({ patients: [mockPatient], total: 42 });
+    expect(entry.error).toBeNull();
+    expect(patientsDal.getPatientsPage).toHaveBeenCalledWith({
+      ...PAGE_QUERY,
+      clinicId: CLINIC_ID,
+    });
+  });
+
+  it("fetchPatientsPage passes the marketing filter through to the DAL", async () => {
+    vi.mocked(patientsDal.getPatientsPage).mockResolvedValue({
+      patients: [],
+      total: 0,
+    });
+
+    await usePatientsStore
+      .getState()
+      .fetchPatientsPage({ ...PAGE_QUERY, marketingOptIn: false });
+
+    expect(patientsDal.getPatientsPage).toHaveBeenCalledWith(
+      expect.objectContaining({ marketingOptIn: false }),
+    );
+  });
+
+  it("seedPatientsPage does not overwrite data already fetched by the client", () => {
+    const store = usePatientsStore.getState();
+    const client = { patients: [mockPatient as never], total: 7 };
+    const server = { patients: [], total: 0 };
+
+    store.seedPatientsPage(PAGE_QUERY, client);
+    store.seedPatientsPage(PAGE_QUERY, server);
+
+    const entry =
+      usePatientsStore.getState().byPage[patientsPageKey(PAGE_QUERY)];
+    expect(entry.data).toEqual(client);
+  });
+
+  it("createPatient refetches the cached page so the total stays in sync", async () => {
+    vi.mocked(patientsDal.insertPatient).mockResolvedValue(
+      mockPatient as never,
+    );
+    vi.mocked(patientsDal.getPatientsPage).mockResolvedValue({
+      patients: [mockPatient as never],
+      total: 1,
+    });
+
+    usePatientsStore.setState({
+      byPage: {
+        [patientsPageKey(PAGE_QUERY)]: {
+          data: { patients: [], total: 0 },
+          error: null,
+          loading: false,
+        },
+      },
+    });
+
+    await usePatientsStore.getState().createPatient({
+      clinic_id: CLINIC_ID,
+      full_name: "Carlos López",
+      dni: null,
+      birth_date: null,
+      phone: null,
+      email: null,
+      address: null,
+      notes: null,
+      marketing_opt_in: false,
+    });
+
+    expect(patientsDal.getPatientsPage).toHaveBeenCalledWith({
+      ...PAGE_QUERY,
+      clinicId: CLINIC_ID,
+    });
+    expect(
+      usePatientsStore.getState().byPage[patientsPageKey(PAGE_QUERY)].data
+        ?.total,
+    ).toBe(1);
   });
 
   it("fetchPatient sets data in byId", async () => {

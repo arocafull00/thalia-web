@@ -85,22 +85,24 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
       .getByRole("row", { name: new RegExp(`^${E2E_DATA.patient}\\b`) }),
   ).toHaveCount(0);
 
+  // El paciente de filtro tiene marketing_opt_in = false en la semilla, así que
+  // «Activas» lo deja fuera y «No activas» lo devuelve.
   await selectComboboxOption(
     page,
-    page.getByTestId("patients-status-combobox"),
-    "Inactivos",
+    page.getByTestId("patients-marketing-combobox"),
+    "Activas",
   );
-  await expectSearchParam(page, "status", "inactive");
+  await expectSearchParam(page, "marketing", "granted");
   await expect(
     page.getByRole("table").getByText("No hay pacientes con ese criterio."),
   ).toBeVisible();
 
   await selectComboboxOption(
     page,
-    page.getByTestId("patients-status-combobox"),
-    "Activos",
+    page.getByTestId("patients-marketing-combobox"),
+    "No activas",
   );
-  await expectSearchParam(page, "status", "active");
+  await expectSearchParam(page, "marketing", "denied");
   const patientRow = page.getByRole("row", {
     name: new RegExp(E2E_DATA.filterPatient),
   });

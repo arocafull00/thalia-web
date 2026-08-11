@@ -81,7 +81,13 @@ type FinancesStore = {
     month: Date,
     type: TransactionType | "all",
   ) => Promise<void>;
+  seedTransactions: (
+    month: Date,
+    type: TransactionType | "all",
+    transactions: Transaction[],
+  ) => void;
   fetchFinancialSummary: (month: Date) => Promise<void>;
+  seedFinancialSummary: (month: Date, summary: FinancialSummary) => void;
   createTransaction: (input: TransactionInput) => Promise<Transaction>;
   updateTransaction: (
     id: string,
@@ -94,6 +100,40 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   summaryByKey: {},
   creating: false,
   createError: null,
+
+  seedTransactions: (month, type, transactions) => {
+    const key = transactionsKey(month, type);
+
+    set((state) => {
+      if (state.transactionsByKey[key]?.data != null) {
+        return state;
+      }
+
+      return {
+        transactionsByKey: {
+          ...state.transactionsByKey,
+          [key]: successQueryEntry(transactions),
+        },
+      };
+    });
+  },
+
+  seedFinancialSummary: (month, summary) => {
+    const key = summaryKey(month);
+
+    set((state) => {
+      if (state.summaryByKey[key]?.data != null) {
+        return state;
+      }
+
+      return {
+        summaryByKey: {
+          ...state.summaryByKey,
+          [key]: successQueryEntry(summary),
+        },
+      };
+    });
+  },
 
   fetchTransactions: async (month, type) => {
     const key = transactionsKey(month, type);

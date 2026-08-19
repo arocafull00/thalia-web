@@ -3,6 +3,8 @@ import "server-only";
 import type {
   EmployeeAppointmentRow,
   EmployeeAppointmentStats,
+  EmployeePageParams,
+  EmployeePageResult,
 } from "@/dal/employees.dal";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -23,6 +25,57 @@ export async function getEmployees(
 
   const { data, error } = await query;
   return unwrapSupabaseList(data, error) as Employee[];
+}
+
+/**
+ * Misma consulta que `getEmployeesPage` del DAL de navegador, con el cliente de
+ * servidor, para sembrar la primera página desde el Server Component.
+ *
+ * Se duplica en lugar de compartirse porque cada uno usa un cliente distinto;
+ * cualquier cambio en el filtrado hay que replicarlo en los dos.
+ */
+export async function getEmployeesPage(
+  params: EmployeePageParams,
+): Promise<EmployeePageResult> {
+  const supabase = await createClient();
+  const offset = params.page * params.pageSize;
+
+  let query = supabase
+    .from("employees")
+    .select("*", { count: "exact" })
+    .order("full_name")
+    .order("id")
+    .range(offset, offset + params.pageSize - 1);
+
+  if (params.clinicId) {
+    query = query.eq("clinic_id", params.clinicId);
+  }
+
+  if (params.role) {
+    query = query.eq("role", params.role);
+  }
+
+  // Un `active` nulo cuenta como activo; ver el DAL de navegador.
+  if (params.active === true) {
+    query = query.not("active", "is", false);
+  }
+
+  if (params.active === false) {
+    query = query.is("active", false);
+  }
+
+  const search = params.search.trim();
+
+  if (search) {
+    query = query.or(`full_name.ilike.%${search}%,specialty.ilike.%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  return {
+    employees: unwrapSupabaseList(data, error) as Employee[],
+    total: count ?? 0,
+  };
 }
 
 export async function getEmployee(

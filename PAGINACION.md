@@ -244,7 +244,7 @@ refrescos (F5); a partir de ahí manda el cliente y su caché.
 | Tratamientos (#57) | A | Hecho, tamaño 10. Sin vista; categorías en consulta aparte |
 | Pacientes (#56) | A | Hecho, tamaño 10. Sin vista; el filtro de estado pasó a `marketing_opt_in` |
 | Campañas (#72) | A | Hecho, tamaño 10. Sin lista completa: el store solo cachea páginas |
-| Personal (#73) | A | Pendiente |
+| Personal (#73) | A | Hecho, tamaño 10. `list` conservada para calendario y citas |
 | Materiales (#70) | B — filtro de stock cruza dos columnas | Pendiente |
 | Finanzas (#71) | A | Pendiente |
 | Citas de un empleado (#74) | — | Pendiente, hoy `.limit(50)` fijo |
@@ -252,9 +252,24 @@ refrescos (F5); a partir de ahí manda el cliente y su caché.
 | Citas de un paciente (#76) | — | Pendiente, agregados acoplados |
 
 **Pendiente transversal:** los tamaños de página están repartidos por dominio
-(10, 20, 24). Con cuatro pantallas ya en 10, toca unificarlos en una constante
+(10, 20, 24). Con cinco pantallas ya en 10, toca unificarlos en una constante
 compartida.
 
 **Pendiente transversal:** ninguna pantalla sembrada desde servidor maneja el
 error de red. Un `fetch failed` en el Server Component revienta el render en
 lugar de caer en el `Notice` de «no se pudieron cargar».
+
+### Booleanos que admiten nulos
+
+`employees.active` es `BOOLEAN DEFAULT true`, es decir, **nullable**, y el
+filtro en cliente trataba el nulo como activo (`active !== false`). Traducirlo a
+`.eq("active", true)` habría hecho desaparecer del listado a los empleados
+antiguos que nunca tuvieron el campo puesto.
+
+```ts
+.not("active", "is", false)   // activos: TRUE o NULL
+.is("active", false)          // inactivos
+```
+
+Antes de mover un filtro booleano al servidor, mirar si la columna admite nulos
+y qué hacía el cliente con ellos.

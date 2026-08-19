@@ -31,6 +31,29 @@ export type EmployeeUpdate = Partial<
   >
 >;
 
+export type EmployeePageParams = {
+  clinicId: string | null;
+  search: string;
+  role: string;
+  /** `null` es «sin filtrar»; `false` filtra los dados de baja. */
+  active: boolean | null;
+  page: number;
+  pageSize: number;
+};
+
+export type EmployeePageResult = {
+  employees: Employee[];
+  total: number;
+};
+
+/**
+ * Aplica el filtro de estado tal y como lo entendía el cliente: `active` admite
+ * nulos y un nulo cuenta como activo, así que «activos» es `IS NOT FALSE` y no
+ * `= true`. Con `eq` desaparecerían de la lista los empleados antiguos que
+ * nunca han tenido el campo puesto.
+ */
+const ACTIVE_FILTER = { column: "active", value: false } as const;
+
 export async function getEmployees(
   clinicId: string | null,
 ): Promise<Employee[]> {
@@ -42,6 +65,57 @@ export async function getEmployees(
 
   const { data, error } = await query;
   return unwrapSupabaseList(data, error) as Employee[];
+}
+
+/**
+ * Página del listado de personal, filtrada y ordenada en servidor.
+ *
+ * Sin vista SQL: la búsqueda mira `full_name` y `specialty` —dos columnas de la
+ * misma tabla, que PostgREST sí sabe combinar con `or`— y los filtros son
+ * `role` y `active`.
+ */
+export async function getEmployeesPage(
+  params: EmployeePageParams,
+): Promise<EmployeePageResult> {
+  const offset = params.page * params.pageSize;
+
+  let query = supabase
+    .from("employees")
+    .select("*", { count: "exact" })
+    .order("full_name")
+    // Desempate estable: sin esto, dos empleados homónimos pueden cambiar de
+    // orden entre páginas y una fila se repetiría o se perdería.
+    .order("id")
+    .range(offset, offset + params.pageSize - 1);
+
+  if (params.clinicId) {
+    query = query.eq("clinic_id", params.clinicId);
+  }
+
+  if (params.role) {
+    query = query.eq("role", params.role);
+  }
+
+  if (params.active === true) {
+    query = query.not(ACTIVE_FILTER.column, "is", ACTIVE_FILTER.value);
+  }
+
+  if (params.active === false) {
+    query = query.is(ACTIVE_FILTER.column, ACTIVE_FILTER.value);
+  }
+
+  const search = params.search.trim();
+
+  if (search) {
+    query = query.or(`full_name.ilike.%${search}%,specialty.ilike.%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  return {
+    employees: unwrapSupabaseList(data, error) as Employee[],
+    total: count ?? 0,
+  };
 }
 
 export async function getEmployee(employeeId: string): Promise<Employee> {

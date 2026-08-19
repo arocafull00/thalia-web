@@ -1,11 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import * as employeesDal from "@/dal/employees.dal";
-import { useEmployeesStore } from "@/stores/employees-store";
+import {
+  employeesPageKey,
+  useEmployeesStore,
+  type EmployeesPageQuery,
+} from "@/stores/employees-store";
 import { CLINIC_ID, EMPLOYEE_ID } from "@/tests/mocks";
 
 vi.mock("@/dal/employees.dal", () => ({
   getEmployees: vi.fn(),
+  getEmployeesPage: vi.fn(),
   getEmployee: vi.fn(),
   getEmployeeAppointments: vi.fn(),
   getEmployeeAppointmentStats: vi.fn(),
@@ -52,8 +57,17 @@ const mockAppointmentRow = {
   patients: { id: "patient-1", full_name: "Carlos López" },
 };
 
+const PAGE_QUERY: EmployeesPageQuery = {
+  search: "",
+  role: "",
+  active: null,
+  page: 0,
+  pageSize: 10,
+};
+
 const initialState = {
   list: { data: null, loading: false, error: null },
+  byPage: {},
   byId: {},
   statsByEmployeeId: {},
   appointmentsByEmployeeId: {},
@@ -68,9 +82,90 @@ describe("employees-store", () => {
     useEmployeesStore.setState(initialState);
   });
 
+  describe("fetchEmployeesPage", () => {
+    it("stores the page and its total under the query key", async () => {
+      vi.mocked(employeesDal.getEmployeesPage).mockResolvedValue({
+        employees: [mockEmployee as never],
+        total: 23,
+      });
+
+      await useEmployeesStore.getState().fetchEmployeesPage(PAGE_QUERY);
+
+      const entry =
+        useEmployeesStore.getState().byPage[employeesPageKey(PAGE_QUERY)];
+      expect(entry.data).toEqual({ employees: [mockEmployee], total: 23 });
+      expect(entry.error).toBeNull();
+      expect(employeesDal.getEmployeesPage).toHaveBeenCalledWith({
+        ...PAGE_QUERY,
+        clinicId: CLINIC_ID,
+      });
+    });
+
+    it("passes the status filter through as a boolean, keeping null as unfiltered", async () => {
+      vi.mocked(employeesDal.getEmployeesPage).mockResolvedValue({
+        employees: [],
+        total: 0,
+      });
+
+      await useEmployeesStore
+        .getState()
+        .fetchEmployeesPage({ ...PAGE_QUERY, active: false });
+
+      expect(employeesDal.getEmployeesPage).toHaveBeenCalledWith(
+        expect.objectContaining({ active: false }),
+      );
+    });
+
+    it("keeps client data when seeding the same page", () => {
+      const store = useEmployeesStore.getState();
+      const client = { employees: [mockEmployee as never], total: 7 };
+
+      store.seedEmployeesPage(PAGE_QUERY, client);
+      store.seedEmployeesPage(PAGE_QUERY, { employees: [], total: 0 });
+
+      expect(
+        useEmployeesStore.getState().byPage[employeesPageKey(PAGE_QUERY)].data,
+      ).toEqual(client);
+    });
+  });
+
+  it("createEmployee refetches the cached page so the total stays in sync", async () => {
+    vi.mocked(employeesDal.inviteEmployee).mockResolvedValue(
+      mockEmployee as never,
+    );
+    vi.mocked(employeesDal.getEmployees).mockResolvedValue([]);
+    vi.mocked(employeesDal.getEmployeesPage).mockResolvedValue({
+      employees: [mockEmployee as never],
+      total: 1,
+    });
+
+    useEmployeesStore.setState({
+      byPage: {
+        [employeesPageKey(PAGE_QUERY)]: {
+          data: { employees: [], total: 0 },
+          error: null,
+          loading: false,
+        },
+      },
+    });
+
+    await useEmployeesStore
+      .getState()
+      .createEmployee({ email: "nuevo@clinic.com", role: "employee" });
+
+    expect(employeesDal.getEmployeesPage).toHaveBeenCalledWith({
+      ...PAGE_QUERY,
+      clinicId: CLINIC_ID,
+    });
+    // La lista completa se sigue refrescando: la consumen el calendario y los
+    // diálogos de citas.
+    expect(employeesDal.getEmployees).toHaveBeenCalled();
+  });
+
   it("has correct initial state", () => {
     const state = useEmployeesStore.getState();
     expect(state.list).toEqual({ data: null, loading: false, error: null });
+    expect(state.byPage).toEqual({});
     expect(state.byId).toEqual({});
     expect(state.statsByEmployeeId).toEqual({});
     expect(state.appointmentsByEmployeeId).toEqual({});

@@ -20,6 +20,7 @@ export function resetClinicQueryData() {
   useDashboardStore.setState({ data: emptyQueryEntry() });
   useEmployeesStore.setState({
     list: emptyQueryEntry(),
+    byPage: {},
     byId: {},
     statsByEmployeeId: {},
     appointmentsByEmployeeId: {},

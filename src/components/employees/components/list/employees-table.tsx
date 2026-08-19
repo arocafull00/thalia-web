@@ -17,6 +17,13 @@ type EmployeesTableProps = {
   onRowClick: (id: string) => void;
   onEdit: (id: string) => void;
   onToggleStatus: (id: string) => void;
+  /** Paginación en servidor: `employees` es ya la página visible. */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
 };
 
 export default function EmployeesTable({
@@ -24,6 +31,7 @@ export default function EmployeesTable({
   onRowClick,
   onEdit,
   onToggleStatus,
+  pagination,
 }: EmployeesTableProps) {
   const actionHandlers = useMemo(
     () => ({ onEdit, onToggleStatus }),
@@ -38,7 +46,7 @@ export default function EmployeesTable({
     <DataTable
       columns={columns}
       data={employees}
-      enableSorting
+      manualPagination={pagination}
       mobileColumns={employeesMobileColumns}
       renderMobileActions={(employee) => (
         <ListRowActions

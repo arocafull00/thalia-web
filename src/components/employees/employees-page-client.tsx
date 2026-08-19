@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeInviteForm from "@/components/employees/components/form/employee-invite-form";
@@ -32,23 +32,30 @@ import {
 } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
+import type { EmployeePageResult } from "@/dal/employees.dal";
+import {
+  EMPLOYEES_PAGE_SIZE,
+  parseEmployeeStatusFilter,
+} from "@/lib/employee-pagination";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useEmployeeInviteDialog } from "@/lib/hooks/use-employee-invite-dialog";
-import { useEmployees } from "@/lib/hooks/use-employees";
+import { useEmployeesPage } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import type { Employee } from "@/types/database.types";
+import type { EmployeesPageQuery } from "@/stores/employees-store";
 
-const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "" };
+const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "", page: "" };
 
 type EmployeesPageClientProps = {
-  initialEmployees: Employee[];
+  initialPage: EmployeePageResult;
+  initialQuery: EmployeesPageQuery;
 };
 
 export default function EmployeesPageClient({
-  initialEmployees,
+  initialPage,
+  initialQuery,
 }: EmployeesPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -61,61 +68,59 @@ export default function EmployeesPageClient({
   const [sheetKey, setSheetKey] = useState(0);
   const { profile } = useAuth();
   const { platformRole } = useActiveClinic();
-  const employees = useEmployees(initialEmployees);
   const { filters, setFilter, setFilters } = useUrlFilters(
     EMPLOYEE_FILTER_DEFAULTS,
   );
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
   const dialog = useEmployeeInviteDialog(() => setDialogOpen(false));
   const canManage =
     platformRole === "owner" ||
     platformRole === "admin" ||
     profile?.role === "admin";
-  const employeeData = useMemo(() => employees.data ?? [], [employees.data]);
 
-  const filteredEmployees = useMemo(() => {
-    const normalizedSearch = searchQuery.trim().toLowerCase();
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
 
-    return employeeData.filter((employee) => {
-      if (filters.role && employee.role !== filters.role) {
-        return false;
-      }
+  const pageFilters = useMemo(
+    () => ({
+      active: parseEmployeeStatusFilter(filters.status),
+      page: pageIndex,
+      role: filters.role,
+      search: searchQuery,
+    }),
+    [filters.role, filters.status, pageIndex, searchQuery],
+  );
 
-      if (filters.status === "active" && employee.active === false) {
-        return false;
-      }
-
-      if (filters.status === "inactive" && employee.active !== false) {
-        return false;
-      }
-
-      if (!normalizedSearch) {
-        return true;
-      }
-
-      const specialty = employee.specialty?.toLowerCase() ?? "";
-      return (
-        employee.full_name.toLowerCase().includes(normalizedSearch) ||
-        specialty.includes(normalizedSearch)
-      );
-    });
-  }, [employeeData, filters.role, filters.status, searchQuery]);
+  const employees = useEmployeesPage(pageFilters, {
+    initialPage,
+    initialQuery,
+  });
 
   const editingEmployee = useMemo(
     () =>
-      filteredEmployees.find((employee) => employee.id === editingEmployeeId),
-    [editingEmployeeId, filteredEmployees],
+      employees.employees.find((employee) => employee.id === editingEmployeeId),
+    [editingEmployeeId, employees.employees],
   );
   const statusEmployee = useMemo(
     () =>
-      filteredEmployees.find((employee) => employee.id === statusEmployeeId),
-    [filteredEmployees, statusEmployeeId],
+      employees.employees.find((employee) => employee.id === statusEmployeeId),
+    [employees.employees, statusEmployeeId],
   );
 
-  const hasEmployees = employeeData.length > 0;
   const hasActiveFilters = Boolean(
     searchQuery.trim() || filters.role || filters.status,
   );
@@ -123,7 +128,7 @@ export default function EmployeesPageClient({
     !employees.isLoading &&
     !employees.error &&
     !hasActiveFilters &&
-    !hasEmployees;
+    employees.total === 0;
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
     setDialogOpen(nextOpen);
@@ -174,9 +179,9 @@ export default function EmployeesPageClient({
             role={filters.role}
             search={filters.q}
             status={filters.status}
-            onRoleChange={(value) => setFilter("role", value)}
+            onRoleChange={(value) => setFilterAndResetPage("role", value)}
             onSearchChange={handleSearchChange}
-            onStatusChange={(value) => setFilter("status", value)}
+            onStatusChange={(value) => setFilterAndResetPage("status", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
         }
@@ -192,10 +197,17 @@ export default function EmployeesPageClient({
         ) : null}
         {!showEmptyState && !employees.isLoading ? (
           <EmployeesTable
-            employees={filteredEmployees}
+            employees={employees.employees}
             onRowClick={handleRowClick}
             onEdit={handleRowClick}
             onToggleStatus={setStatusEmployeeId}
+            pagination={{
+              pageIndex,
+              pageSize: EMPLOYEES_PAGE_SIZE,
+              total: employees.total,
+              onPageChange: (next) =>
+                setFilter("page", next === 0 ? "" : String(next)),
+            }}
           />
         ) : null}
       </PageCard>
@@ -269,7 +281,7 @@ export default function EmployeesPageClient({
         key={sheetKey}
         open={sheetOpen}
         filters={filters}
-        onApply={(updates) => setFilters(updates)}
+        onApply={(updates) => setFilters({ ...updates, page: "" })}
         onClear={() => setFilters(EMPLOYEE_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
       />

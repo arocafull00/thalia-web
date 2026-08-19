@@ -1,22 +1,113 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import type {
   EmployeeAppointmentRow,
   EmployeeAppointmentStats,
+  EmployeePageResult,
 } from "@/dal/employees.dal";
+import { EMPLOYEES_PAGE_SIZE } from "@/lib/employee-pagination";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
   useServerSeed,
 } from "@/lib/hooks/use-server-seed";
 import {
+  employeesPageKey,
   useEmployeesStore,
   type CreateEmployeeInput,
+  type EmployeesPageQuery,
 } from "@/stores/employees-store";
 import { isInitialLoading } from "@/stores/query-state";
 import type { Employee } from "@/types/database.types";
 
 export type { CreateEmployeeInput };
+
+type EmployeesPageFilters = {
+  active: boolean | null;
+  page: number;
+  role: string;
+  search: string;
+};
+
+type EmployeesPageSeed = {
+  initialPage?: EmployeePageResult;
+  initialQuery?: EmployeesPageQuery;
+};
+
+/**
+ * Listado de personal paginado en servidor.
+ *
+ * Filtros, búsqueda y orden viajan al servidor: filtrar en cliente sobre una
+ * página ya recortada daría recuentos falsos y rompería la paginación.
+ *
+ * Convive con `useEmployees`, que sigue devolviendo la lista completa para el
+ * calendario y los diálogos de citas.
+ */
+export function useEmployeesPage(
+  filters: EmployeesPageFilters,
+  seed?: EmployeesPageSeed,
+) {
+  const query = useMemo<EmployeesPageQuery>(
+    () => ({
+      search: filters.search,
+      role: filters.role,
+      active: filters.active,
+      page: filters.page,
+      pageSize: EMPLOYEES_PAGE_SIZE,
+    }),
+    [filters.active, filters.page, filters.role, filters.search],
+  );
+
+  const key = employeesPageKey(query);
+  const entry = useEmployeesStore((state) => state.byPage[key]);
+  const fetchEmployeesPage = useEmployeesStore(
+    (state) => state.fetchEmployeesPage,
+  );
+  const seedEmployeesPage = useEmployeesStore(
+    (state) => state.seedEmployeesPage,
+  );
+
+  // La siembra sólo vale para la consulta exacta que resolvió el servidor: si
+  // los filtros de la URL no coinciden, se descarta y el cliente vuelve a pedir.
+  const seededResult = useServerSeed(
+    key,
+    seed?.initialQuery ? employeesPageKey(seed.initialQuery) : "",
+    seed?.initialPage,
+  );
+  const hasClientData = entry?.data != null;
+
+  useEffect(() => {
+    if (seededResult === undefined || hasClientData) {
+      return;
+    }
+
+    seedEmployeesPage(query, seededResult);
+  }, [hasClientData, query, seedEmployeesPage, seededResult]);
+
+  useEffect(() => {
+    if (seededResult !== undefined) {
+      return;
+    }
+
+    void fetchEmployeesPage(query);
+  }, [fetchEmployeesPage, query, seededResult]);
+
+  const refresh = useCallback(
+    () => fetchEmployeesPage(query),
+    [fetchEmployeesPage, query],
+  );
+
+  const resolved = entry?.data ?? seededResult ?? null;
+  const employees = useMemo(() => resolved?.employees ?? [], [resolved]);
+
+  return {
+    employees,
+    total: resolved?.total ?? 0,
+    error: entry?.error ?? null,
+    isLoading: resolved == null && isInitialLoading(entry),
+    refresh,
+  };
+}
 
 export function useEmployees(initialData?: Employee[]) {
   const entry = useEmployeesStore((state) => state.list);

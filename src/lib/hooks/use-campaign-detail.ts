@@ -15,6 +15,12 @@ import type { CampaignRecipientWithPatient } from "@/types/database.types";
 export function useCampaignDetail(campaignId: string) {
   const campaign = useCampaign(campaignId);
   const fetchCampaign = useCampaignsStore((state) => state.fetchCampaign);
+  // Enviar y duplicar van directos al DAL, sin pasar por el store, así que las
+  // páginas cacheadas del listado se quedarían obsoletas: la campaña enviada
+  // seguiría figurando como borrador y la copia no aparecería.
+  const refreshCampaignPages = useCampaignsStore(
+    (state) => state.refreshCampaignPages,
+  );
   const [recipients, setRecipients] = useState<CampaignRecipientWithPatient[]>(
     [],
   );
@@ -62,6 +68,7 @@ export function useCampaignDetail(campaignId: string) {
         // sin esto seguiría mostrándose como borrador con el botón de enviar
         // disponible para un segundo intento.
         void fetchCampaign(campaignId);
+        void refreshCampaignPages();
         refresh();
       })
       .catch((cause) => {
@@ -74,7 +81,7 @@ export function useCampaignDetail(campaignId: string) {
         setSendError(message || MARKETING_COPY.send.error);
       })
       .finally(() => setIsSending(false));
-  }, [campaignId, fetchCampaign, refresh]);
+  }, [campaignId, fetchCampaign, refresh, refreshCampaignPages]);
 
   const [isDuplicating, setIsDuplicating] = useState(false);
 
@@ -86,6 +93,7 @@ export function useCampaignDetail(campaignId: string) {
       duplicateCampaign(campaignId, MARKETING_COPY.duplicate.copyPrefix)
         .then((created) => {
           notifySuccess(MARKETING_COPY.duplicate.success);
+          void refreshCampaignPages();
           onDuplicated(created.id);
         })
         .catch((cause) => {
@@ -98,7 +106,7 @@ export function useCampaignDetail(campaignId: string) {
         })
         .finally(() => setIsDuplicating(false));
     },
-    [campaignId],
+    [campaignId, refreshCampaignPages],
   );
 
   return {

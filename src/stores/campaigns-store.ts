@@ -2,16 +2,17 @@ import { create } from "zustand";
 
 import {
   getCampaign,
-  getCampaigns,
+  getCampaignsPage,
   insertCampaign,
   updateCampaign,
   type CampaignInsert,
+  type CampaignPageParams,
+  type CampaignPageResult,
   type CampaignUpdate,
 } from "@/dal/campaigns.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
 import {
-  emptyQueryEntry,
   errorQueryEntry,
   loadingQueryEntry,
   successQueryEntry,
@@ -19,14 +20,32 @@ import {
 } from "@/stores/query-state";
 import type { Campaign } from "@/types/database.types";
 
+export type CampaignsPageQuery = Omit<CampaignPageParams, "clinicId">;
+
+export function campaignsPageKey(query: CampaignsPageQuery) {
+  return JSON.stringify({
+    search: query.search.trim().toLowerCase(),
+    status: query.status,
+    createdFrom: query.createdFrom,
+    createdTo: query.createdTo,
+    page: query.page,
+    pageSize: query.pageSize,
+  });
+}
+
 type CampaignsStore = {
-  list: QueryEntry<Campaign[]>;
+  byPage: Record<string, QueryEntry<CampaignPageResult>>;
   byId: Record<string, QueryEntry<Campaign>>;
   creating: boolean;
   createError: Error | null;
   updating: boolean;
   updateError: Error | null;
-  fetchCampaigns: () => Promise<void>;
+  fetchCampaignsPage: (query: CampaignsPageQuery) => Promise<void>;
+  seedCampaignsPage: (
+    query: CampaignsPageQuery,
+    result: CampaignPageResult,
+  ) => void;
+  refreshCampaignPages: () => Promise<void>;
   fetchCampaign: (campaignId: string) => Promise<void>;
   createCampaign: (input: CampaignInsert) => Promise<Campaign>;
   updateCampaign: (
@@ -40,28 +59,67 @@ function toError(cause: unknown): Error {
 }
 
 export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
-  list: emptyQueryEntry(),
+  byPage: {},
   byId: {},
   creating: false,
   createError: null,
   updating: false,
   updateError: null,
 
-  fetchCampaigns: async () => {
-    set({ list: loadingQueryEntry(get().list) });
+  seedCampaignsPage: (query, result) => {
+    const key = campaignsPageKey(query);
+
+    set((state) => {
+      // La siembra sólo rellena huecos: si ya hay datos de cliente para esta
+      // página, son más frescos que los del servidor.
+      if (state.byPage[key]?.data != null) {
+        return state;
+      }
+
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+    });
+  },
+
+  fetchCampaignsPage: async (query) => {
+    const key = campaignsPageKey(query);
+    const previous = get().byPage[key];
+    set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
-      const clinicId = getActiveClinicId();
-      const campaigns = await getCampaigns(clinicId);
-      set({ list: successQueryEntry(campaigns) });
+      const result = await getCampaignsPage({
+        ...query,
+        clinicId: getActiveClinicId(),
+      });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "campaigns-store",
-        action: "fetchCampaigns",
+        action: "fetchCampaignsPage",
         clinicId: getActiveClinicId(),
       });
-      set({ list: errorQueryEntry(toError(cause), get().list) });
+      set({
+        byPage: {
+          ...get().byPage,
+          [key]: errorQueryEntry(toError(cause), previous),
+        },
+      });
     }
+  },
+
+  /**
+   * Vuelve a pedir todas las páginas en caché. Hace falta tras cualquier
+   * mutación: crear o duplicar cambia el total —«1-10 de 40» pasa a «de 41»— y
+   * enviar cambia el `status`, que además es filtrable. Parchear la campaña en
+   * memoria no arreglaría ninguna de las dos cosas.
+   */
+  refreshCampaignPages: async () => {
+    const { byPage, fetchCampaignsPage } = get();
+
+    await Promise.all(
+      Object.keys(byPage).map((key) =>
+        fetchCampaignsPage(JSON.parse(key) as CampaignsPageQuery),
+      ),
+    );
   },
 
   fetchCampaign: async (campaignId) => {
@@ -93,12 +151,11 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
 
     try {
       const campaign = await insertCampaign(input);
-      const current = get().list.data ?? [];
       set({
-        creating: false,
-        list: successQueryEntry([campaign, ...current]),
         byId: { ...get().byId, [campaign.id]: successQueryEntry(campaign) },
       });
+      await get().refreshCampaignPages();
+      set({ creating: false });
       return campaign;
     } catch (cause) {
       logger.captureException(cause, {
@@ -116,14 +173,11 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
 
     try {
       const campaign = await updateCampaign(campaignId, input);
-      const current = get().list.data ?? [];
       set({
-        updating: false,
-        list: successQueryEntry(
-          current.map((entry) => (entry.id === campaignId ? campaign : entry)),
-        ),
         byId: { ...get().byId, [campaignId]: successQueryEntry(campaign) },
       });
+      await get().refreshCampaignPages();
+      set({ updating: false });
       return campaign;
     } catch (cause) {
       logger.captureException(cause, {

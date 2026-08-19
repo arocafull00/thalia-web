@@ -1,4 +1,5 @@
 import { useAppointmentsStore } from "@/stores/appointments-store";
+import { useCampaignsStore } from "@/stores/campaigns-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useEmployeesStore } from "@/stores/employees-store";
 import { useFinancesStore } from "@/stores/finances-store";
@@ -15,6 +16,7 @@ export function resetClinicQueryData() {
     appointmentInventoryById: {},
     defaultMaterialsByKey: {},
   });
+  useCampaignsStore.setState({ byPage: {}, byId: {} });
   useDashboardStore.setState({ data: emptyQueryEntry() });
   useEmployeesStore.setState({
     list: emptyQueryEntry(),

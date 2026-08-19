@@ -17,16 +17,33 @@ import {
   PAGE_LIST_SKELETON_ROWS,
   SkeletonList,
 } from "@/components/ui/primitives/skeleton-list";
+import type { CampaignPageResult } from "@/dal/campaigns.dal";
+import { CAMPAIGNS_PAGE_SIZE } from "@/lib/campaign-pagination";
 import { useCampaignCreateDialog } from "@/lib/hooks/use-campaign-create-dialog";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useMarketingPage } from "@/lib/hooks/use-marketing-page";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useTreatments } from "@/lib/hooks/use-treatment";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
+import type { CampaignsPageQuery } from "@/stores/campaigns-store";
 
-const MARKETING_FILTER_DEFAULTS = { q: "", status: "", from: "", to: "" };
+const MARKETING_FILTER_DEFAULTS = {
+  q: "",
+  status: "",
+  from: "",
+  to: "",
+  page: "",
+};
 
-export default function MarketingPageClient() {
+type MarketingPageClientProps = {
+  initialPage: CampaignPageResult;
+  initialQuery: CampaignsPageQuery;
+};
+
+export default function MarketingPageClient({
+  initialPage,
+  initialQuery,
+}: MarketingPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [imageKey, setImageKey] = useState<string | null>(null);
@@ -35,12 +52,26 @@ export default function MarketingPageClient() {
   const { filters, setFilter, setFilters } = useUrlFilters(
     MARKETING_FILTER_DEFAULTS,
   );
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
   const treatments = useTreatments();
   const dialog = useCampaignCreateDialog(() => setDialogOpen(false));
+
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
 
   const pageFilters = useMemo(
     () => ({
@@ -48,12 +79,15 @@ export default function MarketingPageClient() {
       status: filters.status,
       from: filters.from,
       to: filters.to,
+      page: pageIndex,
     }),
-    [filters.from, filters.status, filters.to, searchQuery],
+    [filters.from, filters.status, filters.to, pageIndex, searchQuery],
   );
 
-  const { campaigns, filteredCampaigns, hasCampaigns } =
-    useMarketingPage(pageFilters);
+  const { campaigns, hasCampaigns } = useMarketingPage(pageFilters, {
+    initialPage,
+    initialQuery,
+  });
 
   const treatmentOptions = useMemo(
     () =>
@@ -97,10 +131,10 @@ export default function MarketingPageClient() {
               from={filters.from}
               to={filters.to}
               onSearchChange={handleSearchChange}
-              onStatusChange={(value) => setFilter("status", value)}
-              onFromChange={(value) => setFilter("from", value)}
-              onToChange={(value) => setFilter("to", value)}
-              onClearDates={() => setFilters({ from: "", to: "" })}
+              onStatusChange={(value) => setFilterAndResetPage("status", value)}
+              onFromChange={(value) => setFilterAndResetPage("from", value)}
+              onToChange={(value) => setFilterAndResetPage("to", value)}
+              onClearDates={() => setFilters({ from: "", to: "", page: "" })}
               onOpenSheet={handleOpenFiltersSheet}
             />
           ) : null
@@ -115,9 +149,16 @@ export default function MarketingPageClient() {
         {showEmptyState ? <CampaignsEmptyState /> : null}
         {!campaigns.isLoading && hasCampaigns ? (
           <CampaignsTable
-            campaigns={filteredCampaigns}
+            campaigns={campaigns.campaigns}
             onRowClick={(campaignId) => router.push(`/marketing/${campaignId}`)}
             onOpenImage={handleOpenImage}
+            pagination={{
+              pageIndex,
+              pageSize: CAMPAIGNS_PAGE_SIZE,
+              total: campaigns.total,
+              onPageChange: (next) =>
+                setFilter("page", next === 0 ? "" : String(next)),
+            }}
           />
         ) : null}
       </PageCard>
@@ -136,8 +177,8 @@ export default function MarketingPageClient() {
           from: filters.from,
           to: filters.to,
         }}
-        onApply={(updates) => setFilters(updates)}
-        onClear={() => setFilters({ status: "", from: "", to: "" })}
+        onApply={(updates) => setFilters({ ...updates, page: "" })}
+        onClear={() => setFilters({ status: "", from: "", to: "", page: "" })}
         onDismiss={() => setSheetOpen(false)}
       />
       <CampaignImageDialog

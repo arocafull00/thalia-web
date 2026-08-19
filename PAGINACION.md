@@ -118,6 +118,39 @@ aparte, `byPage`.
 
 Antes de tocar un store, mirar quién más lo consume.
 
+### El «¿hay algo?» deja de poder deducirse de las filas
+
+Varias pantallas deciden qué pintar con `items.length > 0`: estado vacío
+invitando a crear el primero, o la lista con su barra de filtros. Con
+paginación esas filas son **sólo la página**, y además ya vienen filtradas.
+
+En campañas la barra de filtros se renderizaba condicionada a eso. Filtrar
+hasta cero resultados la habría hecho desaparecer, dejando al usuario sin forma
+de deshacer el filtro.
+
+**Solución:** deducirlo del total y dar por hecho que hay datos cuando hay
+filtros activos.
+
+```ts
+const hasCampaigns = hasActiveFilters || total > 0;
+```
+
+### Los rangos de fecha se resuelven en la zona de la clínica
+
+Un filtro `YYYY-MM-DD` contra una columna `timestamptz` necesita convertirse a
+instantes. Hacerlo con `new Date(...)` usa la zona de quien ejecuta: el
+navegador en el cliente, casi siempre UTC en el servidor. Los dos calcularían
+límites distintos y la siembra traería un recorte que no es el que se muestra.
+
+Se resuelve con `clinicWallFieldsToIso` y `CLINIC_TIME_ZONE`, que dan el mismo
+resultado en ambos lados. Y `to` abarca el día entero: sin eso, filtrar por un
+solo día no devuelve nada.
+
+**Validar la fecha antes de convertirla.** `\d{4}-\d{2}-\d{2}` acepta
+`2026-13-99`, y `clinicWallFieldsToIso` lanza `RangeError` con un valor
+imposible. Como el filtro viene de la URL, eso es una pantalla en blanco a un
+query string de distancia.
+
 ### Un filtro que no filtra nada real no se puede paginar
 
 En pacientes había un desplegable «Estado del paciente» con Activos/Inactivos
@@ -210,8 +243,18 @@ refrescos (F5); a partir de ahí manda el cliente y su caché.
 | Archivos de paciente | A | Hecho, tamaño 20 |
 | Tratamientos (#57) | A | Hecho, tamaño 10. Sin vista; categorías en consulta aparte |
 | Pacientes (#56) | A | Hecho, tamaño 10. Sin vista; el filtro de estado pasó a `marketing_opt_in` |
-| Resto de listados (#36) | por determinar | Pendiente |
+| Campañas (#72) | A | Hecho, tamaño 10. Sin lista completa: el store solo cachea páginas |
+| Personal (#73) | A | Pendiente |
+| Materiales (#70) | B — filtro de stock cruza dos columnas | Pendiente |
+| Finanzas (#71) | A | Pendiente |
+| Citas de un empleado (#74) | — | Pendiente, hoy `.limit(50)` fijo |
+| Movimientos de un material (#75) | — | Pendiente |
+| Citas de un paciente (#76) | — | Pendiente, agregados acoplados |
 
 **Pendiente transversal:** los tamaños de página están repartidos por dominio
-(10, 20, 24). Conviene unificarlos en una constante compartida cuando queden
-más pantallas migradas.
+(10, 20, 24). Con cuatro pantallas ya en 10, toca unificarlos en una constante
+compartida.
+
+**Pendiente transversal:** ninguna pantalla sembrada desde servidor maneja el
+error de red. Un `fetch failed` en el Server Component revienta el render en
+lugar de caer en el `Notice` de «no se pudieron cargar».

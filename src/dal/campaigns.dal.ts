@@ -22,20 +22,75 @@ export type CampaignUpdate = Partial<Omit<CampaignInsert, "clinic_id">> & {
   scheduled_at?: string | null;
 };
 
-export async function getCampaigns(
-  clinicId: string | null,
-): Promise<Campaign[]> {
+/* Nota: no hay `getCampaigns` (lista completa). El listado es la única pantalla
+ * que consumía las campañas de la clínica y ahora pide sólo su página; el
+ * detalle usa `getCampaign`. */
+
+export type CampaignPageParams = {
+  clinicId: string | null;
+  search: string;
+  status: string;
+  /** Límites ISO ya resueltos en la zona de la clínica; ver campaign-pagination. */
+  createdFrom: string | null;
+  createdTo: string | null;
+  page: number;
+  pageSize: number;
+};
+
+export type CampaignPageResult = {
+  campaigns: Campaign[];
+  total: number;
+};
+
+/**
+ * Página del listado de campañas, filtrada y ordenada en servidor.
+ *
+ * Sin vista SQL: la búsqueda mira `title` y los filtros `status` y `created_at`,
+ * las tres columnas de `campaigns`.
+ */
+export async function getCampaignsPage(
+  params: CampaignPageParams,
+): Promise<CampaignPageResult> {
+  const offset = params.page * params.pageSize;
+
   let query = supabase
     .from("campaigns")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    // Desempate estable: sin esto, dos campañas creadas en el mismo instante
+    // pueden cambiar de orden entre páginas y una fila se repetiría o se
+    // perdería. Duplicar una campaña deja dos con `created_at` muy próximos.
+    .order("id", { ascending: false })
+    .range(offset, offset + params.pageSize - 1);
 
-  if (clinicId) {
-    query = query.eq("clinic_id", clinicId);
+  if (params.clinicId) {
+    query = query.eq("clinic_id", params.clinicId);
   }
 
-  const { data, error } = await query;
-  return unwrapSupabaseList(data, error) as Campaign[];
+  if (params.status) {
+    query = query.eq("status", params.status);
+  }
+
+  if (params.createdFrom) {
+    query = query.gte("created_at", params.createdFrom);
+  }
+
+  if (params.createdTo) {
+    query = query.lte("created_at", params.createdTo);
+  }
+
+  const search = params.search.trim();
+
+  if (search) {
+    query = query.ilike("title", `%${search}%`);
+  }
+
+  const { data, error, count } = await query;
+
+  return {
+    campaigns: unwrapSupabaseList(data, error) as Campaign[],
+    total: count ?? 0,
+  };
 }
 
 export async function getCampaign(campaignId: string): Promise<Campaign> {

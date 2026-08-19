@@ -11,12 +11,20 @@ type CampaignsTableProps = {
   campaigns: Campaign[];
   onRowClick: (id: string) => void;
   onOpenImage: (storageKey: string) => void;
+  /** Paginación en servidor: `campaigns` es ya la página visible. */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
 };
 
 export default function CampaignsTable({
   campaigns,
   onRowClick,
   onOpenImage,
+  pagination,
 }: CampaignsTableProps) {
   const columns = useMemo(
     () => buildCampaignsColumns({ onOpenImage }),
@@ -27,9 +35,7 @@ export default function CampaignsTable({
     <DataTable
       columns={columns}
       data={campaigns}
-      enablePagination
-      enableSorting
-      pageSize={10}
+      manualPagination={pagination}
       emptyMessage={MARKETING_COPY.list.emptyFiltered}
       onRowClick={(campaign) => onRowClick(campaign.id)}
     />

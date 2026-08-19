@@ -27,25 +27,26 @@ export function useTransactions(
   const fetchTransactions = useFinancesStore(
     (state) => state.fetchTransactions,
   );
+  const seedTransactions = useFinancesStore((state) => state.seedTransactions);
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
   const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData === undefined || hasClientData) {
+      return;
+    }
+
+    seedTransactions(month, type, seededData);
+  }, [hasClientData, month, seedTransactions, seededData, type]);
+
+  useEffect(() => {
+    if (seededData !== undefined) {
       return;
     }
 
     void fetchTransactions(month, type);
-  }, [
-    clinicId,
-    fetchTransactions,
-    hasClientData,
-    key,
-    month,
-    seededData,
-    type,
-  ]);
+  }, [clinicId, fetchTransactions, key, month, seededData, type]);
 
   const data = entry?.data ?? seededData;
 
@@ -65,17 +66,28 @@ export function useFinancialSummary(
   const fetchFinancialSummary = useFinancesStore(
     (state) => state.fetchFinancialSummary,
   );
+  const seedFinancialSummary = useFinancesStore(
+    (state) => state.seedFinancialSummary,
+  );
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
   const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData === undefined || hasClientData) {
+      return;
+    }
+
+    seedFinancialSummary(month, seededData);
+  }, [hasClientData, month, seedFinancialSummary, seededData]);
+
+  useEffect(() => {
+    if (seededData !== undefined) {
       return;
     }
 
     void fetchFinancialSummary(month);
-  }, [clinicId, fetchFinancialSummary, hasClientData, key, month, seededData]);
+  }, [clinicId, fetchFinancialSummary, key, month, seededData]);
 
   const data = entry?.data ?? seededData;
 

@@ -2,10 +2,15 @@ import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { create } from "zustand";
 
 import {
+  getTransactionCategories,
   getTransactions,
+  getTransactionsPage,
   insertTransaction,
   updateTransaction as updateTransactionDal,
+  type TransactionPageParams,
+  type TransactionPageResult,
 } from "@/dal/finances.dal";
+import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { buildFinancialSummary } from "@/lib/finances-summary";
 import { logger } from "@/lib/logger";
 import {
@@ -35,6 +40,12 @@ export type TransactionUpdatePayload = {
   date: string;
 };
 
+export type CategoryBreakdownEntry = {
+  category: string;
+  amount: number;
+  percent: number;
+};
+
 export type FinancialSummary = {
   income: number;
   expenses: number;
@@ -42,12 +53,26 @@ export type FinancialSummary = {
   previousNet: number;
   difference: number;
   weekly: { week: number; income: number; expenses: number }[];
+  /**
+   * Top 4 de categorías del mes. Va en el resumen y no en el hook porque el
+   * hook ya sólo ve la página visible; el resumen, en cambio, se calcula sobre
+   * el mes completo y no cuesta ninguna consulta extra.
+   */
+  breakdown: CategoryBreakdownEntry[];
 };
 
-function transactionsKey(month: Date, type: TransactionType | "all") {
-  const from = format(startOfMonth(month), "yyyy-MM-dd");
-  const to = format(endOfMonth(month), "yyyy-MM-dd");
-  return `${from}:${to}:${type}`;
+export type TransactionsPageQuery = Omit<TransactionPageParams, "clinicId">;
+
+export function transactionsPageKey(query: TransactionsPageQuery) {
+  return JSON.stringify({
+    from: query.from,
+    to: query.to,
+    type: query.type,
+    category: query.category,
+    search: query.search.trim().toLowerCase(),
+    page: query.page,
+    pageSize: query.pageSize,
+  });
 }
 
 function summaryKey(month: Date) {
@@ -55,12 +80,18 @@ function summaryKey(month: Date) {
 }
 
 async function refreshFinancesCaches(get: () => FinancesStore) {
-  const transactionKeys = Object.keys(get().transactionsByKey);
+  const pageKeys = Object.keys(get().byPage);
   await Promise.all(
-    transactionKeys.map((key) => {
-      const [from, , type] = key.split(":");
-      const month = new Date(from);
-      return get().fetchTransactions(month, type as TransactionType | "all");
+    pageKeys.map((key) =>
+      get().fetchTransactionsPage(JSON.parse(key) as TransactionsPageQuery),
+    ),
+  );
+
+  const categoryKeys = Object.keys(get().categoriesByRange);
+  await Promise.all(
+    categoryKeys.map((key) => {
+      const [from, to] = key.split(":");
+      return get().fetchTransactionCategories(from, to);
     }),
   );
 
@@ -73,18 +104,21 @@ async function refreshFinancesCaches(get: () => FinancesStore) {
 }
 
 type FinancesStore = {
-  transactionsByKey: Record<string, QueryEntry<Transaction[]>>;
+  byPage: Record<string, QueryEntry<TransactionPageResult>>;
+  categoriesByRange: Record<string, QueryEntry<string[]>>;
   summaryByKey: Record<string, QueryEntry<FinancialSummary>>;
   creating: boolean;
   createError: Error | null;
-  fetchTransactions: (
-    month: Date,
-    type: TransactionType | "all",
-  ) => Promise<void>;
-  seedTransactions: (
-    month: Date,
-    type: TransactionType | "all",
-    transactions: Transaction[],
+  fetchTransactionsPage: (query: TransactionsPageQuery) => Promise<void>;
+  seedTransactionsPage: (
+    query: TransactionsPageQuery,
+    result: TransactionPageResult,
+  ) => void;
+  fetchTransactionCategories: (from: string, to: string) => Promise<void>;
+  seedTransactionCategories: (
+    from: string,
+    to: string,
+    categories: string[],
   ) => void;
   fetchFinancialSummary: (month: Date) => Promise<void>;
   seedFinancialSummary: (month: Date, summary: FinancialSummary) => void;
@@ -96,27 +130,11 @@ type FinancesStore = {
 };
 
 export const useFinancesStore = create<FinancesStore>((set, get) => ({
-  transactionsByKey: {},
+  byPage: {},
+  categoriesByRange: {},
   summaryByKey: {},
   creating: false,
   createError: null,
-
-  seedTransactions: (month, type, transactions) => {
-    const key = transactionsKey(month, type);
-
-    set((state) => {
-      if (state.transactionsByKey[key]?.data != null) {
-        return state;
-      }
-
-      return {
-        transactionsByKey: {
-          ...state.transactionsByKey,
-          [key]: successQueryEntry(transactions),
-        },
-      };
-    });
-  },
 
   seedFinancialSummary: (month, summary) => {
     const key = summaryKey(month);
@@ -135,36 +153,97 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
     });
   },
 
-  fetchTransactions: async (month, type) => {
-    const key = transactionsKey(month, type);
-    const previous = get().transactionsByKey[key];
+  seedTransactionsPage: (query, result) => {
+    const key = transactionsPageKey(query);
+
+    set((state) => {
+      // La siembra sólo rellena huecos: si ya hay datos de cliente para esta
+      // consulta, son más frescos que los del servidor.
+      if (state.byPage[key]?.data != null) {
+        return state;
+      }
+
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+    });
+  },
+
+  fetchTransactionsPage: async (query) => {
+    const key = transactionsPageKey(query);
+    const previous = get().byPage[key];
+    set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
+
+    try {
+      const result = await getTransactionsPage({
+        ...query,
+        clinicId: getActiveClinicId(),
+      });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+    } catch (cause) {
+      logger.captureException(cause, {
+        store: "finances-store",
+        action: "fetchTransactionsPage",
+        clinicId: getActiveClinicId(),
+      });
+      set({
+        byPage: {
+          ...get().byPage,
+          [key]: errorQueryEntry(
+            cause instanceof Error ? cause : new Error(String(cause)),
+            previous,
+          ),
+        },
+      });
+    }
+  },
+
+  seedTransactionCategories: (from, to, categories) => {
+    const key = `${from}:${to}`;
+
+    set((state) => {
+      if (state.categoriesByRange[key]?.data != null) {
+        return state;
+      }
+
+      return {
+        categoriesByRange: {
+          ...state.categoriesByRange,
+          [key]: successQueryEntry(categories),
+        },
+      };
+    });
+  },
+
+  fetchTransactionCategories: async (from, to) => {
+    const key = `${from}:${to}`;
+    const previous = get().categoriesByRange[key];
     set({
-      transactionsByKey: {
-        ...get().transactionsByKey,
+      categoriesByRange: {
+        ...get().categoriesByRange,
         [key]: loadingQueryEntry(previous),
       },
     });
 
     try {
-      const from = format(startOfMonth(month), "yyyy-MM-dd");
-      const to = format(endOfMonth(month), "yyyy-MM-dd");
-      const transactions = await getTransactions(from, to, type);
+      const categories = await getTransactionCategories(
+        getActiveClinicId(),
+        from,
+        to,
+      );
       set({
-        transactionsByKey: {
-          ...get().transactionsByKey,
-          [key]: successQueryEntry(transactions),
+        categoriesByRange: {
+          ...get().categoriesByRange,
+          [key]: successQueryEntry(categories),
         },
       });
     } catch (cause) {
       logger.captureException(cause, {
         store: "finances-store",
-        action: "fetchTransactions",
-        month: key,
-        type,
+        action: "fetchTransactionCategories",
+        range: key,
       });
       set({
-        transactionsByKey: {
-          ...get().transactionsByKey,
+        categoriesByRange: {
+          ...get().categoriesByRange,
           [key]: errorQueryEntry(
             cause instanceof Error ? cause : new Error(String(cause)),
             previous,
@@ -264,7 +343,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   },
 }));
 
-export { transactionsKey, summaryKey };
+export { summaryKey };
 
 export function transactionsToCsv(transactions: Transaction[]) {
   const rows = [["date", "type", "category", "amount", "description"]];

@@ -29,6 +29,5 @@ export const FINANCES_COPY = {
   },
   movements: {
     title: "Movimientos recientes",
-    loadMore: "Cargar más",
   },
 } as const;

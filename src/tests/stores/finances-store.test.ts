@@ -3,13 +3,15 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as financesDal from "@/dal/finances.dal";
 import {
   useFinancesStore,
-  transactionsKey,
+  transactionsPageKey,
   summaryKey,
   transactionsToCsv,
 } from "@/stores/finances-store";
 import { CLINIC_ID } from "@/tests/mocks";
 
 vi.mock("@/dal/finances.dal", () => ({
+  getTransactionsPage: vi.fn(),
+  getTransactionCategories: vi.fn(),
   getTransactions: vi.fn(),
   insertTransaction: vi.fn(),
 }));
@@ -131,7 +133,8 @@ const mockTransaction = {
 };
 
 const initialState = {
-  transactionsByKey: {},
+  byPage: {},
+  categoriesByRange: {},
   summaryByKey: {},
   creating: false,
   createError: null,
@@ -144,42 +147,62 @@ describe("finances-store", () => {
 
   it("has correct initial state", () => {
     const state = useFinancesStore.getState();
-    expect(state.transactionsByKey).toEqual({});
+    expect(state.byPage).toEqual({});
+    expect(state.categoriesByRange).toEqual({});
     expect(state.summaryByKey).toEqual({});
     expect(state.creating).toBe(false);
     expect(state.createError).toBeNull();
   });
 
-  describe("fetchTransactions", () => {
-    it("sets transactions on success", async () => {
-      vi.mocked(financesDal.getTransactions).mockResolvedValue(
-        janTransactions as never,
-      );
+  describe("fetchTransactionsPage", () => {
+    const PAGE_QUERY = {
+      from: "2024-01-01",
+      to: "2024-01-31",
+      type: "all" as const,
+      category: "",
+      search: "",
+      page: 0,
+      pageSize: 20,
+    };
 
-      await useFinancesStore
-        .getState()
-        .fetchTransactions(new Date("2024-01-01"), "all");
+    it("stores the page and its total under the query key", async () => {
+      vi.mocked(financesDal.getTransactionsPage).mockResolvedValue({
+        transactions: janTransactions as never,
+        total: 57,
+      });
 
-      const key = transactionsKey(new Date("2024-01-01"), "all");
-      const entry = useFinancesStore.getState().transactionsByKey[key];
-      expect(entry.data).toEqual(janTransactions);
+      await useFinancesStore.getState().fetchTransactionsPage(PAGE_QUERY);
+
+      const entry =
+        useFinancesStore.getState().byPage[transactionsPageKey(PAGE_QUERY)];
+      expect(entry.data).toEqual({ transactions: janTransactions, total: 57 });
       expect(entry.error).toBeNull();
-      expect(entry.loading).toBe(false);
     });
 
     it("sets error on DAL failure", async () => {
-      vi.mocked(financesDal.getTransactions).mockRejectedValue(
-        new Error("DB error"),
+      vi.mocked(financesDal.getTransactionsPage).mockRejectedValue(
+        new Error("boom"),
       );
 
-      await useFinancesStore
-        .getState()
-        .fetchTransactions(new Date("2024-01-01"), "all");
+      await useFinancesStore.getState().fetchTransactionsPage(PAGE_QUERY);
 
-      const key = transactionsKey(new Date("2024-01-01"), "all");
-      const entry = useFinancesStore.getState().transactionsByKey[key];
+      const entry =
+        useFinancesStore.getState().byPage[transactionsPageKey(PAGE_QUERY)];
       expect(entry.error).toBeTruthy();
       expect(entry.data).toBeNull();
+    });
+
+    it("keeps client data when seeding the same page", () => {
+      const store = useFinancesStore.getState();
+      const client = { transactions: janTransactions as never, total: 3 };
+
+      store.seedTransactionsPage(PAGE_QUERY, client);
+      store.seedTransactionsPage(PAGE_QUERY, { transactions: [], total: 0 });
+
+      expect(
+        useFinancesStore.getState().byPage[transactionsPageKey(PAGE_QUERY)]
+          .data,
+      ).toEqual(client);
     });
   });
 
@@ -245,14 +268,31 @@ describe("finances-store", () => {
 
   describe("createTransaction", () => {
     it("inserts and invalidates all cached keys", async () => {
-      const janKey = transactionsKey(new Date("2024-01-01"), "all");
-      const junKey = transactionsKey(JUN_2024, "all");
+      const pageQuery = {
+        from: "2024-06-01",
+        to: "2024-06-30",
+        type: "all" as const,
+        category: "",
+        search: "",
+        page: 0,
+        pageSize: 20,
+      };
       const sumKey = summaryKey(JUN_2024);
 
       useFinancesStore.setState({
-        transactionsByKey: {
-          [janKey]: { data: janTransactions, loading: false, error: null },
-          [junKey]: { data: null, loading: false, error: null },
+        byPage: {
+          [transactionsPageKey(pageQuery)]: {
+            data: { transactions: [], total: 0 },
+            loading: false,
+            error: null,
+          },
+        },
+        categoriesByRange: {
+          "2024-06-01:2024-06-30": {
+            data: ["Vieja"],
+            loading: false,
+            error: null,
+          },
         },
         summaryByKey: {
           [sumKey]: {
@@ -263,6 +303,7 @@ describe("finances-store", () => {
               previousNet: 0,
               difference: 0,
               weekly: [],
+              breakdown: [],
             },
             loading: false,
             error: null,
@@ -274,6 +315,14 @@ describe("finances-store", () => {
         mockTransaction as never,
       );
       vi.mocked(financesDal.getTransactions).mockResolvedValue([]);
+      vi.mocked(financesDal.getTransactionsPage).mockResolvedValue({
+        transactions: [],
+        total: 1,
+      });
+      vi.mocked(financesDal.getTransactionCategories).mockResolvedValue([
+        "Vieja",
+        "Nueva",
+      ]);
 
       await useFinancesStore.getState().createTransaction({
         clinic_id: CLINIC_ID,
@@ -287,7 +336,11 @@ describe("finances-store", () => {
       });
 
       expect(financesDal.insertTransaction).toHaveBeenCalled();
-      expect(financesDal.getTransactions).toHaveBeenCalledTimes(4);
+      // La página en caché, sus categorías y el resumen se releen: el total
+      // cambia al insertar y la categoría nueva tiene que aparecer en el filtro.
+      expect(financesDal.getTransactionsPage).toHaveBeenCalled();
+      expect(financesDal.getTransactionCategories).toHaveBeenCalled();
+      expect(financesDal.getTransactions).toHaveBeenCalledTimes(2);
       expect(useFinancesStore.getState().creating).toBe(false);
       expect(useFinancesStore.getState().createError).toBeNull();
     });
@@ -315,22 +368,38 @@ describe("finances-store", () => {
     });
   });
 
-  describe("transactionsKey", () => {
-    it("formats key from date and type", () => {
-      const key = transactionsKey(new Date("2024-06-01"), "all");
-      expect(key).toBe("2024-06-01:2024-06-30:all");
+  describe("transactionsPageKey", () => {
+    it("normalises the search so casing and spacing do not split the cache", () => {
+      const base = {
+        from: "2024-06-01",
+        to: "2024-06-30",
+        type: "all" as const,
+        category: "",
+        page: 0,
+        pageSize: 20,
+      };
+
+      expect(transactionsPageKey({ ...base, search: "  Luz  " })).toBe(
+        transactionsPageKey({ ...base, search: "luz" }),
+      );
     });
 
-    it("includes type in key", () => {
-      const key = transactionsKey(new Date("2024-01-01"), "income");
-      expect(key).toBe("2024-01-01:2024-01-31:income");
-    });
-  });
+    it("separates pages and filters", () => {
+      const base = {
+        from: "2024-06-01",
+        to: "2024-06-30",
+        type: "all" as const,
+        category: "",
+        search: "",
+        pageSize: 20,
+      };
 
-  describe("summaryKey", () => {
-    it("formats key as yyyy-MM", () => {
-      const key = summaryKey(new Date("2024-06-15"));
-      expect(key).toBe("2024-06");
+      expect(transactionsPageKey({ ...base, page: 0 })).not.toBe(
+        transactionsPageKey({ ...base, page: 1 }),
+      );
+      expect(transactionsPageKey({ ...base, page: 0 })).not.toBe(
+        transactionsPageKey({ ...base, page: 0, category: "Luz" }),
+      );
     });
   });
 

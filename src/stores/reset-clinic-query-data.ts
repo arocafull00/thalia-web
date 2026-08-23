@@ -25,7 +25,11 @@ export function resetClinicQueryData() {
     statsByEmployeeId: {},
     appointmentsByEmployeeId: {},
   });
-  useFinancesStore.setState({ transactionsByKey: {}, summaryByKey: {} });
+  useFinancesStore.setState({
+    byPage: {},
+    categoriesByRange: {},
+    summaryByKey: {},
+  });
   useInventoryStore.setState({
     list: emptyQueryEntry(),
     byId: {},

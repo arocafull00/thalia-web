@@ -1,10 +1,14 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
-import { useClinicServerSeed } from "@/lib/hooks/use-server-seed";
+import {
+  useClinicServerSeed,
+  useServerSeed,
+} from "@/lib/hooks/use-server-seed";
 import {
   summaryKey,
-  transactionsKey,
+  transactionsPageKey,
+  type TransactionsPageQuery,
   transactionsToCsv,
   useFinancesStore,
   type FinancialSummary,
@@ -12,49 +16,117 @@ import {
   type TransactionUpdatePayload,
 } from "@/stores/finances-store";
 import { isInitialLoading } from "@/stores/query-state";
-import type { Transaction, TransactionType } from "@/types/database.types";
+import type { Transaction } from "@/types/database.types";
 
 export type { TransactionInput, TransactionUpdatePayload };
 export { transactionsToCsv };
 
-export function useTransactions(
-  month: Date,
-  type: TransactionType | "all",
-  initialData?: Transaction[],
+type TransactionsPageSeed = {
+  initialTransactions?: Transaction[];
+  initialTotal?: number;
+  initialQuery?: TransactionsPageQuery;
+};
+
+/**
+ * Listado de movimientos paginado en servidor.
+ *
+ * Sustituye al «cargar más» que recortaba en memoria: filtros, búsqueda y
+ * orden viajan al servidor, y el recuento sale de `count: "exact"`.
+ */
+export function useTransactionsPage(
+  query: TransactionsPageQuery,
+  seed?: TransactionsPageSeed,
 ) {
-  const key = transactionsKey(month, type);
-  const entry = useFinancesStore((state) => state.transactionsByKey[key]);
-  const fetchTransactions = useFinancesStore(
-    (state) => state.fetchTransactions,
+  const key = transactionsPageKey(query);
+  const entry = useFinancesStore((state) => state.byPage[key]);
+  const fetchTransactionsPage = useFinancesStore(
+    (state) => state.fetchTransactionsPage,
   );
-  const seedTransactions = useFinancesStore((state) => state.seedTransactions);
-  const clinicId = useClinicId();
-  const seededData = useClinicServerSeed(clinicId, initialData);
+  const seedTransactionsPage = useFinancesStore(
+    (state) => state.seedTransactionsPage,
+  );
+
+  const seededResult = useServerSeed(
+    key,
+    seed?.initialQuery ? transactionsPageKey(seed.initialQuery) : "",
+    seed?.initialTransactions
+      ? {
+          transactions: seed.initialTransactions,
+          total: seed.initialTotal ?? seed.initialTransactions.length,
+        }
+      : undefined,
+  );
   const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData === undefined || hasClientData) {
+    if (seededResult === undefined || hasClientData) {
       return;
     }
 
-    seedTransactions(month, type, seededData);
-  }, [hasClientData, month, seedTransactions, seededData, type]);
+    seedTransactionsPage(query, seededResult);
+  }, [hasClientData, query, seedTransactionsPage, seededResult]);
 
   useEffect(() => {
-    if (seededData !== undefined) {
+    if (seededResult !== undefined) {
       return;
     }
 
-    void fetchTransactions(month, type);
-  }, [clinicId, fetchTransactions, key, month, seededData, type]);
+    void fetchTransactionsPage(query);
+  }, [fetchTransactionsPage, query, seededResult]);
 
-  const data = entry?.data ?? seededData;
+  const refresh = useCallback(
+    () => fetchTransactionsPage(query),
+    [fetchTransactionsPage, query],
+  );
+
+  const resolved = entry?.data ?? seededResult ?? null;
+  const transactions = useMemo(() => resolved?.transactions ?? [], [resolved]);
 
   return {
-    data,
-    isLoading: data == null && isInitialLoading(entry),
-    error: entry?.error,
+    transactions,
+    total: resolved?.total ?? 0,
+    error: entry?.error ?? null,
+    isLoading: resolved == null && isInitialLoading(entry),
+    refresh,
   };
+}
+
+/** Categorías del mes, para el desplegable de filtro. */
+export function useTransactionCategories(
+  from: string,
+  to: string,
+  initialData?: string[],
+) {
+  const key = `${from}:${to}`;
+  const entry = useFinancesStore((state) => state.categoriesByRange[key]);
+  const fetchTransactionCategories = useFinancesStore(
+    (state) => state.fetchTransactionCategories,
+  );
+  const seedTransactionCategories = useFinancesStore(
+    (state) => state.seedTransactionCategories,
+  );
+  const hasClientData = entry?.data != null;
+
+  useEffect(() => {
+    if (initialData === undefined || hasClientData) {
+      return;
+    }
+
+    seedTransactionCategories(from, to, initialData);
+  }, [from, hasClientData, initialData, seedTransactionCategories, to]);
+
+  useEffect(() => {
+    if (initialData !== undefined) {
+      return;
+    }
+
+    void fetchTransactionCategories(from, to);
+  }, [fetchTransactionCategories, from, initialData, to]);
+
+  return useMemo(
+    () => entry?.data ?? initialData ?? [],
+    [entry?.data, initialData],
+  );
 }
 
 export function useFinancialSummary(

@@ -2,7 +2,6 @@ import TransactionsTable from "@/components/finances/components/transactions-tab
 import FinancesTabBar, {
   type FinancesTabValue,
 } from "@/components/finances/finances-tab-bar";
-import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { FINANCES_COPY } from "@/copy/finances-copy";
@@ -14,9 +13,14 @@ type FinancesMovementsSectionProps = {
   transactions: Transaction[];
   isLoading: boolean;
   error: Error | null | undefined;
-  hasMore: boolean;
-  onLoadMore: () => void;
   onRowClick: (id: string) => void;
+  /** Paginación en servidor; sustituye al antiguo «cargar más» en memoria. */
+  pagination: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
 };
 
 export default function FinancesMovementsSection({
@@ -25,9 +29,8 @@ export default function FinancesMovementsSection({
   transactions,
   isLoading,
   error,
-  hasMore,
-  onLoadMore,
   onRowClick,
+  pagination,
 }: FinancesMovementsSectionProps) {
   return (
     <div className="border-t border-border-subtle pt-6">
@@ -46,19 +49,8 @@ export default function FinancesMovementsSection({
           <TransactionsTable
             transactions={transactions}
             onRowClick={onRowClick}
+            pagination={pagination}
           />
-        ) : null}
-        {hasMore ? (
-          <div className="mt-4 flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onLoadMore}
-              className="rounded-full px-4 py-2 text-sm motion-reduce:transition-none"
-            >
-              {FINANCES_COPY.movements.loadMore}
-            </Button>
-          </div>
         ) : null}
       </div>
     </div>

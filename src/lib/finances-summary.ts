@@ -3,6 +3,36 @@ import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import type { FinancialSummary } from "@/stores/finances-store";
 import type { Transaction } from "@/types/database.types";
 
+/**
+ * Top 4 de categorías del mes por importe.
+ *
+ * Vivía en `use-finances-page`, derivado del array completo de transacciones.
+ * Con el listado paginado ese array pasa a ser sólo la página visible, así que
+ * el desglose se calcularía sobre 20 filas y los porcentajes mentirían. Aquí
+ * recibe el mes entero, que es lo que el resumen ya consulta de todos modos.
+ */
+function buildCategoryBreakdown(current: Transaction[]) {
+  const totals = new Map<string, number>();
+  const total = current.reduce(
+    (sum, transaction) => sum + transaction.amount,
+    0,
+  );
+
+  for (const transaction of current) {
+    const category = transaction.category ?? "Sin categoria";
+    totals.set(category, (totals.get(category) ?? 0) + transaction.amount);
+  }
+
+  return Array.from(totals.entries())
+    .map(([category, amount]) => ({
+      amount,
+      category,
+      percent: total > 0 ? Math.round((amount / total) * 100) : 0,
+    }))
+    .sort((left, right) => right.amount - left.amount)
+    .slice(0, 4);
+}
+
 export function buildFinancialSummary(
   current: Transaction[],
   previousTransactions: Transaction[],
@@ -43,6 +73,7 @@ export function buildFinancialSummary(
           .reduce((total, transaction) => total + transaction.amount, 0),
       };
     }),
+    breakdown: buildCategoryBreakdown(current),
   };
 }
 

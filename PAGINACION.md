@@ -246,14 +246,15 @@ refrescos (F5); a partir de ahí manda el cliente y su caché.
 | Campañas (#72) | A | Hecho, tamaño 10. Sin lista completa: el store solo cachea páginas |
 | Personal (#73) | A | Hecho, tamaño 10. `list` conservada para calendario y citas |
 | Materiales (#70) | B — filtro de stock cruza dos columnas | Pendiente |
-| Finanzas (#71) | A | Pendiente |
+| Finanzas (#71) | A | Hecho, tamaño 20. Sin vista; desglose dentro del resumen |
 | Citas de un empleado (#74) | — | Pendiente, hoy `.limit(50)` fijo |
 | Movimientos de un material (#75) | — | Pendiente |
 | Citas de un paciente (#76) | — | Pendiente, agregados acoplados |
 
 **Pendiente transversal:** los tamaños de página están repartidos por dominio
 (10, 20, 24). Con cinco pantallas ya en 10, toca unificarlos en una constante
-compartida.
+compartida. Finanzas se quedó en 20 a propósito: es el tamaño que usaba su
+«cargar más» y bajarlo habría cambiado la pantalla sin motivo.
 
 **Pendiente transversal:** ninguna pantalla sembrada desde servidor maneja el
 error de red. Un `fetch failed` en el Server Component revienta el render en
@@ -273,3 +274,32 @@ antiguos que nunca tuvieron el campo puesto.
 
 Antes de mover un filtro booleano al servidor, mirar si la columna admite nulos
 y qué hacía el cliente con ellos.
+
+### Un agregado no siempre necesita RPC ni vista
+
+El desglose por categoría de finanzas se calculaba en el hook sobre el array
+completo de transacciones. Con paginación ese array es sólo la página, así que
+los porcentajes mentirían — el caso clásico de «derivados que se rompen».
+
+La salida obvia era un `group by` en servidor, vía RPC o vista. No hizo falta:
+`buildFinancialSummary` **ya recibe el mes entero** para calcular ingresos,
+gastos y el reparto semanal, así que el top-4 salió de ahí a coste cero.
+
+Antes de escribir una migración para un agregado, mirar si alguna consulta que
+ya se hace tiene los datos delante.
+
+### El filtrado de los dos DAL no se puede compartir
+
+Tentador: seis condiciones duplicadas entre `finances.dal.ts` y su gemelo de
+servidor invitan a extraer un helper que reciba el builder y lo encadene.
+
+No compila. El tipo del builder de Supabase es recursivo y un genérico sobre él
+revienta la inferencia:
+
+```
+TS2589: Type instantiation is excessively deep and possibly infinite.
+```
+
+Por eso todos los `*.server.dal.ts` duplican la consulta en vez de compartirla.
+No es descuido: cualquier cambio en el filtrado hay que replicarlo en los dos, y
+conviene decirlo en un comentario junto a cada par.

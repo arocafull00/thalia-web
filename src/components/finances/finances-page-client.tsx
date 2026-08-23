@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
 import FinancesFilters from "@/components/finances/components/finances-filters";
@@ -32,20 +32,26 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
+import { TRANSACTIONS_PAGE_SIZE } from "@/lib/finances-pagination";
 import { parseFinancesMonthParam } from "@/lib/finances-summary";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import type { FinancialSummary } from "@/stores/finances-store";
+import type {
+  FinancialSummary,
+  TransactionsPageQuery,
+} from "@/stores/finances-store";
 import type { Transaction } from "@/types/database.types";
 
 type FinancesPageClientProps = {
   initialMonth: string;
   initialTab: FinancesTabValue;
   initialTransactions: Transaction[];
-  initialTransactionsKey: string;
+  initialTotal: number;
+  initialQuery: TransactionsPageQuery;
+  initialCategories: string[];
   initialSummary?: FinancialSummary;
   initialSummaryKey: string;
 };
@@ -54,7 +60,9 @@ export default function FinancesPageClient({
   initialMonth,
   initialTab,
   initialTransactions,
-  initialTransactionsKey,
+  initialTotal,
+  initialQuery,
+  initialCategories,
   initialSummary,
   initialSummaryKey,
 }: FinancesPageClientProps) {
@@ -68,51 +76,67 @@ export default function FinancesPageClient({
     () => ({
       category: "",
       month: initialMonth,
+      page: "",
       q: "",
       tab: initialTab,
     }),
     [initialMonth, initialTab],
   );
   const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
+
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
 
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
       month: filters.month,
+      page: pageIndex,
       search: searchQuery,
       tab: filters.tab as FinancesTabValue,
     }),
-    [filters.category, filters.month, filters.tab, searchQuery],
+    [filters.category, filters.month, filters.tab, pageIndex, searchQuery],
   );
 
   const {
     categoryBreakdown,
     categoryOptions,
     fabType,
-    hasMore,
     isAdmin,
-    loadMore,
+    listData,
     summary,
     tab,
+    total,
     transactions,
-    visibleTransactions,
   } = useFinancesPage(pageFilters, {
+    initialCategories,
+    initialQuery,
     initialSummary,
     initialSummaryKey,
+    initialTotal,
     initialTransactions,
-    initialTransactionsKey,
   });
 
   const editingTransaction = useMemo(
     () =>
-      visibleTransactions.find(
-        (transaction) => transaction.id === editingTransactionId,
-      ) ?? null,
-    [editingTransactionId, visibleTransactions],
+      listData.find((transaction) => transaction.id === editingTransactionId) ??
+      null,
+    [editingTransactionId, listData],
   );
 
   const dialog = useTransactionCreateDialog(
@@ -227,11 +251,16 @@ export default function FinancesPageClient({
         <FinancesMovementsSection
           tab={tab}
           onTabChange={handleTabChange}
-          transactions={visibleTransactions}
-          isLoading={transactions.isLoading && !transactions.data}
+          transactions={listData}
+          isLoading={transactions.isLoading}
           error={transactions.error}
-          hasMore={hasMore}
-          onLoadMore={loadMore}
+          pagination={{
+            pageIndex,
+            pageSize: TRANSACTIONS_PAGE_SIZE,
+            total,
+            onPageChange: (next) =>
+              setFilter("page", next === 0 ? "" : String(next)),
+          }}
           onRowClick={handleRowClick}
         />
       </PageCard>

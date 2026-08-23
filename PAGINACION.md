@@ -51,7 +51,9 @@ frontera entre el caso A y el B.
 
 ---
 
-## Caso B — la búsqueda cruza varias tablas
+## Caso B — el filtro no cabe en una consulta normal
+
+Hay dos variantes, y llevan a soluciones distintas.
 
 Es el caso de **citas**: al escribir se busca en el nombre del paciente, en su
 teléfono y en el nombre del tratamiento. Tres tablas distintas.
@@ -245,7 +247,7 @@ refrescos (F5); a partir de ahí manda el cliente y su caché.
 | Pacientes (#56) | A | Hecho, tamaño 10. Sin vista; el filtro de estado pasó a `marketing_opt_in` |
 | Campañas (#72) | A | Hecho, tamaño 10. Sin lista completa: el store solo cachea páginas |
 | Personal (#73) | A | Hecho, tamaño 10. `list` conservada para calendario y citas |
-| Materiales (#70) | B — filtro de stock cruza dos columnas | Pendiente |
+| Materiales (#70) | B — columna generada | Hecho, tamaño 10. Resumen y categorías en consultas aparte |
 | Finanzas (#71) | A | Hecho, tamaño 20. Sin vista; desglose dentro del resumen |
 | Citas de un empleado (#74) | — | Pendiente, hoy `.limit(50)` fijo |
 | Movimientos de un material (#75) | — | Pendiente |
@@ -303,3 +305,45 @@ TS2589: Type instantiation is excessively deep and possibly infinite.
 Por eso todos los `*.server.dal.ts` duplican la consulta en vez de compartirla.
 No es descuido: cualquier cambio en el filtrado hay que replicarlo en los dos, y
 conviene decirlo en un comentario junto a cada par.
+
+### Comparar dos columnas tampoco se puede
+
+Es la otra variante del caso B, y no necesita vista sino **columna generada**.
+
+El filtro de stock de materiales clasificaba así, en cliente:
+
+```ts
+if (stock <= 0) return "critical";
+if (stock - minStock < 10) return "low";
+return "optimal";
+```
+
+Esa resta compara dos columnas, y PostgREST no sabe: en
+`.lt("stock", "min_stock")` el segundo argumento se lee como literal. La salida
+es materializar la clasificación:
+
+```sql
+ALTER TABLE inventory_items
+  ADD COLUMN stock_level TEXT GENERATED ALWAYS AS (
+    CASE
+      WHEN COALESCE(stock, 0) <= 0 THEN 'critical'
+      WHEN COALESCE(stock, 0) - COALESCE(min_stock, 0) < 10 THEN 'low'
+      ELSE 'optimal'
+    END
+  ) STORED;
+```
+
+Frente a una vista, la columna generada gana aquí: no hay relaciones que
+embeber, el filtro pasa a ser un `eq` indexable y los recuentos de cabecera
+salen con tres `count: "exact", head: true`.
+
+**El `COALESCE` no es decorativo.** `stock` y `min_stock` admiten nulos y el
+cliente los trataba como 0 (`Number(item.stock ?? 0)`). Sin él, un material con
+stock nulo pasaría de «crítico» a «óptimo» al migrar. Es el mismo tipo de
+trampa que `employees.active`, en versión numérica.
+
+**Coste a vigilar:** el umbral queda en tres sitios — la columna generada, el
+trigger de alertas y la función de TypeScript que sigue pintando las etiquetas.
+Al migrar se comprobó caso a caso que SQL y TS clasifican igual (nulos, cero,
+negativo y el límite exacto). Si el umbral cambia, hay que cambiarlo en los tres
+o la lista filtrará distinto de lo que muestra.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import InventoryItemCreateForm from "@/components/inventory/components/form/inventory-item-create-form";
 import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
@@ -30,21 +30,32 @@ import {
 } from "@/components/ui/primitives/skeleton-list";
 import { INVENTORY_COPY } from "@/copy/inventory-copy";
 import { INVENTORY_ITEM_CREATE_COPY } from "@/copy/inventory-item-create-copy";
+import type {
+  InventoryPageResult,
+  InventoryStockSummary as InventoryStockSummaryValue,
+} from "@/dal/inventory.dal";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useInventoryItemCreateDialog } from "@/lib/hooks/use-inventory-item-create-dialog";
 import { useInventoryPage } from "@/lib/hooks/use-inventory-page";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import type { InventoryItem } from "@/types/database.types";
+import { INVENTORY_PAGE_SIZE } from "@/lib/inventory-pagination";
+import type { InventoryPageQuery } from "@/stores/inventory-store";
 
-const INVENTORY_FILTER_DEFAULTS = { category: "", q: "", stock: "" };
+const INVENTORY_FILTER_DEFAULTS = { category: "", page: "", q: "", stock: "" };
 
 type InventoryPageClientProps = {
-  initialItems: InventoryItem[];
+  initialPage: InventoryPageResult;
+  initialQuery: InventoryPageQuery;
+  initialCategories: string[];
+  initialSummary: InventoryStockSummaryValue;
 };
 
 export default function InventoryPageClient({
-  initialItems,
+  initialPage,
+  initialQuery,
+  initialCategories,
+  initialSummary,
 }: InventoryPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -55,29 +66,44 @@ export default function InventoryPageClient({
   const { filters, setFilter, setFilters } = useUrlFilters(
     INVENTORY_FILTER_DEFAULTS,
   );
+
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
+  const setFilterAndResetPage = useCallback(
+    (key: string, value: string) => {
+      setFilters({ [key]: value, page: "" });
+    },
+    [setFilters],
+  );
+
   const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
-    setFilter,
+    setFilterAndResetPage,
   );
+
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
+  const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
   const dialog = useInventoryItemCreateDialog(() => setDialogOpen(false));
 
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
+      page: pageIndex,
       search: searchQuery,
       stock: filters.stock,
     }),
-    [filters.category, filters.stock, searchQuery],
+    [filters.category, filters.stock, pageIndex, searchQuery],
   );
 
-  const { categories, filteredItems, inventory, summary } = useInventoryPage(
+  const { categories, items, inventory, summary, total } = useInventoryPage(
     pageFilters,
-    initialItems,
+    { initialPage, initialQuery, initialCategories, initialSummary },
   );
 
   const editingItem = useMemo(
-    () => filteredItems.find((item) => item.id === editingItemId),
-    [editingItemId, filteredItems],
+    () => items.find((item) => item.id === editingItemId),
+    [editingItemId, items],
   );
 
   const categoryOptions = useMemo(
@@ -126,9 +152,11 @@ export default function InventoryPageClient({
             categoryOptions={categoryOptions}
             search={filters.q}
             stock={filters.stock}
-            onCategoryChange={(value) => setFilter("category", value)}
+            onCategoryChange={(value) =>
+              setFilterAndResetPage("category", value)
+            }
             onSearchChange={handleSearchChange}
-            onStockChange={(value) => setFilter("stock", value)}
+            onStockChange={(value) => setFilterAndResetPage("stock", value)}
             onOpenSheet={handleOpenFiltersSheet}
           />
         }
@@ -136,7 +164,7 @@ export default function InventoryPageClient({
         <InventoryStockSummary
           summary={summary}
           activeStock={filters.stock}
-          onStockChange={(value) => setFilter("stock", value)}
+          onStockChange={(value) => setFilterAndResetPage("stock", value)}
         />
         {inventory.isLoading ? (
           <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
@@ -146,9 +174,16 @@ export default function InventoryPageClient({
         ) : null}
         {!inventory.isLoading ? (
           <InventoryTable
-            items={filteredItems}
+            items={items}
             onRowClick={handleRowClick}
             onEdit={handleRowClick}
+            pagination={{
+              pageIndex,
+              pageSize: INVENTORY_PAGE_SIZE,
+              total,
+              onPageChange: (next) =>
+                setFilter("page", next === 0 ? "" : String(next)),
+            }}
           />
         ) : null}
       </PageCard>
@@ -210,7 +245,7 @@ export default function InventoryPageClient({
         open={sheetOpen}
         filters={filters}
         categoryOptions={categoryOptions}
-        onApply={(updates) => setFilters(updates)}
+        onApply={(updates) => setFilters({ ...updates, page: "" })}
         onClear={() => setFilters(INVENTORY_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
       />

@@ -284,9 +284,13 @@ export type InventoryItem = {
   stock: number | null;
   min_stock: number | null;
   unit_price: number | null;
+  /** Columna generada; ver 20260823120000_inventory_stock_level.sql. */
+  stock_level: InventoryStockLevelValue;
   created_at: string | null;
   updated_at: string | null;
 };
+
+export type InventoryStockLevelValue = "critical" | "low" | "optimal";
 
 export type InventoryMovement = {
   id: string;

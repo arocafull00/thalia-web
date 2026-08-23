@@ -16,6 +16,13 @@ type InventoryTableProps = {
   items: InventoryItem[];
   emptyMessage?: string;
   onRowClick: (id: string) => void;
+  /** Paginación en servidor: `items` es ya la página visible. */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (pageIndex: number) => void;
+  };
   onEdit: (id: string) => void;
 };
 
@@ -24,6 +31,7 @@ export default function InventoryTable({
   emptyMessage,
   onRowClick,
   onEdit,
+  pagination,
 }: InventoryTableProps) {
   const actionHandlers = useMemo(() => ({ onEdit }), [onEdit]);
   const columns = useMemo(
@@ -35,9 +43,7 @@ export default function InventoryTable({
     <DataTable
       columns={columns}
       data={items}
-      enablePagination
-      enableSorting
-      pageSize={10}
+      manualPagination={pagination}
       mobileColumns={inventoryMobileColumns}
       renderMobileActions={(item) => (
         <ListRowActions

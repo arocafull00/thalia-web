@@ -32,6 +32,9 @@ export function resetClinicQueryData() {
   });
   useInventoryStore.setState({
     list: emptyQueryEntry(),
+    byPage: {},
+    categories: emptyQueryEntry(),
+    summary: emptyQueryEntry(),
     byId: {},
     movementsByItemId: {},
   });

@@ -15,9 +15,13 @@ import { useShellStore } from "@/stores/shell-store";
 
 type AppLayoutClientProps = {
   children: React.ReactNode;
+  defaultSidebarOpen?: boolean;
 };
 
-export default function AppLayoutClient({ children }: AppLayoutClientProps) {
+export default function AppLayoutClient({
+  children,
+  defaultSidebarOpen,
+}: AppLayoutClientProps) {
   const router = useRouter();
   const { loading, user } = useAuth();
   const { clinicId, platformRole, loading: clinicLoading } = useActiveClinic();
@@ -93,7 +97,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
 
   return (
     <div className="animate-in fade-in-0 duration-500">
-      <AppShell>{children}</AppShell>
+      <AppShell defaultSidebarOpen={defaultSidebarOpen}>{children}</AppShell>
     </div>
   );
 }

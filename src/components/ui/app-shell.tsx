@@ -10,11 +10,26 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 type AppShellProps = {
   children: ReactNode;
+  /**
+   * Estado inicial del sidebar, leído de la cookie en el Server Component.
+   *
+   * `SidebarProvider` escribe la cookie al colapsar pero no la lee: si no se
+   * le pasa este valor, recargar siempre devuelve el sidebar a expandido.
+   * Tiene que resolverse en servidor para que el primer render ya salga con el
+   * ancho correcto y no haya salto.
+   */
+  defaultSidebarOpen?: boolean;
 };
 
-export default function AppShell({ children }: AppShellProps) {
+export default function AppShell({
+  children,
+  defaultSidebarOpen = true,
+}: AppShellProps) {
   return (
-    <SidebarProvider className="relative h-svh min-h-0 overflow-hidden">
+    <SidebarProvider
+      defaultOpen={defaultSidebarOpen}
+      className="relative h-svh min-h-0 overflow-hidden"
+    >
       <AppBackdrop />
       <AppSidebar />
       {/* En md+ el hueco izquierdo lo aporta el padding del propio sidebar. */}

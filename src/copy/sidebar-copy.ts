@@ -1,4 +1,5 @@
 export const SIDEBAR_COPY = {
+  toggle: "Contraer o expandir el menú",
   profileFallback: "Perfil",
   signOut: "Cerrar sesión",
   signOutConfirm: {

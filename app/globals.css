@@ -59,6 +59,15 @@
     color-mix(in srgb, var(--primary) 50%, transparent);
   --shadow-nav-active: 0 0 16px
     color-mix(in srgb, var(--primary) 28%, transparent);
+  /* Colapso del sidebar. Los comparten el hueco reservado, el panel, el logo y
+     las etiquetas: si cualquiera de ellos usa otra curva o duración, las piezas
+     llegan desacompasadas y el movimiento se ve a saltos. */
+  --sidebar-duration: 260ms;
+  /* Retardo entre etiqueta y etiqueta al expandir, para que el menú aparezca
+     en cascada de arriba abajo en vez de todo a la vez. */
+  --sidebar-stagger: 20ms;
+  --sidebar-ease: cubic-bezier(0.32, 0.72, 0, 1);
+
   --radius-button: 8px;
   --radius-input: 8px;
   --radius-card: 10px;
@@ -661,6 +670,12 @@ input[type="search"],
 @media (prefers-reduced-motion: reduce) {
   .table-row-wash {
     transition: none;
+  }
+
+  /* El sidebar cambia de ancho de golpe en vez de animarse. */
+  :root {
+    --sidebar-duration: 0ms;
+    --sidebar-stagger: 0ms;
   }
 }
 

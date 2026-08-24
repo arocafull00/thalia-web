@@ -27,7 +27,7 @@ export default function SidebarProfileFooter() {
 
   return (
     <>
-      <div className="flex items-center gap-2.5 px-1.5 py-3.5">
+      <div className="flex items-center gap-2.5 px-1.5 py-3.5 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0">
         <ProfileAvatarImage
           src={displayUri}
           initials={initials}
@@ -35,7 +35,7 @@ export default function SidebarProfileFooter() {
           avatarStyle={{ borderRadius: "var(--radius-button)" }}
           fallbackClassName="bg-[image:var(--gradient-avatar)] text-[12.5px] font-semibold text-primary-hover"
         />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 overflow-hidden transition-[opacity,width] duration-[var(--sidebar-duration)] ease-[var(--sidebar-ease)] group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:opacity-0">
           <p
             className="truncate text-[13.5px] font-medium text-ink"
             title={profile?.full_name ?? undefined}
@@ -54,7 +54,7 @@ export default function SidebarProfileFooter() {
           size="icon-sm"
           aria-label={SIDEBAR_COPY.signOut}
           onClick={() => setSignOutOpen(true)}
-          className="shrink-0 rounded-lg text-ink-muted hover:text-ink"
+          className="shrink-0 rounded-lg text-ink-muted transition-[opacity,width] duration-[var(--sidebar-duration)] ease-[var(--sidebar-ease)] hover:text-ink group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:opacity-0"
         >
           <LogOut size={16} />
         </Button>

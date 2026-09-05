@@ -1,4 +1,3 @@
-import { spawnSync } from "node:child_process";
 import { randomBytes, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -11,12 +10,13 @@ const CONFIRMATION = "RESET_ALL_SUPABASE_DATA";
 const APPOINTMENTS_PER_DAY = 20;
 const DEFAULT_APPOINTMENT_DAYS = 30;
 const PATIENT_COUNT = 120;
+const FINANCE_WEEKDAY_COUNT = 22;
 const STORAGE_PAGE_SIZE = 1000;
 const DELETE_BATCH_SIZE = 10;
 const INSERT_BATCH_SIZE = 500;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, "..");
-const resetSqlPath = join(projectRoot, "supabase", "reset-production-data.sql");
+const environmentFilePath = join(projectRoot, ".env");
 const linkedProjectRefPath = join(
   projectRoot,
   "supabase",
@@ -24,13 +24,38 @@ const linkedProjectRefPath = join(
   "project-ref",
 );
 
+const publicTablesDeleteOrder = [
+  "appointment_inventory_items",
+  "appointment_reminders",
+  "appointment_treatments",
+  "campaign_recipients",
+  "campaign_segments",
+  "inventory_alerts",
+  "inventory_movements",
+  "patient_files",
+  "patient_images",
+  "transactions",
+  "treatment_inventory_items",
+  "appointments",
+  "campaigns",
+  "campaign_templates",
+  "patients",
+  "transaction_categories",
+  "inventory_items",
+  "treatment",
+  "clinic_memberships",
+  "invitation_tokens",
+  "employees",
+  "clinics",
+];
+
 const clinicDefinitions = [
   {
     key: "dental",
     adminEmailEnvironment: "SEED_DENTAL_ADMIN_EMAIL",
     adminPasswordEnvironment: "SEED_DENTAL_ADMIN_PASSWORD",
     clinicNameEnvironment: "SEED_DENTAL_CLINIC_NAME",
-    defaultName: "Clínica Dental Landora",
+    defaultName: "Clínica Dental Thalia",
     admin: {
       fullName: "Elena Ruiz",
       specialty: "Dirección odontológica",
@@ -192,7 +217,7 @@ const clinicDefinitions = [
     adminEmailEnvironment: "SEED_AESTHETIC_ADMIN_EMAIL",
     adminPasswordEnvironment: "SEED_AESTHETIC_ADMIN_PASSWORD",
     clinicNameEnvironment: "SEED_AESTHETIC_CLINIC_NAME",
-    defaultName: "Clínica Estética Landora",
+    defaultName: "Clínica Estética Thalia",
     admin: {
       fullName: "Marina López",
       specialty: "Dirección médica estética",
@@ -371,6 +396,29 @@ const firstNames = [
   "Yolanda",
 ];
 
+const expenseSeedDefinitions = [
+  {
+    categoryName: "Nóminas",
+    amount: 4200,
+    description: "Nóminas del mes",
+  },
+  {
+    categoryName: "Alquiler",
+    amount: 1800,
+    description: "Alquiler del local",
+  },
+  {
+    categoryName: "Marketing",
+    amount: 350,
+    description: "Campaña en redes sociales",
+  },
+  {
+    categoryName: "Material sanitario",
+    amount: 620,
+    description: "Reposición de material",
+  },
+];
+
 const lastNames = [
   "Alonso",
   "Blanco",
@@ -393,6 +441,44 @@ function getArgument(name) {
 
 function writeOutput(message) {
   process.stdout.write(`${message}\n`);
+}
+
+function loadEnvironmentFile() {
+  let contents;
+
+  try {
+    contents = readFileSync(environmentFilePath, "utf8");
+  } catch {
+    return;
+  }
+
+  for (const line of contents.split("\n")) {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    const separatorIndex = trimmed.indexOf("=");
+
+    if (separatorIndex === -1) {
+      continue;
+    }
+
+    const key = trimmed.slice(0, separatorIndex).trim();
+    let value = trimmed.slice(separatorIndex + 1).trim();
+
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    if (!(key in process.env)) {
+      process.env[key] = value;
+    }
+  }
 }
 
 function readRequiredEnvironment(name, fallbackName) {
@@ -460,7 +546,7 @@ function loadConfiguration() {
     "SUPABASE_SERVICE_ROLE_KEY",
   );
   const sharedAdminPassword = process.env.SEED_ADMIN_PASSWORD?.trim();
-  const emailDomain = (process.env.SEED_EMAIL_DOMAIN ?? "landora.test")
+  const emailDomain = (process.env.SEED_EMAIL_DOMAIN ?? "thalia.test")
     .trim()
     .toLowerCase();
   const appointmentDays = parsePositiveInteger(
@@ -542,23 +628,16 @@ function createAdminClient(config) {
   });
 }
 
-function runPublicDataReset() {
-  const command = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
-  const result = spawnSync(
-    command,
-    ["exec", "supabase", "db", "query", "--linked", "--file", resetSqlPath],
-    {
-      cwd: projectRoot,
-      stdio: "inherit",
-    },
-  );
+async function runPublicDataReset(adminClient) {
+  for (const table of publicTablesDeleteOrder) {
+    const { error } = await adminClient
+      .from(table)
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
 
-  if (result.error) {
-    throw result.error;
-  }
-
-  if (result.status !== 0) {
-    throw new Error("No se pudieron vaciar las tablas public");
+    if (error) {
+      throw new Error(`No se pudo vaciar ${table}: ${error.message}`);
+    }
   }
 }
 
@@ -730,7 +809,7 @@ function getOpenDates(timezone, count) {
 
   while (dates.length < count) {
     const date = getDateInTimeZone(cursor, timezone);
-    const dayOfWeek = new Date(`${date}T12:00:00Z`).getUTCDay();
+    const dayOfWeek = fromZonedTime(`${date}T12:00:00`, timezone).getDay();
 
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
       dates.push(date);
@@ -742,7 +821,25 @@ function getOpenDates(timezone, count) {
   return dates;
 }
 
-function createPatients(clinic) {
+function getPastWeekdayDates(timezone, count) {
+  const dates = [];
+  let cursor = new Date();
+
+  while (dates.length < count) {
+    const date = getDateInTimeZone(cursor, timezone);
+    const dayOfWeek = fromZonedTime(`${date}T12:00:00`, timezone).getDay();
+
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+      dates.unshift(date);
+    }
+
+    cursor = addCalendarDays(cursor, -1);
+  }
+
+  return dates;
+}
+
+function createPatients(clinic, emailDomain) {
   const clinicOffset = clinic.key === "dental" ? 0 : PATIENT_COUNT;
 
   return Array.from({ length: PATIENT_COUNT }, (_, index) => {
@@ -761,7 +858,7 @@ function createPatients(clinic) {
       dni: `${String(10000000 + globalIndex)}${"TRWAGMYFPDXBNJZSQVHLCKE"[globalIndex % 23]}`,
       birth_date: `${birthYear}-${birthMonth}-${birthDay}`,
       phone: `${clinic.patientPhonePrefix}${String(index).padStart(6, "0")}`,
-      email: `paciente.${clinic.key}.${sequence}@landora.test`,
+      email: `paciente.${clinic.key}.${sequence}@${emailDomain}`,
       address: `Calle Salud ${index + 1}, Madrid`,
       notes: index % 8 === 0 ? clinic.patientNote : null,
       marketing_opt_in: index % 3 !== 0,
@@ -820,6 +917,99 @@ function createAppointments({
   });
 
   return { appointments, appointmentTreatments };
+}
+
+async function fetchTransactionCategories(adminClient, clinicId) {
+  const { data, error } = await adminClient
+    .from("transaction_categories")
+    .select("id, type, name")
+    .eq("clinic_id", clinicId);
+
+  if (error || !data) {
+    throw new Error(
+      `No se pudieron cargar las categorías financieras: ${error?.message ?? "sin datos"}`,
+    );
+  }
+
+  return new Map(
+    data.map((category) => [`${category.type}:${category.name}`, category]),
+  );
+}
+
+function createTransactions({
+  adminId,
+  categories,
+  clinicId,
+  financeDates,
+  seededTreatments,
+}) {
+  const transactions = [];
+  const treatmentsCategory = categories.get("income:Tratamientos");
+  const productsCategory = categories.get("income:Productos");
+
+  if (!treatmentsCategory || !productsCategory) {
+    throw new Error("Faltan categorías financieras por defecto");
+  }
+
+  financeDates.forEach((date, index) => {
+    const treatment = seededTreatments[index % seededTreatments.length];
+
+    transactions.push({
+      id: randomUUID(),
+      clinic_id: clinicId,
+      appointment_id: null,
+      type: "income",
+      category_id: treatmentsCategory.id,
+      amount: treatment.price,
+      description: `Cobro de ${treatment.name.toLowerCase()}`,
+      date,
+      created_by: adminId,
+    });
+
+    if (index % 4 === 0) {
+      transactions.push({
+        id: randomUUID(),
+        clinic_id: clinicId,
+        appointment_id: null,
+        type: "income",
+        category_id: productsCategory.id,
+        amount: 35 + (index % 5) * 12,
+        description: "Venta de producto en mostrador",
+        date,
+        created_by: adminId,
+      });
+    }
+  });
+
+  const expenseDates = [
+    financeDates.at(-1),
+    financeDates.at(-8),
+    financeDates.at(-15),
+  ].filter(Boolean);
+
+  for (const expenseDate of expenseDates) {
+    for (const expense of expenseSeedDefinitions) {
+      const category = categories.get(`expense:${expense.categoryName}`);
+
+      if (!category) {
+        throw new Error(`Falta la categoría ${expense.categoryName}`);
+      }
+
+      transactions.push({
+        id: randomUUID(),
+        clinic_id: clinicId,
+        appointment_id: null,
+        type: "expense",
+        category_id: category.id,
+        amount: expense.amount,
+        description: expense.description,
+        date: expenseDate,
+        created_by: adminId,
+      });
+    }
+  }
+
+  return transactions;
 }
 
 async function seedClinic({
@@ -902,7 +1092,7 @@ async function seedClinic({
     })),
   );
 
-  const patients = createPatients({ ...clinic, id: clinicId });
+  const patients = createPatients({ ...clinic, id: clinicId }, config.emailDomain);
   await insertRows(adminClient, "patients", patients);
 
   const inventoryItems = clinic.inventory.map((item) => ({
@@ -989,6 +1179,20 @@ async function seedClinic({
     appointmentTreatments,
   );
 
+  const categories = await fetchTransactionCategories(adminClient, clinicId);
+  const financeDates = getPastWeekdayDates(
+    config.timezone,
+    FINANCE_WEEKDAY_COUNT,
+  );
+  const transactions = createTransactions({
+    adminId: admin.id,
+    categories,
+    clinicId,
+    financeDates,
+    seededTreatments,
+  });
+  await insertRows(adminClient, "transactions", transactions);
+
   return {
     admin,
     appointmentCount: appointments.length,
@@ -998,6 +1202,7 @@ async function seedClinic({
     employees,
     inventoryItemCount: inventoryItems.length,
     patientCount: patients.length,
+    transactionCount: transactions.length,
     treatmentInventoryItemCount: treatmentInventoryItems.length,
     treatmentCount: seededTreatments.length,
   };
@@ -1046,6 +1251,7 @@ async function verifySeed(adminClient, result) {
       treatmentInventoryItems:
         accumulator.treatmentInventoryItems +
         clinic.treatmentInventoryItemCount,
+      transactions: accumulator.transactions + clinic.transactionCount,
       treatments: accumulator.treatments + clinic.treatmentCount,
     }),
     {
@@ -1054,6 +1260,7 @@ async function verifySeed(adminClient, result) {
       inventoryItems: 0,
       patients: 0,
       treatmentInventoryItems: 0,
+      transactions: 0,
       treatments: 0,
     },
   );
@@ -1066,6 +1273,7 @@ async function verifySeed(adminClient, result) {
     inventory_items: totals.inventoryItems,
     patients: totals.patients,
     transaction_categories: result.clinics.length * 6,
+    transactions: totals.transactions,
     treatment: totals.treatments,
     treatment_inventory_items: totals.treatmentInventoryItems,
   };
@@ -1104,6 +1312,7 @@ async function removeCreatedUsers(adminClient, userIds) {
 }
 
 async function main() {
+  loadEnvironmentFile();
   const config = loadConfiguration();
   const adminClient = createAdminClient(config);
   const createdUserIds = [];
@@ -1112,7 +1321,7 @@ async function main() {
   writeOutput("Vaciando objetos de Storage...");
   const deletedObjects = await clearStorage(adminClient);
   writeOutput("Vaciando tablas public...");
-  runPublicDataReset();
+  await runPublicDataReset(adminClient);
   writeOutput("Eliminando usuarios de Supabase Auth...");
   const deletedUsers = await deleteAllAuthUsers(adminClient);
   writeOutput("Generando datos iniciales...");
@@ -1159,7 +1368,7 @@ async function main() {
     );
   } catch (error) {
     console.error("La seed falló. Limpiando los datos parciales...");
-    runPublicDataReset();
+    await runPublicDataReset(adminClient);
     await removeCreatedUsers(adminClient, createdUserIds);
     throw error;
   }

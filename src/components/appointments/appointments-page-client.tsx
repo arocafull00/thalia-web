@@ -1,5 +1,6 @@
 "use client";
 
+import { RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
@@ -22,7 +23,7 @@ import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
-import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { notifySuccess } from "@/lib/sound";
 import {
@@ -164,10 +165,27 @@ export default function AppointmentsPageClient({
     setSheetOpen(true);
   };
 
-  useTopbarAction({
-    title: "Nueva cita",
-    testId: "appointment-create-trigger",
-    onClick: handleOpenCreateDialog,
+  useTopbarActions({
+    buttons: [
+      {
+        title: appointments.isRefreshing
+          ? APPOINTMENTS_COPY.page.refreshing
+          : APPOINTMENTS_COPY.page.refresh,
+        icon: RefreshCw,
+        iconClassName: appointments.isRefreshing
+          ? "animate-spin motion-reduce:animate-none"
+          : undefined,
+        disabled: appointments.isRefreshing,
+        variant: "ghost",
+        testId: "appointments-refresh-trigger",
+        onClick: () => void appointments.refresh(),
+      },
+      {
+        title: "Nueva cita",
+        testId: "appointment-create-trigger",
+        onClick: handleOpenCreateDialog,
+      },
+    ],
   });
 
   return (
@@ -186,7 +204,6 @@ export default function AppointmentsPageClient({
             search={searchQuery}
             status={filters.status}
             to={filters.to}
-            isRefreshing={appointments.isRefreshing}
             onEmployeeIdChange={(value) =>
               setFilterAndResetPage("employeeId", value)
             }
@@ -195,7 +212,6 @@ export default function AppointmentsPageClient({
             onStatusChange={(value) => setFilterAndResetPage("status", value)}
             onToChange={(value) => setFilterAndResetPage("to", value)}
             onOpenSheet={handleOpenFiltersSheet}
-            onRefresh={() => void appointments.refresh()}
           />
         }
       >

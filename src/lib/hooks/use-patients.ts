@@ -87,10 +87,13 @@ export function usePatientsPage(
     void fetchPatientsPage(query);
   }, [fetchPatientsPage, query, seededResult]);
 
-  const refresh = useCallback(
-    () => fetchPatientsPage(query),
-    [fetchPatientsPage, query],
-  );
+  const refresh = useCallback(() => {
+    if (usePatientsStore.getState().byPage[key]?.loading) {
+      return Promise.resolve();
+    }
+
+    return fetchPatientsPage(query);
+  }, [fetchPatientsPage, key, query]);
 
   const resolved = entry?.data ?? seededResult ?? null;
   const patients = useMemo(() => resolved?.patients ?? [], [resolved]);

@@ -1,5 +1,6 @@
 "use client";
 
+import { RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
@@ -19,7 +20,7 @@ import {
   SkeletonList,
 } from "@/components/ui/primitives/skeleton-list";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
-import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { TREATMENTS_PAGE_SIZE } from "@/lib/treatment-pagination";
 import type { TreatmentsPageQuery } from "@/stores/treatment-store";
@@ -105,10 +106,27 @@ export default function TreatmentsPageClient({
     setSheetOpen(true);
   };
 
-  useTopbarAction({
-    title: TREATMENTS_COPY.page.add,
-    testId: "treatment-create-trigger",
-    onClick: page.openCreateDialog,
+  useTopbarActions({
+    buttons: [
+      {
+        title: treatments.isRefreshing
+          ? TREATMENTS_COPY.page.refreshing
+          : TREATMENTS_COPY.page.refresh,
+        icon: RefreshCw,
+        iconClassName: treatments.isRefreshing
+          ? "animate-spin motion-reduce:animate-none"
+          : undefined,
+        disabled: treatments.isRefreshing,
+        variant: "ghost",
+        testId: "treatments-refresh-trigger",
+        onClick: () => void treatments.refresh(),
+      },
+      {
+        title: TREATMENTS_COPY.page.add,
+        testId: "treatment-create-trigger",
+        onClick: page.openCreateDialog,
+      },
+    ],
   });
 
   return (
@@ -120,13 +138,11 @@ export default function TreatmentsPageClient({
             categoryOptions={categoryOptions}
             search={filters.q}
             showCategoryFilter={showCategoryFilter}
-            isRefreshing={treatments.isRefreshing}
             onCategoryChange={(value) =>
               setFilterAndResetPage("category", value)
             }
             onSearchChange={handleSearchChange}
             onOpenSheet={handleOpenFiltersSheet}
-            onRefresh={() => void treatments.refresh()}
           />
         }
       >

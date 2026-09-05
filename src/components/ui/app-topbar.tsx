@@ -40,7 +40,7 @@ export default function AppTopbar() {
   const markAsRead = useInventoryAlertsStore((state) => state.markAsRead);
   const { canPromptInstall, handleInstall, showInstallCta } = usePwaInstall();
   const title = appNavItemTitle(pathname);
-  const primaryAction = action ?? actions[0] ?? null;
+  const topbarActions = action ? [action] : actions;
   const hasOverflowMenu =
     menu?.sections.some((section) => section.actions.length > 0) ?? false;
 
@@ -128,21 +128,23 @@ export default function AppTopbar() {
               className="control-chip h-[38px] rounded-button text-[13.5px]"
             />
           ) : null}
-          {primaryAction ? (
+          {topbarActions.map((topbarAction, index) => (
             <ActionButton
-              title={primaryAction.title}
-              icon={primaryAction.icon ?? Plus}
-              disabled={primaryAction.disabled}
-              variant={primaryAction.variant}
-              testId={primaryAction.testId}
-              onClick={primaryAction.onClick}
+              key={`${topbarAction.testId ?? topbarAction.title}-${index}`}
+              title={topbarAction.title}
+              icon={topbarAction.icon ?? Plus}
+              iconClassName={topbarAction.iconClassName}
+              disabled={topbarAction.disabled}
+              variant={topbarAction.variant}
+              testId={topbarAction.testId}
+              onClick={topbarAction.onClick}
               className={
-                primaryAction.variant === "ghost"
+                topbarAction.variant === "ghost"
                   ? "control-chip h-[38px] rounded-button text-[13.5px]"
                   : "h-[38px] rounded-button bg-[image:var(--gradient-primary)] text-[13.5px] shadow-glow transition-shadow hover:shadow-glow-strong"
               }
             />
-          ) : null}
+          ))}
           {hasOverflowMenu && menu ? (
             <ProfileActionsMenu
               sections={menu.sections}

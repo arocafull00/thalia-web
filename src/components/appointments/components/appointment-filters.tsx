@@ -11,7 +11,6 @@ import AppointmentEmployeeFilter from "@/components/appointments/components/appo
 import AppointmentStatusFilter from "@/components/appointments/components/appointment-status-filter";
 import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
-import PageRefreshButton from "@/components/ui/page-refresh-button";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { Employee } from "@/types/database.types";
@@ -23,11 +22,9 @@ type AppointmentFiltersProps = {
   search: string;
   status: string;
   to: string;
-  isRefreshing: boolean;
   onEmployeeIdChange: (value: string) => void;
   onFromChange: (value: string) => void;
   onOpenSheet: () => void;
-  onRefresh: () => void;
   onSearchChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   onToChange: (value: string) => void;
@@ -40,11 +37,9 @@ export default function AppointmentFilters({
   search,
   status,
   to,
-  isRefreshing,
   onEmployeeIdChange,
   onFromChange,
   onOpenSheet,
-  onRefresh,
   onSearchChange,
   onStatusChange,
   onToChange,
@@ -65,14 +60,6 @@ export default function AppointmentFilters({
       searchClearLabel={APPOINTMENTS_COPY.filters.searchClear}
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
-      trailingAction={
-        <PageRefreshButton
-          isRefreshing={isRefreshing}
-          label={APPOINTMENTS_COPY.page.refresh}
-          loadingLabel={APPOINTMENTS_COPY.page.refreshing}
-          onRefresh={onRefresh}
-        />
-      }
     >
       <FilterField
         label={APPOINTMENTS_COPY.filterLabels.employee}

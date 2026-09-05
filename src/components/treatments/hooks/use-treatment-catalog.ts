@@ -107,10 +107,13 @@ export function useTreatmentCatalog(
     seed?.initialCategories,
   ]);
 
-  const refresh = useCallback(
-    () => fetchTreatmentsPage(query),
-    [fetchTreatmentsPage, query],
-  );
+  const refresh = useCallback(() => {
+    if (useTreatmentStore.getState().byPage[key]?.loading) {
+      return Promise.resolve();
+    }
+
+    return fetchTreatmentsPage(query);
+  }, [fetchTreatmentsPage, key, query]);
 
   const resolved = entry?.data ?? seededResult ?? null;
   const filteredTreatments = useMemo(

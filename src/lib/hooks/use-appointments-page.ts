@@ -159,12 +159,13 @@ export function useAppointmentsPage(
 
   const resolved = entry?.data ?? seededResult ?? null;
 
-  // El botón de refrescar de la barra de filtros vuelve a pedir la página
-  // actual sin pasar por la siembra del servidor.
-  const refresh = useCallback(
-    () => fetchAppointmentsPage(query),
-    [fetchAppointmentsPage, query],
-  );
+  const refresh = useCallback(() => {
+    if (useAppointmentsStore.getState().byPage[key]?.loading) {
+      return Promise.resolve();
+    }
+
+    return fetchAppointmentsPage(query);
+  }, [fetchAppointmentsPage, key, query]);
 
   const appointments = {
     data: resolved,

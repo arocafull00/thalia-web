@@ -12,6 +12,7 @@ export type TopbarBreadcrumb = {
 export type TopbarAction = {
   title: string;
   icon?: LucideIcon;
+  iconClassName?: string;
   onClick: () => void;
   disabled?: boolean;
   variant?: "solid" | "ghost";

@@ -10,7 +10,7 @@ export type TopbarActionButtonConfig = Omit<TopbarAction, "onClick"> & {
 
 export type TopbarActionsConfig = {
   buttons: TopbarActionButtonConfig[];
-  menu: {
+  menu?: {
     sections: ProfileActionSection[];
     ariaLabel: string;
   };
@@ -31,7 +31,7 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
       )
       .join("|") ?? "";
   const menuKey =
-    config?.menu.sections
+    config?.menu?.sections
       .flatMap((section) =>
         section.actions.map(
           (action) =>
@@ -39,7 +39,7 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
         ),
       )
       .join("|") ?? "";
-  const menuAriaLabel = config?.menu.ariaLabel;
+  const menuAriaLabel = config?.menu?.ariaLabel;
 
   const handleButtonClick = useEffectEvent((index: number) => {
     config?.buttons[index]?.onClick();
@@ -50,7 +50,7 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
       return;
     }
 
-    flattenMenuSections(config.menu.sections)[index]?.onClick?.();
+    flattenMenuSections(config.menu?.sections ?? [])[index]?.onClick?.();
   });
 
   useEffect(() => {
@@ -64,6 +64,7 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
       config.buttons.map((button, index) => ({
         title: button.title,
         icon: button.icon,
+        iconClassName: button.iconClassName,
         disabled: button.disabled,
         variant: button.variant,
         desktopOnly: button.desktopOnly,
@@ -71,6 +72,15 @@ export function useTopbarActions(config: TopbarActionsConfig | null) {
         onClick: () => handleButtonClick(index),
       })),
     );
+
+    if (!config.menu) {
+      setMenu(null);
+
+      return () => {
+        setActions([]);
+        setMenu(null);
+      };
+    }
 
     let actionIndex = 0;
 

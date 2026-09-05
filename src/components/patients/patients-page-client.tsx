@@ -1,5 +1,6 @@
 "use client";
 
+import { RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
@@ -34,7 +35,7 @@ import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
 import { usePatientsPage } from "@/lib/hooks/use-patients";
-import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import {
   parseMarketingFilter,
@@ -135,10 +136,27 @@ export default function PatientsPageClient({
     setEditDialogOpen(true);
   };
 
-  useTopbarAction({
-    title: "Nuevo paciente",
-    testId: "patient-create-trigger",
-    onClick: () => setDialogOpen(true),
+  useTopbarActions({
+    buttons: [
+      {
+        title: patients.isRefreshing
+          ? PATIENTS_COPY.page.refreshing
+          : PATIENTS_COPY.page.refresh,
+        icon: RefreshCw,
+        iconClassName: patients.isRefreshing
+          ? "animate-spin motion-reduce:animate-none"
+          : undefined,
+        disabled: patients.isRefreshing,
+        variant: "ghost",
+        testId: "patients-refresh-trigger",
+        onClick: () => void patients.refresh(),
+      },
+      {
+        title: "Nuevo paciente",
+        testId: "patient-create-trigger",
+        onClick: () => setDialogOpen(true),
+      },
+    ],
   });
 
   return (
@@ -148,13 +166,11 @@ export default function PatientsPageClient({
           <PatientsFilters
             search={filters.q}
             marketing={filters.marketing}
-            isRefreshing={patients.isRefreshing}
             onSearchChange={handleSearchChange}
             onMarketingChange={(value) =>
               setFilterAndResetPage("marketing", value)
             }
             onOpenSheet={handleOpenFiltersSheet}
-            onRefresh={() => void patients.refresh()}
           />
         }
       >

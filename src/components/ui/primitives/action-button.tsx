@@ -13,6 +13,7 @@ export function ActionButton({
   variant = "solid",
   testId,
   className,
+  iconClassName,
 }: {
   title: string;
   icon?: LucideIcon;
@@ -21,6 +22,7 @@ export function ActionButton({
   variant?: "solid" | "ghost";
   testId?: string;
   className?: string;
+  iconClassName?: string;
 }) {
   if (variant === "ghost") {
     return (
@@ -30,11 +32,16 @@ export function ActionButton({
         size="sm"
         disabled={disabled}
         onClick={onClick}
+        aria-label={title}
+        title={title}
         data-testid={testId}
         className={cn("text-ink-secondary", className)}
       >
         {Icon ? (
-          <Icon className="size-3.5 shrink-0" aria-hidden="true" />
+          <Icon
+            className={cn("size-3.5 shrink-0", iconClassName)}
+            aria-hidden="true"
+          />
         ) : null}
         {title}
       </Button>
@@ -47,11 +54,18 @@ export function ActionButton({
       size="sm"
       disabled={disabled}
       onClick={onClick}
+      aria-label={title}
+      title={title}
       data-testid={testId}
       data-cuelume-press=""
       className={className}
     >
-      {Icon ? <Icon className="size-3.5 shrink-0" aria-hidden="true" /> : null}
+      {Icon ? (
+        <Icon
+          className={cn("size-3.5 shrink-0", iconClassName)}
+          aria-hidden="true"
+        />
+      ) : null}
       {title}
     </Button>
   );

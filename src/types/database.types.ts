@@ -35,6 +35,21 @@ export type InventoryAlert = {
 
 export type TransactionType = "income" | "expense";
 
+export type TransactionCategory = {
+  id: string;
+  clinic_id: string;
+  type: TransactionType;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TransactionCategorySummary = Pick<
+  TransactionCategory,
+  "id" | "type" | "name" | "is_active"
+>;
+
 export type Clinic = {
   id: string;
   name: string;
@@ -302,18 +317,22 @@ export type InventoryMovement = {
   created_at: string | null;
 };
 
-export type Transaction = {
+export type TransactionRow = {
   id: string;
   clinic_id: string;
   appointment_id: string | null;
   type: TransactionType;
-  category: string | null;
+  category_id: string | null;
   amount: number;
   description: string | null;
   date: string | null;
   created_by: string;
   created_at: string | null;
   updated_at: string | null;
+};
+
+export type Transaction = TransactionRow & {
+  category: TransactionCategorySummary | null;
 };
 
 export type CampaignStatus = "draft" | "scheduled" | "sent" | "cancelled";
@@ -469,10 +488,15 @@ type Tables = {
     Insert: Partial<InventoryMovement>;
     Update: Partial<InventoryMovement>;
   };
+  transaction_categories: {
+    Row: TransactionCategory;
+    Insert: Partial<TransactionCategory>;
+    Update: Partial<TransactionCategory>;
+  };
   transactions: {
-    Row: Transaction;
-    Insert: Partial<Transaction>;
-    Update: Partial<Transaction>;
+    Row: TransactionRow;
+    Insert: Partial<TransactionRow>;
+    Update: Partial<TransactionRow>;
   };
   campaigns: {
     Row: Campaign;

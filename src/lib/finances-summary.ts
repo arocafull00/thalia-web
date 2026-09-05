@@ -12,22 +12,36 @@ import type { Transaction } from "@/types/database.types";
  * recibe el mes entero, que es lo que el resumen ya consulta de todos modos.
  */
 function buildCategoryBreakdown(current: Transaction[]) {
-  const totals = new Map<string, number>();
+  const totals = new Map<
+    string,
+    {
+      amount: number;
+      category: string;
+      categoryId: string | null;
+      type: Transaction["type"];
+    }
+  >();
   const total = current.reduce(
     (sum, transaction) => sum + transaction.amount,
     0,
   );
 
   for (const transaction of current) {
-    const category = transaction.category ?? "Sin categoria";
-    totals.set(category, (totals.get(category) ?? 0) + transaction.amount);
+    const categoryId = transaction.category_id;
+    const key = categoryId ?? `${transaction.type}:uncategorized`;
+    const previous = totals.get(key);
+    totals.set(key, {
+      amount: (previous?.amount ?? 0) + transaction.amount,
+      category: transaction.category?.name ?? "Sin categoría",
+      categoryId,
+      type: transaction.type,
+    });
   }
 
-  return Array.from(totals.entries())
-    .map(([category, amount]) => ({
-      amount,
-      category,
-      percent: total > 0 ? Math.round((amount / total) * 100) : 0,
+  return Array.from(totals.values())
+    .map((entry) => ({
+      ...entry,
+      percent: total > 0 ? Math.round((entry.amount / total) * 100) : 0,
     }))
     .sort((left, right) => right.amount - left.amount)
     .slice(0, 4);

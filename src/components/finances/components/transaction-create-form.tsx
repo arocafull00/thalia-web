@@ -7,22 +7,37 @@ import {
 
 import AppDateField from "@/components/ui/app-date-field";
 import AppDialogError from "@/components/ui/app-dialog-error";
+import AppSearchableCombobox, {
+  type AppSearchableComboboxOption,
+} from "@/components/ui/app-searchable-combobox";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
 import type { TransactionFormValues } from "@/lib/hooks/use-transaction-create-dialog";
+import type { TransactionType } from "@/types/database.types";
 
 const inputClassName =
   "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
+
+const typeOptions: AppSearchableComboboxOption[] = [
+  { value: "income", label: TRANSACTION_CREATE_COPY.fields.typeIncome },
+  { value: "expense", label: TRANSACTION_CREATE_COPY.fields.typeExpense },
+];
 
 type TransactionCreateFormProps = {
   register: UseFormRegister<TransactionFormValues>;
   control: Control<TransactionFormValues>;
   errors: FieldErrors<TransactionFormValues>;
+  type: TransactionType;
+  categoryOptions: AppSearchableComboboxOption[];
+  onTypeChange: (type: TransactionType) => void;
 };
 
 export default function TransactionCreateForm({
   register,
   control,
   errors,
+  type,
+  categoryOptions,
+  onTypeChange,
 }: TransactionCreateFormProps) {
   return (
     <div className="mt-4 space-y-4">
@@ -34,14 +49,22 @@ export default function TransactionCreateForm({
             {TRANSACTION_CREATE_COPY.fields.requiredMark}
           </span>
         </span>
-        <select {...register("type")} className={inputClassName}>
-          <option value="income">
-            {TRANSACTION_CREATE_COPY.fields.typeIncome}
-          </option>
-          <option value="expense">
-            {TRANSACTION_CREATE_COPY.fields.typeExpense}
-          </option>
-        </select>
+        <Controller
+          name="type"
+          control={control}
+          render={() => (
+            <AppSearchableCombobox
+              value={type}
+              onValueChange={(value) => {
+                if (value === "income" || value === "expense") {
+                  onTypeChange(value);
+                }
+              }}
+              options={typeOptions}
+              showSearch={false}
+            />
+          )}
+        />
         {errors.type ? (
           <span className="text-sm text-danger">{errors.type.message}</span>
         ) : null}
@@ -92,9 +115,27 @@ export default function TransactionCreateForm({
         <span className="text-sm text-ink-secondary">
           {TRANSACTION_CREATE_COPY.fields.category}
         </span>
-        <input {...register("category")} className={inputClassName} />
-        {errors.category ? (
-          <span className="text-sm text-danger">{errors.category.message}</span>
+        <Controller
+          name="category_id"
+          control={control}
+          render={({ field }) => (
+            <AppSearchableCombobox
+              value={field.value || null}
+              onValueChange={(value) => field.onChange(value ?? "")}
+              options={categoryOptions}
+              placeholder={TRANSACTION_CREATE_COPY.fields.categoryPlaceholder}
+              searchPlaceholder={TRANSACTION_CREATE_COPY.fields.categorySearch}
+              emptyMessage={TRANSACTION_CREATE_COPY.fields.categoryEmpty}
+              allowClear
+              clearLabel={TRANSACTION_CREATE_COPY.fields.categoryPlaceholder}
+              testId="transaction-category-combobox"
+            />
+          )}
+        />
+        {errors.category_id ? (
+          <span className="text-sm text-danger">
+            {errors.category_id.message}
+          </span>
         ) : null}
       </label>
       <label className="block space-y-1.5">

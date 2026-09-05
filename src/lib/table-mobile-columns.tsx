@@ -257,7 +257,7 @@ export const transactionsMobileColumns: MobileCardColumn<Transaction>[] = [
     priority: "primary",
     render: (transaction) => (
       <span className="font-medium text-ink">
-        {transaction.category ?? "Sin categoria"}
+        {transaction.category?.name ?? "Sin categoría"}
       </span>
     ),
   },

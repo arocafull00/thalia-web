@@ -6,6 +6,7 @@ import { useFinancesStore } from "@/stores/finances-store";
 import { useInventoryStore } from "@/stores/inventory-store";
 import { usePatientsStore } from "@/stores/patients-store";
 import { emptyQueryEntry } from "@/stores/query-state";
+import { useTransactionCategoriesStore } from "@/stores/transaction-categories-store";
 import { useTreatmentStore } from "@/stores/treatment-store";
 
 export function resetClinicQueryData() {
@@ -27,7 +28,6 @@ export function resetClinicQueryData() {
   });
   useFinancesStore.setState({
     byPage: {},
-    categoriesByRange: {},
     summaryByKey: {},
   });
   useInventoryStore.setState({
@@ -51,4 +51,5 @@ export function resetClinicQueryData() {
     categories: emptyQueryEntry(),
     byId: {},
   });
+  useTransactionCategoriesStore.setState({ byClinic: {}, mutating: false });
 }

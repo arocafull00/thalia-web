@@ -15,7 +15,7 @@ const transactionFieldsSchema = z.object({
     .string()
     .trim()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "La fecha no es válida."),
-  category: nullableTrimmedString(100, "La categoría es demasiado larga."),
+  category_id: uuidSchema("La categoría no es válida.").nullable(),
   description: nullableTrimmedString(500, "La descripción es demasiado larga."),
 });
 

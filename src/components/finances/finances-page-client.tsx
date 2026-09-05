@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
 import FinancesFilters from "@/components/finances/components/finances-filters";
@@ -43,7 +43,7 @@ import type {
   FinancialSummary,
   TransactionsPageQuery,
 } from "@/stores/finances-store";
-import type { Transaction } from "@/types/database.types";
+import type { Transaction, TransactionCategory } from "@/types/database.types";
 
 type FinancesPageClientProps = {
   initialMonth: string;
@@ -51,7 +51,7 @@ type FinancesPageClientProps = {
   initialTransactions: Transaction[];
   initialTotal: number;
   initialQuery: TransactionsPageQuery;
-  initialCategories: string[];
+  initialCategories: TransactionCategory[];
   initialSummary?: FinancialSummary;
   initialSummaryKey: string;
 };
@@ -115,6 +115,7 @@ export default function FinancesPageClient({
 
   const {
     categoryBreakdown,
+    categories,
     categoryOptions,
     fabType,
     isAdmin,
@@ -142,17 +143,31 @@ export default function FinancesPageClient({
   const dialog = useTransactionCreateDialog(
     fabType,
     () => setDialogOpen(false),
+    categories,
     editingTransaction,
   );
 
   const comboboxCategoryOptions = useMemo(
     () =>
       categoryOptions.map((category) => ({
-        label: category,
-        value: category,
+        label: `${category.name}${
+          category.is_active ? "" : FINANCES_COPY.categories.archivedSuffix
+        }`,
+        value: category.id,
       })),
     [categoryOptions],
   );
+
+  useEffect(() => {
+    if (
+      !filters.category ||
+      categoryOptions.some((category) => category.id === filters.category)
+    ) {
+      return;
+    }
+
+    setFilterAndResetPage("category", "");
+  }, [categoryOptions, filters.category, setFilterAndResetPage]);
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
     setDialogOpen(nextOpen);
@@ -189,6 +204,19 @@ export default function FinancesPageClient({
   };
 
   const handleTabChange = (nextTab: FinancesTabValue) => {
+    const selectedCategory = categories.find(
+      (category) => category.id === filters.category,
+    );
+
+    if (
+      selectedCategory &&
+      nextTab !== "summary" &&
+      selectedCategory.type !== nextTab
+    ) {
+      setFilters({ category: "", page: "", tab: nextTab });
+      return;
+    }
+
     setFilter("tab", nextTab);
   };
 
@@ -282,6 +310,9 @@ export default function FinancesPageClient({
               register={dialog.register}
               control={dialog.control}
               errors={dialog.errors}
+              type={dialog.type}
+              categoryOptions={dialog.categoryOptions}
+              onTypeChange={dialog.handleTypeChange}
             />
           </div>
           <AppDialogFooter>

@@ -1,12 +1,37 @@
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
-import type { Transaction, TransactionType } from "@/types/database.types";
+import type {
+  Transaction,
+  TransactionCategorySummary,
+  TransactionRow,
+  TransactionType,
+} from "@/types/database.types";
+
+const TRANSACTION_SELECT =
+  "id, clinic_id, appointment_id, type, category_id, amount, description, date, created_by, created_at, updated_at, category:transaction_categories!transactions_category_id_clinic_id_type_fkey(id, type, name, is_active)";
+
+type TransactionQueryRow = TransactionRow & {
+  category: TransactionCategorySummary | TransactionCategorySummary[] | null;
+};
+
+function normalizeTransaction(row: TransactionQueryRow): Transaction {
+  return {
+    ...row,
+    category: Array.isArray(row.category)
+      ? (row.category[0] ?? null)
+      : row.category,
+  };
+}
+
+function normalizeTransactions(rows: unknown): Transaction[] {
+  return (rows as TransactionQueryRow[]).map(normalizeTransaction);
+}
 
 export type TransactionInsert = {
   clinic_id: string;
   appointment_id: string | null;
   type: TransactionType;
-  category: string | null;
+  category_id: string | null;
   amount: number;
   description: string | null;
   date: string;
@@ -15,7 +40,7 @@ export type TransactionInsert = {
 
 export type TransactionUpdate = {
   type: TransactionType;
-  category: string | null;
+  category_id: string | null;
   amount: number;
   description: string | null;
   date: string;
@@ -26,7 +51,7 @@ export type TransactionPageParams = {
   from: string;
   to: string;
   type: TransactionType | "all";
-  category: string;
+  categoryId: string;
   search: string;
   page: number;
   pageSize: number;
@@ -41,10 +66,11 @@ export async function getTransactions(
   from: string,
   to: string,
   type: TransactionType | "all",
+  categoryId: string,
 ): Promise<Transaction[]> {
   let query = supabase
     .from("transactions")
-    .select("*")
+    .select(TRANSACTION_SELECT)
     .gte("date", from)
     .lte("date", to)
     .order("date", { ascending: false });
@@ -53,8 +79,12 @@ export async function getTransactions(
     query = query.eq("type", type);
   }
 
+  if (categoryId) {
+    query = query.eq("category_id", categoryId);
+  }
+
   const { data, error } = await query;
-  return unwrapSupabaseList(data, error) as Transaction[];
+  return normalizeTransactions(unwrapSupabaseList(data, error));
 }
 
 export async function insertTransaction(
@@ -63,9 +93,11 @@ export async function insertTransaction(
   const { data, error } = await supabase
     .from("transactions")
     .insert(input)
-    .select("*")
+    .select(TRANSACTION_SELECT)
     .single();
-  return unwrapSupabase(data, error) as Transaction;
+  return normalizeTransaction(
+    unwrapSupabase(data, error) as TransactionQueryRow,
+  );
 }
 
 export async function updateTransaction(
@@ -76,9 +108,11 @@ export async function updateTransaction(
     .from("transactions")
     .update(input)
     .eq("id", id)
-    .select("*")
+    .select(TRANSACTION_SELECT)
     .single();
-  return unwrapSupabase(data, error) as Transaction;
+  return normalizeTransaction(
+    unwrapSupabase(data, error) as TransactionQueryRow,
+  );
 }
 
 /**
@@ -94,7 +128,7 @@ export async function getTransactionsPage(
 
   let query = supabase
     .from("transactions")
-    .select("*", { count: "exact" })
+    .select(TRANSACTION_SELECT, { count: "exact" })
     .gte("date", params.from)
     .lte("date", params.to)
     .order("date", { ascending: false })
@@ -115,51 +149,20 @@ export async function getTransactionsPage(
     query = query.eq("type", params.type);
   }
 
-  if (params.category) {
-    query = query.eq("category", params.category);
+  if (params.categoryId) {
+    query = query.eq("category_id", params.categoryId);
   }
 
   const search = params.search.trim();
 
   if (search) {
-    query = query.or(
-      `description.ilike.%${search}%,category.ilike.%${search}%`,
-    );
+    query = query.ilike("description", `%${search}%`);
   }
 
   const { data, error, count } = await query;
 
   return {
-    transactions: unwrapSupabaseList(data, error) as Transaction[],
+    transactions: normalizeTransactions(unwrapSupabaseList(data, error)),
     total: count ?? 0,
   };
-}
-
-/**
- * Categorías presentes en el mes, para el desplegable de filtro.
- *
- * Consulta aparte a propósito: derivarlas de la página visible mostraría sólo
- * las de esas 20 filas y no se podría filtrar por el resto.
- */
-export async function getTransactionCategories(
-  clinicId: string | null,
-  from: string,
-  to: string,
-): Promise<string[]> {
-  let query = supabase
-    .from("transactions")
-    .select("category")
-    .gte("date", from)
-    .lte("date", to);
-
-  if (clinicId) {
-    query = query.eq("clinic_id", clinicId);
-  }
-
-  const { data, error } = await query;
-  const rows = unwrapSupabaseList(data, error) as { category: string | null }[];
-
-  return [
-    ...new Set(rows.map((row) => row.category).filter(Boolean) as string[]),
-  ].sort((left, right) => left.localeCompare(right, "es"));
 }

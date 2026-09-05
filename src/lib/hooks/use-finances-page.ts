@@ -9,16 +9,20 @@ import {
 import { useAuth } from "@/lib/hooks/use-auth";
 import {
   useFinancialSummary,
-  useTransactionCategories,
   useTransactionsPage,
 } from "@/lib/hooks/use-finances";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
+import { useTransactionCategories } from "@/lib/hooks/use-transaction-categories";
 import {
   summaryKey,
   type FinancialSummary,
   type TransactionsPageQuery,
 } from "@/stores/finances-store";
-import type { Transaction, TransactionType } from "@/types/database.types";
+import type {
+  Transaction,
+  TransactionCategory,
+  TransactionType,
+} from "@/types/database.types";
 
 function transactionTypeForTab(tab: FinancesTabValue): TransactionType | "all" {
   if (tab === "summary") {
@@ -40,7 +44,7 @@ type FinancesPageSeed = {
   initialTransactions?: Transaction[];
   initialTotal?: number;
   initialQuery?: TransactionsPageQuery;
-  initialCategories?: string[];
+  initialCategories?: TransactionCategory[];
   initialSummary?: FinancialSummary;
   initialSummaryKey?: string;
 };
@@ -62,7 +66,7 @@ export function useFinancesPage(
       from: range.from,
       to: range.to,
       type: transactionTypeForTab(tab),
-      category: filters.category,
+      categoryId: filters.category,
       search: filters.search,
       page: filters.page,
       pageSize: TRANSACTIONS_PAGE_SIZE,
@@ -76,22 +80,22 @@ export function useFinancesPage(
     initialQuery: seed?.initialQuery,
   });
 
-  // Las categorías no dependen de la página ni del filtro: se piden una vez
-  // por mes. Derivarlas de las 20 filas visibles dejaría fuera las demás y no
-  // habría forma de filtrar por ellas.
-  const categoryOptions = useTransactionCategories(
-    range.from,
-    range.to,
-    seed?.initialCategories,
+  const { categories } = useTransactionCategories(seed?.initialCategories);
+  const categoryOptions = useMemo(
+    () =>
+      categories.filter(
+        (category) => tab === "summary" || category.type === tab,
+      ),
+    [categories, tab],
   );
 
-  const summaryKeyValue = summaryKey(month);
+  const summaryKeyValue = summaryKey(month, filters.category);
   const seededSummary = useServerSeed(
     summaryKeyValue,
     seed?.initialSummaryKey ?? "",
     seed?.initialSummary,
   );
-  const summary = useFinancialSummary(month, seededSummary);
+  const summary = useFinancialSummary(month, filters.category, seededSummary);
 
   // El desglose por categoría se calcula ahora en el resumen, sobre el mes
   // completo. Antes salía del array de transacciones, que ya sólo es la página.
@@ -109,6 +113,7 @@ export function useFinancesPage(
   return {
     categoryBreakdown,
     categoryOptions,
+    categories,
     fabType,
     isAdmin,
     listData,

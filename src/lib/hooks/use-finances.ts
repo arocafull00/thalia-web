@@ -91,49 +91,12 @@ export function useTransactionsPage(
   };
 }
 
-/** Categorías del mes, para el desplegable de filtro. */
-export function useTransactionCategories(
-  from: string,
-  to: string,
-  initialData?: string[],
-) {
-  const key = `${from}:${to}`;
-  const entry = useFinancesStore((state) => state.categoriesByRange[key]);
-  const fetchTransactionCategories = useFinancesStore(
-    (state) => state.fetchTransactionCategories,
-  );
-  const seedTransactionCategories = useFinancesStore(
-    (state) => state.seedTransactionCategories,
-  );
-  const hasClientData = entry?.data != null;
-
-  useEffect(() => {
-    if (initialData === undefined || hasClientData) {
-      return;
-    }
-
-    seedTransactionCategories(from, to, initialData);
-  }, [from, hasClientData, initialData, seedTransactionCategories, to]);
-
-  useEffect(() => {
-    if (initialData !== undefined) {
-      return;
-    }
-
-    void fetchTransactionCategories(from, to);
-  }, [fetchTransactionCategories, from, initialData, to]);
-
-  return useMemo(
-    () => entry?.data ?? initialData ?? [],
-    [entry?.data, initialData],
-  );
-}
-
 export function useFinancialSummary(
   month: Date,
+  categoryId: string,
   initialData?: FinancialSummary,
 ) {
-  const key = summaryKey(month);
+  const key = summaryKey(month, categoryId);
   const entry = useFinancesStore((state) => state.summaryByKey[key]);
   const fetchFinancialSummary = useFinancesStore(
     (state) => state.fetchFinancialSummary,
@@ -150,16 +113,16 @@ export function useFinancialSummary(
       return;
     }
 
-    seedFinancialSummary(month, seededData);
-  }, [hasClientData, month, seedFinancialSummary, seededData]);
+    seedFinancialSummary(month, categoryId, seededData);
+  }, [categoryId, hasClientData, month, seedFinancialSummary, seededData]);
 
   useEffect(() => {
     if (seededData !== undefined) {
       return;
     }
 
-    void fetchFinancialSummary(month);
-  }, [clinicId, fetchFinancialSummary, key, month, seededData]);
+    void fetchFinancialSummary(month, categoryId);
+  }, [categoryId, clinicId, fetchFinancialSummary, key, month, seededData]);
 
   const data = entry?.data ?? seededData;
 

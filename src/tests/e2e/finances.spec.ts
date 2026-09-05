@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { format } from "date-fns";
 
-import { clickTopbarTrigger } from "./e2e-helpers";
+import { clickTopbarTrigger, selectComboboxOption } from "./e2e-helpers";
 
 test("crea un ingreso", async ({ page }) => {
   const suffix = Date.now();
   const description = `E2E Ingreso ${suffix}`;
-  const category = `E2E Categoría ${suffix}`;
+  const category = "Productos";
   const today = format(new Date(), "yyyy-MM-dd");
 
   await page.goto("/finances");
@@ -16,7 +16,11 @@ test("crea un ingreso", async ({ page }) => {
   const dialog = page.getByRole("dialog", { name: "Nuevo movimiento" });
   await dialog.getByLabel(/Importe/).fill("120.50");
   await dialog.getByLabel("Editar fecha manualmente").fill(today);
-  await dialog.getByLabel(/Categoría/).fill(category);
+  await selectComboboxOption(
+    page,
+    dialog.getByTestId("transaction-category-combobox"),
+    category,
+  );
   await dialog.getByLabel(/Descripción/).fill(description);
   await page.getByTestId("transaction-create-submit").click();
 

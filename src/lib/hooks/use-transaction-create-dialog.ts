@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, parseISO } from "date-fns";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
@@ -17,7 +17,11 @@ import {
   transactionUpdateSchema,
 } from "@/lib/schemas/transaction-schema";
 import { notifySuccess } from "@/lib/sound";
-import type { Transaction, TransactionType } from "@/types/database.types";
+import type {
+  Transaction,
+  TransactionCategory,
+  TransactionType,
+} from "@/types/database.types";
 
 const transactionFormSchema = z.object({
   type: z.enum(["income", "expense"]),
@@ -25,7 +29,7 @@ const transactionFormSchema = z.object({
     .number({ message: "El importe no es válido." })
     .positive("El importe debe ser mayor que cero."),
   date: z.date(),
-  category: z.string(),
+  category_id: z.string(),
   description: z.string(),
 });
 
@@ -40,7 +44,7 @@ function createDefaultValues(
       type: transaction.type,
       amount: transaction.amount,
       date: transaction.date ? parseISO(transaction.date) : new Date(),
-      category: transaction.category ?? "",
+      category_id: transaction.category_id ?? "",
       description: transaction.description ?? "",
     };
   }
@@ -49,7 +53,7 @@ function createDefaultValues(
     type,
     amount: "",
     date: new Date(),
-    category: "",
+    category_id: "",
     description: "",
   };
 }
@@ -57,6 +61,7 @@ function createDefaultValues(
 export function useTransactionCreateDialog(
   initialType: TransactionType,
   onSuccess: () => void,
+  categories: TransactionCategory[],
   transaction: Transaction | null = null,
 ) {
   const clinicId = useClinicId();
@@ -74,11 +79,32 @@ export function useTransactionCreateDialog(
     reset,
     setError,
     clearErrors,
+    getValues,
+    setValue,
     formState: { errors, isDirty, isSubmitting },
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: createDefaultValues(initialType, transaction),
   });
+  const type = useWatch({ control, name: "type" });
+  const categoryOptions = useMemo(
+    () =>
+      categories
+        .filter(
+          (category) =>
+            category.type === type &&
+            (category.is_active || category.id === transaction?.category_id),
+        )
+        .map((category) => ({
+          label: `${category.name}${
+            category.is_active
+              ? ""
+              : TRANSACTION_CREATE_COPY.fields.archivedSuffix
+          }`,
+          value: category.id,
+        })),
+    [categories, transaction?.category_id, type],
+  );
 
   useEffect(() => {
     reset(createDefaultValues(initialType, transaction));
@@ -86,6 +112,17 @@ export function useTransactionCreateDialog(
 
   const prepare = (type: TransactionType) => {
     reset(createDefaultValues(type));
+  };
+
+  const handleTypeChange = (nextType: TransactionType) => {
+    const selectedCategory = categories.find(
+      (category) => category.id === getValues("category_id"),
+    );
+    setValue("type", nextType, { shouldDirty: true });
+
+    if (selectedCategory?.type !== nextType) {
+      setValue("category_id", "", { shouldDirty: true });
+    }
   };
 
   const onSubmit = handleSubmit((data) => {
@@ -98,7 +135,7 @@ export function useTransactionCreateDialog(
         type: data.type,
         amount: data.amount,
         date: formattedDate,
-        category: data.category,
+        category_id: data.category_id || null,
         description: data.description,
       });
 
@@ -143,7 +180,7 @@ export function useTransactionCreateDialog(
       type: data.type,
       amount: data.amount,
       date: formattedDate,
-      category: data.category,
+      category_id: data.category_id || null,
       description: data.description,
     });
 
@@ -169,12 +206,15 @@ export function useTransactionCreateDialog(
   return {
     register,
     control,
+    categoryOptions,
     errors,
     isDirty,
     isEditing,
     isPending: isCreating || isUpdating || isSubmitting,
+    handleTypeChange,
     prepare,
     reset: () => reset(createDefaultValues(initialType, transaction)),
     handleSubmit: onSubmit,
+    type,
   };
 }

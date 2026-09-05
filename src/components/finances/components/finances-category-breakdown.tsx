@@ -2,7 +2,9 @@ import FinancesCategoryRow from "@/components/finances/components/finances-categ
 import { FINANCES_COPY } from "@/copy/finances-copy";
 
 type CategoryBreakdownItem = {
+  categoryId: string | null;
   category: string;
+  type: "income" | "expense";
   percent: number;
 };
 
@@ -26,7 +28,7 @@ export default function FinancesCategoryBreakdown({
         <div className="divide-y divide-border-subtle">
           {items.map((item) => (
             <FinancesCategoryRow
-              key={item.category}
+              key={item.categoryId ?? `${item.type}:uncategorized`}
               category={item.category}
               percent={item.percent}
             />

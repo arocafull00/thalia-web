@@ -2,7 +2,6 @@ import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { create } from "zustand";
 
 import {
-  getTransactionCategories,
   getTransactions,
   getTransactionsPage,
   insertTransaction,
@@ -25,7 +24,7 @@ export type TransactionInput = {
   clinic_id: string;
   appointment_id: string | null;
   type: TransactionType;
-  category: string | null;
+  category_id: string | null;
   amount: number;
   description: string | null;
   date: string;
@@ -34,14 +33,16 @@ export type TransactionInput = {
 
 export type TransactionUpdatePayload = {
   type: TransactionType;
-  category: string | null;
+  category_id: string | null;
   amount: number;
   description: string | null;
   date: string;
 };
 
 export type CategoryBreakdownEntry = {
+  categoryId: string | null;
   category: string;
+  type: TransactionType;
   amount: number;
   percent: number;
 };
@@ -68,15 +69,15 @@ export function transactionsPageKey(query: TransactionsPageQuery) {
     from: query.from,
     to: query.to,
     type: query.type,
-    category: query.category,
+    categoryId: query.categoryId,
     search: query.search.trim().toLowerCase(),
     page: query.page,
     pageSize: query.pageSize,
   });
 }
 
-function summaryKey(month: Date) {
-  return format(month, "yyyy-MM");
+function summaryKey(month: Date, categoryId: string) {
+  return `${format(month, "yyyy-MM")}:${categoryId}`;
 }
 
 async function refreshFinancesCaches(get: () => FinancesStore) {
@@ -87,25 +88,17 @@ async function refreshFinancesCaches(get: () => FinancesStore) {
     ),
   );
 
-  const categoryKeys = Object.keys(get().categoriesByRange);
-  await Promise.all(
-    categoryKeys.map((key) => {
-      const [from, to] = key.split(":");
-      return get().fetchTransactionCategories(from, to);
-    }),
-  );
-
   const summaryKeys = Object.keys(get().summaryByKey);
   await Promise.all(
-    summaryKeys.map((key) =>
-      get().fetchFinancialSummary(new Date(`${key}-01`)),
-    ),
+    summaryKeys.map((key) => {
+      const [month, categoryId = ""] = key.split(":");
+      return get().fetchFinancialSummary(new Date(`${month}-01`), categoryId);
+    }),
   );
 }
 
 type FinancesStore = {
   byPage: Record<string, QueryEntry<TransactionPageResult>>;
-  categoriesByRange: Record<string, QueryEntry<string[]>>;
   summaryByKey: Record<string, QueryEntry<FinancialSummary>>;
   creating: boolean;
   createError: Error | null;
@@ -114,14 +107,13 @@ type FinancesStore = {
     query: TransactionsPageQuery,
     result: TransactionPageResult,
   ) => void;
-  fetchTransactionCategories: (from: string, to: string) => Promise<void>;
-  seedTransactionCategories: (
-    from: string,
-    to: string,
-    categories: string[],
+  fetchFinancialSummary: (month: Date, categoryId: string) => Promise<void>;
+  seedFinancialSummary: (
+    month: Date,
+    categoryId: string,
+    summary: FinancialSummary,
   ) => void;
-  fetchFinancialSummary: (month: Date) => Promise<void>;
-  seedFinancialSummary: (month: Date, summary: FinancialSummary) => void;
+  invalidateCaches: () => void;
   createTransaction: (input: TransactionInput) => Promise<Transaction>;
   updateTransaction: (
     id: string,
@@ -131,13 +123,12 @@ type FinancesStore = {
 
 export const useFinancesStore = create<FinancesStore>((set, get) => ({
   byPage: {},
-  categoriesByRange: {},
   summaryByKey: {},
   creating: false,
   createError: null,
 
-  seedFinancialSummary: (month, summary) => {
-    const key = summaryKey(month);
+  seedFinancialSummary: (month, categoryId, summary) => {
+    const key = summaryKey(month, categoryId);
 
     set((state) => {
       if (state.summaryByKey[key]?.data != null) {
@@ -196,65 +187,8 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
     }
   },
 
-  seedTransactionCategories: (from, to, categories) => {
-    const key = `${from}:${to}`;
-
-    set((state) => {
-      if (state.categoriesByRange[key]?.data != null) {
-        return state;
-      }
-
-      return {
-        categoriesByRange: {
-          ...state.categoriesByRange,
-          [key]: successQueryEntry(categories),
-        },
-      };
-    });
-  },
-
-  fetchTransactionCategories: async (from, to) => {
-    const key = `${from}:${to}`;
-    const previous = get().categoriesByRange[key];
-    set({
-      categoriesByRange: {
-        ...get().categoriesByRange,
-        [key]: loadingQueryEntry(previous),
-      },
-    });
-
-    try {
-      const categories = await getTransactionCategories(
-        getActiveClinicId(),
-        from,
-        to,
-      );
-      set({
-        categoriesByRange: {
-          ...get().categoriesByRange,
-          [key]: successQueryEntry(categories),
-        },
-      });
-    } catch (cause) {
-      logger.captureException(cause, {
-        store: "finances-store",
-        action: "fetchTransactionCategories",
-        range: key,
-      });
-      set({
-        categoriesByRange: {
-          ...get().categoriesByRange,
-          [key]: errorQueryEntry(
-            cause instanceof Error ? cause : new Error(String(cause)),
-            previous,
-          ),
-        },
-      });
-    }
-  },
-
-  fetchFinancialSummary: async (month) => {
-    const key = summaryKey(month);
+  fetchFinancialSummary: async (month, categoryId) => {
+    const key = summaryKey(month, categoryId);
     const previous = get().summaryByKey[key];
     set({
       summaryByKey: {
@@ -271,8 +205,8 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       const previousTo = format(endOfMonth(previousMonth), "yyyy-MM-dd");
 
       const [current, previousTransactions] = await Promise.all([
-        getTransactions(currentFrom, currentTo, "all"),
-        getTransactions(previousFrom, previousTo, "all"),
+        getTransactions(currentFrom, currentTo, "all", categoryId),
+        getTransactions(previousFrom, previousTo, "all", categoryId),
       ]);
       const summary = buildFinancialSummary(current, previousTransactions);
 
@@ -299,6 +233,8 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       });
     }
   },
+
+  invalidateCaches: () => set({ byPage: {}, summaryByKey: {} }),
 
   createTransaction: async (input) => {
     set({ creating: true, createError: null });
@@ -352,7 +288,7 @@ export function transactionsToCsv(transactions: Transaction[]) {
     rows.push([
       transaction.date ?? "",
       transaction.type,
-      transaction.category ?? "",
+      transaction.category?.name ?? "",
       String(transaction.amount),
       transaction.description ?? "",
     ]);

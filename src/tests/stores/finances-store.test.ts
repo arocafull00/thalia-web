@@ -11,9 +11,9 @@ import { CLINIC_ID } from "@/tests/mocks";
 
 vi.mock("@/dal/finances.dal", () => ({
   getTransactionsPage: vi.fn(),
-  getTransactionCategories: vi.fn(),
   getTransactions: vi.fn(),
   insertTransaction: vi.fn(),
+  updateTransaction: vi.fn(),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -26,7 +26,13 @@ const jan3 = {
   id: "t1",
   clinic_id: CLINIC_ID,
   type: "income" as const,
-  category: "Consulta",
+  category_id: "cat-consulta",
+  category: {
+    id: "cat-consulta",
+    type: "income" as const,
+    name: "Consulta",
+    is_active: true,
+  },
   amount: 100,
   description: null,
   date: "2024-01-03",
@@ -39,7 +45,13 @@ const jan10 = {
   id: "t2",
   clinic_id: CLINIC_ID,
   type: "expense" as const,
-  category: "Material",
+  category_id: "cat-material",
+  category: {
+    id: "cat-material",
+    type: "expense" as const,
+    name: "Material",
+    is_active: true,
+  },
   amount: 50,
   description: null,
   date: "2024-01-10",
@@ -52,7 +64,13 @@ const jan15 = {
   id: "t3",
   clinic_id: CLINIC_ID,
   type: "income" as const,
-  category: "Tratamiento",
+  category_id: "cat-tratamiento",
+  category: {
+    id: "cat-tratamiento",
+    type: "income" as const,
+    name: "Tratamiento",
+    is_active: true,
+  },
   amount: 200,
   description: null,
   date: "2024-01-15",
@@ -65,7 +83,13 @@ const jan22 = {
   id: "t4",
   clinic_id: CLINIC_ID,
   type: "expense" as const,
-  category: "Limpieza",
+  category_id: "cat-limpieza",
+  category: {
+    id: "cat-limpieza",
+    type: "expense" as const,
+    name: "Limpieza",
+    is_active: true,
+  },
   amount: 30,
   description: null,
   date: "2024-01-22",
@@ -78,7 +102,13 @@ const jan29 = {
   id: "t5",
   clinic_id: CLINIC_ID,
   type: "income" as const,
-  category: "Consulta",
+  category_id: "cat-consulta",
+  category: {
+    id: "cat-consulta",
+    type: "income" as const,
+    name: "Consulta",
+    is_active: true,
+  },
   amount: 75,
   description: null,
   date: "2024-01-29",
@@ -94,7 +124,13 @@ const decIncome = {
   id: "t6",
   clinic_id: CLINIC_ID,
   type: "income" as const,
-  category: "Consulta",
+  category_id: "cat-consulta",
+  category: {
+    id: "cat-consulta",
+    type: "income" as const,
+    name: "Consulta",
+    is_active: true,
+  },
   amount: 500,
   description: null,
   date: "2023-12-15",
@@ -107,7 +143,13 @@ const decExpense = {
   id: "t7",
   clinic_id: CLINIC_ID,
   type: "expense" as const,
-  category: "Alquiler",
+  category_id: "cat-alquiler",
+  category: {
+    id: "cat-alquiler",
+    type: "expense" as const,
+    name: "Alquiler",
+    is_active: true,
+  },
   amount: 100,
   description: null,
   date: "2023-12-20",
@@ -122,7 +164,13 @@ const mockTransaction = {
   id: "t-new",
   clinic_id: CLINIC_ID,
   type: "income" as const,
-  category: "Nueva",
+  category_id: "cat-nueva",
+  category: {
+    id: "cat-nueva",
+    type: "income" as const,
+    name: "Nueva",
+    is_active: true,
+  },
   amount: 300,
   description: "extra",
   date: "2024-06-15",
@@ -134,7 +182,6 @@ const mockTransaction = {
 
 const initialState = {
   byPage: {},
-  categoriesByRange: {},
   summaryByKey: {},
   creating: false,
   createError: null,
@@ -148,7 +195,6 @@ describe("finances-store", () => {
   it("has correct initial state", () => {
     const state = useFinancesStore.getState();
     expect(state.byPage).toEqual({});
-    expect(state.categoriesByRange).toEqual({});
     expect(state.summaryByKey).toEqual({});
     expect(state.creating).toBe(false);
     expect(state.createError).toBeNull();
@@ -159,7 +205,7 @@ describe("finances-store", () => {
       from: "2024-01-01",
       to: "2024-01-31",
       type: "all" as const,
-      category: "",
+      categoryId: "",
       search: "",
       page: 0,
       pageSize: 20,
@@ -207,6 +253,34 @@ describe("finances-store", () => {
   });
 
   describe("fetchFinancialSummary", () => {
+    it("applies the category to current and previous month metrics", async () => {
+      vi.mocked(financesDal.getTransactions).mockResolvedValue([]);
+
+      await useFinancesStore
+        .getState()
+        .fetchFinancialSummary(new Date("2024-01-01"), "cat-consulta");
+
+      expect(financesDal.getTransactions).toHaveBeenNthCalledWith(
+        1,
+        "2024-01-01",
+        "2024-01-31",
+        "all",
+        "cat-consulta",
+      );
+      expect(financesDal.getTransactions).toHaveBeenNthCalledWith(
+        2,
+        "2023-12-01",
+        "2023-12-31",
+        "all",
+        "cat-consulta",
+      );
+      expect(
+        useFinancesStore.getState().summaryByKey[
+          summaryKey(new Date("2024-01-01"), "cat-consulta")
+        ].error,
+      ).toBeNull();
+    });
+
     it("computes summary with correct aggregation", async () => {
       vi.mocked(financesDal.getTransactions).mockResolvedValueOnce(
         janTransactions as never,
@@ -217,9 +291,9 @@ describe("finances-store", () => {
 
       await useFinancesStore
         .getState()
-        .fetchFinancialSummary(new Date("2024-01-01"));
+        .fetchFinancialSummary(new Date("2024-01-01"), "");
 
-      const key = summaryKey(new Date("2024-01-01"));
+      const key = summaryKey(new Date("2024-01-01"), "");
       const entry = useFinancesStore.getState().summaryByKey[key];
 
       expect(entry.data?.income).toBe(375);
@@ -238,9 +312,9 @@ describe("finances-store", () => {
 
       await useFinancesStore
         .getState()
-        .fetchFinancialSummary(new Date("2024-01-01"));
+        .fetchFinancialSummary(new Date("2024-01-01"), "");
 
-      const key = summaryKey(new Date("2024-01-01"));
+      const key = summaryKey(new Date("2024-01-01"), "");
       const { weekly } = useFinancesStore.getState().summaryByKey[key].data!;
 
       expect(weekly[0]).toEqual({ week: 1, income: 100, expenses: 0 });
@@ -257,9 +331,9 @@ describe("finances-store", () => {
 
       await useFinancesStore
         .getState()
-        .fetchFinancialSummary(new Date("2024-01-01"));
+        .fetchFinancialSummary(new Date("2024-01-01"), "");
 
-      const key = summaryKey(new Date("2024-01-01"));
+      const key = summaryKey(new Date("2024-01-01"), "");
       const entry = useFinancesStore.getState().summaryByKey[key];
       expect(entry.error).toBeTruthy();
       expect(entry.loading).toBe(false);
@@ -272,24 +346,17 @@ describe("finances-store", () => {
         from: "2024-06-01",
         to: "2024-06-30",
         type: "all" as const,
-        category: "",
+        categoryId: "",
         search: "",
         page: 0,
         pageSize: 20,
       };
-      const sumKey = summaryKey(JUN_2024);
+      const sumKey = summaryKey(JUN_2024, "");
 
       useFinancesStore.setState({
         byPage: {
           [transactionsPageKey(pageQuery)]: {
             data: { transactions: [], total: 0 },
-            loading: false,
-            error: null,
-          },
-        },
-        categoriesByRange: {
-          "2024-06-01:2024-06-30": {
-            data: ["Vieja"],
             loading: false,
             error: null,
           },
@@ -319,16 +386,11 @@ describe("finances-store", () => {
         transactions: [],
         total: 1,
       });
-      vi.mocked(financesDal.getTransactionCategories).mockResolvedValue([
-        "Vieja",
-        "Nueva",
-      ]);
-
       await useFinancesStore.getState().createTransaction({
         clinic_id: CLINIC_ID,
         appointment_id: null,
         type: "income",
-        category: "Nueva",
+        category_id: "cat-nueva",
         amount: 300,
         description: "extra",
         date: "2024-06-15",
@@ -336,10 +398,7 @@ describe("finances-store", () => {
       });
 
       expect(financesDal.insertTransaction).toHaveBeenCalled();
-      // La página en caché, sus categorías y el resumen se releen: el total
-      // cambia al insertar y la categoría nueva tiene que aparecer en el filtro.
       expect(financesDal.getTransactionsPage).toHaveBeenCalled();
-      expect(financesDal.getTransactionCategories).toHaveBeenCalled();
       expect(financesDal.getTransactions).toHaveBeenCalledTimes(2);
       expect(useFinancesStore.getState().creating).toBe(false);
       expect(useFinancesStore.getState().createError).toBeNull();
@@ -355,7 +414,7 @@ describe("finances-store", () => {
           clinic_id: CLINIC_ID,
           appointment_id: null,
           type: "income",
-          category: null,
+          category_id: null,
           amount: 100,
           description: null,
           date: "2024-06-15",
@@ -374,7 +433,7 @@ describe("finances-store", () => {
         from: "2024-06-01",
         to: "2024-06-30",
         type: "all" as const,
-        category: "",
+        categoryId: "",
         page: 0,
         pageSize: 20,
       };
@@ -389,7 +448,7 @@ describe("finances-store", () => {
         from: "2024-06-01",
         to: "2024-06-30",
         type: "all" as const,
-        category: "",
+        categoryId: "",
         search: "",
         pageSize: 20,
       };
@@ -398,7 +457,7 @@ describe("finances-store", () => {
         transactionsPageKey({ ...base, page: 1 }),
       );
       expect(transactionsPageKey({ ...base, page: 0 })).not.toBe(
-        transactionsPageKey({ ...base, page: 0, category: "Luz" }),
+        transactionsPageKey({ ...base, page: 0, categoryId: "cat-luz" }),
       );
     });
   });

@@ -26,6 +26,7 @@ export const FINANCES_COPY = {
   categories: {
     title: "Desglose por categoría",
     empty: "Sin movimientos categorizados.",
+    archivedSuffix: " (Archivada)",
   },
   movements: {
     title: "Movimientos recientes",

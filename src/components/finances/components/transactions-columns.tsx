@@ -20,18 +20,19 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: "category",
+    id: "category",
+    accessorFn: (transaction) => transaction.category?.name ?? "",
     header: ({ column }) => (
       <SortableTableHead column={column} title="Categoria" />
     ),
     cell: ({ row }) => (
       <span className="font-medium text-ink">
-        {row.getValue("category") ?? "Sin categoria"}
+        {row.original.category?.name ?? "Sin categoría"}
       </span>
     ),
     sortingFn: (left, right) => {
-      const leftCategory = (left.original.category ?? "").toLowerCase();
-      const rightCategory = (right.original.category ?? "").toLowerCase();
+      const leftCategory = (left.original.category?.name ?? "").toLowerCase();
+      const rightCategory = (right.original.category?.name ?? "").toLowerCase();
       return leftCategory.localeCompare(rightCategory, "es");
     },
   },

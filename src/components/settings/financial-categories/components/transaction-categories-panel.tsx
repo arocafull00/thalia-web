@@ -4,12 +4,14 @@ import TransactionCategoryGroup from "@/components/settings/financial-categories
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { TRANSACTION_CATEGORIES_COPY } from "@/copy/transaction-categories-copy";
+import { cn } from "@/lib/utils";
 import type {
   TransactionCategory,
   TransactionType,
 } from "@/types/database.types";
 
 type TransactionCategoriesPanelProps = {
+  className?: string;
   disabled: boolean;
   error: Error | null;
   expenseActive: TransactionCategory[];
@@ -24,6 +26,7 @@ type TransactionCategoriesPanelProps = {
 };
 
 export default function TransactionCategoriesPanel({
+  className,
   disabled,
   error,
   expenseActive,
@@ -37,7 +40,10 @@ export default function TransactionCategoriesPanel({
   onRestore,
 }: TransactionCategoriesPanelProps) {
   return (
-    <section className="mt-8" aria-labelledby="transaction-categories-heading">
+    <section
+      className={cn("mt-8", className)}
+      aria-labelledby="transaction-categories-heading"
+    >
       <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border-subtle pb-4">
         <div>
           <h2

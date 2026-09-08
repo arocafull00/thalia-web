@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
+import FinancesCategoryManagementDialogs from "@/components/finances/components/finances-category-management-dialogs";
 import FinancesFilters from "@/components/finances/components/finances-filters";
 import FinancesFiltersSheet from "@/components/finances/components/finances-filters-sheet";
 import FinancesMovementsSection from "@/components/finances/components/finances-movements-section";
@@ -14,6 +15,7 @@ import FinancesMonthSelector, {
   financesMonthToParam,
 } from "@/components/finances/finances-month-selector";
 import type { FinancesTabValue } from "@/components/finances/finances-tab-bar";
+import { useTransactionCategoriesManager } from "@/components/settings/financial-categories/hooks/use-transaction-categories-manager";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -72,6 +74,7 @@ export default function FinancesPageClient({
   >(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
+  const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
   const filterDefaults = useMemo(
     () => ({
       category: "",
@@ -146,6 +149,13 @@ export default function FinancesPageClient({
     categories,
     editingTransaction,
   );
+  const categoryManager = useTransactionCategoriesManager(initialCategories, {
+    onCreated: (category) => {
+      if (dialogOpen && category.type === dialog.type) {
+        dialog.selectCategory(category.id);
+      }
+    },
+  });
 
   const comboboxCategoryOptions = useMemo(
     () =>
@@ -197,6 +207,14 @@ export default function FinancesPageClient({
   const handleOpenFiltersSheet = () => {
     setSheetKey((key) => key + 1);
     setSheetOpen(true);
+  };
+
+  const handleOpenMovementCategoryCreate = () => {
+    categoryManager.openCreate(dialog.type);
+  };
+
+  const handleOpenSummaryCategoryCreate = () => {
+    categoryManager.openCreate(fabType);
   };
 
   const handleMonthChange = (nextMonth: Date) => {
@@ -271,7 +289,12 @@ export default function FinancesPageClient({
             <FinancesSummaryMetrics summary={summary.data} />
             <div className="grid gap-8 py-4 xl:grid-cols-[1.8fr_1fr]">
               <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
-              <FinancesCategoryBreakdown items={categoryBreakdown} />
+              <FinancesCategoryBreakdown
+                items={categoryBreakdown}
+                disabled={categoryManager.isPending}
+                onCreateCategory={handleOpenSummaryCategoryCreate}
+                onManageCategories={() => setCategoryManagerOpen(true)}
+              />
             </div>
           </>
         ) : null}
@@ -312,6 +335,7 @@ export default function FinancesPageClient({
               errors={dialog.errors}
               type={dialog.type}
               categoryOptions={dialog.categoryOptions}
+              onCreateCategory={handleOpenMovementCategoryCreate}
               onTypeChange={dialog.handleTypeChange}
             />
           </div>
@@ -342,6 +366,11 @@ export default function FinancesPageClient({
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      <FinancesCategoryManagementDialogs
+        manager={categoryManager}
+        open={categoryManagerOpen}
+        onOpenChange={setCategoryManagerOpen}
+      />
       <FinancesFiltersSheet
         key={sheetKey}
         open={sheetOpen}

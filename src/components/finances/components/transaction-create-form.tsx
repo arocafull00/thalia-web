@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import {
   Controller,
   type Control,
@@ -10,6 +11,7 @@ import AppDialogError from "@/components/ui/app-dialog-error";
 import AppSearchableCombobox, {
   type AppSearchableComboboxOption,
 } from "@/components/ui/app-searchable-combobox";
+import { Button } from "@/components/ui/button";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
 import type { TransactionFormValues } from "@/lib/hooks/use-transaction-create-dialog";
 import type { TransactionType } from "@/types/database.types";
@@ -28,6 +30,7 @@ type TransactionCreateFormProps = {
   errors: FieldErrors<TransactionFormValues>;
   type: TransactionType;
   categoryOptions: AppSearchableComboboxOption[];
+  onCreateCategory: () => void;
   onTypeChange: (type: TransactionType) => void;
 };
 
@@ -37,6 +40,7 @@ export default function TransactionCreateForm({
   errors,
   type,
   categoryOptions,
+  onCreateCategory,
   onTypeChange,
 }: TransactionCreateFormProps) {
   return (
@@ -111,10 +115,23 @@ export default function TransactionCreateForm({
           ) : null}
         </label>
       </div>
-      <label className="block space-y-1.5">
-        <span className="text-sm text-ink-secondary">
-          {TRANSACTION_CREATE_COPY.fields.category}
-        </span>
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm text-ink-secondary">
+            {TRANSACTION_CREATE_COPY.fields.category}
+          </span>
+          <Button
+            type="button"
+            variant="link"
+            size="xs"
+            onClick={onCreateCategory}
+            data-testid="transaction-category-create-trigger"
+            className="gap-1 text-xs no-underline"
+          >
+            <Plus aria-hidden="true" />
+            {TRANSACTION_CREATE_COPY.actions.newCategory}
+          </Button>
+        </div>
         <Controller
           name="category_id"
           control={control}
@@ -128,6 +145,7 @@ export default function TransactionCreateForm({
               emptyMessage={TRANSACTION_CREATE_COPY.fields.categoryEmpty}
               allowClear
               clearLabel={TRANSACTION_CREATE_COPY.fields.categoryPlaceholder}
+              ariaLabel={TRANSACTION_CREATE_COPY.fields.category}
               testId="transaction-category-combobox"
             />
           )}
@@ -137,7 +155,7 @@ export default function TransactionCreateForm({
             {errors.category_id.message}
           </span>
         ) : null}
-      </label>
+      </div>
       <label className="block space-y-1.5">
         <span className="text-sm text-ink-secondary">
           {TRANSACTION_CREATE_COPY.fields.description}

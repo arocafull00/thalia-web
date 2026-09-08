@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { format } from "date-fns";
 
-import { clickTopbarTrigger, selectComboboxOption } from "./e2e-helpers";
+import { clickTopbarTrigger } from "./e2e-helpers";
 
 test("crea un ingreso", async ({ page }) => {
   const suffix = Date.now();
   const description = `E2E Ingreso ${suffix}`;
-  const category = "Productos";
+  const category = `E2E Categoría ${suffix}`;
   const today = format(new Date(), "yyyy-MM-dd");
 
   await page.goto("/finances");
@@ -14,13 +14,22 @@ test("crea un ingreso", async ({ page }) => {
   await clickTopbarTrigger(page, "transaction-create-trigger");
 
   const dialog = page.getByRole("dialog", { name: "Nuevo movimiento" });
-  await dialog.getByLabel(/Importe/).fill("120.50");
-  await dialog.getByLabel("Editar fecha manualmente").fill(today);
-  await selectComboboxOption(
-    page,
-    dialog.getByTestId("transaction-category-combobox"),
+  await dialog.getByTestId("transaction-category-create-trigger").click();
+
+  const categoryDialog = page.getByRole("dialog", {
+    name: "Nueva categoría",
+  });
+  await categoryDialog.getByLabel("Nombre").fill(category);
+  await categoryDialog.getByRole("button", { name: "Guardar" }).click();
+
+  await expect(categoryDialog).toBeHidden({ timeout: 15_000 });
+  await expect(page.getByText("Categoría creada correctamente.")).toBeVisible();
+  await expect(dialog.getByTestId("transaction-category-combobox")).toHaveText(
     category,
   );
+
+  await dialog.getByLabel(/Importe/).fill("120.50");
+  await dialog.getByLabel("Editar fecha manualmente").fill(today);
   await dialog.getByLabel(/Descripción/).fill(description);
   await page.getByTestId("transaction-create-submit").click();
 

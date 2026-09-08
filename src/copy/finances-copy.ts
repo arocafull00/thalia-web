@@ -25,6 +25,11 @@ export const FINANCES_COPY = {
   },
   categories: {
     title: "Desglose por categoría",
+    new: "Nueva categoría",
+    manage: "Gestionar",
+    manageTitle: "Gestionar categorías financieras",
+    manageDescription:
+      "Crea, renombra, archiva o restaura las categorías de la clínica.",
     empty: "Sin movimientos categorizados.",
     archivedSuffix: " (Archivada)",
   },

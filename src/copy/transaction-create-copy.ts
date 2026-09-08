@@ -17,6 +17,7 @@ export const TRANSACTION_CREATE_COPY = {
     typeExpense: "Gasto",
   },
   actions: {
+    newCategory: "Nueva categoría",
     cancel: "Cancelar",
     save: "Guardar",
     saving: "Guardando...",

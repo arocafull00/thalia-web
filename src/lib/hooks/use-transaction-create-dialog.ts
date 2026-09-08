@@ -125,6 +125,13 @@ export function useTransactionCreateDialog(
     }
   };
 
+  const selectCategory = (categoryId: string) => {
+    setValue("category_id", categoryId, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   const onSubmit = handleSubmit((data) => {
     clearErrors("root");
 
@@ -212,6 +219,7 @@ export function useTransactionCreateDialog(
     isEditing,
     isPending: isCreating || isUpdating || isSubmitting,
     handleTypeChange,
+    selectCategory,
     prepare,
     reset: () => reset(createDefaultValues(initialType, transaction)),
     handleSubmit: onSubmit,

@@ -29,6 +29,9 @@ function defaultValues(
 
 export function useTransactionCategoriesManager(
   initialData: TransactionCategory[],
+  options?: {
+    onCreated?: (category: TransactionCategory) => void;
+  },
 ) {
   const { categories, error, isLoading } =
     useTransactionCategories(initialData);
@@ -113,7 +116,8 @@ export function useTransactionCategoriesManager(
         await renameCategory({ id: editingCategory.id, name: values.name });
         toast.success(TRANSACTION_CATEGORIES_COPY.success.renamed);
       } else {
-        await createCategory(values);
+        const category = await createCategory(values);
+        options?.onCreated?.(category);
         toast.success(TRANSACTION_CATEGORIES_COPY.success.created);
       }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, type LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,12 +18,17 @@ type ProfileActionsMenuProps = {
   sections: ProfileActionSection[];
   ariaLabel: string;
   className?: string;
+  /** Por defecto los tres puntos horizontales de las filas de tabla. */
+  icon?: LucideIcon;
+  contentClassName?: string;
 };
 
 export default function ProfileActionsMenu({
   sections,
   ariaLabel,
   className,
+  icon: Icon = MoreHorizontal,
+  contentClassName,
 }: ProfileActionsMenuProps) {
   const visibleSections = sections.filter(
     (section) => section.actions.length > 0,
@@ -43,12 +48,12 @@ export default function ProfileActionsMenu({
           aria-label={ariaLabel}
           className={cn(className)}
         >
-          <MoreHorizontal size={18} strokeWidth={1.5} />
+          <Icon size={18} strokeWidth={1.5} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className={cn(contentClassName)}>
         {visibleSections.map((section, sectionIndex) => (
-          <div key={section.label}>
+          <div key={`${section.label}-${sectionIndex}`}>
             {sectionIndex > 0 ? <DropdownMenuSeparator /> : null}
             <DropdownMenuLabel>{section.label}</DropdownMenuLabel>
             {section.actions.map((action) => (

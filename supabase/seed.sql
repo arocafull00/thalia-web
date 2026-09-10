@@ -440,3 +440,79 @@ VALUES
     '10000000-0000-4000-8000-000000000001',
     now() - interval '1 day'
   );
+
+-- ---------------------------------------------------------------------------
+-- Profesional autónomo (issue #102)
+-- ---------------------------------------------------------------------------
+-- Membresía 'external' en la misma clínica, con rol de empleado 'doctor': es la
+-- combinación que importa, porque la política de escritura de patients es FOR
+-- ALL y en PostgreSQL eso concede también SELECT. Sin excluir a external de esa
+-- política, un autónomo que fuese 'doctor' vería el censo entero.
+--
+-- Sólo se le da UNA cita, con el paciente base, así que es el único paciente que
+-- debe ver. Va a +90 días para no aparecer en los rangos por defecto del
+-- calendario ni del listado de citas y no alterar otros specs. No se añade
+-- ningún paciente nuevo, para no tocar los recuentos de marketing.
+
+-- `employees.id` es FK de `auth.users`, así que la cuenta va primero.
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, email_change, email_change_token_new, recovery_token
+)
+VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  '00000000-0000-4000-8000-0000000000ff',
+  'authenticated',
+  'authenticated',
+  'e2e-autonomo@landora.test',
+  crypt('LandoraE2E123!', gen_salt('bf')),
+  now(),
+  '{"provider":"email","providers":["email"]}',
+  '{"full_name":"E2E Autónomo","registration_profile_complete":true,"intended_operational_role":"doctor"}',
+  now(), now(), '', '', '', ''
+);
+
+INSERT INTO auth.identities (
+  id, provider_id, user_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+)
+VALUES (
+  '00000000-0000-4000-8000-0000000000fe',
+  '00000000-0000-4000-8000-0000000000ff',
+  '00000000-0000-4000-8000-0000000000ff',
+  '{"sub":"00000000-0000-4000-8000-0000000000ff","email":"e2e-autonomo@landora.test","email_verified":true}',
+  'email',
+  now(), now(), now()
+);
+
+INSERT INTO public.employees (id, clinic_id, full_name, role, active)
+VALUES (
+  '00000000-0000-4000-8000-0000000000ff',
+  '10000000-0000-4000-8000-000000000001',
+  'E2E Autónomo',
+  'doctor',
+  true
+);
+
+INSERT INTO public.clinic_memberships (user_id, clinic_id, role, status)
+VALUES (
+  '00000000-0000-4000-8000-0000000000ff',
+  '10000000-0000-4000-8000-000000000001',
+  'external',
+  'active'
+);
+
+INSERT INTO public.appointments (
+  id, clinic_id, patient_id, employee_id, starts_at, ends_at, status, notes
+)
+VALUES (
+  '70000000-0000-4000-8000-000000000030',
+  '10000000-0000-4000-8000-000000000001',
+  '30000000-0000-4000-8000-000000000001',
+  '00000000-0000-4000-8000-0000000000ff',
+  date_trunc('day', now()) + interval '90 days 9 hours',
+  date_trunc('day', now()) + interval '90 days 9 hours 30 minutes',
+  'scheduled',
+  'Única cita del autónomo: define el paciente que puede ver.'
+);

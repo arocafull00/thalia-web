@@ -6,6 +6,14 @@ const e2eUser = {
   password: "LandoraE2E123!",
 };
 
+// Autónomo (#102): su fila de employees y su membresía 'external' vienen del
+// seed; aquí sólo se crea la cuenta de auth con la que inicia sesión.
+const e2eExternalUser = {
+  id: "00000000-0000-4000-8000-0000000000ff",
+  email: "e2e-autonomo@landora.test",
+  password: "LandoraE2E123!",
+};
+
 const statusResult = spawnSync(
   "pnpm",
   ["exec", "supabase", "status", "--output", "json"],
@@ -78,14 +86,16 @@ async function requestAuth(pathname, apiKey, options) {
 }
 
 try {
-  await requestAuth(`/admin/users/${e2eUser.id}`, secretKey, {
-    method: "PUT",
-    body: JSON.stringify({
-      email: e2eUser.email,
-      email_confirm: true,
-      password: e2eUser.password,
-    }),
-  });
+  for (const user of [e2eUser, e2eExternalUser]) {
+    await requestAuth(`/admin/users/${user.id}`, secretKey, {
+      method: "PUT",
+      body: JSON.stringify({
+        email: user.email,
+        email_confirm: true,
+        password: user.password,
+      }),
+    });
+  }
   await requestAuth("/token?grant_type=password", publishableKey, {
     method: "POST",
     body: JSON.stringify({

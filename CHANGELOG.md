@@ -1,5 +1,19 @@
 # Changelog
 
+## 102-autonomo-solo-ve-sus-pacientes
+
+- El profesional autónomo (`external`) solo ve en Pacientes los vinculados a citas donde él es el profesional asignado. Antes veía el censo completo de la clínica: nombres, teléfonos y fechas de nacimiento de gente que no ha tratado nunca
+- Entrar por URL directa al detalle de un paciente ajeno devuelve «no encontrado», sin revelar si ese paciente existe
+- Para el autónomo los pacientes pasan a ser de solo lectura, en la línea de #101
+- Sin cambios para `owner`, `admin` ni `employee`: siguen viendo todos los pacientes de su clínica
+
+### Notas de implementación
+
+- El filtro va en RLS y no en el DAL. Ningún DAL de pacientes usa service role, así que la política corrige a la vez listado, recuento, búsqueda, detalle y llamadas directas a la API; filtrarlo en el DAL sería cosmético, bastaría con consultar PostgREST por fuera de la aplicación
+- Nueva función `current_membership_role()`. La que ya existía, `current_employee_role()`, devuelve la profesión (doctor, reception…), no la relación con la clínica: un autónomo es `external` y `doctor` a la vez
+- `patients_write_allowed_roles` era `FOR ALL` y permissive, y en PostgreSQL eso concede también `SELECT`. Como las políticas permisivas se combinan con OR, acotar solo la de lectura no habría servido de nada
+
+
 ## 85-87-confirmación-de-cita-y-recordatorios
 
 ### Confirmación de cita por el paciente (#87)

@@ -14,6 +14,8 @@ import {
 } from "@/dal/treatments.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
+import { assertCanMutateClinicalData } from "@/lib/permissions";
+import { useAuthStore } from "@/stores/auth-store";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -234,6 +236,9 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   createTreatment: async (input) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ creating: true, createError: null });
 
     const { inventoryLinks, ...treatmentInput } = input;
@@ -267,6 +272,9 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   updateTreatment: async (treatmentId, input) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ updating: true, updateError: null });
 
     const { inventoryLinks, ...treatmentInput } = input;
@@ -299,6 +307,9 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   deleteTreatment: async (treatmentId) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ deleting: true, deleteError: null });
 
     try {

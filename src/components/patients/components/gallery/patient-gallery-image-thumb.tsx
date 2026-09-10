@@ -22,6 +22,7 @@ type PatientGalleryImageThumbProps = {
   loading?: "eager" | "lazy";
   onView: () => void;
   onToggleSelect: () => void;
+  readOnly?: boolean;
 };
 
 export default function PatientGalleryImageThumb({
@@ -31,6 +32,7 @@ export default function PatientGalleryImageThumb({
   loading = "lazy",
   onView,
   onToggleSelect,
+  readOnly = false,
 }: PatientGalleryImageThumbProps) {
   const imageUrl = usePatientImageUrl(image);
   const imageName = image.original_filename ?? PATIENT_GALLERY_COPY.title;
@@ -91,14 +93,16 @@ export default function PatientGalleryImageThumb({
             <Eye />
             {PATIENT_GALLERY_COPY.thumbActions.view}
           </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            variant="destructive"
-            onClick={() => openDeleteConfirm(image)}
-          >
-            <Trash2 />
-            {PATIENT_GALLERY_COPY.thumbActions.delete}
-          </ContextMenuItem>
+          {!readOnly ? <ContextMenuSeparator /> : null}
+          {!readOnly ? (
+            <ContextMenuItem
+              variant="destructive"
+              onClick={() => openDeleteConfirm(image)}
+            >
+              <Trash2 />
+              {PATIENT_GALLERY_COPY.thumbActions.delete}
+            </ContextMenuItem>
+          ) : null}
         </ContextMenuContent>
       ) : null}
     </ContextMenu>

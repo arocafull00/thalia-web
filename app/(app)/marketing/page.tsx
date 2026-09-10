@@ -5,6 +5,7 @@ import {
   campaignDateRangeToIso,
 } from "@/lib/campaign-pagination";
 import { getServerActiveClinicId } from "@/lib/server/active-clinic";
+import { requireBusinessOwner } from "@/lib/server/business-access";
 
 export default async function MarketingPage({
   searchParams,
@@ -17,6 +18,7 @@ export default async function MarketingPage({
     to?: string;
   }>;
 }) {
+  await requireBusinessOwner();
   const [params, clinicId] = await Promise.all([
     searchParams,
     getServerActiveClinicId(),

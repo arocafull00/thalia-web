@@ -3,6 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
+import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import AppointmentStatusSelect from "@/components/appointments/components/appointment-status-select";
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
 import ListRowActions from "@/components/ui/list-row-actions";
@@ -26,6 +27,7 @@ export function buildAppointmentsColumns(
   onStatusChange: (id: string, status: AppointmentStatus) => void,
   timezone: string,
   actionHandlers: AppointmentListActionHandlers,
+  readOnly = false,
 ): ColumnDef<AppointmentWithRelations>[] {
   return [
     {
@@ -87,14 +89,17 @@ export function buildAppointmentsColumns(
       header: ({ column }) => (
         <SortableTableHead column={column} title="Estado" />
       ),
-      cell: ({ row }) => (
-        <div onClick={(e) => e.stopPropagation()}>
-          <AppointmentStatusSelect
-            status={row.original.status}
-            onChange={(status) => onStatusChange(row.original.id, status)}
-          />
-        </div>
-      ),
+      cell: ({ row }) =>
+        readOnly ? (
+          <AppointmentStatusBadge status={row.original.status} />
+        ) : (
+          <div onClick={(e) => e.stopPropagation()}>
+            <AppointmentStatusSelect
+              status={row.original.status}
+              onChange={(status) => onStatusChange(row.original.id, status)}
+            />
+          </div>
+        ),
       sortingFn: (left, right) => {
         const leftStatus = appointmentStatusLabel(left.original.status);
         const rightStatus = appointmentStatusLabel(right.original.status);

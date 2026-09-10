@@ -1,3 +1,4 @@
+import { normalizeAppointments } from "@/dal/price-normalizers";
 import { APPOINTMENT_LIST_SELECT } from "@/dal/selects";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabaseList } from "@/lib/supabase-query";
@@ -20,5 +21,7 @@ export async function getTodayAppointments(
   }
 
   const { data, error } = await query;
-  return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  return normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
 }

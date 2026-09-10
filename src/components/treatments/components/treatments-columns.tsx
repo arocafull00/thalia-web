@@ -11,38 +11,49 @@ import { formatCurrency } from "@/lib/format";
 import type { TreatmentWithInventory } from "@/types/database.types";
 
 export type TreatmentListActionHandlers = {
-  onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
 };
 
 export function getTreatmentRowActions(
   treatment: TreatmentWithInventory,
   handlers: TreatmentListActionHandlers,
 ): ProfileAction[] {
-  return [
+  const actions: ProfileAction[] = [
     {
       label: TREATMENTS_COPY.row.view,
       icon: Eye,
       href: `/treatments/${treatment.id}`,
     },
-    {
+  ];
+
+  const onEdit = handlers.onEdit;
+  if (onEdit) {
+    actions.push({
       label: TREATMENTS_COPY.row.edit,
       icon: Pencil,
-      onClick: () => handlers.onEdit(treatment.id),
-    },
-    {
+      onClick: () => onEdit(treatment.id),
+    });
+  }
+
+  const onDelete = handlers.onDelete;
+  if (onDelete) {
+    actions.push({
       label: TREATMENTS_COPY.row.delete,
       icon: Trash2,
-      onClick: () => handlers.onDelete(treatment.id),
+      onClick: () => onDelete(treatment.id),
       variant: "danger",
-    },
-  ];
+    });
+  }
+
+  return actions;
 }
 
 export function getTreatmentsColumns(
   handlers: TreatmentListActionHandlers,
+  showPrices = true,
 ): ColumnDef<TreatmentWithInventory>[] {
-  return [
+  const columns: ColumnDef<TreatmentWithInventory>[] = [
     {
       accessorKey: "name",
       header: ({ column }) => (
@@ -92,7 +103,10 @@ export function getTreatmentsColumns(
         </span>
       ),
     },
-    {
+  ];
+
+  if (showPrices) {
+    columns.push({
       accessorKey: "price",
       header: ({ column }) => (
         <SortableTableHead column={column} title="Precio" />
@@ -105,7 +119,10 @@ export function getTreatmentsColumns(
         ) : (
           <span className="text-sm text-ink-secondary">-</span>
         ),
-    },
+    });
+  }
+
+  columns.push(
     {
       id: "materials",
       accessorFn: (row) => row.treatment_inventory_items.length,
@@ -134,5 +151,7 @@ export function getTreatmentsColumns(
       ),
       enableSorting: false,
     },
-  ];
+  );
+
+  return columns;
 }

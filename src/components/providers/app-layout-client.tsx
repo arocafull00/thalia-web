@@ -34,23 +34,26 @@ export default function AppLayoutClient({
   );
   const fetchAlerts = useInventoryAlertsStore((state) => state.fetchAlerts);
 
-  const canManageClinic =
-    platformRole === "owner" ||
-    platformRole === "admin" ||
-    platformRole === null;
+  const canManageBusiness = platformRole === "owner";
 
   useEffect(() => {
     initSounds();
   }, []);
 
   useEffect(() => {
-    if (!clinicId) return;
+    if (!clinicId || !canManageBusiness) return;
     void fetchAlerts(clinicId);
     subscribeRealtime(clinicId);
     return () => {
       unsubscribeRealtime();
     };
-  }, [clinicId, fetchAlerts, subscribeRealtime, unsubscribeRealtime]);
+  }, [
+    canManageBusiness,
+    clinicId,
+    fetchAlerts,
+    subscribeRealtime,
+    unsubscribeRealtime,
+  ]);
 
   useEffect(() => {
     if (loading) {
@@ -69,13 +72,12 @@ export default function AppLayoutClient({
   }, [clinicId, clinicLoading, loading, router, user]);
 
   useEffect(() => {
-    const isExternal = platformRole === "external";
     setNavVisibility({
-      showEmployees: canManageClinic && !isExternal,
-      showFinances: canManageClinic && !isExternal,
-      showInventory: !isExternal,
+      showEmployees: canManageBusiness,
+      showFinances: canManageBusiness,
+      showInventory: canManageBusiness,
     });
-  }, [canManageClinic, platformRole, setNavVisibility]);
+  }, [canManageBusiness, setNavVisibility]);
 
   const awaitingClientAuth = loading;
 

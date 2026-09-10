@@ -15,8 +15,9 @@ import type { TreatmentWithInventory } from "@/types/database.types";
 type TreatmentsTableProps = {
   treatments: TreatmentWithInventory[];
   onRowClick: (id: string) => void;
-  onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  showPrices?: boolean;
   /** Paginación en servidor: `treatments` es ya la página visible. */
   pagination?: {
     pageIndex: number;
@@ -31,6 +32,7 @@ export default function TreatmentsTable({
   onRowClick,
   onDelete,
   onEdit,
+  showPrices = true,
   pagination,
 }: TreatmentsTableProps) {
   const actionHandlers = useMemo(
@@ -38,8 +40,8 @@ export default function TreatmentsTable({
     [onDelete, onEdit],
   );
   const columns = useMemo(
-    () => getTreatmentsColumns(actionHandlers),
-    [actionHandlers],
+    () => getTreatmentsColumns(actionHandlers, showPrices),
+    [actionHandlers, showPrices],
   );
 
   return (

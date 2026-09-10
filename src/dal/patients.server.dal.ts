@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { PatientPageParams, PatientPageResult } from "@/dal/patients.dal";
+import { normalizeAppointments } from "@/dal/price-normalizers";
 import { APPOINTMENT_LIST_SELECT } from "@/dal/selects";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -91,5 +92,7 @@ export async function getPatientAppointments(
     .select(APPOINTMENT_LIST_SELECT)
     .eq("patient_id", patientId)
     .order("starts_at", { ascending: false });
-  return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  return normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
 }

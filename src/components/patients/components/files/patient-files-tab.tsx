@@ -25,6 +25,7 @@ import PatientFileViewer from "./patient-file-viewer";
 type PatientFilesTabProps = {
   patient: Patient;
   onOpenUploader: () => void;
+  readOnly?: boolean;
 };
 
 function filterFilesByCategory(
@@ -41,6 +42,7 @@ function filterFilesByCategory(
 export default function PatientFilesTab({
   patient,
   onOpenUploader,
+  readOnly = false,
 }: PatientFilesTabProps) {
   const [category, setCategory] = useState<PatientFileCategory | "">("");
   const [viewerFile, setViewerFile] = useState<PatientFile | null>(null);
@@ -108,12 +110,14 @@ export default function PatientFilesTab({
               onChange={setCategory}
             />
           </div>
-          <ActionButton
-            title={PATIENT_FILES_COPY.actions.upload}
-            icon={Upload}
-            testId="patient-file-upload-trigger"
-            onClick={onOpenUploader}
-          />
+          {!readOnly ? (
+            <ActionButton
+              title={PATIENT_FILES_COPY.actions.upload}
+              icon={Upload}
+              testId="patient-file-upload-trigger"
+              onClick={onOpenUploader}
+            />
+          ) : null}
         </div>
 
         <Separator />
@@ -140,8 +144,8 @@ export default function PatientFilesTab({
                   file={file}
                   onView={handleView}
                   onDownload={handleDownload}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onEdit={readOnly ? undefined : handleEdit}
+                  onDelete={readOnly ? undefined : handleDelete}
                 />
               ))
             : null}
@@ -155,12 +159,14 @@ export default function PatientFilesTab({
         onDownload={handleDownload}
       />
 
-      <PatientFileEditDialog
-        patientId={patient.id}
-        file={editFile}
-        open={editOpen}
-        onOpenChange={setEditOpen}
-      />
+      {!readOnly ? (
+        <PatientFileEditDialog
+          patientId={patient.id}
+          file={editFile}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+        />
+      ) : null}
     </>
   );
 }

@@ -7,6 +7,7 @@ import {
   getEmployees,
   getEmployeesPage,
   inviteEmployee,
+  setExternalMembershipStatus as setExternalMembershipStatusDal,
   updateEmployee,
   type EmployeeAppointmentRow,
   type EmployeeAppointmentStats,
@@ -80,6 +81,10 @@ type EmployeesStore = {
   fetchEmployeeAppointments: (employeeId: string) => Promise<void>;
   createEmployee: (input: CreateEmployeeInput) => Promise<Employee>;
   updateEmployee: (id: string, values: Partial<Employee>) => Promise<Employee>;
+  setExternalMembershipStatus: (
+    employeeId: string,
+    status: "active" | "suspended",
+  ) => Promise<void>;
 };
 
 /**
@@ -324,6 +329,27 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         store: "employees-store",
         action: "updateEmployee",
         employeeId: id,
+      });
+      set({ updating: false, updateError: error });
+      throw error;
+    }
+  },
+
+  setExternalMembershipStatus: async (employeeId, status) => {
+    set({ updating: true, updateError: null });
+
+    try {
+      const clinicId = getActiveClinicId();
+      if (!clinicId) throw new Error("No hay clínica activa");
+      await setExternalMembershipStatusDal(employeeId, clinicId, status);
+      await refreshEmployeeQueries(get);
+      set({ updating: false });
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "employees-store",
+        action: "setExternalMembershipStatus",
+        employeeId,
       });
       set({ updating: false, updateError: error });
       throw error;

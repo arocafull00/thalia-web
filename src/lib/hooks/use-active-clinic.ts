@@ -42,7 +42,7 @@ export function useActiveClinic() {
     resolvedMemberships.find(
       (item) => item.clinicId === resolvedActiveClinicId,
     ) ?? null;
-  const clinicId = resolvedActiveClinicId ?? resolvedProfile?.clinic_id ?? null;
+  const clinicId = resolvedActiveClinicId;
 
   return {
     clinicId,
@@ -51,6 +51,8 @@ export function useActiveClinic() {
     clinicTimezone: resolveAppointmentTimezone(membership?.clinicTimezone),
     membership,
     platformRole: membership?.role ?? null,
+    accountType: resolvedProfile?.account_type ?? null,
+    isExternal: resolvedProfile?.account_type === "external",
     memberships: resolvedMemberships,
     loading: loading && !canUseBootstrap,
     setActiveClinic,

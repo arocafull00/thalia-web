@@ -13,14 +13,22 @@ import {
 } from "@/lib/supabase-query";
 import type { Employee } from "@/types/database.types";
 
+const EMPLOYEE_CLINIC_SELECT =
+  "*, clinic_memberships!clinic_memberships_employee_fkey!inner(clinic_id, status)";
+
 export async function getEmployees(
   clinicId: string | null,
 ): Promise<Employee[]> {
   const supabase = await createClient();
-  let query = supabase.from("employees").select("*").order("full_name");
+  let query = supabase
+    .from("employees")
+    .select(EMPLOYEE_CLINIC_SELECT)
+    .order("full_name");
 
   if (clinicId) {
-    query = query.eq("clinic_id", clinicId);
+    query = query
+      .eq("clinic_memberships.clinic_id", clinicId)
+      .eq("clinic_memberships.status", "active");
   }
 
   const { data, error } = await query;
@@ -42,13 +50,15 @@ export async function getEmployeesPage(
 
   let query = supabase
     .from("employees")
-    .select("*", { count: "exact" })
+    .select(EMPLOYEE_CLINIC_SELECT, { count: "exact" })
     .order("full_name")
     .order("id")
     .range(offset, offset + params.pageSize - 1);
 
   if (params.clinicId) {
-    query = query.eq("clinic_id", params.clinicId);
+    query = query
+      .eq("clinic_memberships.clinic_id", params.clinicId)
+      .eq("clinic_memberships.status", "active");
   }
 
   if (params.role) {

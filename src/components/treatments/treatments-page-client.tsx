@@ -19,6 +19,7 @@ import {
   PAGE_LIST_SKELETON_ROWS,
   SkeletonList,
 } from "@/components/ui/primitives/skeleton-list";
+import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
@@ -42,6 +43,7 @@ export default function TreatmentsPageClient({
   initialCategories,
 }: TreatmentsPageClientProps) {
   const router = useRouter();
+  const { isExternal } = useActiveClinic();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { filters, setFilter, setFilters } = useUrlFilters(
@@ -121,11 +123,15 @@ export default function TreatmentsPageClient({
         testId: "treatments-refresh-trigger",
         onClick: () => void treatments.refresh(),
       },
-      {
-        title: TREATMENTS_COPY.page.add,
-        testId: "treatment-create-trigger",
-        onClick: page.openCreateDialog,
-      },
+      ...(!isExternal
+        ? [
+            {
+              title: TREATMENTS_COPY.page.add,
+              testId: "treatment-create-trigger",
+              onClick: page.openCreateDialog,
+            },
+          ]
+        : []),
     ],
   });
 
@@ -155,9 +161,16 @@ export default function TreatmentsPageClient({
         {!treatments.isLoading && !treatments.error ? (
           <TreatmentsTable
             treatments={filteredTreatments}
-            onRowClick={page.openEditDialog}
-            onEdit={page.openEditDialog}
-            onDelete={page.openDeleteDialog}
+            onRowClick={(id) => {
+              if (isExternal) {
+                router.push(`/treatments/${id}`);
+                return;
+              }
+              page.openEditDialog(id);
+            }}
+            onEdit={isExternal ? undefined : page.openEditDialog}
+            onDelete={isExternal ? undefined : page.openDeleteDialog}
+            showPrices={!isExternal}
             pagination={{
               pageIndex,
               pageSize: TREATMENTS_PAGE_SIZE,
@@ -168,24 +181,26 @@ export default function TreatmentsPageClient({
           />
         ) : null}
       </PageCard>
-      <TreatmentDialog
-        open={page.dialogOpen}
-        treatmentId={page.selectedTreatmentId}
-        onOpenChange={(open) => {
-          if (!open) {
-            page.closeDialog();
+      {!isExternal ? (
+        <TreatmentDialog
+          open={page.dialogOpen}
+          treatmentId={page.selectedTreatmentId}
+          onOpenChange={(open) => {
+            if (!open) {
+              page.closeDialog();
+            }
+          }}
+          onViewDetail={
+            page.selectedTreatmentId
+              ? () => {
+                  page.closeDialog();
+                  router.push(`/treatments/${page.selectedTreatmentId}`);
+                }
+              : undefined
           }
-        }}
-        onViewDetail={
-          page.selectedTreatmentId
-            ? () => {
-                page.closeDialog();
-                router.push(`/treatments/${page.selectedTreatmentId}`);
-              }
-            : undefined
-        }
-      />
-      {deleteTreatment ? (
+        />
+      ) : null}
+      {!isExternal && deleteTreatment ? (
         <TreatmentDeleteConfirmDialog
           treatment={deleteTreatment}
           open
@@ -208,10 +223,12 @@ export default function TreatmentsPageClient({
           onDismiss={() => setSheetOpen(false)}
         />
       ) : null}
-      <MobileFab
-        label={TREATMENTS_COPY.page.add}
-        onClick={page.openCreateDialog}
-      />
+      {!isExternal ? (
+        <MobileFab
+          label={TREATMENTS_COPY.page.add}
+          onClick={page.openCreateDialog}
+        />
+      ) : null}
     </div>
   );
 }

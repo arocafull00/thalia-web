@@ -28,6 +28,7 @@ type PatientGalleryToolbarProps = {
   onStartSelection: () => void;
   onCancelSelection: () => void;
   onCompare: () => void;
+  readOnly?: boolean;
 };
 
 export default function PatientGalleryToolbar({
@@ -48,6 +49,7 @@ export default function PatientGalleryToolbar({
   onStartSelection,
   onCancelSelection,
   onCompare,
+  readOnly = false,
 }: PatientGalleryToolbarProps) {
   return (
     <div className="space-y-4">
@@ -94,12 +96,14 @@ export default function PatientGalleryToolbar({
             density={density}
             onChange={onDensityChange}
           />
-          <ActionButton
-            title={PATIENT_GALLERY_COPY.actions.upload}
-            icon={Upload}
-            testId="patient-gallery-upload-trigger"
-            onClick={onOpenUploader}
-          />
+          {!readOnly ? (
+            <ActionButton
+              title={PATIENT_GALLERY_COPY.actions.upload}
+              icon={Upload}
+              testId="patient-gallery-upload-trigger"
+              onClick={onOpenUploader}
+            />
+          ) : null}
           {selectionMode ? (
             <>
               <ActionButton

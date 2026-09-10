@@ -9,14 +9,16 @@ import type { AppointmentWithRelations } from "@/types/database.types";
 type AppointmentTreatmentsSectionProps = {
   treatments: AppointmentWithRelations["appointment_treatments"];
   totalDurationMinutes: number;
+  showPrices?: boolean;
 };
 
 export default function AppointmentTreatmentsSection({
   treatments,
   totalDurationMinutes,
+  showPrices = true,
 }: AppointmentTreatmentsSectionProps) {
   const totalPrice = treatments.reduce(
-    (sum, entry) => sum + entry.price_at_booking,
+    (sum, entry) => sum + (entry.price_at_booking ?? 0),
     0,
   );
 
@@ -40,6 +42,7 @@ export default function AppointmentTreatmentsSection({
                 color={entry.treatment?.color ?? null}
                 priceAtBooking={entry.price_at_booking}
                 durationMinutes={entry.treatment?.duration_minutes ?? null}
+                showPrice={showPrices}
               />
             ))}
           </div>
@@ -48,9 +51,11 @@ export default function AppointmentTreatmentsSection({
               {APPOINTMENT_DETAIL_COPY.totalDuration}: {totalDurationMinutes}{" "}
               min
             </span>
-            <span className="font-medium text-success">
-              {APPOINTMENT_DETAIL_COPY.total}: {formatCurrency(totalPrice)}
-            </span>
+            {showPrices ? (
+              <span className="font-medium text-success">
+                {APPOINTMENT_DETAIL_COPY.total}: {formatCurrency(totalPrice)}
+              </span>
+            ) : null}
           </div>
         </>
       )}

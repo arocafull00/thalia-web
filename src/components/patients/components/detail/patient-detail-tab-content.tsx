@@ -16,6 +16,7 @@ type PatientDetailTabContentProps = {
   error: Error | null | undefined;
   onOpenUploader: () => void;
   onOpenFilesUploader: () => void;
+  readOnly?: boolean;
 };
 
 export default function PatientDetailTabContent({
@@ -26,6 +27,7 @@ export default function PatientDetailTabContent({
   error,
   onOpenUploader,
   onOpenFilesUploader,
+  readOnly = false,
 }: PatientDetailTabContentProps) {
   if (activeTab === "summary") {
     return <PatientSummaryTab patient={patient} appointments={appointments} />;
@@ -47,15 +49,25 @@ export default function PatientDetailTabContent({
 
   if (activeTab === "gallery") {
     return (
-      <PatientGalleryTab patient={patient} onOpenUploader={onOpenUploader} />
+      <PatientGalleryTab
+        patient={patient}
+        onOpenUploader={onOpenUploader}
+        readOnly={readOnly}
+      />
     );
   }
 
   if (activeTab === "files") {
     return (
-      <PatientFilesTab patient={patient} onOpenUploader={onOpenFilesUploader} />
+      <PatientFilesTab
+        patient={patient}
+        onOpenUploader={onOpenFilesUploader}
+        readOnly={readOnly}
+      />
     );
   }
 
-  return <PatientAppointmentsTab appointments={appointments} />;
+  return (
+    <PatientAppointmentsTab appointments={appointments} readOnly={readOnly} />
+  );
 }

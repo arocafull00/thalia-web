@@ -92,7 +92,6 @@ function mapMembershipRow(row: ClinicMembershipRow): ClinicMembershipView {
 export function resolveActiveClinicId(
   cookieClinicId: string | null,
   memberships: ClinicMembershipView[],
-  profile: Employee | null,
 ): string | null {
   if (
     cookieClinicId &&
@@ -101,11 +100,7 @@ export function resolveActiveClinicId(
     return cookieClinicId;
   }
 
-  if (memberships[0]?.clinicId) {
-    return memberships[0].clinicId;
-  }
-
-  return profile?.clinic_id ?? null;
+  return memberships[0]?.clinicId ?? null;
 }
 
 function resolveActiveClinicTimezone(
@@ -133,14 +128,9 @@ function resolveActiveClinicTimezone(
 function resolveActiveClinicBootstrap(
   cookieClinicId: string | null,
   membershipRows: ClinicMembershipRow[],
-  profile: Employee | null,
 ): ActiveClinicBootstrap {
   const memberships = membershipRows.map(mapMembershipRow);
-  const activeClinicId = resolveActiveClinicId(
-    cookieClinicId,
-    memberships,
-    profile,
-  );
+  const activeClinicId = resolveActiveClinicId(cookieClinicId, memberships);
 
   return {
     activeClinicId,
@@ -166,16 +156,7 @@ export const getActiveClinicBootstrap = cache(
       readActiveClinicCookie(),
       getCachedMemberships(identity.userId),
     ]);
-    const profile =
-      membershipRows.length === 0
-        ? await getCachedEmployee(identity.userId)
-        : null;
-
-    return resolveActiveClinicBootstrap(
-      cookieClinicId,
-      membershipRows,
-      profile,
-    );
+    return resolveActiveClinicBootstrap(cookieClinicId, membershipRows);
   },
 );
 
@@ -202,7 +183,6 @@ export const getAppBootstrap = cache(async (): Promise<AppBootstrap> => {
   const { activeClinicId, activeClinicTimezone } = resolveActiveClinicBootstrap(
     cookieClinicId,
     membershipRows,
-    profile,
   );
 
   return {

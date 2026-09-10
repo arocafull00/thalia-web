@@ -97,7 +97,10 @@ export default function EmployeeDetailPageClient({
   useTopbarActions(
     employee
       ? {
-          buttons: [getEmployeeDetailPrimaryAction(employeeActionHandlers)],
+          buttons:
+            employee.account_type === "external"
+              ? []
+              : [getEmployeeDetailPrimaryAction(employeeActionHandlers)],
           menu: {
             sections: getEmployeeDetailMenuSections(
               employee,
@@ -167,12 +170,14 @@ export default function EmployeeDetailPageClient({
         </div>
       </div>
 
-      <EmployeeEditDialog
-        employee={employee}
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        onSuccess={refetch}
-      />
+      {employee.account_type === "internal" ? (
+        <EmployeeEditDialog
+          employee={employee}
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          onSuccess={refetch}
+        />
+      ) : null}
 
       <EmployeeStatusConfirmDialog
         employee={employee}

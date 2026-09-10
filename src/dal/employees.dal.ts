@@ -46,6 +46,9 @@ export type EmployeePageResult = {
   total: number;
 };
 
+const EMPLOYEE_CLINIC_SELECT =
+  "*, clinic_memberships!clinic_memberships_employee_fkey!inner(clinic_id, status)";
+
 /**
  * Aplica el filtro de estado tal y como lo entendía el cliente: `active` admite
  * nulos y un nulo cuenta como activo, así que «activos» es `IS NOT FALSE` y no
@@ -57,10 +60,15 @@ const ACTIVE_FILTER = { column: "active", value: false } as const;
 export async function getEmployees(
   clinicId: string | null,
 ): Promise<Employee[]> {
-  let query = supabase.from("employees").select("*").order("full_name");
+  let query = supabase
+    .from("employees")
+    .select(EMPLOYEE_CLINIC_SELECT)
+    .order("full_name");
 
   if (clinicId) {
-    query = query.eq("clinic_id", clinicId);
+    query = query
+      .eq("clinic_memberships.clinic_id", clinicId)
+      .eq("clinic_memberships.status", "active");
   }
 
   const { data, error } = await query;
@@ -81,7 +89,7 @@ export async function getEmployeesPage(
 
   let query = supabase
     .from("employees")
-    .select("*", { count: "exact" })
+    .select(EMPLOYEE_CLINIC_SELECT, { count: "exact" })
     .order("full_name")
     // Desempate estable: sin esto, dos empleados homónimos pueden cambiar de
     // orden entre páginas y una fila se repetiría o se perdería.
@@ -89,7 +97,9 @@ export async function getEmployeesPage(
     .range(offset, offset + params.pageSize - 1);
 
   if (params.clinicId) {
-    query = query.eq("clinic_id", params.clinicId);
+    query = query
+      .eq("clinic_memberships.clinic_id", params.clinicId)
+      .eq("clinic_memberships.status", "active");
   }
 
   if (params.role) {
@@ -206,4 +216,20 @@ export async function updateEmployee(
     .select("*")
     .single();
   return unwrapSupabase(data, error) as Employee;
+}
+
+export async function setExternalMembershipStatus(
+  employeeId: string,
+  clinicId: string,
+  status: "active" | "suspended",
+): Promise<void> {
+  const { error } = await supabase.rpc("set_external_membership_status", {
+    p_employee_id: employeeId,
+    p_clinic_id: clinicId,
+    p_status: status,
+  });
+
+  if (error) {
+    throw error;
+  }
 }

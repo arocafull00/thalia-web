@@ -19,7 +19,9 @@ import {
   buildPatientImageKey,
   uploadPatientImageObject,
 } from "@/lib/patient-image-storage";
+import { assertCanMutateClinicalData } from "@/lib/permissions";
 import type { PatientImageUploadInput } from "@/lib/schemas/patient-image-schema";
+import { useAuthStore } from "@/stores/auth-store";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientImageDeleteConfirmState = {
@@ -336,6 +338,9 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   },
 
   uploadPatientImage: async ({ clinicId, patientId, file, metadata }) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({
       uploading: true,
       uploadProgress: 0,
@@ -379,6 +384,9 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   },
 
   uploadPatientImages: async ({ clinicId, patientId, files, metadata }) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     const total = files.length;
     set({
       uploading: true,
@@ -436,6 +444,9 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   },
 
   deletePatientImage: async (patientId, image) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ deletingId: image.id, deleteError: null });
 
     try {

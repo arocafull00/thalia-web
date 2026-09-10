@@ -29,6 +29,7 @@ type PatientGalleryResultsProps = {
   onToggleSelect: (image: PatientImage) => void;
   onLoadMore: () => void;
   onRetry: () => void;
+  readOnly?: boolean;
 };
 
 export default function PatientGalleryResults({
@@ -48,6 +49,7 @@ export default function PatientGalleryResults({
   onToggleSelect,
   onLoadMore,
   onRetry,
+  readOnly = false,
 }: PatientGalleryResultsProps) {
   if (isLoading) {
     return <PatientGallerySkeleton />;
@@ -88,6 +90,7 @@ export default function PatientGalleryResults({
           eagerImageIds={eagerImageIds}
           onViewImage={onViewImage}
           onToggleSelect={onToggleSelect}
+          readOnly={readOnly}
         />
       ))}
 

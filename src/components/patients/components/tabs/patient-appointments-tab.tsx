@@ -15,10 +15,12 @@ import type {
 
 type PatientAppointmentsTabProps = {
   appointments: AppointmentWithRelations[];
+  readOnly?: boolean;
 };
 
 export default function PatientAppointmentsTab({
   appointments,
+  readOnly = false,
 }: PatientAppointmentsTabProps) {
   const router = useRouter();
 
@@ -45,6 +47,7 @@ export default function PatientAppointmentsTab({
         appointments={appointments}
         onRowClick={(id) => router.push(`/appointments/${id}`)}
         onStatusChange={handleStatusChange}
+        readOnly={readOnly}
       />
     </div>
   );

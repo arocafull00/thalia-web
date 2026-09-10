@@ -1,4 +1,8 @@
-import { TREATMENT_DETAIL_SELECT } from "@/dal/selects";
+import {
+  normalizeTreatment,
+  normalizeTreatmentWithInventory,
+} from "@/dal/price-normalizers";
+import { TREATMENT_DETAIL_SELECT, TREATMENT_LIST_SELECT } from "@/dal/selects";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type { Treatment, TreatmentWithInventory } from "@/types/database.types";
@@ -37,7 +41,7 @@ export async function getTreatments(
 ): Promise<TreatmentWithInventory[]> {
   let query = supabase
     .from("treatment")
-    .select("*, treatment_inventory_items(id)")
+    .select(TREATMENT_LIST_SELECT)
     .order("name");
 
   if (clinicId) {
@@ -45,7 +49,9 @@ export async function getTreatments(
   }
 
   const { data, error } = await query;
-  return unwrapSupabaseList(data, error) as TreatmentWithInventory[];
+  return (unwrapSupabaseList(data, error) as Record<string, unknown>[]).map(
+    normalizeTreatmentWithInventory,
+  );
 }
 
 /**
@@ -61,7 +67,7 @@ export async function getTreatmentsPage(
 
   let query = supabase
     .from("treatment")
-    .select("*, treatment_inventory_items(id)", { count: "exact" })
+    .select(TREATMENT_LIST_SELECT, { count: "exact" })
     .order("name")
     // Desempate estable: sin esto, dos tratamientos con el mismo nombre pueden
     // cambiar de orden entre páginas y una fila se repetiría o se perdería.
@@ -85,7 +91,9 @@ export async function getTreatmentsPage(
   const { data, error, count } = await query;
 
   return {
-    treatments: unwrapSupabaseList(data, error) as TreatmentWithInventory[],
+    treatments: (
+      unwrapSupabaseList(data, error) as Record<string, unknown>[]
+    ).map(normalizeTreatmentWithInventory),
     total: count ?? 0,
   };
 }
@@ -122,7 +130,9 @@ export async function getTreatment(
     .select(TREATMENT_DETAIL_SELECT)
     .eq("id", treatmentId)
     .single();
-  return unwrapSupabase(data, error) as TreatmentWithInventory;
+  return normalizeTreatmentWithInventory(
+    unwrapSupabase(data, error) as Record<string, unknown>,
+  );
 }
 
 export async function getTreatmentsByIds(
@@ -133,33 +143,59 @@ export async function getTreatmentsByIds(
   }
   const { data, error } = await supabase
     .from("treatment")
-    .select("*")
+    .select("*, treatment_prices(price)")
     .in("id", treatmentIds);
-  return unwrapSupabaseList(data, error) as Treatment[];
+  return (unwrapSupabaseList(data, error) as Record<string, unknown>[]).map(
+    normalizeTreatment,
+  );
 }
 
 export async function insertTreatment(
   input: TreatmentInsert,
 ): Promise<Treatment> {
+  const { price, ...treatmentInput } = input;
   const { data, error } = await supabase
     .from("treatment")
-    .insert(input)
+    .insert(treatmentInput)
     .select("*")
     .single();
-  return unwrapSupabase(data, error) as Treatment;
+  const treatment = unwrapSupabase(data, error);
+  const { error: priceError } = await supabase.from("treatment_prices").insert({
+    treatment_id: treatment.id,
+    price,
+  });
+
+  if (priceError) {
+    await supabase.from("treatment").delete().eq("id", treatment.id);
+    throw priceError;
+  }
+
+  return { ...treatment, price } as Treatment;
 }
 
 export async function updateTreatment(
   treatmentId: string,
   input: TreatmentUpdate,
 ): Promise<Treatment> {
+  const { price, ...treatmentInput } = input;
   const { data, error } = await supabase
     .from("treatment")
-    .update(input)
+    .update(treatmentInput)
     .eq("id", treatmentId)
     .select("*")
     .single();
-  return unwrapSupabase(data, error) as Treatment;
+  const treatment = unwrapSupabase(data, error);
+  const { error: priceError } = await supabase.from("treatment_prices").upsert({
+    treatment_id: treatmentId,
+    price,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (priceError) {
+    throw priceError;
+  }
+
+  return { ...treatment, price } as Treatment;
 }
 
 export async function deleteTreatment(treatmentId: string): Promise<void> {

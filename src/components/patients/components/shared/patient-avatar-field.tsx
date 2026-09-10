@@ -12,6 +12,7 @@ type PatientAvatarFieldProps = {
   initials: string;
   uploadPending: boolean;
   onFileSelected: (file: File) => void;
+  readOnly?: boolean;
 };
 
 export default function PatientAvatarField({
@@ -19,6 +20,7 @@ export default function PatientAvatarField({
   initials,
   uploadPending,
   onFileSelected,
+  readOnly = false,
 }: PatientAvatarFieldProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,14 +42,7 @@ export default function PatientAvatarField({
           onFileSelected(file);
         }}
       />
-      <Button
-        type="button"
-        variant="ghost"
-        disabled={uploadPending}
-        aria-label={PATIENT_CREATE_COPY.fields.avatarLabel}
-        onClick={() => fileInputRef.current?.click()}
-        className="relative overflow-visible rounded-full p-0"
-      >
+      {readOnly ? (
         <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
           <ProfileAvatarImage
             src={displayUri}
@@ -56,10 +51,28 @@ export default function PatientAvatarField({
             fallbackClassName="bg-primary-subtle text-primary"
           />
         </div>
-        <span className="absolute right-0 bottom-0 flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-primary text-on-primary">
-          <Pencil className="size-3.5" aria-hidden="true" />
-        </span>
-      </Button>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={uploadPending}
+          aria-label={PATIENT_CREATE_COPY.fields.avatarLabel}
+          onClick={() => fileInputRef.current?.click()}
+          className="relative overflow-visible rounded-full p-0"
+        >
+          <div className="rounded-full bg-surface p-0.5 ring-1 ring-border-subtle">
+            <ProfileAvatarImage
+              src={displayUri}
+              initials={initials}
+              size="lg"
+              fallbackClassName="bg-primary-subtle text-primary"
+            />
+          </div>
+          <span className="absolute right-0 bottom-0 flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-primary text-on-primary">
+            <Pencil className="size-3.5" aria-hidden="true" />
+          </span>
+        </Button>
+      )}
     </div>
   );
 }

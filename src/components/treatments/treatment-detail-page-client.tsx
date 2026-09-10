@@ -17,6 +17,7 @@ import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { TREATMENT_DETAIL_COPY } from "@/copy/treatment-detail-copy";
+import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { useTreatmentDetail } from "@/lib/hooks/use-treatment-detail";
@@ -30,6 +31,7 @@ export default function TreatmentDetailPageClient({
   treatment: serverTreatment,
 }: TreatmentDetailPageClientProps) {
   const router = useRouter();
+  const { isExternal } = useActiveClinic();
   const { id: routeTreatmentId } = useParams<{ id: string }>();
   const {
     treatment,
@@ -45,7 +47,7 @@ export default function TreatmentDetailPageClient({
   } = useTreatmentDetail(serverTreatment ?? routeTreatmentId);
 
   useTopbarBreadcrumb(
-    treatment
+    treatment && !isExternal
       ? {
           rootLabel: TREATMENT_DETAIL_COPY.breadcrumbRoot,
           rootHref: "/treatments",
@@ -100,34 +102,43 @@ export default function TreatmentDetailPageClient({
       <TreatmentDetailHeader treatment={treatment} />
 
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">
-        <TreatmentDetailInfoSection treatment={treatment} />
-        <TreatmentDetailInventorySection treatment={treatment} />
+        <TreatmentDetailInfoSection
+          treatment={treatment}
+          showPrice={!isExternal}
+        />
+        {!isExternal ? (
+          <TreatmentDetailInventorySection treatment={treatment} />
+        ) : null}
         <TreatmentImagesSection treatmentId={treatment.id} />
       </div>
 
-      <TreatmentDialog
-        open={editDialogOpen}
-        treatmentId={treatment.id}
-        onOpenChange={(open) => {
-          if (!open) {
-            closeEditDialog();
-            refetch();
-          }
-        }}
-      />
+      {!isExternal ? (
+        <TreatmentDialog
+          open={editDialogOpen}
+          treatmentId={treatment.id}
+          onOpenChange={(open) => {
+            if (!open) {
+              closeEditDialog();
+              refetch();
+            }
+          }}
+        />
+      ) : null}
 
-      <TreatmentDeleteConfirmDialog
-        treatment={treatment}
-        open={deleteDialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            closeDeleteDialog();
-          }
-        }}
-        onSuccess={() => {
-          router.push("/treatments");
-        }}
-      />
+      {!isExternal ? (
+        <TreatmentDeleteConfirmDialog
+          treatment={treatment}
+          open={deleteDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              closeDeleteDialog();
+            }
+          }}
+          onSuccess={() => {
+            router.push("/treatments");
+          }}
+        />
+      ) : null}
     </div>
   );
 }

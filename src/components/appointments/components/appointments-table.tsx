@@ -16,6 +16,7 @@ type AppointmentsTableProps = {
   appointments: AppointmentWithRelations[];
   onRowClick: (id: string) => void;
   onStatusChange: (id: string, status: AppointmentStatus) => void;
+  readOnly?: boolean;
   /**
    * Paginación en servidor: `appointments` es ya la página visible. Se omite
    * donde la tabla muestra una lista corta y completa, como el tab de citas de
@@ -35,6 +36,7 @@ export default function AppointmentsTable({
   appointments,
   onRowClick,
   onStatusChange,
+  readOnly = false,
   pagination,
   onDelete,
   onEdit,
@@ -45,8 +47,14 @@ export default function AppointmentsTable({
     [onDelete, onEdit],
   );
   const columns = useMemo(
-    () => buildAppointmentsColumns(onStatusChange, timezone, actionHandlers),
-    [actionHandlers, onStatusChange, timezone],
+    () =>
+      buildAppointmentsColumns(
+        onStatusChange,
+        timezone,
+        actionHandlers,
+        readOnly,
+      ),
+    [actionHandlers, onStatusChange, readOnly, timezone],
   );
 
   return (

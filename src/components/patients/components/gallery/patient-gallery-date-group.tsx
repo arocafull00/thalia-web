@@ -14,6 +14,7 @@ type PatientGalleryDateGroupProps = {
   eagerImageIds: Set<string>;
   onViewImage: (image: PatientImage) => void;
   onToggleSelect: (image: PatientImage) => void;
+  readOnly?: boolean;
 };
 
 export default function PatientGalleryDateGroup({
@@ -25,6 +26,7 @@ export default function PatientGalleryDateGroup({
   eagerImageIds,
   onViewImage,
   onToggleSelect,
+  readOnly = false,
 }: PatientGalleryDateGroupProps) {
   return (
     <div>
@@ -41,6 +43,7 @@ export default function PatientGalleryDateGroup({
             loading={eagerImageIds.has(image.id) ? "eager" : "lazy"}
             onView={() => onViewImage(image)}
             onToggleSelect={() => onToggleSelect(image)}
+            readOnly={readOnly}
           />
         ))}
       </div>

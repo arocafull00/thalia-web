@@ -5,6 +5,7 @@ import {
   parseEmployeeStatusFilter,
 } from "@/lib/employee-pagination";
 import { getServerActiveClinicId } from "@/lib/server/active-clinic";
+import { requireBusinessOwner } from "@/lib/server/business-access";
 
 export default async function EmployeesPage({
   searchParams,
@@ -16,6 +17,7 @@ export default async function EmployeesPage({
     status?: string;
   }>;
 }) {
+  await requireBusinessOwner();
   const [params, clinicId] = await Promise.all([
     searchParams,
     getServerActiveClinicId(),

@@ -6,6 +6,10 @@ import type {
   AppointmentRangeParams,
 } from "@/dal/appointments.dal";
 import {
+  normalizeAppointment,
+  normalizeAppointments,
+} from "@/dal/price-normalizers";
+import {
   APPOINTMENT_DETAIL_SELECT,
   APPOINTMENT_LIST_SELECT,
 } from "@/dal/selects";
@@ -70,7 +74,9 @@ export async function getAppointmentsPage(
     .select(APPOINTMENT_LIST_SELECT)
     .in("id", ids);
 
-  const rows = unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  const rows = normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
   const position = new Map(ids.map((id, index) => [id, index]));
 
   return {
@@ -114,5 +120,9 @@ export async function getAppointment(
     .select(APPOINTMENT_DETAIL_SELECT)
     .eq("id", appointmentId)
     .maybeSingle();
-  return unwrapSupabaseNullable(data, error) as AppointmentWithRelations | null;
+  const appointment = unwrapSupabaseNullable(data, error) as Record<
+    string,
+    unknown
+  > | null;
+  return appointment ? normalizeAppointment(appointment) : null;
 }

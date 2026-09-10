@@ -149,6 +149,11 @@ export default function EmployeesPageClient({
   };
 
   const handleRowClick = (id: string) => {
+    const employee = employees.employees.find((entry) => entry.id === id);
+    if (employee?.account_type === "external") {
+      router.push(`/employees/${id}`);
+      return;
+    }
     setEditingEmployeeId(id);
     setEditDialogOpen(true);
   };

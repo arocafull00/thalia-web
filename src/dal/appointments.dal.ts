@@ -1,4 +1,8 @@
 import {
+  normalizeAppointment,
+  normalizeAppointments,
+} from "@/dal/price-normalizers";
+import {
   APPOINTMENT_DETAIL_SELECT,
   APPOINTMENT_LIST_SELECT,
 } from "@/dal/selects";
@@ -77,7 +81,9 @@ export async function getAppointments(
   }
 
   const { data, error } = await query;
-  return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  return normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
 }
 
 export type AppointmentPageParams = AppointmentRangeParams & {
@@ -153,7 +159,9 @@ export async function getAppointmentsPage(
     .select(APPOINTMENT_LIST_SELECT)
     .in("id", ids);
 
-  const rows = unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  const rows = normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
 
   // `in` no conserva el orden de la lista, así que se reordena según los ids
   // que devolvió la vista, que son los que llevan el orden bueno.
@@ -174,7 +182,9 @@ export async function getAppointment(
     .select(APPOINTMENT_DETAIL_SELECT)
     .eq("id", appointmentId)
     .single();
-  return unwrapSupabase(data, error) as AppointmentWithRelations;
+  return normalizeAppointment(
+    unwrapSupabase(data, error) as Record<string, unknown>,
+  );
 }
 
 export async function getAppointmentInventoryItems(
@@ -241,8 +251,38 @@ export async function insertAppointment(
 export async function insertAppointmentTreatments(
   rows: AppointmentTreatmentInsert[],
 ): Promise<void> {
-  const { error } = await supabase.from("appointment_treatments").insert(rows);
-  if (error) throw error;
+  if (rows.length === 0) {
+    return;
+  }
+
+  const links = rows.map(
+    ({ price_at_booking: _priceAtBooking, ...row }) => row,
+  );
+  const { data, error } = await supabase
+    .from("appointment_treatments")
+    .insert(links)
+    .select("id, treatment_id");
+  const inserted = unwrapSupabaseList(data, error);
+  const prices = inserted.map((entry) => ({
+    appointment_treatment_id: entry.id,
+    price_at_booking:
+      rows.find((row) => row.treatment_id === entry.treatment_id)
+        ?.price_at_booking ?? 0,
+  }));
+  const { error: priceError } = await supabase
+    .from("appointment_treatment_prices")
+    .insert(prices);
+
+  if (priceError) {
+    await supabase
+      .from("appointment_treatments")
+      .delete()
+      .in(
+        "id",
+        inserted.map((entry) => entry.id),
+      );
+    throw priceError;
+  }
 }
 
 export async function updateAppointment(

@@ -21,6 +21,7 @@ import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
+import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientDetailTabs } from "@/lib/hooks/use-patient-detail-tabs";
 import { usePatient, usePatientAppointments } from "@/lib/hooks/use-patients";
@@ -41,6 +42,7 @@ export default function PatientDetailPageClient({
   initialAppointments,
 }: PatientDetailPageClientProps) {
   const { id: routePatientId } = useParams<{ id: string }>();
+  const { isExternal } = useActiveClinic();
   const patientId = serverPatient?.id ?? routePatientId;
   const patientQuery = usePatient(serverPatient ?? patientId);
   const appointmentsQuery = usePatientAppointments(
@@ -81,7 +83,7 @@ export default function PatientDetailPageClient({
   const patientAvatar = usePatientAvatar(patient);
 
   useTopbarBreadcrumb(
-    patient
+    patient && !isExternal
       ? {
           rootLabel: PATIENT_DETAIL_COPY.breadcrumbRoot,
           rootHref: "/patients",
@@ -144,6 +146,7 @@ export default function PatientDetailPageClient({
         avatarDisplayUri={patientAvatar.avatarDisplayUri}
         avatarUploadPending={patientAvatar.avatarUploadPending}
         onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
+        readOnly={isExternal}
       />
 
       <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
@@ -157,39 +160,48 @@ export default function PatientDetailPageClient({
             error={appointmentsQuery.error}
             onOpenUploader={() => setUploaderOpen(true)}
             onOpenFilesUploader={() => setFilesUploaderOpen(true)}
+            readOnly={isExternal}
           />
         </div>
       </div>
 
-      <PatientEditDialog
-        patient={patient}
-        open={editDialogOpen}
-        avatarDisplayUri={patientAvatar.avatarDisplayUri}
-        avatarUploadPending={patientAvatar.avatarUploadPending}
-        onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
-        onOpenChange={setEditDialogOpen}
-        onSuccess={refetch}
-      />
+      {!isExternal ? (
+        <PatientEditDialog
+          patient={patient}
+          open={editDialogOpen}
+          avatarDisplayUri={patientAvatar.avatarDisplayUri}
+          avatarUploadPending={patientAvatar.avatarUploadPending}
+          onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
+          onOpenChange={setEditDialogOpen}
+          onSuccess={refetch}
+        />
+      ) : null}
 
-      <AppointmentCreateDialog
-        open={appointmentDialogOpen}
-        onOpenChange={setAppointmentDialogOpen}
-        initialPatientId={patient.id}
-      />
+      {!isExternal ? (
+        <AppointmentCreateDialog
+          open={appointmentDialogOpen}
+          onOpenChange={setAppointmentDialogOpen}
+          initialPatientId={patient.id}
+        />
+      ) : null}
 
-      <PatientImageUploaderDialog
-        patientId={patient.id}
-        open={uploaderOpen}
-        onOpenChange={setUploaderOpen}
-      />
+      {!isExternal ? (
+        <PatientImageUploaderDialog
+          patientId={patient.id}
+          open={uploaderOpen}
+          onOpenChange={setUploaderOpen}
+        />
+      ) : null}
 
-      <PatientFileUploaderDialog
-        patientId={patient.id}
-        open={filesUploaderOpen}
-        onOpenChange={setFilesUploaderOpen}
-      />
+      {!isExternal ? (
+        <PatientFileUploaderDialog
+          patientId={patient.id}
+          open={filesUploaderOpen}
+          onOpenChange={setFilesUploaderOpen}
+        />
+      ) : null}
 
-      {deleteConfirm ? (
+      {!isExternal && deleteConfirm ? (
         <PatientImageDeleteConfirmDialog
           patientId={patientId}
           image={deleteConfirm.image}
@@ -205,7 +217,7 @@ export default function PatientDetailPageClient({
         />
       ) : null}
 
-      {filesDeleteConfirm ? (
+      {!isExternal && filesDeleteConfirm ? (
         <PatientFileDeleteConfirmDialog
           patientId={patientId}
           file={filesDeleteConfirm.file}

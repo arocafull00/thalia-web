@@ -73,7 +73,7 @@ VALUES (
 
 INSERT INTO public.employees (
   id,
-  clinic_id,
+  account_type,
   full_name,
   role,
   specialty,
@@ -83,7 +83,7 @@ INSERT INTO public.employees (
 )
 VALUES (
   '00000000-0000-4000-8000-000000000001',
-  '10000000-0000-4000-8000-000000000001',
+  'internal',
   'E2E Administrador',
   'admin',
   'Medicina estética',
@@ -150,8 +150,7 @@ INSERT INTO public.treatment (
   name,
   category,
   duration_minutes,
-  color,
-  price
+  color
 )
 VALUES (
   '40000000-0000-4000-8000-000000000001',
@@ -159,9 +158,11 @@ VALUES (
   'E2E Tratamiento Facial',
   'Facial',
   30,
-  '#7c3aed',
-  75.00
+  '#7c3aed'
 );
+
+INSERT INTO public.treatment_prices (treatment_id, price)
+VALUES ('40000000-0000-4000-8000-000000000001', 75.00);
 
 INSERT INTO public.inventory_items (
   id,
@@ -221,15 +222,19 @@ VALUES (
 INSERT INTO public.appointment_treatments (
   id,
   appointment_id,
-  treatment_id,
-  price_at_booking
+  treatment_id
 )
 VALUES (
   '80000000-0000-4000-8000-000000000001',
   '70000000-0000-4000-8000-000000000001',
-  '40000000-0000-4000-8000-000000000001',
-  75.00
+  '40000000-0000-4000-8000-000000000001'
 );
+
+INSERT INTO public.appointment_treatment_prices (
+  appointment_treatment_id,
+  price_at_booking
+)
+VALUES ('80000000-0000-4000-8000-000000000001', 75.00);
 
 -- ---------------------------------------------------------------------------
 -- Datos de marketing (issue #31)
@@ -365,21 +370,18 @@ VALUES
 INSERT INTO public.appointment_treatments (
   id,
   appointment_id,
-  treatment_id,
-  price_at_booking
+  treatment_id
 )
 VALUES
   (
     '80000000-0000-4000-8000-000000000010',
     '70000000-0000-4000-8000-000000000010',
-    '40000000-0000-4000-8000-000000000001',
-    75.00
+    '40000000-0000-4000-8000-000000000001'
   ),
   (
     '80000000-0000-4000-8000-000000000012',
     '70000000-0000-4000-8000-000000000012',
-    '40000000-0000-4000-8000-000000000001',
-    75.00
+    '40000000-0000-4000-8000-000000000001'
   );
 
 -- ---------------------------------------------------------------------------
@@ -486,12 +488,12 @@ VALUES (
   now(), now(), now()
 );
 
-INSERT INTO public.employees (id, clinic_id, full_name, role, active)
+INSERT INTO public.employees (id, full_name, role, account_type, active)
 VALUES (
   '00000000-0000-4000-8000-0000000000ff',
-  '10000000-0000-4000-8000-000000000001',
   'E2E Autónomo',
   'doctor',
+  'external',
   true
 );
 
@@ -516,3 +518,10 @@ VALUES (
   'scheduled',
   'Única cita del autónomo: define el paciente que puede ver.'
 );
+INSERT INTO public.appointment_treatment_prices (
+  appointment_treatment_id,
+  price_at_booking
+)
+VALUES
+  ('80000000-0000-4000-8000-000000000010', 75.00),
+  ('80000000-0000-4000-8000-000000000012', 75.00);

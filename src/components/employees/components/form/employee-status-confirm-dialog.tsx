@@ -6,6 +6,7 @@ import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { EMPLOYEE_STATUS_COPY } from "@/copy/employee-status-copy";
 import { useUpdateEmployee } from "@/lib/hooks/use-employees";
 import { notifySuccess } from "@/lib/sound";
+import { useEmployeesStore } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
 
 type EmployeeStatusConfirmDialogProps = {
@@ -22,6 +23,9 @@ export default function EmployeeStatusConfirmDialog({
   onSuccess,
 }: EmployeeStatusConfirmDialogProps) {
   const { mutate, isPending } = useUpdateEmployee();
+  const setExternalMembershipStatus = useEmployeesStore(
+    (state) => state.setExternalMembershipStatus,
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const isActive = employee.active !== false;
   const copy = isActive
@@ -30,6 +34,23 @@ export default function EmployeeStatusConfirmDialog({
 
   const handleConfirm = () => {
     setErrorMessage(null);
+
+    if (employee.account_type === "external") {
+      void setExternalMembershipStatus(employee.id, "suspended")
+        .then(() => {
+          notifySuccess(copy.success);
+          handleOpenChange(false);
+          onSuccess();
+        })
+        .catch((cause) => {
+          setErrorMessage(
+            cause instanceof Error && cause.message
+              ? cause.message
+              : copy.error,
+          );
+        });
+      return;
+    }
 
     mutate(
       {

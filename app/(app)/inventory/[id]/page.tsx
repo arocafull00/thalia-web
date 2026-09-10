@@ -6,12 +6,14 @@ import {
   getInventoryMovements,
 } from "@/dal/inventory.server.dal";
 import { logger } from "@/lib/logger";
+import { requireBusinessOwner } from "@/lib/server/business-access";
 
 export default async function InventoryItemDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireBusinessOwner();
   const { id } = await params;
   let item: Awaited<ReturnType<typeof getInventoryItem>>;
   let movements: Awaited<ReturnType<typeof getInventoryMovements>>;

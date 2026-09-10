@@ -21,26 +21,32 @@ export function getEmployeeRowActions(
 ): ProfileAction[] {
   const isInactive = employee.active === false;
 
-  return [
+  const actions: ProfileAction[] = [
     {
       label: EMPLOYEES_COPY.list.actions.view,
       icon: Eye,
       href: `/employees/${employee.id}`,
     },
-    {
+  ];
+
+  if (employee.account_type === "internal") {
+    actions.push({
       label: EMPLOYEES_COPY.list.actions.edit,
       icon: Pencil,
       onClick: () => handlers.onEdit(employee.id),
-    },
-    {
-      label: isInactive
-        ? EMPLOYEES_COPY.list.actions.activate
-        : EMPLOYEES_COPY.list.actions.deactivate,
-      icon: isInactive ? UserCheck : UserX,
-      onClick: () => handlers.onToggleStatus(employee.id),
-      variant: isInactive ? "default" : "danger",
-    },
-  ];
+    });
+  }
+
+  actions.push({
+    label: isInactive
+      ? EMPLOYEES_COPY.list.actions.activate
+      : EMPLOYEES_COPY.list.actions.deactivate,
+    icon: isInactive ? UserCheck : UserX,
+    onClick: () => handlers.onToggleStatus(employee.id),
+    variant: isInactive ? "default" : "danger",
+  });
+
+  return actions;
 }
 
 export function buildEmployeesColumns(

@@ -1,5 +1,7 @@
 export type EmployeeRole = "admin" | "reception" | "doctor" | "auxiliary";
 
+export type EmployeeAccountType = "internal" | "external";
+
 export type ClinicMembershipRole = "owner" | "admin" | "employee" | "external";
 
 export type ClinicMembershipInvitationRole = Exclude<
@@ -147,7 +149,7 @@ export type InvitationToken = {
 
 export type Employee = {
   id: string;
-  clinic_id: string;
+  account_type: EmployeeAccountType;
   full_name: string;
   role: EmployeeRole;
   specialty: string | null;
@@ -267,6 +269,14 @@ export type Treatment = {
   updated_at: string | null;
 };
 
+export type TreatmentRow = Omit<Treatment, "price">;
+
+export type TreatmentPrice = {
+  treatment_id: string;
+  price: number | null;
+  updated_at: string;
+};
+
 export type TreatmentInventoryItem = {
   id: string;
   treatment_id: string;
@@ -299,8 +309,19 @@ export type AppointmentTreatment = {
   id: string;
   appointment_id: string;
   treatment_id: string;
-  price_at_booking: number;
+  price_at_booking: number | null;
   created_at: string | null;
+};
+
+export type AppointmentTreatmentRow = Omit<
+  AppointmentTreatment,
+  "price_at_booking"
+>;
+
+export type AppointmentTreatmentPrice = {
+  appointment_treatment_id: string;
+  price_at_booking: number;
+  created_at: string;
 };
 
 export type AppointmentInventoryItem = {
@@ -491,9 +512,14 @@ type Tables = {
     Update: Partial<Patient>;
   };
   treatment: {
-    Row: Treatment;
-    Insert: Partial<Treatment>;
-    Update: Partial<Treatment>;
+    Row: TreatmentRow;
+    Insert: Partial<TreatmentRow>;
+    Update: Partial<TreatmentRow>;
+  };
+  treatment_prices: {
+    Row: TreatmentPrice;
+    Insert: Partial<TreatmentPrice>;
+    Update: Partial<TreatmentPrice>;
   };
   treatment_inventory_items: {
     Row: TreatmentInventoryItem;
@@ -506,9 +532,14 @@ type Tables = {
     Update: Partial<Appointment>;
   };
   appointment_treatments: {
-    Row: AppointmentTreatment;
-    Insert: Partial<AppointmentTreatment>;
-    Update: Partial<AppointmentTreatment>;
+    Row: AppointmentTreatmentRow;
+    Insert: Partial<AppointmentTreatmentRow>;
+    Update: Partial<AppointmentTreatmentRow>;
+  };
+  appointment_treatment_prices: {
+    Row: AppointmentTreatmentPrice;
+    Insert: Partial<AppointmentTreatmentPrice>;
+    Update: Partial<AppointmentTreatmentPrice>;
   };
   appointment_inventory_items: {
     Row: AppointmentInventoryItem;

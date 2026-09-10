@@ -6,8 +6,9 @@ type AppointmentDetailTreatmentItemProps = {
   treatmentId: string | null;
   name: string;
   color: string | null;
-  priceAtBooking: number;
+  priceAtBooking: number | null;
   durationMinutes: number | null;
+  showPrice?: boolean;
 };
 
 export default function AppointmentDetailTreatmentItem({
@@ -16,6 +17,7 @@ export default function AppointmentDetailTreatmentItem({
   color,
   priceAtBooking,
   durationMinutes,
+  showPrice = true,
 }: AppointmentDetailTreatmentItemProps) {
   const content = (
     <>
@@ -29,9 +31,11 @@ export default function AppointmentDetailTreatmentItem({
       </div>
       <div className="flex shrink-0 items-center gap-3 text-sm text-ink-secondary">
         {durationMinutes ? <span>{durationMinutes} min</span> : null}
-        <span className="font-medium text-ink">
-          {formatCurrency(priceAtBooking)}
-        </span>
+        {showPrice && priceAtBooking != null ? (
+          <span className="font-medium text-ink">
+            {formatCurrency(priceAtBooking)}
+          </span>
+        ) : null}
       </div>
     </>
   );

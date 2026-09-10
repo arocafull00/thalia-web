@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/primitives/skeleton-list";
 import { PATIENT_CREATE_COPY } from "@/copy/patient-create-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
+import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientCreateDialog } from "@/lib/hooks/use-patient-create-dialog";
@@ -58,6 +59,7 @@ export default function PatientsPageClient({
   initialQuery,
 }: PatientsPageClientProps) {
   const router = useRouter();
+  const { isExternal } = useActiveClinic();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
@@ -132,6 +134,10 @@ export default function PatientsPageClient({
   };
 
   const handleRowClick = (id: string) => {
+    if (isExternal) {
+      router.push(`/patients/${id}`);
+      return;
+    }
     setEditingPatientId(id);
     setEditDialogOpen(true);
   };
@@ -151,11 +157,15 @@ export default function PatientsPageClient({
         testId: "patients-refresh-trigger",
         onClick: () => void patients.refresh(),
       },
-      {
-        title: "Nuevo paciente",
-        testId: "patient-create-trigger",
-        onClick: () => setDialogOpen(true),
-      },
+      ...(!isExternal
+        ? [
+            {
+              title: "Nuevo paciente",
+              testId: "patient-create-trigger",
+              onClick: () => setDialogOpen(true),
+            },
+          ]
+        : []),
     ],
   });
 
@@ -187,7 +197,7 @@ export default function PatientsPageClient({
           <PatientsTable
             patients={patients.patients}
             onRowClick={handleRowClick}
-            onEdit={handleRowClick}
+            onEdit={isExternal ? undefined : handleRowClick}
             pagination={{
               pageIndex,
               pageSize: PATIENTS_PAGE_SIZE,
@@ -198,53 +208,55 @@ export default function PatientsPageClient({
           />
         ) : null}
       </PageCard>
-      <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
-        <AppSheetContent>
-          <AppDialogHeader>
-            <AppDialogTitle>{PATIENT_CREATE_COPY.title}</AppDialogTitle>
-            <AppDialogDescription>
-              {PATIENT_CREATE_COPY.description}
-            </AppDialogDescription>
-          </AppDialogHeader>
-          <div className="min-h-0 flex-1 overflow-y-auto px-1">
-            <PatientCreateForm
-              register={dialog.register}
-              control={dialog.control}
-              errors={dialog.errors}
-              avatarDisplayUri={dialog.avatarDisplayUri}
-              avatarInitials={dialog.avatarInitials}
-              avatarUploadPending={dialog.avatarUploadPending}
-              onAvatarFileSelected={dialog.onAvatarFileSelected}
-            />
-          </div>
-          <AppDialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancelCreate}
-              className="rounded-button px-3 py-1.5 text-sm"
-            >
-              <FORM_ACTION_ICONS.cancel
-                className={FORM_ACTION_ICON_CLASS}
-                aria-hidden="true"
+      {!isExternal ? (
+        <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
+          <AppSheetContent>
+            <AppDialogHeader>
+              <AppDialogTitle>{PATIENT_CREATE_COPY.title}</AppDialogTitle>
+              <AppDialogDescription>
+                {PATIENT_CREATE_COPY.description}
+              </AppDialogDescription>
+            </AppDialogHeader>
+            <div className="min-h-0 flex-1 overflow-y-auto px-1">
+              <PatientCreateForm
+                register={dialog.register}
+                control={dialog.control}
+                errors={dialog.errors}
+                avatarDisplayUri={dialog.avatarDisplayUri}
+                avatarInitials={dialog.avatarInitials}
+                avatarUploadPending={dialog.avatarUploadPending}
+                onAvatarFileSelected={dialog.onAvatarFileSelected}
               />
-              {PATIENT_CREATE_COPY.actions.cancel}
-            </Button>
-            <ActionButton
-              icon={FORM_ACTION_ICONS.save}
-              title={
-                dialog.isPending
-                  ? PATIENT_CREATE_COPY.actions.saving
-                  : PATIENT_CREATE_COPY.actions.save
-              }
-              disabled={dialog.isPending}
-              testId="patient-create-submit"
-              onClick={dialog.handleSubmit}
-            />
-          </AppDialogFooter>
-        </AppSheetContent>
-      </AppDialog>
-      {editingPatient ? (
+            </div>
+            <AppDialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancelCreate}
+                className="rounded-button px-3 py-1.5 text-sm"
+              >
+                <FORM_ACTION_ICONS.cancel
+                  className={FORM_ACTION_ICON_CLASS}
+                  aria-hidden="true"
+                />
+                {PATIENT_CREATE_COPY.actions.cancel}
+              </Button>
+              <ActionButton
+                icon={FORM_ACTION_ICONS.save}
+                title={
+                  dialog.isPending
+                    ? PATIENT_CREATE_COPY.actions.saving
+                    : PATIENT_CREATE_COPY.actions.save
+                }
+                disabled={dialog.isPending}
+                testId="patient-create-submit"
+                onClick={dialog.handleSubmit}
+              />
+            </AppDialogFooter>
+          </AppSheetContent>
+        </AppDialog>
+      ) : null}
+      {!isExternal && editingPatient ? (
         <PatientEditDialog
           patient={editingPatient}
           open={editDialogOpen}
@@ -267,7 +279,9 @@ export default function PatientsPageClient({
         onClear={() => setFilters(PATIENT_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
       />
-      <MobileFab label="Nuevo paciente" onClick={() => setDialogOpen(true)} />
+      {!isExternal ? (
+        <MobileFab label="Nuevo paciente" onClick={() => setDialogOpen(true)} />
+      ) : null}
     </div>
   );
 }

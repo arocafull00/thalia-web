@@ -18,6 +18,7 @@ import {
   uploadPatientFileObject,
   validatePatientFile,
 } from "@/lib/patient-file-storage";
+import { assertCanMutateClinicalData } from "@/lib/permissions";
 import type { PatientFileUploadInput } from "@/lib/schemas/patient-file-schema";
 import { useAuthStore } from "@/stores/auth-store";
 import {
@@ -248,6 +249,9 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   },
 
   uploadPatientFile: async ({ clinicId, patientId, file, metadata }) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({
       uploading: true,
       uploadProgress: 0,
@@ -290,6 +294,9 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   },
 
   uploadPatientFiles: async ({ clinicId, patientId, files, metadata }) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     const total = files.length;
     set({
       uploading: true,
@@ -346,6 +353,9 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   },
 
   updatePatientFile: async (patientId, fileId, data) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ updatingId: fileId, updateError: null });
 
     try {
@@ -380,6 +390,9 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   },
 
   deletePatientFile: async (patientId, file) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ deletingId: file.id, deleteError: null });
 
     try {

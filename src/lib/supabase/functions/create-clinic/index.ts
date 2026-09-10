@@ -89,6 +89,24 @@ Deno.serve(async (req) => {
     );
   }
 
+  const { data: existingEmployee, error: employeeLookupError } =
+    await adminClient
+      .from("employees")
+      .select("account_type")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+  if (employeeLookupError || existingEmployee?.account_type === "external") {
+    return Response.json(
+      {
+        error:
+          employeeLookupError?.message ??
+          "External users cannot create clinics",
+      },
+      { status: 400, headers: corsHeaders },
+    );
+  }
+
   const { data: clinic, error: clinicError } = await adminClient
     .from("clinics")
     .insert({
@@ -113,27 +131,10 @@ Deno.serve(async (req) => {
     );
   }
 
-  const { error: membershipError } = await adminClient
-    .from("clinic_memberships")
-    .insert({
-      user_id: authData.user.id,
-      clinic_id: clinic.id,
-      role: "owner",
-      status: "active",
-      joined_at: new Date().toISOString(),
-    });
-
-  if (membershipError) {
-    return Response.json(
-      { error: membershipError.message },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
   const { error: employeeError } = await adminClient.from("employees").upsert(
     {
       id: authData.user.id,
-      clinic_id: clinic.id,
+      account_type: "internal",
       full_name: resolvedFullName,
       role: resolvedRole,
       specialty:
@@ -153,6 +154,23 @@ Deno.serve(async (req) => {
   if (employeeError) {
     return Response.json(
       { error: employeeError.message },
+      { status: 400, headers: corsHeaders },
+    );
+  }
+
+  const { error: membershipError } = await adminClient
+    .from("clinic_memberships")
+    .insert({
+      user_id: authData.user.id,
+      clinic_id: clinic.id,
+      role: "owner",
+      status: "active",
+      joined_at: new Date().toISOString(),
+    });
+
+  if (membershipError) {
+    return Response.json(
+      { error: membershipError.message },
       { status: 400, headers: corsHeaders },
     );
   }

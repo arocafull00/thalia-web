@@ -11,6 +11,7 @@ type PatientDetailHeaderProps = {
   avatarDisplayUri: string | null;
   avatarUploadPending: boolean;
   onAvatarFileSelected: (file: File) => void;
+  readOnly?: boolean;
 };
 
 export default function PatientDetailHeader({
@@ -18,6 +19,7 @@ export default function PatientDetailHeader({
   avatarDisplayUri,
   avatarUploadPending,
   onAvatarFileSelected,
+  readOnly = false,
 }: PatientDetailHeaderProps) {
   const initials = getProfileInitials(patient.full_name);
   const subtitleParts = [
@@ -33,6 +35,7 @@ export default function PatientDetailHeader({
         initials={initials}
         uploadPending={avatarUploadPending}
         onFileSelected={onAvatarFileSelected}
+        readOnly={readOnly}
       />
 
       <div className="min-w-0 space-y-1">

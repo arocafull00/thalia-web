@@ -133,6 +133,28 @@ Deno.serve(async (req) => {
   }
 
   const memberships = existingMemberships ?? [];
+  const { data: existingEmployee, error: employeeLookupError } =
+    await adminClient
+      .from("employees")
+      .select("id, role, account_type")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+  if (employeeLookupError) {
+    return Response.json(
+      { error: employeeLookupError.message },
+      { status: 400, headers: corsHeaders },
+    );
+  }
+
+  const accountType = invitation.role === "external" ? "external" : "internal";
+
+  if (existingEmployee && existingEmployee.account_type !== accountType) {
+    return Response.json(
+      { error: "Invitation role conflicts with the global account type" },
+      { status: 400, headers: corsHeaders },
+    );
+  }
 
   if (
     memberships.some(
@@ -164,13 +186,39 @@ Deno.serve(async (req) => {
     authData.user.email.split("@")[0] ??
     "Empleado";
 
-  const operationalRole = resolveEmployeeRole(invitation.role, employeeRole);
+  const operationalRole =
+    existingEmployee?.role ??
+    resolveEmployeeRole(invitation.role, employeeRole);
 
   if (!operationalRole) {
     return Response.json(
       { error: "Employee role is required" },
       { status: 400, headers: corsHeaders },
     );
+  }
+
+  if (!existingEmployee) {
+    const { error: employeeError } = await adminClient
+      .from("employees")
+      .insert({
+        id: authData.user.id,
+        account_type: accountType,
+        full_name: fullName,
+        role: operationalRole,
+        specialty:
+          typeof specialty === "string" && specialty.trim()
+            ? specialty.trim()
+            : null,
+        color: typeof color === "string" && color.trim() ? color.trim() : null,
+        active: true,
+      });
+
+    if (employeeError) {
+      return Response.json(
+        { error: employeeError.message },
+        { status: 400, headers: corsHeaders },
+      );
+    }
   }
 
   const { error: membershipError } = await adminClient
@@ -189,31 +237,6 @@ Deno.serve(async (req) => {
       { error: membershipError.message },
       { status: 400, headers: corsHeaders },
     );
-  }
-
-  if (memberships.length === 0) {
-    const { error: employeeError } = await adminClient.from("employees").upsert(
-      {
-        id: authData.user.id,
-        clinic_id: invitation.clinic_id,
-        full_name: fullName,
-        role: operationalRole,
-        specialty:
-          typeof specialty === "string" && specialty.trim()
-            ? specialty.trim()
-            : null,
-        color: typeof color === "string" && color.trim() ? color.trim() : null,
-        active: true,
-      },
-      { onConflict: "id" },
-    );
-
-    if (employeeError) {
-      return Response.json(
-        { error: employeeError.message },
-        { status: 400, headers: corsHeaders },
-      );
-    }
   }
 
   const { error: tokenError } = await adminClient

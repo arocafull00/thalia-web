@@ -6,6 +6,7 @@ import {
 } from "@/dal/inventory.server.dal";
 import { INVENTORY_PAGE_SIZE } from "@/lib/inventory-pagination";
 import { getServerActiveClinicId } from "@/lib/server/active-clinic";
+import { requireBusinessOwner } from "@/lib/server/business-access";
 
 /** `ok` es un alias histórico de `optimal`; ver `resolveStockLevel`. */
 function resolveStockLevel(stockParam: string): string {
@@ -30,6 +31,7 @@ export default async function InventoryPage({
     stock?: string;
   }>;
 }) {
+  await requireBusinessOwner();
   const [params, clinicId] = await Promise.all([
     searchParams,
     getServerActiveClinicId(),

@@ -8,10 +8,12 @@ import type { TreatmentWithInventory } from "@/types/database.types";
 
 type TreatmentDetailInfoSectionProps = {
   treatment: TreatmentWithInventory;
+  showPrice?: boolean;
 };
 
 export default function TreatmentDetailInfoSection({
   treatment,
+  showPrice = true,
 }: TreatmentDetailInfoSectionProps) {
   return (
     <section aria-label={TREATMENT_DETAIL_COPY.sections.info}>
@@ -19,12 +21,14 @@ export default function TreatmentDetailInfoSection({
         {TREATMENT_DETAIL_COPY.sections.info}
       </h2>
       <div className="divide-y divide-border-subtle">
-        <ProfileInfoRow
-          icon={Tag}
-          iconLabel={TREATMENT_DETAIL_COPY.fields.category}
-          label={TREATMENT_DETAIL_COPY.fields.category}
-          value={treatment.category}
-        />
+        {showPrice ? (
+          <ProfileInfoRow
+            icon={Tag}
+            iconLabel={TREATMENT_DETAIL_COPY.fields.category}
+            label={TREATMENT_DETAIL_COPY.fields.category}
+            value={treatment.category}
+          />
+        ) : null}
         <ProfileInfoRow
           icon={Clock}
           iconLabel={TREATMENT_DETAIL_COPY.fields.duration}

@@ -13,12 +13,14 @@ import {
 } from "@/dal/patients.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
+import { assertCanMutateClinicalData } from "@/lib/permissions";
 import {
   patientSchema,
   patientUpdateSchema,
 } from "@/lib/schemas/patient-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { uploadFile } from "@/lib/storage";
+import { useAuthStore } from "@/stores/auth-store";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -297,6 +299,9 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   },
 
   createPatient: async (input) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ creating: true, createError: null });
 
     try {
@@ -324,6 +329,9 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   },
 
   updatePatient: async (id, values) => {
+    assertCanMutateClinicalData(
+      useAuthStore.getState().profile?.account_type ?? null,
+    );
     set({ updating: true, updateError: null });
 
     try {

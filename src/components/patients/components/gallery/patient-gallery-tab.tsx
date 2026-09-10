@@ -13,11 +13,13 @@ import PatientImageViewer from "./patient-image-viewer";
 type PatientGalleryTabProps = {
   patient: Patient;
   onOpenUploader: () => void;
+  readOnly?: boolean;
 };
 
 export default function PatientGalleryTab({
   patient,
   onOpenUploader,
+  readOnly = false,
 }: PatientGalleryTabProps) {
   const gallery = usePatientGallery(patient.id);
 
@@ -42,6 +44,7 @@ export default function PatientGalleryTab({
           onStartSelection={() => gallery.setSelectionMode(true)}
           onCancelSelection={gallery.handleCloseSelectionMode}
           onCompare={() => gallery.setComparisonOpen(true)}
+          readOnly={readOnly}
         />
 
         <Separator />
@@ -63,6 +66,7 @@ export default function PatientGalleryTab({
           onToggleSelect={gallery.handleToggleSelect}
           onLoadMore={() => void gallery.imagesQuery.loadMore()}
           onRetry={() => void gallery.imagesQuery.refresh()}
+          readOnly={readOnly}
         />
       </div>
 

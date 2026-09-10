@@ -16,7 +16,7 @@ type PatientsTableProps = {
   patients: Patient[];
   emptyMessage?: string;
   onRowClick: (id: string) => void;
-  onEdit: (id: string) => void;
+  onEdit?: (id: string) => void;
   /** Paginación en servidor: `patients` es ya la página visible. */
   pagination?: {
     pageIndex: number;

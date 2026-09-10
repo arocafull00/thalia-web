@@ -21,6 +21,7 @@ import {
 } from "@/copy/app-sidebar-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
+import { canAccessBusiness } from "@/lib/permissions";
 import {
   canManageClinicSettings,
   SETTINGS_SECTIONS,
@@ -141,20 +142,25 @@ export function useAppNavItems() {
   const showFinances = useShellStore((state) => state.showFinances);
   const showInventory = useShellStore((state) => state.showInventory);
   const canManageClinic = canManageClinicSettings(platformRole);
+  const canViewBusiness = canAccessBusiness(platformRole);
 
   const items: AppNavItem[] = BASE_NAV_ITEMS.map((item) => {
     let visible = true;
 
+    if (item.section === "business") {
+      visible = canViewBusiness;
+    }
+
     if (item.href === "/employees") {
-      visible = showEmployees;
+      visible = visible && showEmployees;
     }
 
     if (item.href === "/finances") {
-      visible = showFinances;
+      visible = visible && showFinances;
     }
 
     if (item.href === "/inventory") {
-      visible = showInventory;
+      visible = visible && showInventory;
     }
 
     return {

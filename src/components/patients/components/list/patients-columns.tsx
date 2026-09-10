@@ -13,25 +13,31 @@ import type { Patient } from "@/types/database.types";
 const { columns, noEmail, noPhone } = PATIENTS_COPY.list;
 
 export type PatientListActionHandlers = {
-  onEdit: (id: string) => void;
+  onEdit?: (id: string) => void;
 };
 
 export function getPatientRowActions(
   patient: Patient,
   handlers: PatientListActionHandlers,
 ): ProfileAction[] {
-  return [
+  const actions: ProfileAction[] = [
     {
       label: PATIENTS_COPY.list.actions.view,
       icon: Eye,
       href: `/patients/${patient.id}`,
     },
-    {
+  ];
+
+  const onEdit = handlers.onEdit;
+  if (onEdit) {
+    actions.push({
       label: PATIENTS_COPY.list.actions.edit,
       icon: Pencil,
-      onClick: () => handlers.onEdit(patient.id),
-    },
-  ];
+      onClick: () => onEdit(patient.id),
+    });
+  }
+
+  return actions;
 }
 
 export function buildPatientsColumns(

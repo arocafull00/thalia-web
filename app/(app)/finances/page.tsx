@@ -14,6 +14,7 @@ import {
 } from "@/lib/finances-summary";
 import { parseFinancesTabParam } from "@/lib/finances-url";
 import { getServerActiveClinicId } from "@/lib/server/active-clinic";
+import { requireBusinessOwner } from "@/lib/server/business-access";
 import { summaryKey } from "@/stores/finances-store";
 import type { TransactionType } from "@/types/database.types";
 
@@ -38,6 +39,7 @@ export default async function FinancesPage({
     tab?: string;
   }>;
 }) {
+  await requireBusinessOwner();
   const [params, clinicId] = await Promise.all([
     searchParams,
     getServerActiveClinicId(),

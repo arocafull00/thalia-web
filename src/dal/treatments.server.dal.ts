@@ -1,6 +1,7 @@
 import "server-only";
 
-import { TREATMENT_DETAIL_SELECT } from "@/dal/selects";
+import { normalizeTreatmentWithInventory } from "@/dal/price-normalizers";
+import { TREATMENT_DETAIL_SELECT, TREATMENT_LIST_SELECT } from "@/dal/selects";
 import type {
   TreatmentPageParams,
   TreatmentPageResult,
@@ -27,7 +28,7 @@ export async function getTreatmentsPage(
 
   let query = supabase
     .from("treatment")
-    .select("*, treatment_inventory_items(id)", { count: "exact" })
+    .select(TREATMENT_LIST_SELECT, { count: "exact" })
     .order("name")
     .order("id")
     .range(offset, offset + params.pageSize - 1);
@@ -49,7 +50,9 @@ export async function getTreatmentsPage(
   const { data, error, count } = await query;
 
   return {
-    treatments: unwrapSupabaseList(data, error) as TreatmentWithInventory[],
+    treatments: (
+      unwrapSupabaseList(data, error) as Record<string, unknown>[]
+    ).map(normalizeTreatmentWithInventory),
     total: count ?? 0,
   };
 }
@@ -78,7 +81,7 @@ export async function getTreatments(
   const supabase = await createClient();
   let query = supabase
     .from("treatment")
-    .select("*, treatment_inventory_items(id)")
+    .select(TREATMENT_LIST_SELECT)
     .order("name");
 
   if (clinicId) {
@@ -86,7 +89,9 @@ export async function getTreatments(
   }
 
   const { data, error } = await query;
-  return unwrapSupabaseList(data, error) as TreatmentWithInventory[];
+  return (unwrapSupabaseList(data, error) as Record<string, unknown>[]).map(
+    normalizeTreatmentWithInventory,
+  );
 }
 
 export async function getTreatment(
@@ -98,5 +103,9 @@ export async function getTreatment(
     .select(TREATMENT_DETAIL_SELECT)
     .eq("id", treatmentId)
     .maybeSingle();
-  return unwrapSupabaseNullable(data, error) as TreatmentWithInventory | null;
+  const treatment = unwrapSupabaseNullable(data, error) as Record<
+    string,
+    unknown
+  > | null;
+  return treatment ? normalizeTreatmentWithInventory(treatment) : null;
 }

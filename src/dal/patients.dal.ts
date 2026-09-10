@@ -1,3 +1,4 @@
+import { normalizeAppointments } from "@/dal/price-normalizers";
 import { APPOINTMENT_LIST_SELECT } from "@/dal/selects";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
@@ -112,7 +113,9 @@ export async function getPatientAppointments(
     .select(APPOINTMENT_LIST_SELECT)
     .eq("patient_id", patientId)
     .order("starts_at", { ascending: false });
-  return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  return normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
 }
 
 export async function getUpcomingPatientAppointments(
@@ -124,7 +127,9 @@ export async function getUpcomingPatientAppointments(
     .eq("patient_id", patientId)
     .gt("starts_at", new Date().toISOString())
     .order("starts_at");
-  return unwrapSupabaseList(data, error) as AppointmentWithRelations[];
+  return normalizeAppointments(
+    unwrapSupabaseList(data, error) as Record<string, unknown>[],
+  );
 }
 
 export async function insertPatient(input: PatientInsert): Promise<Patient> {

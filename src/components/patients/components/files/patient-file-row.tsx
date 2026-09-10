@@ -22,8 +22,8 @@ type PatientFileRowProps = {
   file: PatientFile;
   onView: (file: PatientFile) => void;
   onDownload: (file: PatientFile) => void;
-  onEdit: (file: PatientFile) => void;
-  onDelete: (file: PatientFile) => void;
+  onEdit?: (file: PatientFile) => void;
+  onDelete?: (file: PatientFile) => void;
 };
 
 export default function PatientFileRow({
@@ -81,17 +81,21 @@ export default function PatientFileRow({
             <Download aria-hidden="true" />
             {PATIENT_FILES_COPY.actions.download}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onEdit(file)}>
-            <Pencil aria-hidden="true" />
-            {PATIENT_FILES_COPY.actions.edit}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={() => onDelete(file)}
-          >
-            <Trash2 aria-hidden="true" />
-            {PATIENT_FILES_COPY.actions.delete}
-          </DropdownMenuItem>
+          {onEdit ? (
+            <DropdownMenuItem onClick={() => onEdit(file)}>
+              <Pencil aria-hidden="true" />
+              {PATIENT_FILES_COPY.actions.edit}
+            </DropdownMenuItem>
+          ) : null}
+          {onDelete ? (
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => onDelete(file)}
+            >
+              <Trash2 aria-hidden="true" />
+              {PATIENT_FILES_COPY.actions.delete}
+            </DropdownMenuItem>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

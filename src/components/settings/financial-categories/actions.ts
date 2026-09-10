@@ -19,12 +19,13 @@ import type { TransactionCategory } from "@/types/database.types";
 
 async function requireCategoryManager() {
   const supabase = await createClient();
-  const [{ data: authData, error: authError }, clinicId] = await Promise.all([
-    supabase.auth.getUser(),
+  const [{ data: claimsData, error: claimsError }, clinicId] = await Promise.all([
+    supabase.auth.getClaims(),
     getServerActiveClinicId(),
   ]);
+  const userId = claimsData?.claims?.sub;
 
-  if (authError || !authData.user) {
+  if (claimsError || typeof userId !== "string") {
     throw new Error("Debes iniciar sesión para gestionar categorías.");
   }
 
@@ -35,7 +36,7 @@ async function requireCategoryManager() {
   const { data: membership, error: membershipError } = await supabase
     .from("clinic_memberships")
     .select("id")
-    .eq("user_id", authData.user.id)
+    .eq("user_id", userId)
     .eq("clinic_id", clinicId)
     .eq("status", "active")
     .in("role", ["owner", "admin"])
@@ -45,7 +46,7 @@ async function requireCategoryManager() {
     throw new Error("No tienes permisos para gestionar categorías.");
   }
 
-  return { clinicId, userId: authData.user.id };
+  return { clinicId, userId };
 }
 
 function categoryMutationError(cause: unknown) {

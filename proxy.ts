@@ -13,6 +13,10 @@ const publicRoutes = [
   "/forgot-password",
   "/reset-password",
   "/no-membership",
+  // Confirmación de cita por el paciente (#87). Es la única ruta pública que
+  // abre alguien de fuera de la clínica: sin sesión, desde el navegador
+  // embebido de WhatsApp. Sin esto el enlace del mensaje lleva a /login.
+  "/cita",
 ];
 
 const pwaRoutes = ["/manifest.webmanifest", "/sw.js"];

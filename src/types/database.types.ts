@@ -66,6 +66,7 @@ export type Clinic = {
   whatsapp_reminder_hours: number[];
   whatsapp_phone_number_id: string | null;
   whatsapp_message_template: string;
+  whatsapp_confirmation_enabled: boolean;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -83,6 +84,42 @@ export type AppointmentReminder = {
   error_message: string | null;
   reminder_type: string;
   created_at: string;
+};
+
+/**
+ * Estado de una cita tal y como lo ve el paciente que abre el enlace de
+ * confirmación. Lo calcula `appointment_confirmation_state` en la base de
+ * datos: el orden de los casos es la regla de negocio, así que no se
+ * reconstruye aquí.
+ */
+export type AppointmentConfirmationState =
+  | "confirmable"
+  | "already_confirmed"
+  | "cancelled"
+  | "closed"
+  | "past"
+  | "expired";
+
+export type AppointmentConfirmationToken = {
+  id: string;
+  token: string;
+  appointment_id: string;
+  clinic_id: string;
+  expires_at: string;
+  confirmed_at: string | null;
+  created_at: string;
+};
+
+/** Lo mínimo que se le enseña a quien abre el enlace. Sin apellidos, teléfono
+ * ni tratamiento: el enlace viaja por WhatsApp y se reenvía. */
+export type AppointmentConfirmationView = {
+  state: AppointmentConfirmationState;
+  patient_first_name: string;
+  clinic_name: string;
+  clinic_phone: string | null;
+  clinic_timezone: string;
+  employee_name: string;
+  starts_at: string;
 };
 
 export type ClinicMembership = {
@@ -518,6 +555,11 @@ type Tables = {
     Insert: Partial<CampaignRecipient>;
     Update: Partial<CampaignRecipient>;
   };
+  appointment_confirmation_tokens: {
+    Row: AppointmentConfirmationToken;
+    Insert: Partial<AppointmentConfirmationToken>;
+    Update: Partial<AppointmentConfirmationToken>;
+  };
 };
 
 export type Database = {
@@ -561,6 +603,18 @@ export type Database = {
           visit_count: number;
           last_visit_at: string | null;
         }[];
+      };
+      get_appointment_confirmation: {
+        Args: {
+          p_token: string;
+        };
+        Returns: AppointmentConfirmationView[];
+      };
+      confirm_appointment_by_token: {
+        Args: {
+          p_token: string;
+        };
+        Returns: AppointmentConfirmationView[];
       };
     };
     Enums: Record<string, never>;

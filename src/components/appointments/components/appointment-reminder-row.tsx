@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import {
+  firstSkipReason,
   getRemindersForAppointment,
   sendManualReminder,
 } from "@/dal/appointment-reminders.dal";
@@ -40,8 +41,25 @@ export default function AppointmentReminderRow({
 
     setSending(true);
     try {
-      await sendManualReminder(appointmentId, clinicId);
-      toast.success(APPOINTMENT_DETAIL_COPY.reminderManualSuccess);
+      const summary = await sendManualReminder(appointmentId, clinicId);
+
+      if (summary?.sent) {
+        toast.success(APPOINTMENT_DETAIL_COPY.reminderManualSuccess);
+      } else if (summary?.failed) {
+        // El envío se intentó y WhatsApp lo rechazó. El motivo exacto de Twilio
+        // queda en appointment_reminders.error_message y en los logs.
+        toast.error(APPOINTMENT_DETAIL_COPY.reminderManualError);
+      } else {
+        // Ni enviado ni fallido: la función decidió no enviar. Decir "enviado"
+        // dejaría a la clínica esperando a un paciente que no recibió nada.
+        const reason = firstSkipReason(summary) ?? "desconocido";
+        toast.info(
+          APPOINTMENT_DETAIL_COPY.reminderSkipped[
+            reason as keyof typeof APPOINTMENT_DETAIL_COPY.reminderSkipped
+          ] ?? APPOINTMENT_DETAIL_COPY.reminderSkipped.desconocido,
+        );
+      }
+
       const updated = await getRemindersForAppointment(appointmentId);
       setReminders(Array.isArray(updated) ? updated : []);
     } catch {

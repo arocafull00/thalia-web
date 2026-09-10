@@ -65,10 +65,17 @@ export const SETTINGS_COPY = {
     phoneNumberIdHint:
       "Número de Twilio con prefijo internacional. En sandbox usa el número del sandbox de Twilio.",
     reminderHoursLabel: "Enviar recordatorio",
-    reminderHoursHint: "Puedes seleccionar varios momentos",
+    reminderHoursHint: "Se envía un único aviso por cita",
     templateLabel: "Mensaje",
     templateHint:
       "Variables disponibles: {paciente}, {clinica}, {fecha}, {hora}, {profesional}",
+    templateHintWithLink:
+      "Variables disponibles: {paciente}, {clinica}, {fecha}, {hora}, {profesional} y {enlace}, el botón para confirmar",
+    confirmationEnableLabel: "Pedir confirmación en el recordatorio",
+    confirmationEnableHint:
+      "Añade al recordatorio un enlace para que el paciente confirme la cita",
+    reminderTemplateMissingLink:
+      "Añade {enlace} al mensaje o el paciente no podrá confirmar.",
     saveLabel: "Guardar",
     savingLabel: "Guardando...",
   },

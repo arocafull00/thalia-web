@@ -381,3 +381,62 @@ VALUES
     '40000000-0000-4000-8000-000000000001',
     75.00
   );
+
+-- ---------------------------------------------------------------------------
+-- Confirmación de cita por enlace público (issue #87)
+-- ---------------------------------------------------------------------------
+-- En producción estos tokens los crea `send-reminders` al incrustar el enlace
+-- en el recordatorio. Aquí van sembrados con identificadores fijos para que el
+-- E2E pueda visitar una URL concreta sin depender de la edge function. Van a +60 días a propósito: fuera del rango que pintan por
+-- defecto el calendario y el listado de citas, así no alteran las asserciones
+-- de los demás specs.
+
+INSERT INTO public.appointments (
+  id, clinic_id, patient_id, employee_id, starts_at, ends_at, status, notes
+)
+VALUES
+  (
+    '70000000-0000-4000-8000-000000000020',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000001',
+    '00000000-0000-4000-8000-000000000001',
+    date_trunc('day', now()) + interval '60 days 10 hours',
+    date_trunc('day', now()) + interval '60 days 10 hours 30 minutes',
+    'scheduled',
+    'Cita confirmable por enlace público.'
+  ),
+  (
+    '70000000-0000-4000-8000-000000000021',
+    '10000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000001',
+    '00000000-0000-4000-8000-000000000001',
+    date_trunc('day', now()) + interval '61 days 10 hours',
+    date_trunc('day', now()) + interval '61 days 10 hours 30 minutes',
+    'cancelled',
+    'Cita cancelada: el enlace no debe ofrecer confirmar.'
+  );
+
+INSERT INTO public.appointment_confirmation_tokens (
+  token, appointment_id, clinic_id, expires_at
+)
+VALUES
+  (
+    '90000000-0000-4000-8000-000000000001',
+    '70000000-0000-4000-8000-000000000020',
+    '10000000-0000-4000-8000-000000000001',
+    now() + interval '67 days'
+  ),
+  (
+    '90000000-0000-4000-8000-000000000002',
+    '70000000-0000-4000-8000-000000000021',
+    '10000000-0000-4000-8000-000000000001',
+    now() + interval '68 days'
+  ),
+  -- Token caducado sobre una cita futura: comprueba el corte por caducidad
+  -- independientemente del estado de la cita.
+  (
+    '90000000-0000-4000-8000-000000000003',
+    '70000000-0000-4000-8000-000000000001',
+    '10000000-0000-4000-8000-000000000001',
+    now() - interval '1 day'
+  );

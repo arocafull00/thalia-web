@@ -26,6 +26,15 @@ export const APPOINTMENT_DETAIL_COPY = {
   reminderSending: "Enviando...",
   reminderManualSuccess: "Recordatorio enviado por WhatsApp.",
   reminderManualError: "No se pudo enviar el recordatorio.",
+  reminderSkipped: {
+    clinica_no_elegible:
+      "Los recordatorios están desactivados o falta el número de envío en Ajustes.",
+    clinica_sin_numero: "Falta el número de envío de WhatsApp en Ajustes.",
+    paciente_sin_telefono: "Este paciente no tiene teléfono.",
+    sin_citas_en_ventana: "La cita ya no admite recordatorio.",
+    error_consulta_citas: "No se pudo leer la cita.",
+    desconocido: "No se envió el recordatorio.",
+  },
   totalDuration: "Duración total",
   total: "Total",
   materials: "Materiales",

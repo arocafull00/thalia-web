@@ -12,6 +12,7 @@ import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import FilterField from "@/components/ui/filter-field";
 import FiltersSheet from "@/components/ui/filters-sheet";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import type { Employee } from "@/types/database.types";
 
@@ -41,6 +42,7 @@ export default function AppointmentFiltersSheet({
 }: AppointmentFiltersSheetProps) {
   const employees = useEmployees(initialEmployees);
   const [pending, setPending] = useState<AppointmentFilters>(filters);
+  const isExternal = useIsExternalProfessional();
 
   const activeEmployees = useMemo(
     () =>
@@ -97,25 +99,29 @@ export default function AppointmentFiltersSheet({
       onClear={handleClear}
       contentClassName="min-h-[70dvh]"
     >
-      <FilterField
-        variant="sheet"
-        label={APPOINTMENTS_COPY.filterLabels.employee}
-      >
-        {({ controlId }) => (
-          <AppSearchableCombobox
-            id={controlId}
-            value={pending.employeeId || null}
-            onValueChange={(v) =>
-              setPending((prev) => ({ ...prev, employeeId: v ?? "" }))
-            }
-            options={employeeOptions}
-            placeholder={APPOINTMENTS_COPY.filters.all}
-            searchPlaceholder={APPOINTMENTS_COPY.filters.searchEmployee}
-            allowClear
-            clearLabel={APPOINTMENTS_COPY.filters.all}
-          />
-        )}
-      </FilterField>
+      {/* Mismo motivo que en la barra de escritorio: el autónomo no puede
+          consultar la agenda de nadie más. */}
+      {isExternal ? null : (
+        <FilterField
+          variant="sheet"
+          label={APPOINTMENTS_COPY.filterLabels.employee}
+        >
+          {({ controlId }) => (
+            <AppSearchableCombobox
+              id={controlId}
+              value={pending.employeeId || null}
+              onValueChange={(v) =>
+                setPending((prev) => ({ ...prev, employeeId: v ?? "" }))
+              }
+              options={employeeOptions}
+              placeholder={APPOINTMENTS_COPY.filters.all}
+              searchPlaceholder={APPOINTMENTS_COPY.filters.searchEmployee}
+              allowClear
+              clearLabel={APPOINTMENTS_COPY.filters.all}
+            />
+          )}
+        </FilterField>
+      )}
 
       <div className="flex flex-col gap-3">
         <FilterField variant="sheet" label={APPOINTMENTS_COPY.filters.dateFrom}>

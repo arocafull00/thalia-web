@@ -12,7 +12,10 @@ import AppointmentStatusFilter from "@/components/appointments/components/appoin
 import FilterField from "@/components/ui/filter-field";
 import PageFiltersBar from "@/components/ui/page-filters-bar";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
-import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
+import {
+  useActiveClinicTimezone,
+  useIsExternalProfessional,
+} from "@/lib/hooks/use-active-clinic";
 import type { Employee } from "@/types/database.types";
 
 type AppointmentFiltersProps = {
@@ -45,6 +48,7 @@ export default function AppointmentFilters({
   onToChange,
 }: AppointmentFiltersProps) {
   const timezone = useActiveClinicTimezone();
+  const isExternal = useIsExternalProfessional();
   const defaults = useMemo(
     () => getDefaultAppointmentDateRange(timezone),
     [timezone],
@@ -61,19 +65,25 @@ export default function AppointmentFilters({
       onSearchChange={onSearchChange}
       onOpenSheet={onOpenSheet}
     >
-      <FilterField
-        label={APPOINTMENTS_COPY.filterLabels.employee}
-        className="w-40 shrink-0"
-      >
-        {({ controlId }) => (
-          <AppointmentEmployeeFilter
-            id={controlId}
-            employeeId={employeeId}
-            initialEmployees={initialEmployees}
-            onEmployeeIdChange={onEmployeeIdChange}
-          />
-        )}
-      </FilterField>
+      {/*
+        El autónomo sólo puede ver su propia agenda, así que un selector de
+        profesional sólo le serviría para vaciar la lista.
+      */}
+      {isExternal ? null : (
+        <FilterField
+          label={APPOINTMENTS_COPY.filterLabels.employee}
+          className="w-40 shrink-0"
+        >
+          {({ controlId }) => (
+            <AppointmentEmployeeFilter
+              id={controlId}
+              employeeId={employeeId}
+              initialEmployees={initialEmployees}
+              onEmployeeIdChange={onEmployeeIdChange}
+            />
+          )}
+        </FilterField>
+      )}
       <FilterField
         label={APPOINTMENTS_COPY.filterLabels.dateRange}
         className="w-48 shrink-0"

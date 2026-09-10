@@ -1,5 +1,19 @@
 # Changelog
 
+## 99-autonomo-solo-ve-sus-citas
+
+- El profesional autónomo (`external`) solo ve las citas en las que es el profesional asignado, tanto en el listado como en la agenda. Antes veía la agenda entera de la clínica: con quién trabaja el resto del equipo, a qué hora y con qué paciente
+- Tampoco puede modificar una cita ajena conociendo su identificador. Sí puede editar las suyas
+- Desaparece el selector de profesional en la barra de filtros, en la hoja de filtros móvil y en la agenda: solo podría servirle para vaciar la lista
+- Sin cambios para `owner`, `admin` ni `employee`
+
+### Notas de implementación
+
+- El filtro va en RLS y no en los hooks, igual que #102. Cubre a la vez listado, recuento, agenda, detalle y la vista `appointments_search`, que es `security_invoker`
+- Aquí no hizo falta la corrección que sí necesitó `patients`: las políticas de citas ya estaban separadas por comando y ninguna era `FOR ALL`
+- Resuelve de paso el efecto visible de #102: las citas ajenas salían con el nombre del paciente en blanco, porque el paciente ya estaba oculto pero la cita no
+
+
 ## 102-autonomo-solo-ve-sus-pacientes
 
 - El profesional autónomo (`external`) solo ve en Pacientes los vinculados a citas donde él es el profesional asignado. Antes veía el censo completo de la clínica: nombres, teléfonos y fechas de nacimiento de gente que no ha tratado nunca

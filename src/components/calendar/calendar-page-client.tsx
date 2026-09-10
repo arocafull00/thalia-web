@@ -26,7 +26,10 @@ import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { instantToClinicWallDate } from "@/lib/appointment-datetime";
-import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
+import {
+  useActiveClinicTimezone,
+  useIsExternalProfessional,
+} from "@/lib/hooks/use-active-clinic";
 import { useAppointment } from "@/lib/hooks/use-appointments";
 import { useClinicInfo, type ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -62,6 +65,7 @@ export default function CalendarPageClient({
     useState<CalendarOverlapGroupSheetState>(CLOSED_GROUP_SHEET);
   const isMobile = useIsMobile();
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
+  const isExternal = useIsExternalProfessional();
   const employeeId = useCalendarStore((state) => state.employeeId);
   const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
   const setWeekAnchor = useCalendarStore((state) => state.setWeekAnchor);
@@ -194,7 +198,13 @@ export default function CalendarPageClient({
       <CalendarToolbar
         rangeLabel={rangeLabel}
         viewMode={viewMode}
-        filter={<CalendarEmployeeFilter initialEmployees={initialEmployees} />}
+        filter={
+          // El autónomo sólo tiene su propia agenda: filtrar por profesional
+          // no le ofrece nada que pueda ver.
+          isExternal ? undefined : (
+            <CalendarEmployeeFilter initialEmployees={initialEmployees} />
+          )
+        }
         statusBadge={<ClinicStatusBadge clinic={clinic} />}
         onPrevious={onPrevious}
         onNext={onNext}

@@ -57,6 +57,20 @@ export function useActiveClinic() {
   };
 }
 
+/**
+ * El usuario es un profesional autónomo en la clínica activa.
+ *
+ * Sólo ve sus propias citas y los pacientes de esas citas (#99, #102), así que
+ * enseñarle un selector de profesional sería ofrecerle filtrar por gente cuya
+ * agenda no puede consultar: elegiría a otro y la lista saldría vacía.
+ *
+ * El filtro de verdad vive en RLS. Esto es únicamente para la interfaz.
+ */
+export function useIsExternalProfessional() {
+  const { platformRole } = useActiveClinic();
+  return platformRole === "external";
+}
+
 export function useClinicId() {
   const { clinicId } = useActiveClinic();
   return clinicId;

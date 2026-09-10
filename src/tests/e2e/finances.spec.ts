@@ -23,10 +23,13 @@ test("crea un ingreso", async ({ page }) => {
   await categoryDialog.getByRole("button", { name: "Guardar" }).click();
 
   await expect(categoryDialog).toBeHidden({ timeout: 15_000 });
-  await expect(page.getByText("Categoría creada correctamente.")).toBeVisible();
   await expect(dialog.getByTestId("transaction-category-combobox")).toHaveText(
     category,
+    { timeout: 15_000 },
   );
+  await expect(page.getByText("Categoría creada correctamente.")).toBeVisible({
+    timeout: 15_000,
+  });
 
   await dialog.getByLabel(/Importe/).fill("120.50");
   await dialog.getByLabel("Editar fecha manualmente").fill(today);

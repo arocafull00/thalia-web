@@ -23,6 +23,15 @@ export const FINANCES_COPY = {
   weekly: {
     title: "Desglose semanal",
   },
+  incomeExpenseRatio: {
+    title: "Gastos sobre ingresos",
+    income: "Ingresos",
+    expenses: "Gastos",
+    empty: "Sin movimientos durante este mes.",
+    noIncome: "Sin ingresos para calcular el ratio.",
+    summary: (percentage: number) =>
+      `Los gastos equivalen al ${percentage}% de los ingresos.`,
+  },
   categories: {
     title: "Desglose por categoría",
     new: "Nueva categoría",

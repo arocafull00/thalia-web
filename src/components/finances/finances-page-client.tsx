@@ -7,6 +7,7 @@ import FinancesCategoryBreakdown from "@/components/finances/components/finances
 import FinancesCategoryManagementDialogs from "@/components/finances/components/finances-category-management-dialogs";
 import FinancesFilters from "@/components/finances/components/finances-filters";
 import FinancesFiltersSheet from "@/components/finances/components/finances-filters-sheet";
+import FinancesIncomeExpenseRatio from "@/components/finances/components/finances-income-expense-ratio";
 import FinancesMovementsSection from "@/components/finances/components/finances-movements-section";
 import FinancesSummaryMetrics from "@/components/finances/components/finances-summary-metrics";
 import FinancesWeeklyBreakdown from "@/components/finances/components/finances-weekly-breakdown";
@@ -15,6 +16,7 @@ import FinancesMonthSelector, {
   financesMonthToParam,
 } from "@/components/finances/finances-month-selector";
 import type { FinancesTabValue } from "@/components/finances/finances-tab-bar";
+import TransactionCategoryFormDialog from "@/components/settings/financial-categories/components/transaction-category-form-dialog";
 import { useTransactionCategoriesManager } from "@/components/settings/financial-categories/hooks/use-transaction-categories-manager";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
@@ -180,6 +182,10 @@ export default function FinancesPageClient({
   }, [categoryOptions, filters.category, setFilterAndResetPage]);
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && categoryManager.formOpen) {
+      return;
+    }
+
     setDialogOpen(nextOpen);
   };
 
@@ -287,14 +293,24 @@ export default function FinancesPageClient({
         {summary.data ? (
           <>
             <FinancesSummaryMetrics summary={summary.data} />
-            <div className="grid gap-8 py-4 xl:grid-cols-[1.8fr_1fr]">
-              <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
-              <FinancesCategoryBreakdown
-                items={categoryBreakdown}
-                disabled={categoryManager.isPending}
-                onCreateCategory={handleOpenSummaryCategoryCreate}
-                onManageCategories={() => setCategoryManagerOpen(true)}
-              />
+            <div className="grid gap-8 py-4 xl:grid-cols-[minmax(28rem,1fr)_minmax(0,1.5fr)] 2xl:grid-cols-[minmax(28rem,1fr)_minmax(12rem,0.55fr)_minmax(0,1.4fr)]">
+              <div className="xl:col-start-1 xl:row-start-1">
+                <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
+              </div>
+              <div className="xl:col-start-1 xl:row-start-2 2xl:col-start-2 2xl:row-start-1">
+                <FinancesIncomeExpenseRatio
+                  income={summary.data.income}
+                  expenses={summary.data.expenses}
+                />
+              </div>
+              <div className="xl:col-start-2 xl:row-span-2 xl:row-start-1 2xl:col-start-3 2xl:row-span-1">
+                <FinancesCategoryBreakdown
+                  items={categoryBreakdown}
+                  disabled={categoryManager.isPending}
+                  onCreateCategory={handleOpenSummaryCategoryCreate}
+                  onManageCategories={() => setCategoryManagerOpen(true)}
+                />
+              </div>
             </div>
           </>
         ) : null}
@@ -366,6 +382,17 @@ export default function FinancesPageClient({
           </AppDialogFooter>
         </AppSheetContent>
       </AppDialog>
+      <TransactionCategoryFormDialog
+        control={categoryManager.control}
+        editing={categoryManager.editingCategory !== null}
+        errors={categoryManager.errors}
+        isPending={categoryManager.isPending}
+        open={categoryManager.formOpen}
+        register={categoryManager.register}
+        onCancel={categoryManager.closeForm}
+        onOpenChange={categoryManager.setFormDialogOpen}
+        onSubmit={() => void categoryManager.submit()}
+      />
       <FinancesCategoryManagementDialogs
         manager={categoryManager}
         open={categoryManagerOpen}

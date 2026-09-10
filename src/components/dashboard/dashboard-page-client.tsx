@@ -54,7 +54,7 @@ export default function DashboardPageClient({
             appointmentsCount={appointments.length}
             confirmedCount={confirmedCount}
           />
-          <div className="grid gap-8 xl:grid-cols-[1.8fr_1fr]">
+          <div className="grid gap-8 xl:grid-cols-[1.8fr_1fr] xl:items-start">
             <DashboardAgenda
               appointments={agendaAppointments}
               isLoading={isLoading && !data}

@@ -77,7 +77,7 @@ export function useTransactionCategoriesManager(
     register,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<TransactionCategoryCreateInput>({
     resolver: zodResolver(transactionCategoryCreateSchema),
     defaultValues: defaultValues("income"),
@@ -104,6 +104,10 @@ export function useTransactionCategoriesManager(
   const setFormDialogOpen = (open: boolean) => {
     if (open) {
       setFormOpen(true);
+      return;
+    }
+
+    if (isPending || isSubmitting) {
       return;
     }
 

@@ -1,6 +1,5 @@
 import TransactionCategoriesPanel from "@/components/settings/financial-categories/components/transaction-categories-panel";
 import TransactionCategoryArchiveDialog from "@/components/settings/financial-categories/components/transaction-category-archive-dialog";
-import TransactionCategoryFormDialog from "@/components/settings/financial-categories/components/transaction-category-form-dialog";
 import type { useTransactionCategoriesManager } from "@/components/settings/financial-categories/hooks/use-transaction-categories-manager";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
@@ -47,17 +46,6 @@ export default function FinancesCategoryManagementDialogs({
           />
         </AppSheetContent>
       </AppDialog>
-      <TransactionCategoryFormDialog
-        control={manager.control}
-        editing={manager.editingCategory !== null}
-        errors={manager.errors}
-        isPending={manager.isPending}
-        open={manager.formOpen}
-        register={manager.register}
-        onCancel={manager.closeForm}
-        onOpenChange={manager.setFormDialogOpen}
-        onSubmit={() => void manager.submit()}
-      />
       <TransactionCategoryArchiveDialog
         category={manager.categoryToArchive}
         errorMessage={manager.archiveError}

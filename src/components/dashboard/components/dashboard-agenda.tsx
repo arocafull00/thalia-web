@@ -28,20 +28,26 @@ export default function DashboardAgenda({
           {DASHBOARD_COPY.agenda.viewCalendar}
         </Link>
       </div>
-      <div className="divide-y divide-border-subtle">
-        {appointments.map((appointment) => (
-          <AppointmentRow key={appointment.id} appointment={appointment} />
-        ))}
+      <div className="max-h-96 overflow-y-auto">
+        {isLoading ? (
+          <SkeletonList count={3} />
+        ) : error ? (
+          <Notice tone="danger" message={DASHBOARD_COPY.agenda.loadError} />
+        ) : appointments.length === 0 ? (
+          <p className="py-4 text-sm text-ink-secondary">
+            {DASHBOARD_COPY.agenda.empty}
+          </p>
+        ) : (
+          <div className="divide-y divide-border-subtle">
+            {appointments.map((appointment) => (
+              <AppointmentRow
+                key={appointment.id}
+                appointment={appointment}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      {!isLoading && appointments.length === 0 ? (
-        <p className="py-4 text-sm text-ink-secondary">
-          {DASHBOARD_COPY.agenda.empty}
-        </p>
-      ) : null}
-      {isLoading ? <SkeletonList count={3} /> : null}
-      {error ? (
-        <Notice tone="danger" message={DASHBOARD_COPY.agenda.loadError} />
-      ) : null}
     </section>
   );
 }

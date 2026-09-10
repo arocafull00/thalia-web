@@ -1,6 +1,6 @@
 export const LOGIN_COPY = {
   brand: "Thalia",
-  title: "Bienvenido a Thalia",
+  title: "Accede a Thalia",
   subtitle: "Comienza tu experiencia iniciando sesión o creando tu cuenta.",
   tabs: {
     signIn: "Iniciar sesión",

@@ -47,6 +47,8 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <Analytics />
+      <SpeedInsights />
       <body
         className="min-h-full flex flex-col bg-canvas text-ink"
         suppressHydrationWarning
@@ -61,8 +63,6 @@ export default function RootLayout({
             </PwaInstallProvider>
           </ServiceWorkerProvider>
         </Theme>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

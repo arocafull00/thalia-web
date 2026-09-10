@@ -1,5 +1,5 @@
 export const DASHBOARD_COPY = {
-  welcome: (name: string) => `Bienvenida, ${name}`,
+  welcome: (name: string) => `Hola, ${name}`,
   stats: {
     todayAppointments: "Citas hoy",
     confirmed: "Confirmadas",

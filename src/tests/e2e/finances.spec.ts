@@ -23,7 +23,7 @@ test("crea un ingreso", async ({ page }) => {
   await categoryDialog.getByRole("button", { name: "Guardar" }).click();
 
   await expect(categoryDialog).toBeHidden({ timeout: 15_000 });
-  await expect(dialog.getByTestId("transaction-category-combobox")).toHaveText(
+  await expect(page.getByTestId("transaction-category-combobox")).toHaveText(
     category,
     { timeout: 15_000 },
   );

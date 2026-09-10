@@ -1,16 +1,12 @@
 "use client";
 
-import { Calendar, Clock, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 
+import AppointmentHeaderDatetime from "@/components/appointments/components/appointment-header-datetime";
 import AppointmentHeaderPerson from "@/components/appointments/components/appointment-header-person";
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import { Separator } from "@/components/ui/separator";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
-import {
-  formatAppointmentDetailDay,
-  formatAppointmentDuration,
-  formatAppointmentTimeRange,
-} from "@/lib/format";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
@@ -29,7 +25,7 @@ export default function AppointmentHeader({
   const patientPhone = patient?.phone ?? null;
 
   return (
-    <div className="shrink-0 space-y-4 px-4 pt-6 pb-6 lg:px-8">
+    <div className="shrink-0 px-4 pt-6 pb-6 lg:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <AppointmentHeaderPerson
           label={APPOINTMENT_DETAIL_COPY.patient}
@@ -76,22 +72,17 @@ export default function AppointmentHeader({
             ) : null
           }
         />
-      </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-secondary">
-        <span className="inline-flex items-center gap-1.5">
-          <Calendar className="size-3.5" aria-hidden="true" />
-          {formatAppointmentDetailDay(appointment.starts_at, timezone)}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <Clock className="size-3.5" aria-hidden="true" />
-          {formatAppointmentTimeRange(
-            appointment.starts_at,
-            appointment.ends_at,
-            timezone,
-          )}
-        </span>
-        <span>{formatAppointmentDuration(appointment)}</span>
+        <Separator className="sm:hidden" />
+        <Separator
+          orientation="vertical"
+          className="mx-4 hidden self-stretch sm:block"
+        />
+
+        <AppointmentHeaderDatetime
+          appointment={appointment}
+          timezone={timezone}
+        />
       </div>
     </div>
   );

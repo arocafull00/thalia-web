@@ -1,35 +1,13 @@
 "use client";
 
-import type { FormEvent } from "react";
-
-import PasswordInput from "@/components/auth/components/password-input";
+import ResetPasswordForm from "@/components/auth/reset-password/components/reset-password-form";
+import ResetPasswordLinkError from "@/components/auth/reset-password/components/reset-password-link-error";
 import ResetPasswordOpeningSession from "@/components/auth/reset-password/components/reset-password-opening-session";
-import { Button } from "@/components/ui/button";
-import { Notice } from "@/components/ui/primitives/notice";
 import { LOGIN_COPY } from "@/copy/login-copy";
 import { useResetPassword } from "@/lib/hooks/use-reset-password";
 
 export default function ResetPasswordPageClient() {
-  const {
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    showPassword,
-    setShowPassword,
-    showConfirmPassword,
-    setShowConfirmPassword,
-    loading,
-    submitting,
-    success,
-    error,
-    handleSubmit,
-  } = useResetPassword();
-
-  const onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    void handleSubmit();
-  };
+  const { form, handleSubmit, linkError, status } = useResetPassword();
 
   return (
     <section className="flex min-h-screen flex-1 flex-col bg-surface">
@@ -52,67 +30,30 @@ export default function ResetPasswordPageClient() {
             </p>
           </div>
 
-          {success ? (
-            <ResetPasswordOpeningSession />
-          ) : (
-            <form className="space-y-6" onSubmit={onFormSubmit}>
-              <div className="space-y-4">
-                <label className="block space-y-1.5">
-                  <span className="text-sm text-ink-secondary">
-                    {LOGIN_COPY.resetPassword.newPassword}{" "}
-                    <span className="text-danger">
-                      {LOGIN_COPY.fields.requiredMark}
-                    </span>
-                  </span>
-                  <PasswordInput
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    visible={showPassword}
-                    onToggleVisibility={() =>
-                      setShowPassword((current) => !current)
-                    }
-                    autoComplete="new-password"
-                    required
-                    minLength={8}
-                  />
-                </label>
+          {status === "loading" ? (
+            <ResetPasswordOpeningSession
+              message={LOGIN_COPY.resetPassword.validatingSession}
+            />
+          ) : null}
 
-                <label className="block space-y-1.5">
-                  <span className="text-sm text-ink-secondary">
-                    {LOGIN_COPY.resetPassword.confirmPassword}{" "}
-                    <span className="text-danger">
-                      {LOGIN_COPY.fields.requiredMark}
-                    </span>
-                  </span>
-                  <PasswordInput
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
-                    visible={showConfirmPassword}
-                    onToggleVisibility={() =>
-                      setShowConfirmPassword((current) => !current)
-                    }
-                    autoComplete="new-password"
-                    required
-                    minLength={8}
-                  />
-                </label>
-              </div>
+          {status === "invalid" && linkError ? (
+            <ResetPasswordLinkError error={linkError} />
+          ) : null}
 
-              {error ? <Notice tone="danger" message={error} /> : null}
+          {status === "ready" ? (
+            <ResetPasswordForm
+              errors={form.formState.errors}
+              isSubmitting={form.formState.isSubmitting}
+              onSubmit={handleSubmit}
+              register={form.register}
+            />
+          ) : null}
 
-              <Button
-                type="submit"
-                disabled={
-                  loading || submitting || !password || !confirmPassword
-                }
-                className="w-full rounded-full px-4 py-2.5 text-xs font-medium uppercase tracking-wide"
-              >
-                {submitting
-                  ? LOGIN_COPY.resetPassword.submit.loading
-                  : LOGIN_COPY.resetPassword.submit.idle}
-              </Button>
-            </form>
-          )}
+          {status === "success" ? (
+            <ResetPasswordOpeningSession
+              message={LOGIN_COPY.resetPassword.openingSession}
+            />
+          ) : null}
         </div>
       </div>
     </section>

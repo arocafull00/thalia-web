@@ -56,5 +56,17 @@ export const LOGIN_COPY = {
       "¡Listo! Contraseña actualizada correctamente. Ya puedes iniciar sesión.",
     toastSuccess: "Tu contraseña se ha reseteado correctamente.",
     openingSession: "Abriendo sesión con las nuevas credenciales...",
+    validatingSession: "Validando el enlace de recuperación...",
+    errors: {
+      expired: "Este enlace de recuperación ha caducado o ya se ha utilizado.",
+      invalid: "Este enlace de recuperación no es válido.",
+      tooShort: "La contraseña debe tener al menos 8 caracteres.",
+      mismatch: "Las contraseñas no coinciden.",
+      updateFailed:
+        "No se pudo actualizar la contraseña. Solicita un nuevo enlace e inténtalo otra vez.",
+      sessionLost:
+        "La sesión de recuperación ya no es válida. Solicita un nuevo enlace.",
+    },
+    requestNewLink: "Solicitar un nuevo enlace",
   },
 } as const;

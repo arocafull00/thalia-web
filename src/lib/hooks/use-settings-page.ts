@@ -1,6 +1,7 @@
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 import { SETTINGS_COPY } from "@/copy/settings-copy";
+import { requestPasswordRecovery } from "@/lib/auth/password-recovery";
 import { employeeRoleLabel } from "@/lib/format";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth, useUploadProfileAvatar } from "@/lib/hooks/use-auth";
@@ -8,7 +9,6 @@ import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePendingClinicRequests } from "@/lib/hooks/use-pending-clinic-requests";
 import { compressAvatarImage } from "@/lib/image-compression";
 import { canManageClinicSettings } from "@/lib/settings-sections";
-import { supabase } from "@/lib/supabase";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
 import type { EmployeeRole, Employee } from "@/types/database.types";
 
@@ -66,22 +66,20 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
 
     setPasswordSubmitting(true);
 
-    const origin =
-      typeof globalThis.location !== "undefined"
-        ? globalThis.location.origin
-        : "";
-    const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-      redirectTo: `${origin}/callback?next=/reset-password`,
-    });
+    try {
+      const error = await requestPasswordRecovery(user.email);
 
-    setPasswordSubmitting(false);
+      if (error) {
+        toast.error(SETTINGS_COPY.account.changePasswordError);
+        return;
+      }
 
-    if (error) {
+      toast.success(SETTINGS_COPY.account.changePasswordSuccess);
+    } catch {
       toast.error(SETTINGS_COPY.account.changePasswordError);
-      return;
+    } finally {
+      setPasswordSubmitting(false);
     }
-
-    toast.success(SETTINGS_COPY.account.changePasswordSuccess);
   };
 
   const handleSignOut = async () => {

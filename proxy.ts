@@ -21,6 +21,10 @@ const publicRoutes = [
 
 const pwaRoutes = ["/manifest.webmanifest", "/sw.js"];
 
+function matchesRoute(pathname: string, route: string) {
+  return pathname === route || pathname.startsWith(`${route}/`);
+}
+
 export async function proxy(request: NextRequest) {
   const { supabaseResponse, userId } = await updateSession(request);
 
@@ -31,7 +35,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route),
+    matchesRoute(pathname, route),
   );
 
   if (!userId && !isPublicRoute && pathname !== "/") {

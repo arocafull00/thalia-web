@@ -1,16 +1,11 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
-import { supabaseAnonKey, supabaseUrl } from "@/lib/environment";
-
-// createBrowserClient from @supabase/ssr always forces PKCE regardless of options.
-// Use createClient directly so flowType: 'implicit' is actually respected,
-// which makes the reset link work from any browser without a stored code verifier.
-const supabaseImplicit = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: { flowType: "implicit" },
-});
+import { LOGIN_COPY } from "@/copy/login-copy";
+import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
+import { requestPasswordRecovery } from "@/lib/auth/password-recovery";
 
 export function useForgotPassword() {
   const [email, setEmail] = useState("");
@@ -22,17 +17,25 @@ export function useForgotPassword() {
     setError(null);
     setSubmitting(true);
 
-    const origin =
-      typeof globalThis.location !== "undefined"
-        ? globalThis.location.origin
-        : "";
+    try {
+      const recoveryError = await requestPasswordRecovery(email);
 
-    await supabaseImplicit.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${origin}/reset-password`,
-    });
+      if (recoveryError) {
+        const message = getAuthErrorMessage(recoveryError);
+        setError(message);
+        toast.error(message);
+        return;
+      }
 
-    setSubmitting(false);
-    setSubmitted(true);
+      setSubmitted(true);
+      toast.success(LOGIN_COPY.forgotPassword.success);
+    } catch (cause) {
+      const message = getAuthErrorMessage(cause);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return {

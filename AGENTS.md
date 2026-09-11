@@ -179,6 +179,7 @@ const fullName = user?.name ?? "";
 > Si un `useEffect` setea estado que está en sus propias `deps`, rediseña: el valor es derivado, no independiente.
 
 Utiliza siempre pnpm.
+Para cualquier comando remoto de Supabase, usa el perfil `thalia` mediante `--profile thalia`.
 Utiliza siempre tailwind.
 Utiliza siempre lucide icons, nunca emojis.
 Los estados deben ser globales en muchas ocasiones. Evita el prop drilling. Si un componente no usa una prop, no deberia pasarlo a su hijo. Deberia accederse desde un estado de zustand.

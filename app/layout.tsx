@@ -3,6 +3,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+
 import AuthProvider from "@/components/providers/auth-provider";
 import PwaInstallProvider from "@/components/providers/pwa-install-provider";
 import ServiceWorkerProvider from "@/components/providers/service-worker-provider";
@@ -10,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +60,7 @@ export default function RootLayout({
               <AuthProvider>
                 {children}
                 <Toaster position="bottom-right" richColors closeButton />
+                <ToastContainer position="bottom-right" theme="colored" />
               </AuthProvider>
             </PwaInstallProvider>
           </ServiceWorkerProvider>

@@ -29,6 +29,9 @@ export const metadata: Metadata = {
   description: "Gestión de clínicas estéticas",
   icons: {
     icon: "/icon.png",
+    // Tiene que ser un PNG opaco: iOS no admite transparencia en el
+    // apple-touch-icon y la compone sobre negro, así que un icono con esquinas
+    // redondeadas transparentes se instala con las esquinas negras (#83).
     apple: [{ url: "/icon-192x192.png", sizes: "192x192" }],
   },
 };

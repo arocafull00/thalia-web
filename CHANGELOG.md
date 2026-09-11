@@ -1,5 +1,15 @@
 # Changelog
 
+## 83-logo-de-la-app-en-movil
+
+- El icono instalado en el móvil deja de salir con el borde y las esquinas negras. Eran PNG con transparencia, y iOS no la admite en el `apple-touch-icon`: la compone sobre negro. Ahora son opacos sobre su propio crema, y el redondeo lo pone el sistema
+- El manifest declaraba el mismo fichero como `any` y como `maskable`, pero el logo ocupaba el 83 % del ancho cuando la zona segura de Android es el 80 % del diámetro: en los lanzadores con máscara se recortaba. Se añaden `icon-maskable-192x192.png` y `icon-maskable-512x512.png` con la marca reducida y centrada
+- Al reducir el logo asomaba un contorno cuadrado que resultó ser un trazo de 1 px del arte original, imperceptible a tamaño completo. Se recorta antes de escalar
+- `icon.png` se deja con transparencia: es el favicon del navegador, donde sí es correcta
+
+Para verlo hay que **desinstalar y reinstalar la PWA**: el sistema cachea el icono al instalar y no lo actualiza solo.
+
+
 ## 99-autonomo-solo-ve-sus-citas
 
 - El profesional autónomo (`external`) solo ve las citas en las que es el profesional asignado, tanto en el listado como en la agenda. Antes veía la agenda entera de la clínica: con quién trabaja el resto del equipo, a qué hora y con qué paciente

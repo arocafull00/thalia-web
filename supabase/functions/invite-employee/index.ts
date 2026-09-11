@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const AUTH_USERS_PAGE_SIZE = 1000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const INVITATION_TTL_DAYS = 7;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -66,7 +67,9 @@ Deno.serve(async (req) => {
     return errorResponse("unauthorized", "Unauthorized", 401);
   }
 
-  const { email, role, clinicId } = await req.json();
+  const body = await req.json().catch(() => null);
+  const clinicId = body?.clinicId;
+  const action = body?.action ?? "create";
 
   if (!clinicId || typeof clinicId !== "string") {
     return errorResponse("clinic_id_required", "clinicId is required", 400);
@@ -84,6 +87,42 @@ Deno.serve(async (req) => {
   if (requesterError || !requesterMembership) {
     return errorResponse("forbidden", "Forbidden", 403);
   }
+
+  if (action === "cancel") {
+    if (!body?.invitationId || typeof body.invitationId !== "string") {
+      return errorResponse(
+        "invitation_id_required",
+        "invitationId is required",
+        400,
+      );
+    }
+
+    const { error } = await adminClient.rpc(
+      "cancel_pending_employee_invitation",
+      {
+        p_invitation_id: body.invitationId,
+        p_clinic_id: clinicId,
+      },
+    );
+
+    if (error) {
+      const notPending = error.message.includes("invitation_not_pending");
+      return errorResponse(
+        notPending ? "invitation_not_pending" : "invitation_cancel_failed",
+        notPending ? "Invitation is not pending" : "Invitation cancel failed",
+        notPending ? 409 : 500,
+      );
+    }
+
+    return Response.json({ cancelled: true }, { headers: corsHeaders });
+  }
+
+  if (action !== "create" && action !== "replace") {
+    return errorResponse("invalid_action", "Invalid action", 400);
+  }
+
+  const email = body?.email;
+  const role = body?.role;
 
   if (!email || typeof email !== "string" || !email.trim()) {
     return errorResponse("email_required", "Email is required", 400);
@@ -138,6 +177,42 @@ Deno.serve(async (req) => {
     );
   }
 
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + INVITATION_TTL_DAYS);
+
+  if (action === "replace") {
+    if (!body?.invitationId || typeof body.invitationId !== "string") {
+      return errorResponse(
+        "invitation_id_required",
+        "invitationId is required",
+        400,
+      );
+    }
+
+    const { data: invitation, error } = await adminClient.rpc(
+      "replace_pending_employee_invitation",
+      {
+        p_invitation_id: body.invitationId,
+        p_clinic_id: clinicId,
+        p_email: normalizedEmail,
+        p_role: role,
+        p_created_by: authData.user.id,
+        p_expires_at: expiresAt.toISOString(),
+      },
+    );
+
+    if (error || !invitation) {
+      const code = error?.message.includes("invitation_already_pending")
+        ? "invitation_already_pending"
+        : error?.message.includes("invitation_not_pending")
+          ? "invitation_not_pending"
+          : "invitation_replace_failed";
+      return errorResponse(code, error?.message ?? "Invitation failed", 409);
+    }
+
+    return Response.json(invitation, { headers: corsHeaders });
+  }
+
   const { data: pendingInvitation, error: pendingInvitationError } =
     await adminClient
       .from("invitation_tokens")
@@ -164,9 +239,6 @@ Deno.serve(async (req) => {
     );
   }
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7);
-
   const { data: invitation, error: inviteError } = await adminClient
     .from("invitation_tokens")
     .insert({
@@ -176,31 +248,16 @@ Deno.serve(async (req) => {
       created_by: authData.user.id,
       expires_at: expiresAt.toISOString(),
     })
-    .select("token, email, role, expires_at")
+    .select("id, email, role, created_at, expires_at")
     .single();
 
   if (inviteError || !invitation) {
-    const isDuplicate = inviteError?.code === "23505";
     return errorResponse(
-      isDuplicate ? "invitation_already_pending" : "invitation_failed",
-      isDuplicate
-        ? "Este usuario ya tiene una invitación pendiente"
-        : "Invitation failed",
-      isDuplicate ? 409 : 500,
+      "invitation_failed",
+      "Invitation failed",
+      500,
     );
   }
 
-  const appUrl = Deno.env.get("APP_URL") ?? "";
-  const inviteUrl = `${appUrl}/invite/${invitation.token}`;
-
-  return Response.json(
-    {
-      token: invitation.token,
-      inviteUrl,
-      email: invitation.email,
-      role: invitation.role,
-      expiresAt: invitation.expires_at,
-    },
-    { headers: corsHeaders },
-  );
+  return Response.json(invitation, { headers: corsHeaders });
 });

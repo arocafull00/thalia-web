@@ -6,6 +6,7 @@ import {
 } from "react-hook-form";
 
 import AppDialogError from "@/components/ui/app-dialog-error";
+import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import type { EmployeeFormValues } from "@/lib/hooks/use-employee-invite-dialog";
 import type { ClinicMembershipInvitationRole } from "@/types/database.types";
@@ -13,11 +14,13 @@ import type { ClinicMembershipInvitationRole } from "@/types/database.types";
 const inputClassName =
   "w-full rounded-xl border border-border-field bg-surface px-3 py-2.5 text-sm outline-none ring-primary focus:ring-2";
 
-const roleOptions: ClinicMembershipInvitationRole[] = [
-  "admin",
-  "employee",
-  "external",
-];
+const roleOptions: Array<{
+  value: ClinicMembershipInvitationRole;
+  label: string;
+}> = (["admin", "employee", "external"] as const).map((role) => ({
+  value: role,
+  label: EMPLOYEE_INVITE_COPY.roles[role],
+}));
 
 type EmployeeInviteFormProps = {
   register: UseFormRegister<EmployeeFormValues>;
@@ -56,21 +59,17 @@ export default function EmployeeInviteForm({
           name="role"
           control={control}
           render={({ field }) => (
-            <select
+            <AppSearchableCombobox
+              ariaLabel={EMPLOYEE_INVITE_COPY.fields.role}
               value={field.value}
-              onChange={(event) =>
-                field.onChange(
-                  event.target.value as ClinicMembershipInvitationRole,
-                )
-              }
-              className={inputClassName}
-            >
-              {roleOptions.map((option) => (
-                <option key={option} value={option}>
-                  {EMPLOYEE_INVITE_COPY.roles[option]}
-                </option>
-              ))}
-            </select>
+              onValueChange={(value) => {
+                if (value) {
+                  field.onChange(value as ClinicMembershipInvitationRole);
+                }
+              }}
+              options={roleOptions}
+              showSearch={false}
+            />
           )}
         />
         {errors.role ? (

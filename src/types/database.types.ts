@@ -142,10 +142,16 @@ export type InvitationToken = {
   role: InvitationTokenRole;
   email: string;
   created_by: string;
+  created_at: string;
   expires_at: string;
   used_at: string | null;
   used_by: string | null;
 };
+
+export type PendingEmployeeInvitation = Pick<
+  InvitationToken,
+  "id" | "email" | "role" | "created_at" | "expires_at"
+>;
 
 export type Employee = {
   id: string;

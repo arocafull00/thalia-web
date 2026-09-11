@@ -50,5 +50,8 @@ enable_confirmations = false
 [edge_runtime]
 enabled = false
 
+[functions.lookup-employee-invitation]
+verify_jwt = false
+
 [analytics]
 enabled = false

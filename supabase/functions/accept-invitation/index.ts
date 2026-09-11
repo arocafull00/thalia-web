@@ -6,23 +6,29 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-function normalizeEmail(email: string) {
-  return email.trim().toLowerCase();
+const errorMessages: Record<string, string> = {
+  invitation_not_found: "Invitation not found",
+  invitation_already_used: "Invitation already used",
+  invitation_expired: "Invitation expired",
+  invitation_email_mismatch: "Email does not match invitation",
+  already_member_of_clinic: "Already a member of this clinic",
+  owner_cannot_join_other_clinics: "Owners cannot join other clinics",
+  invitation_account_type_conflict:
+    "Invitation role conflicts with the global account type",
+  user_already_belongs_to_clinic: "User already belongs to a clinic",
+  employee_role_required: "Employee role is required",
+};
+
+function errorResponse(error: string, status: number) {
+  return Response.json({ error }, { status, headers: corsHeaders });
 }
 
-function resolveEmployeeRole(invitationRole: string, employeeRole: unknown) {
-  if (invitationRole === "admin") {
-    return "admin";
-  }
+function resolveRpcError(message: string) {
+  const match = Object.entries(errorMessages).find(([code]) =>
+    message.includes(code),
+  );
 
-  if (
-    typeof employeeRole !== "string" ||
-    !["doctor", "reception", "auxiliary"].includes(employeeRole)
-  ) {
-    return null;
-  }
-
-  return employeeRole;
+  return match?.[1] ?? "Invitation could not be processed";
 }
 
 Deno.serve(async (req) => {
@@ -35,10 +41,7 @@ Deno.serve(async (req) => {
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   if (!supabaseUrl || !anonKey || !serviceRoleKey) {
-    return Response.json(
-      { error: "Supabase is not configured" },
-      { status: 500, headers: corsHeaders },
-    );
+    return errorResponse("Supabase is not configured", 500);
   }
 
   const authorization = req.headers.get("Authorization") ?? "";
@@ -49,210 +52,45 @@ Deno.serve(async (req) => {
   const { data: authData, error: authError } = await userClient.auth.getUser();
 
   if (authError || !authData.user?.email) {
-    return Response.json(
-      { error: "Unauthorized" },
-      { status: 401, headers: corsHeaders },
-    );
+    return errorResponse("Unauthorized", 401);
   }
 
-  const { token, action, employeeRole, specialty, color } = await req.json();
+  const body = await req.json().catch(() => null);
+  const token = body?.token;
+  const action = body?.action === "reject" ? "reject" : "accept";
 
   if (!token || typeof token !== "string") {
-    return Response.json(
-      { error: "Token is required" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  const resolvedAction = action === "reject" ? "reject" : "accept";
-
-  const { data: invitation, error: invitationError } = await adminClient
-    .from("invitation_tokens")
-    .select("*")
-    .eq("token", token)
-    .maybeSingle();
-
-  if (invitationError || !invitation) {
-    return Response.json(
-      { error: "Invitation not found" },
-      { status: 404, headers: corsHeaders },
-    );
-  }
-
-  if (invitation.used_at) {
-    return Response.json(
-      { error: "Invitation already used" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  if (new Date(invitation.expires_at) < new Date()) {
-    return Response.json(
-      { error: "Invitation expired" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  if (
-    normalizeEmail(authData.user.email) !== normalizeEmail(invitation.email)
-  ) {
-    return Response.json(
-      { error: "Email does not match invitation" },
-      { status: 403, headers: corsHeaders },
-    );
-  }
-
-  if (resolvedAction === "reject") {
-    const { error: rejectError } = await adminClient
-      .from("invitation_tokens")
-      .update({ used_at: new Date().toISOString(), used_by: authData.user.id })
-      .eq("id", invitation.id);
-
-    if (rejectError) {
-      return Response.json(
-        { error: rejectError.message },
-        { status: 400, headers: corsHeaders },
-      );
-    }
-
-    return Response.json({ rejected: true }, { headers: corsHeaders });
-  }
-
-  const { data: existingMemberships, error: membershipsError } =
-    await adminClient
-      .from("clinic_memberships")
-      .select("id, role, clinic_id")
-      .eq("user_id", authData.user.id)
-      .eq("status", "active");
-
-  if (membershipsError) {
-    return Response.json(
-      { error: membershipsError.message },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  const memberships = existingMemberships ?? [];
-  const { data: existingEmployee, error: employeeLookupError } =
-    await adminClient
-      .from("employees")
-      .select("id, role, account_type")
-      .eq("id", authData.user.id)
-      .maybeSingle();
-
-  if (employeeLookupError) {
-    return Response.json(
-      { error: employeeLookupError.message },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  const accountType = invitation.role === "external" ? "external" : "internal";
-
-  if (existingEmployee && existingEmployee.account_type !== accountType) {
-    return Response.json(
-      { error: "Invitation role conflicts with the global account type" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  if (
-    memberships.some(
-      (membership) => membership.clinic_id === invitation.clinic_id,
-    )
-  ) {
-    return Response.json(
-      { error: "Already a member of this clinic" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  if (invitation.role !== "external" && memberships.length > 0) {
-    return Response.json(
-      { error: "User already belongs to a clinic" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  if (memberships.some((membership) => membership.role === "owner")) {
-    return Response.json(
-      { error: "Owners cannot join other clinics" },
-      { status: 400, headers: corsHeaders },
-    );
+    return errorResponse("Token is required", 400);
   }
 
   const fullName =
-    (authData.user.user_metadata?.full_name as string | undefined) ??
-    authData.user.email.split("@")[0] ??
-    "Empleado";
+    typeof authData.user.user_metadata?.full_name === "string"
+      ? authData.user.user_metadata.full_name
+      : authData.user.email.split("@")[0] ?? "Empleado";
 
-  const operationalRole =
-    existingEmployee?.role ??
-    resolveEmployeeRole(invitation.role, employeeRole);
-
-  if (!operationalRole) {
-    return Response.json(
-      { error: "Employee role is required" },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  if (!existingEmployee) {
-    const { error: employeeError } = await adminClient
-      .from("employees")
-      .insert({
-        id: authData.user.id,
-        account_type: accountType,
-        full_name: fullName,
-        role: operationalRole,
-        specialty:
-          typeof specialty === "string" && specialty.trim()
-            ? specialty.trim()
-            : null,
-        color: typeof color === "string" && color.trim() ? color.trim() : null,
-        active: true,
-      });
-
-    if (employeeError) {
-      return Response.json(
-        { error: employeeError.message },
-        { status: 400, headers: corsHeaders },
-      );
-    }
-  }
-
-  const { error: membershipError } = await adminClient
-    .from("clinic_memberships")
-    .insert({
-      user_id: authData.user.id,
-      clinic_id: invitation.clinic_id,
-      role: invitation.role,
-      status: "active",
-      invited_by: invitation.created_by,
-      joined_at: new Date().toISOString(),
-    });
-
-  if (membershipError) {
-    return Response.json(
-      { error: membershipError.message },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  const { error: tokenError } = await adminClient
-    .from("invitation_tokens")
-    .update({ used_at: new Date().toISOString(), used_by: authData.user.id })
-    .eq("id", invitation.id);
-
-  if (tokenError) {
-    return Response.json(
-      { error: tokenError.message },
-      { status: 400, headers: corsHeaders },
-    );
-  }
-
-  return Response.json(
-    { clinicId: invitation.clinic_id, role: invitation.role },
-    { headers: corsHeaders },
+  const { data, error } = await adminClient.rpc(
+    "consume_employee_invitation",
+    {
+      p_token: token,
+      p_user_id: authData.user.id,
+      p_user_email: authData.user.email,
+      p_action: action,
+      p_full_name: fullName,
+      p_employee_role:
+        typeof body?.employeeRole === "string" ? body.employeeRole : null,
+      p_specialty: typeof body?.specialty === "string" ? body.specialty : null,
+      p_color: typeof body?.color === "string" ? body.color : null,
+    },
   );
+
+  if (error) {
+    const status = error.message.includes("invitation_email_mismatch")
+      ? 403
+      : error.message.includes("invitation_not_found")
+        ? 404
+        : 400;
+    return errorResponse(resolveRpcError(error.message), status);
+  }
+
+  return Response.json(data, { headers: corsHeaders });
 });

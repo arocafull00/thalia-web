@@ -6,6 +6,13 @@ import { useCallback, useMemo, useState } from "react";
 import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeInviteForm from "@/components/employees/components/form/employee-invite-form";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/form/employee-status-confirm-dialog";
+import EmployeeInvitationActionDialog from "@/components/employees/invitations/components/employee-invitation-action-dialog";
+import EmployeeInvitationEditDialog from "@/components/employees/invitations/components/employee-invitation-edit-dialog";
+import EmployeesPageTabs, {
+  type EmployeesPageTab,
+} from "@/components/employees/invitations/components/employees-page-tabs";
+import PendingInvitationsPanel from "@/components/employees/invitations/components/pending-invitations-panel";
+import { useEmployeeInvitations } from "@/components/employees/invitations/hooks/use-employee-invitations";
 import EmployeesFilters from "@/components/employees/components/list/employees-filters";
 import EmployeesFiltersSheet from "@/components/employees/components/list/employees-filters-sheet";
 import EmployeesTable from "@/components/employees/components/list/employees-table";
@@ -38,7 +45,6 @@ import {
   parseEmployeeStatusFilter,
 } from "@/lib/employee-pagination";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
-import { useAuth } from "@/lib/hooks/use-auth";
 import { useEmployeeInviteDialog } from "@/lib/hooks/use-employee-invite-dialog";
 import { useEmployeesPage } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
@@ -66,8 +72,9 @@ export default function EmployeesPageClient({
   const [statusEmployeeId, setStatusEmployeeId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
-  const { profile } = useAuth();
+  const [activeTab, setActiveTab] = useState<EmployeesPageTab>("staff");
   const { platformRole } = useActiveClinic();
+  const invitations = useEmployeeInvitations();
   const { filters, setFilter, setFilters } = useUrlFilters(
     EMPLOYEE_FILTER_DEFAULTS,
   );
@@ -86,10 +93,7 @@ export default function EmployeesPageClient({
     setFilterAndResetPage,
   );
   const dialog = useEmployeeInviteDialog(() => setDialogOpen(false));
-  const canManage =
-    platformRole === "owner" ||
-    platformRole === "admin" ||
-    profile?.role === "admin";
+  const canManage = platformRole === "owner" || platformRole === "admin";
 
   // La página vive en la URL para que un enlace compartido abra donde estaba.
   // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
@@ -161,7 +165,7 @@ export default function EmployeesPageClient({
   useTopbarAction(
     canManage
       ? {
-          title: "Invitar personal",
+          title: EMPLOYEE_INVITE_COPY.title,
           testId: "employee-invite-trigger",
           onClick: () => setDialogOpen(true),
         }
@@ -177,8 +181,17 @@ export default function EmployeesPageClient({
   }
 
   return (
-    <div data-testid="employees-page" className="flex min-h-0 flex-1 flex-col">
-      <PageCard
+    <div
+      data-testid="employees-page"
+      className="flex min-h-0 flex-1 flex-col gap-3"
+    >
+      <EmployeesPageTabs
+        activeTab={activeTab}
+        invitationCount={invitations.invitations.length}
+        onTabChange={setActiveTab}
+      />
+      {activeTab === "staff" ? (
+        <PageCard
         filters={
           <EmployeesFilters
             role={filters.role}
@@ -190,7 +203,7 @@ export default function EmployeesPageClient({
             onOpenSheet={handleOpenFiltersSheet}
           />
         }
-      >
+        >
         {employees.isLoading ? (
           <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
         ) : null}
@@ -215,7 +228,21 @@ export default function EmployeesPageClient({
             }}
           />
         ) : null}
-      </PageCard>
+        </PageCard>
+      ) : (
+        <PendingInvitationsPanel
+          invitations={invitations.invitations}
+          isLoading={invitations.isLoading}
+          error={invitations.error}
+          onEdit={invitations.setEditingInvitation}
+          onReactivate={(invitation) =>
+            invitations.requestAction("reactivate", invitation)
+          }
+          onCancel={(invitation) =>
+            invitations.requestAction("cancel", invitation)
+          }
+        />
+      )}
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>
@@ -282,6 +309,22 @@ export default function EmployeesPageClient({
           onSuccess={() => setStatusEmployeeId(null)}
         />
       ) : null}
+      {invitations.editingInvitation ? (
+        <EmployeeInvitationEditDialog
+          invitation={invitations.editingInvitation}
+          onClose={() => invitations.setEditingInvitation(null)}
+        />
+      ) : null}
+      {invitations.pendingAction ? (
+        <EmployeeInvitationActionDialog
+          action={invitations.pendingAction.action}
+          invitation={invitations.pendingAction.invitation}
+          isPending={invitations.isMutating}
+          errorMessage={invitations.actionError}
+          onClose={invitations.closeAction}
+          onConfirm={invitations.confirmAction}
+        />
+      ) : null}
       <EmployeesFiltersSheet
         key={sheetKey}
         open={sheetOpen}
@@ -290,7 +333,10 @@ export default function EmployeesPageClient({
         onClear={() => setFilters(EMPLOYEE_FILTER_DEFAULTS)}
         onDismiss={() => setSheetOpen(false)}
       />
-      <MobileFab label="Invitar personal" onClick={() => setDialogOpen(true)} />
+      <MobileFab
+        label={EMPLOYEE_INVITE_COPY.title}
+        onClick={() => setDialogOpen(true)}
+      />
     </div>
   );
 }

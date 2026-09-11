@@ -1,18 +1,22 @@
 import { create } from "zustand";
 
 import {
+  cancelEmployeeInvitation,
   getEmployee,
   getEmployeeAppointments,
   getEmployeeAppointmentStats,
   getEmployees,
   getEmployeesPage,
+  getPendingEmployeeInvitations,
   inviteEmployee,
+  replaceEmployeeInvitation,
   setExternalMembershipStatus as setExternalMembershipStatusDal,
   updateEmployee,
   type EmployeeAppointmentRow,
   type EmployeeAppointmentStats,
   type EmployeePageParams,
   type EmployeePageResult,
+  type EmployeeInvitationMutationInput,
 } from "@/dal/employees.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
@@ -31,6 +35,7 @@ import {
 import type {
   ClinicMembershipInvitationRole,
   Employee,
+  PendingEmployeeInvitation,
 } from "@/types/database.types";
 
 export type { EmployeeAppointmentRow, EmployeeAppointmentStats };
@@ -66,8 +71,11 @@ type EmployeesStore = {
     string,
     QueryEntry<EmployeeAppointmentRow[]>
   >;
+  invitations: QueryEntry<PendingEmployeeInvitation[]>;
   creating: boolean;
   createError: Error | null;
+  invitationMutatingId: string | null;
+  invitationMutationError: Error | null;
   updating: boolean;
   updateError: Error | null;
   fetchEmployees: () => Promise<void>;
@@ -79,7 +87,15 @@ type EmployeesStore = {
   fetchEmployee: (employeeId: string) => Promise<void>;
   fetchEmployeeStats: (employeeId: string) => Promise<void>;
   fetchEmployeeAppointments: (employeeId: string) => Promise<void>;
-  createEmployee: (input: CreateEmployeeInput) => Promise<Employee>;
+  fetchPendingInvitations: () => Promise<void>;
+  createEmployee: (
+    input: CreateEmployeeInput,
+  ) => Promise<PendingEmployeeInvitation>;
+  replaceInvitation: (
+    invitationId: string,
+    input: CreateEmployeeInput,
+  ) => Promise<PendingEmployeeInvitation>;
+  cancelInvitation: (invitationId: string) => Promise<void>;
   updateEmployee: (id: string, values: Partial<Employee>) => Promise<Employee>;
   setExternalMembershipStatus: (
     employeeId: string,
@@ -113,8 +129,11 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
   byId: {},
   statsByEmployeeId: {},
   appointmentsByEmployeeId: {},
+  invitations: emptyQueryEntry(),
   creating: false,
   createError: null,
+  invitationMutatingId: null,
+  invitationMutationError: null,
   updating: false,
   updateError: null,
 
@@ -180,6 +199,31 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
           ),
         },
       });
+    }
+  },
+
+  fetchPendingInvitations: async () => {
+    const previous = get().invitations;
+    set({ invitations: loadingQueryEntry(previous) });
+
+    try {
+      const clinicId = getActiveClinicId();
+
+      if (!clinicId) {
+        set({ invitations: successQueryEntry([]) });
+        return;
+      }
+
+      const invitations = await getPendingEmployeeInvitations(clinicId);
+      set({ invitations: successQueryEntry(invitations) });
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "employees-store",
+        action: "fetchPendingInvitations",
+        clinicId: getActiveClinicId(),
+      });
+      set({ invitations: errorQueryEntry(error, previous) });
     }
   },
 
@@ -292,10 +336,10 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
 
       const clinicId = getActiveClinicId();
       if (!clinicId) throw new Error("No hay clínica activa");
-      const employee = await inviteEmployee({ ...parsed.data, clinicId });
-      await refreshEmployeeQueries(get);
+      const invitation = await inviteEmployee({ ...parsed.data, clinicId });
+      await get().fetchPendingInvitations();
       set({ creating: false });
-      return employee;
+      return invitation;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
       logger.captureException(error, {
@@ -304,6 +348,62 @@ export const useEmployeesStore = create<EmployeesStore>((set, get) => ({
         clinicId: getActiveClinicId(),
       });
       set({ creating: false, createError: error });
+      throw error;
+    }
+  },
+
+  replaceInvitation: async (invitationId, input) => {
+    set({ invitationMutatingId: invitationId, invitationMutationError: null });
+
+    try {
+      const parsed = employeeInviteSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
+      const clinicId = getActiveClinicId();
+      if (!clinicId) throw new Error("No hay clínica activa");
+      const mutation: EmployeeInvitationMutationInput = {
+        ...parsed.data,
+        clinicId,
+        invitationId,
+      };
+      const invitation = await replaceEmployeeInvitation(mutation);
+      await get().fetchPendingInvitations();
+      set({ invitationMutatingId: null });
+      return invitation;
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "employees-store",
+        action: "replaceInvitation",
+        clinicId: getActiveClinicId(),
+        invitationId,
+      });
+      set({ invitationMutatingId: null, invitationMutationError: error });
+      throw error;
+    }
+  },
+
+  cancelInvitation: async (invitationId) => {
+    set({ invitationMutatingId: invitationId, invitationMutationError: null });
+
+    try {
+      const clinicId = getActiveClinicId();
+      if (!clinicId) throw new Error("No hay clínica activa");
+      await cancelEmployeeInvitation({ clinicId, invitationId });
+      await get().fetchPendingInvitations();
+      set({ invitationMutatingId: null });
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "employees-store",
+        action: "cancelInvitation",
+        clinicId: getActiveClinicId(),
+        invitationId,
+      });
+      set({ invitationMutatingId: null, invitationMutationError: error });
       throw error;
     }
   },

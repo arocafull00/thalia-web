@@ -4,7 +4,7 @@ import {
   normalizeEmail,
   type PendingClinicRequest,
 } from "@/lib/clinic-requests";
-import { supabase } from "@/lib/supabase";
+import { lookupEmployeeInvitationsByEmail } from "@/dal/employees.dal";
 
 type UsePendingClinicRequestsResult = {
   requests: PendingClinicRequest[];
@@ -31,24 +31,18 @@ export function usePendingClinicRequests(
     setLoading(true);
     setError(null);
 
-    const normalizedEmail = normalizeEmail(email);
-    const now = new Date().toISOString();
+    let data;
 
-    const { data, error: fetchError } = await supabase
-      .from("invitation_tokens")
-      .select("token, role, expires_at, clinics(name)")
-      .eq("email", normalizedEmail)
-      .is("used_at", null)
-      .gt("expires_at", now);
-
-    if (fetchError) {
-      setError(fetchError.message);
+    try {
+      data = await lookupEmployeeInvitationsByEmail(normalizeEmail(email));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : String(cause));
       setRequests([]);
       setLoading(false);
       return;
     }
 
-    const mapped = (data ?? []).flatMap((row) => {
+    const mapped = data.flatMap((row) => {
       const clinicRaw = row.clinics as
         { name: string } | { name: string }[] | null;
       const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;

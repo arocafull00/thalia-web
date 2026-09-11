@@ -6,13 +6,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { REGISTER_COPY } from "@/copy/register-copy";
+import { lookupEmployeeInvitationsByEmail } from "@/dal/employees.dal";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { isOwnerRegistration } from "@/lib/registration-metadata";
 import {
   registerInvitationEmailSchema,
   type RegisterInvitationEmailFormValues,
 } from "@/lib/schemas/register-schema";
-import { supabase } from "@/lib/supabase";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
@@ -64,19 +64,9 @@ export function useRegisterType() {
 
   const handleEmployeeEmailSubmit = handleSubmit(async ({ email }) => {
     try {
-      const { data, error: queryError } = await supabase
-        .from("invitation_tokens")
-        .select("token, email")
-        .is("used_at", null)
-        .ilike("email", email)
-        .gt("expires_at", new Date().toISOString())
-        .maybeSingle();
+      const [invitation] = await lookupEmployeeInvitationsByEmail(email);
 
-      if (queryError) {
-        throw new Error(queryError.message);
-      }
-
-      if (!data) {
+      if (!invitation) {
         setError("root", {
           message: REGISTER_COPY.employeeEmail.errors.notInvited,
         });
@@ -84,7 +74,7 @@ export function useRegisterType() {
       }
 
       setIntent("employee");
-      setToken(data.token, data.email);
+      setToken(invitation.token, invitation.email);
       router.push("/register-employee");
     } catch {
       setError("root", {

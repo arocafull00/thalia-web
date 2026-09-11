@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/lib/hooks/use-auth";
+import { lookupEmployeeInvitationByToken } from "@/dal/employees.dal";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicStore } from "@/stores/clinic-store";
@@ -35,14 +36,9 @@ export function useAcceptInvitation(token: string) {
     let cancelled = false;
 
     if (!user) {
-      supabase
-        .from("invitation_tokens")
-        .select("email")
-        .eq("token", token.trim())
-        .maybeSingle()
-        .then(({ data }) => {
+      lookupEmployeeInvitationByToken(token.trim()).then((invitation) => {
           if (cancelled) return;
-          setToken(token, data?.email ?? undefined);
+          setToken(token, invitation?.email ?? undefined);
           setIntent("employee");
           router.replace("/register-employee");
         });
@@ -52,15 +48,13 @@ export function useAcceptInvitation(token: string) {
     }
 
     const fetchInvitation = async () => {
-      const { data, error } = await supabase
-        .from("invitation_tokens")
-        .select("email, role, expires_at, used_at, clinics(name)")
-        .eq("token", token.trim())
-        .maybeSingle();
+      const data = await lookupEmployeeInvitationByToken(token.trim()).catch(
+        () => null,
+      );
 
       if (cancelled) return;
 
-      if (error || !data) {
+      if (!data) {
         setState({ status: "error", message: "Invitación no encontrada." });
         return;
       }

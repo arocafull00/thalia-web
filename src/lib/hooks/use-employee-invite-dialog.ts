@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { useCreateEmployee } from "@/lib/hooks/use-employees";
 import { employeeInviteSchema } from "@/lib/schemas/employee-schema";
-import { notifySuccess } from "@/lib/sound";
 
 const employeeFormSchema = employeeInviteSchema;
 
@@ -37,14 +37,16 @@ export function useEmployeeInviteDialog(onSuccess: () => void) {
 
     mutate(data, {
       onSuccess: () => {
-        notifySuccess(EMPLOYEE_INVITE_COPY.success);
+        toast.success(EMPLOYEE_INVITE_COPY.success);
         reset(defaultValues);
         onSuccess();
       },
       onError: (cause) => {
+        const message = cause.message || EMPLOYEE_INVITE_COPY.error;
         setError("root", {
-          message: cause.message || EMPLOYEE_INVITE_COPY.error,
+          message,
         });
+        toast.error(message);
       },
     });
   });

@@ -5,6 +5,7 @@ import type {
   Appointment,
   ClinicMembershipInvitationRole,
   Employee,
+  PendingEmployeeInvitation,
 } from "@/types/database.types";
 
 export type EmployeeAppointmentRow = Appointment & {
@@ -22,6 +23,27 @@ export type EmployeeInviteInput = {
   email: string;
   role: ClinicMembershipInvitationRole;
   clinicId: string;
+};
+
+export type EmployeeInvitationMutationInput = EmployeeInviteInput & {
+  invitationId: string;
+};
+
+export type EmployeeInvitationCancelInput = {
+  clinicId: string;
+  invitationId: string;
+};
+
+export type InvitationLookupRow = {
+  token: string;
+  email: string;
+  role: ClinicMembershipInvitationRole;
+  expires_at: string;
+  clinics: { name: string } | { name: string }[] | null;
+};
+
+export type InvitationTokenLookup = Omit<InvitationLookupRow, "token"> & {
+  used_at: string | null;
 };
 
 export type EmployeeUpdate = Partial<
@@ -192,8 +214,9 @@ export async function getEmployeeAppointmentStats(
 
 export async function inviteEmployee(
   input: EmployeeInviteInput,
-): Promise<Employee> {
-  const { data, error } = await supabase.functions.invoke<Employee>(
+): Promise<PendingEmployeeInvitation> {
+  const { data, error } =
+    await supabase.functions.invoke<PendingEmployeeInvitation>(
     "invite-employee",
     { body: input },
   );
@@ -203,6 +226,70 @@ export async function inviteEmployee(
   }
 
   return unwrapSupabase(data, error);
+}
+
+export async function getPendingEmployeeInvitations(
+  clinicId: string,
+): Promise<PendingEmployeeInvitation[]> {
+  const { data, error } = await supabase
+    .from("invitation_tokens")
+    .select("id, email, role, created_at, expires_at")
+    .eq("clinic_id", clinicId)
+    .is("used_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
+
+  return unwrapSupabaseList(data, error) as PendingEmployeeInvitation[];
+}
+
+export async function replaceEmployeeInvitation(
+  input: EmployeeInvitationMutationInput,
+): Promise<PendingEmployeeInvitation> {
+  const { data, error } =
+    await supabase.functions.invoke<PendingEmployeeInvitation>(
+      "invite-employee",
+      { body: { ...input, action: "replace" } },
+    );
+
+  if (error) {
+    throw await createEmployeeInviteError(error);
+  }
+
+  return unwrapSupabase(data, error);
+}
+
+export async function cancelEmployeeInvitation(
+  input: EmployeeInvitationCancelInput,
+): Promise<void> {
+  const { error } = await supabase.functions.invoke("invite-employee", {
+    body: { ...input, action: "cancel" },
+  });
+
+  if (error) {
+    throw await createEmployeeInviteError(error);
+  }
+}
+
+export async function lookupEmployeeInvitationsByEmail(
+  email: string,
+): Promise<InvitationLookupRow[]> {
+  const { data, error } = await supabase.functions.invoke<{
+    invitations: InvitationLookupRow[];
+  }>("lookup-employee-invitation", { body: { email } });
+
+  if (error) throw error;
+  return data?.invitations ?? [];
+}
+
+export async function lookupEmployeeInvitationByToken(
+  token: string,
+): Promise<InvitationTokenLookup | null> {
+  const { data, error } = await supabase.functions.invoke<{
+    invitation: InvitationTokenLookup | null;
+  }>("lookup-employee-invitation", { body: { token } });
+
+  if (error) throw error;
+  return data?.invitation ?? null;
 }
 
 export async function updateEmployee(

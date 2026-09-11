@@ -86,7 +86,9 @@ export async function updateClinicReminderSettings(
   const { error } = await supabase
     .from("clinics")
     .update(settings)
-    .eq("id", clinicId);
+    .eq("id", clinicId)
+    .select("id")
+    .single();
 
   if (error) {
     throw new Error(error.message);

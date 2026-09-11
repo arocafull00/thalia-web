@@ -23,6 +23,13 @@ const EMPLOYEE_INVITE_ERROR_MESSAGES: Record<string, string> = {
   invalid_role: "El rol seleccionado no es válido.",
   "invalid role": "El rol seleccionado no es válido.",
   invitation_already_pending: "Este usuario ya tiene una invitación pendiente",
+  invitation_not_pending:
+    "La invitación ya no está pendiente. Actualiza el listado.",
+  invitation_id_required: "No se pudo identificar la invitación.",
+  invitation_replace_failed:
+    "No se pudo actualizar la invitación. Inténtalo de nuevo.",
+  invitation_cancel_failed:
+    "No se pudo cancelar la invitación. Inténtalo de nuevo.",
   user_already_member: "Este usuario ya pertenece a la clínica",
   "already a member": "Esta persona ya pertenece a la clínica.",
   "already invited": "Ya existe una invitación pendiente para ese email.",

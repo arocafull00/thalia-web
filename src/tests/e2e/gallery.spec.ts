@@ -87,11 +87,9 @@ async function uploadPatientImage(
   );
   await page.getByTestId("patient-gallery-upload-submit").click();
 
-  const successToast = page
-    .getByRole("alert")
-    .filter({ hasText: "1 imagen subida correctamente" })
-    .last();
-  await expect(successToast).toBeVisible({ timeout: 15_000 });
+  await expect(
+    page.getByText("1 imagen subida correctamente").last(),
+  ).toBeVisible({ timeout: 15_000 });
   await expect(dialog).toBeHidden({ timeout: 15_000 });
 }
 

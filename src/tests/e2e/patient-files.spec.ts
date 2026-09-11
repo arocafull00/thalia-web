@@ -24,11 +24,9 @@ test("sube un archivo al paciente seed", async ({ page }) => {
   );
   await page.getByTestId("patient-file-upload-submit").click();
 
-  await expect(
-    page
-      .getByRole("alert")
-      .filter({ hasText: "1 archivo subido correctamente" }),
-  ).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("1 archivo subido correctamente")).toBeVisible({
+    timeout: 20_000,
+  });
   await expect(dialog).toBeHidden({ timeout: 20_000 });
   await expect(page.getByText(fileName)).toBeVisible();
 });

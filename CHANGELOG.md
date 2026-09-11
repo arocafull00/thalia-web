@@ -1,5 +1,12 @@
 # Changelog
 
+## 83-splash-de-ios
+
+- La PWA en iPhone arrancaba con la pantalla en blanco. No había ninguna etiqueta `apple-touch-startup-image`, e iOS no sabe generar el splash a partir del manifest como sí hace Android: exige una imagen por resolución
+- Se añaden nueve pantallas de arranque cubriendo los iPhone en uso, del SE al 15 Pro Max, con el logo centrado sobre el crema de marca
+- La media query debe encajar exactamente con el dispositivo: una talla que falte no degrada a otra parecida, deja la pantalla en blanco
+
+
 ## 87-vista-previa-del-enlace-de-confirmacion
 
 - El enlace de confirmación que viaja en el recordatorio ya genera tarjeta de vista previa en WhatsApp, con el logo, «Confirmación de cita» y el dominio. Antes no había ninguna etiqueta Open Graph en la aplicación, así que el cliente rastreaba la página y se quedaba con el favicon escalado

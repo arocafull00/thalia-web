@@ -7,6 +7,7 @@ import AuthProvider from "@/components/providers/auth-provider";
 import PwaInstallProvider from "@/components/providers/pwa-install-provider";
 import ServiceWorkerProvider from "@/components/providers/service-worker-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { APPLE_SPLASH_SCREENS } from "@/lib/apple-splash-screens";
 
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
@@ -45,6 +46,14 @@ export const metadata: Metadata = {
     // apple-touch-icon y la compone sobre negro, así que un icono con esquinas
     // redondeadas transparentes se instala con las esquinas negras (#83).
     apple: [{ url: "/icon-192x192.png", sizes: "192x192" }],
+  },
+  // Android genera el splash a partir del manifest; iOS no, y sin estas
+  // imágenes arranca con la pantalla en blanco (#83).
+  appleWebApp: {
+    capable: true,
+    title: "Thalia",
+    statusBarStyle: "default",
+    startupImage: APPLE_SPLASH_SCREENS,
   },
 };
 

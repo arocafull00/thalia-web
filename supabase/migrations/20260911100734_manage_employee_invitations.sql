@@ -24,7 +24,7 @@ CREATE POLICY invitation_tokens_select_recipient_or_manager
   FOR SELECT
   TO authenticated
   USING (
-    lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    lower(email) = lower(coalesce((SELECT auth.jwt()) ->> 'email', ''))
     OR EXISTS (
       SELECT 1
       FROM public.clinic_memberships membership
@@ -48,7 +48,7 @@ CREATE POLICY clinics_select_pending_invitation
       WHERE invitation.clinic_id = clinics.id
         AND invitation.used_at IS NULL
         AND invitation.expires_at > now()
-        AND lower(invitation.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+        AND lower(invitation.email) = lower(coalesce((SELECT auth.jwt()) ->> 'email', ''))
     )
   );
 

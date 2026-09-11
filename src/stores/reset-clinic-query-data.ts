@@ -25,6 +25,9 @@ export function resetClinicQueryData() {
     byId: {},
     statsByEmployeeId: {},
     appointmentsByEmployeeId: {},
+    invitations: emptyQueryEntry(),
+    invitationMutatingId: null,
+    invitationMutationError: null,
   });
   useFinancesStore.setState({
     byPage: {},

@@ -14,6 +14,10 @@ export function canAccessBusiness(role: ClinicMembershipRole | null) {
   return role === "owner";
 }
 
+export function canManageEmployees(role: ClinicMembershipRole | null) {
+  return role === "owner" || role === "admin";
+}
+
 export function canMutateClinicalData(accountType: EmployeeAccountType | null) {
   return accountType !== "external";
 }

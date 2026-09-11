@@ -14,7 +14,11 @@ vi.mock("@/dal/employees.dal", () => ({
   getEmployee: vi.fn(),
   getEmployeeAppointments: vi.fn(),
   getEmployeeAppointmentStats: vi.fn(),
+  getPendingEmployeeInvitations: vi.fn(),
   inviteEmployee: vi.fn(),
+  replaceEmployeeInvitation: vi.fn(),
+  cancelEmployeeInvitation: vi.fn(),
+  setExternalMembershipStatus: vi.fn(),
   updateEmployee: vi.fn(),
 }));
 
@@ -41,6 +45,14 @@ const mockEmployee = {
 };
 
 const mockStats = { total: 50, completed: 30, upcoming: 10, cancelled: 5 };
+
+const mockInvitation = {
+  id: "invitation-1",
+  email: "nuevo@clinic.com",
+  role: "employee",
+  created_at: "2024-01-01T00:00:00Z",
+  expires_at: "2024-01-08T00:00:00Z",
+};
 
 const mockAppointmentRow = {
   id: "apt-1",
@@ -71,8 +83,11 @@ const initialState = {
   byId: {},
   statsByEmployeeId: {},
   appointmentsByEmployeeId: {},
+  invitations: { data: null, loading: false, error: null },
   creating: false,
   createError: null,
+  invitationMutatingId: null,
+  invitationMutationError: null,
   updating: false,
   updateError: null,
 };
@@ -129,37 +144,24 @@ describe("employees-store", () => {
     });
   });
 
-  it("createEmployee refetches the cached page so the total stays in sync", async () => {
+  it("createEmployee refreshes pending invitations", async () => {
     vi.mocked(employeesDal.inviteEmployee).mockResolvedValue(
-      mockEmployee as never,
+      mockInvitation as never,
     );
-    vi.mocked(employeesDal.getEmployees).mockResolvedValue([]);
-    vi.mocked(employeesDal.getEmployeesPage).mockResolvedValue({
-      employees: [mockEmployee as never],
-      total: 1,
-    });
-
-    useEmployeesStore.setState({
-      byPage: {
-        [employeesPageKey(PAGE_QUERY)]: {
-          data: { employees: [], total: 0 },
-          error: null,
-          loading: false,
-        },
-      },
-    });
+    vi.mocked(employeesDal.getPendingEmployeeInvitations).mockResolvedValue([
+      mockInvitation as never,
+    ]);
 
     await useEmployeesStore
       .getState()
       .createEmployee({ email: "nuevo@clinic.com", role: "employee" });
 
-    expect(employeesDal.getEmployeesPage).toHaveBeenCalledWith({
-      ...PAGE_QUERY,
-      clinicId: CLINIC_ID,
-    });
-    // La lista completa se sigue refrescando: la consumen el calendario y los
-    // diálogos de citas.
-    expect(employeesDal.getEmployees).toHaveBeenCalled();
+    expect(employeesDal.getPendingEmployeeInvitations).toHaveBeenCalledWith(
+      CLINIC_ID,
+    );
+    expect(useEmployeesStore.getState().invitations.data).toEqual([
+      mockInvitation,
+    ]);
   });
 
   it("has correct initial state", () => {
@@ -169,6 +171,11 @@ describe("employees-store", () => {
     expect(state.byId).toEqual({});
     expect(state.statsByEmployeeId).toEqual({});
     expect(state.appointmentsByEmployeeId).toEqual({});
+    expect(state.invitations).toEqual({
+      data: null,
+      loading: false,
+      error: null,
+    });
     expect(state.creating).toBe(false);
     expect(state.createError).toBeNull();
     expect(state.updating).toBe(false);
@@ -284,25 +291,27 @@ describe("employees-store", () => {
   });
 
   describe("createEmployee", () => {
-    it("validates input, invites employee, and refetches list", async () => {
+    it("validates input, invites employee, and refreshes invitations", async () => {
       vi.mocked(employeesDal.inviteEmployee).mockResolvedValue(
-        mockEmployee as never,
+        mockInvitation as never,
       );
-      vi.mocked(employeesDal.getEmployees).mockResolvedValue([
-        mockEmployee as never,
+      vi.mocked(employeesDal.getPendingEmployeeInvitations).mockResolvedValue([
+        mockInvitation as never,
       ]);
 
       const result = await useEmployeesStore
         .getState()
         .createEmployee({ email: "new@clinic.com", role: "employee" });
 
-      expect(result).toEqual(mockEmployee);
+      expect(result).toEqual(mockInvitation);
       expect(employeesDal.inviteEmployee).toHaveBeenCalledWith({
         email: "new@clinic.com",
         role: "employee",
         clinicId: CLINIC_ID,
       });
-      expect(employeesDal.getEmployees).toHaveBeenCalled();
+      expect(employeesDal.getPendingEmployeeInvitations).toHaveBeenCalledWith(
+        CLINIC_ID,
+      );
       expect(useEmployeesStore.getState().creating).toBe(false);
       expect(useEmployeesStore.getState().createError).toBeNull();
     });

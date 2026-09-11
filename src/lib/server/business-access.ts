@@ -14,3 +14,14 @@ export async function requireBusinessOwner() {
     redirect("/dashboard");
   }
 }
+
+export async function requireClinicManager() {
+  const bootstrap = await getAppBootstrap();
+  const membership = bootstrap.memberships.find(
+    (item) => item.clinicId === bootstrap.activeClinicId,
+  );
+
+  if (membership?.role !== "owner" && membership?.role !== "admin") {
+    redirect("/dashboard");
+  }
+}

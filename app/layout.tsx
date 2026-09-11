@@ -3,13 +3,18 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
+import RecoveryLinkRouter from "@/components/auth/recovery-link-router";
 import AuthProvider from "@/components/providers/auth-provider";
 import PwaInstallProvider from "@/components/providers/pwa-install-provider";
 import ServiceWorkerProvider from "@/components/providers/service-worker-provider";
+import AppToastContainer from "@/components/ui/app-toast-container";
 import { Toaster } from "@/components/ui/sonner";
+import { siteUrl } from "@/lib/environment";
 
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,22 +26,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-/*
- * Base para resolver las URL de metadatos. WhatsApp y cualquier otro cliente
- * que genere vista previa necesitan una URL absoluta: con una relativa no
- * descargan la imagen y la tarjeta sale sin ella.
- *
- * En Vercel la variable de producción viene dada; en local cae a localhost, que
- * es lo correcto para desarrollo.
- */
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteUrl ?? "http://localhost:3000"),
   title: "Thalia",
   description: "Gestión de clínicas estéticas",
   icons: {
@@ -69,11 +60,13 @@ export default function RootLayout({
         className="min-h-full flex flex-col bg-canvas text-ink"
         suppressHydrationWarning
       >
+        <RecoveryLinkRouter />
         <Theme accentColor="teal" grayColor="gray" radius="large">
           <ServiceWorkerProvider>
             <PwaInstallProvider>
               <AuthProvider>
                 {children}
+                <AppToastContainer />
                 <Toaster position="bottom-right" richColors closeButton />
               </AuthProvider>
             </PwaInstallProvider>

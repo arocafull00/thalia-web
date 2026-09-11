@@ -3,13 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
+import type { z } from "zod";
 
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
 import { employeeInviteSchema } from "@/lib/schemas/employee-schema";
 import { useEmployeesStore } from "@/stores/employees-store";
 import type { PendingEmployeeInvitation } from "@/types/database.types";
-import type { z } from "zod";
 
 type InvitationEditValues = z.input<typeof employeeInviteSchema>;
 
@@ -26,9 +26,7 @@ export function useEmployeeInvitationEditDialog(
   const replaceInvitation = useEmployeesStore(
     (state) => state.replaceInvitation,
   );
-  const mutatingId = useEmployeesStore(
-    (state) => state.invitationMutatingId,
-  );
+  const mutatingId = useEmployeesStore((state) => state.invitationMutatingId);
   const form = useForm<InvitationEditValues>({
     resolver: zodResolver(employeeInviteSchema),
     defaultValues: getDefaultValues(invitation),

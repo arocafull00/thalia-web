@@ -66,22 +66,19 @@ Deno.serve(async (req) => {
   const fullName =
     typeof authData.user.user_metadata?.full_name === "string"
       ? authData.user.user_metadata.full_name
-      : authData.user.email.split("@")[0] ?? "Empleado";
+      : (authData.user.email.split("@")[0] ?? "Empleado");
 
-  const { data, error } = await adminClient.rpc(
-    "consume_employee_invitation",
-    {
-      p_token: token,
-      p_user_id: authData.user.id,
-      p_user_email: authData.user.email,
-      p_action: action,
-      p_full_name: fullName,
-      p_employee_role:
-        typeof body?.employeeRole === "string" ? body.employeeRole : null,
-      p_specialty: typeof body?.specialty === "string" ? body.specialty : null,
-      p_color: typeof body?.color === "string" ? body.color : null,
-    },
-  );
+  const { data, error } = await adminClient.rpc("consume_employee_invitation", {
+    p_token: token,
+    p_user_id: authData.user.id,
+    p_user_email: authData.user.email,
+    p_action: action,
+    p_full_name: fullName,
+    p_employee_role:
+      typeof body?.employeeRole === "string" ? body.employeeRole : null,
+    p_specialty: typeof body?.specialty === "string" ? body.specialty : null,
+    p_color: typeof body?.color === "string" ? body.color : null,
+  });
 
   if (error) {
     const status = error.message.includes("invitation_email_mismatch")

@@ -21,7 +21,7 @@ import {
 } from "@/copy/app-sidebar-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
-import { canAccessBusiness } from "@/lib/permissions";
+import { canAccessBusiness, canManageEmployees } from "@/lib/permissions";
 import {
   canManageClinicSettings,
   SETTINGS_SECTIONS,
@@ -152,7 +152,7 @@ export function useAppNavItems() {
     }
 
     if (item.href === "/employees") {
-      visible = visible && showEmployees;
+      visible = canManageEmployees(platformRole) && showEmployees;
     }
 
     if (item.href === "/finances") {

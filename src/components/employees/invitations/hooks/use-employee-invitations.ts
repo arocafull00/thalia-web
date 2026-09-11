@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
@@ -20,9 +20,7 @@ export function useEmployeeInvitations() {
   const replaceInvitation = useEmployeesStore(
     (state) => state.replaceInvitation,
   );
-  const cancelInvitation = useEmployeesStore(
-    (state) => state.cancelInvitation,
-  );
+  const cancelInvitation = useEmployeesStore((state) => state.cancelInvitation);
   const invitationMutatingId = useEmployeesStore(
     (state) => state.invitationMutatingId,
   );

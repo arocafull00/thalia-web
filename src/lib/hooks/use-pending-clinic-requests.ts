@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 
+import { lookupEmployeeInvitationsByEmail } from "@/dal/employees.dal";
 import {
   normalizeEmail,
   type PendingClinicRequest,
 } from "@/lib/clinic-requests";
-import { lookupEmployeeInvitationsByEmail } from "@/dal/employees.dal";
 
 type UsePendingClinicRequestsResult = {
   requests: PendingClinicRequest[];

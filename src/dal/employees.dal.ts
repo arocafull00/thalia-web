@@ -46,6 +46,12 @@ export type InvitationTokenLookup = Omit<InvitationLookupRow, "token"> & {
   used_at: string | null;
 };
 
+export type ConsumeEmployeeInvitationInput = {
+  token: string;
+  action: "accept" | "reject";
+  employeeRole?: Employee["role"];
+};
+
 export type EmployeeUpdate = Partial<
   Pick<
     Employee,
@@ -217,9 +223,9 @@ export async function inviteEmployee(
 ): Promise<PendingEmployeeInvitation> {
   const { data, error } =
     await supabase.functions.invoke<PendingEmployeeInvitation>(
-    "invite-employee",
-    { body: input },
-  );
+      "invite-employee",
+      { body: input },
+    );
 
   if (error) {
     throw await createEmployeeInviteError(error);
@@ -290,6 +296,16 @@ export async function lookupEmployeeInvitationByToken(
 
   if (error) throw error;
   return data?.invitation ?? null;
+}
+
+export async function consumeEmployeeInvitation(
+  input: ConsumeEmployeeInvitationInput,
+): Promise<void> {
+  const { error } = await supabase.functions.invoke("accept-invitation", {
+    body: input,
+  });
+
+  if (error) throw error;
 }
 
 export async function updateEmployee(

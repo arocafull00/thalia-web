@@ -1,21 +1,18 @@
-import { endOfDay, startOfDay } from "date-fns";
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import {
-  PATIENT_FILE_CATEGORY_OPTIONS,
-  PATIENT_FILES_COPY,
-} from "@/copy/patient-files-copy";
+import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";
 import type {
   GlobalPatientFilesParams,
   PaginatedPatientFiles,
-  PatientFilesSort,
 } from "@/dal/patient-files.dal";
 import { getFileUrl } from "@/dal/patient-files.dal";
 import {
-  formatLocalDateInputValue,
-  parseLocalDateInputValue,
-} from "@/lib/date-input";
+  buildFilesQueryFromSearchParams,
+  FILES_PAGE_SIZE,
+} from "@/lib/files-page-query";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useGlobalPatientFiles } from "@/lib/hooks/use-global-patient-files";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
@@ -27,7 +24,7 @@ import type {
   PatientFileWithPatient,
 } from "@/types/database.types";
 
-export const FILES_PAGE_SIZE = 20;
+export { buildFilesQueryFromSearchParams, FILES_PAGE_SIZE };
 
 export const FILES_FILTER_DEFAULTS = {
   category: "",
@@ -42,85 +39,6 @@ export type FilesFilters = Pick<
   typeof FILES_FILTER_DEFAULTS,
   "category" | "from" | "sort" | "to"
 >;
-
-const sortValues: PatientFilesSort[] = [
-  "newest",
-  "oldest",
-  "name_asc",
-  "name_desc",
-];
-
-function parsePage(value: string) {
-  const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
-}
-
-function parseCategory(value: string): PatientFileCategory | null {
-  return PATIENT_FILE_CATEGORY_OPTIONS.some((option) => option.value === value)
-    ? (value as PatientFileCategory)
-    : null;
-}
-
-function parseSort(value: string): PatientFilesSort {
-  return sortValues.includes(value as PatientFilesSort)
-    ? (value as PatientFilesSort)
-    : "newest";
-}
-
-export function buildFilesQueryFromSearchParams(params: {
-  category?: string;
-  from?: string;
-  page?: string;
-  q?: string;
-  sort?: string;
-  to?: string;
-}): Omit<GlobalPatientFilesParams, "clinicId"> {
-  const filters = {
-    category: params.category?.trim() ?? "",
-    from: params.from?.trim() ?? "",
-    page: params.page?.trim() ?? "1",
-    q: params.q?.trim() ?? "",
-    sort: params.sort?.trim() ?? "newest",
-    to: params.to?.trim() ?? "",
-  };
-
-  return {
-    category: parseCategory(filters.category),
-    createdFrom: toStartIso(filters.from),
-    createdTo: toEndIso(filters.to),
-    page: parsePage(filters.page),
-    pageSize: FILES_PAGE_SIZE,
-    patientSearch: filters.q,
-    sort: parseSort(filters.sort),
-  };
-}
-
-function parseDate(value: string) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return null;
-  }
-
-  const parsed = parseLocalDateInputValue(value);
-
-  if (
-    Number.isNaN(parsed.getTime()) ||
-    formatLocalDateInputValue(parsed) !== value
-  ) {
-    return null;
-  }
-
-  return parsed;
-}
-
-function toStartIso(value: string) {
-  const date = parseDate(value);
-  return date ? startOfDay(date).toISOString() : null;
-}
-
-function toEndIso(value: string) {
-  const date = parseDate(value);
-  return date ? endOfDay(date).toISOString() : null;
-}
 
 type FilesPageSeed = {
   initialPage?: PaginatedPatientFiles;
@@ -143,19 +61,11 @@ export function useFilesPage(seed?: FilesPageSeed) {
     filters.q,
     setSearchFilter,
   );
-  const page = parsePage(filters.page);
   const queryParams = useMemo(
-    () => ({
-      category: parseCategory(filters.category),
-      createdFrom: toStartIso(filters.from),
-      createdTo: toEndIso(filters.to),
-      page,
-      pageSize: FILES_PAGE_SIZE,
-      patientSearch: filters.q,
-      sort: parseSort(filters.sort),
-    }),
-    [filters.category, filters.from, filters.q, filters.sort, filters.to, page],
+    () => buildFilesQueryFromSearchParams(filters),
+    [filters],
   );
+  const page = queryParams.page;
   const filesQuery = useGlobalPatientFiles(queryParams, seed);
   const refreshFiles = filesQuery.refresh;
   const deleteConfirm = usePatientFilesStore((state) => state.deleteConfirm);

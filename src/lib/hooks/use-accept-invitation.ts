@@ -1,9 +1,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import {
+  consumeEmployeeInvitation,
+  lookupEmployeeInvitationByToken,
+} from "@/dal/employees.dal";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { lookupEmployeeInvitationByToken } from "@/dal/employees.dal";
-import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicStore } from "@/stores/clinic-store";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
@@ -36,11 +38,16 @@ export function useAcceptInvitation(token: string) {
     let cancelled = false;
 
     if (!user) {
-      lookupEmployeeInvitationByToken(token.trim()).then((invitation) => {
+      lookupEmployeeInvitationByToken(token.trim())
+        .then((invitation) => {
           if (cancelled) return;
           setToken(token, invitation?.email ?? undefined);
           setIntent("employee");
           router.replace("/register-employee");
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setState({ status: "error", message: "Invitación no encontrada." });
         });
       return () => {
         cancelled = true;
@@ -97,19 +104,11 @@ export function useAcceptInvitation(token: string) {
 
     try {
       const role = state.status === "ready" ? state.role : null;
-      const body: Record<string, string> = { token, action: "accept" };
-
-      if (role !== "admin") {
-        body.employeeRole = employeeRole;
-      }
-
-      const { error } = await supabase.functions.invoke("accept-invitation", {
-        body,
+      await consumeEmployeeInvitation({
+        token,
+        action: "accept",
+        employeeRole: role === "admin" ? undefined : employeeRole,
       });
-
-      if (error) {
-        throw new Error(error.message);
-      }
 
       clearToken();
       setState({ status: "accepted" });
@@ -137,13 +136,7 @@ export function useAcceptInvitation(token: string) {
     setSubmitting(true);
 
     try {
-      const { error } = await supabase.functions.invoke("accept-invitation", {
-        body: { token, action: "reject" },
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
+      await consumeEmployeeInvitation({ token, action: "reject" });
 
       clearToken();
       setState({ status: "rejected" });

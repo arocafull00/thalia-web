@@ -1,8 +1,8 @@
 "use client";
 
+import type { EmployeeInvitationAction } from "@/components/employees/invitations/hooks/use-employee-invitations";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
-import type { EmployeeInvitationAction } from "@/components/employees/invitations/hooks/use-employee-invitations";
 import type { PendingEmployeeInvitation } from "@/types/database.types";
 
 type EmployeeInvitationActionDialogProps = {

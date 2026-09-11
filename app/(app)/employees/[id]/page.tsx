@@ -7,14 +7,14 @@ import {
   getEmployeeAppointmentStats,
 } from "@/dal/employees.server.dal";
 import { logger } from "@/lib/logger";
-import { requireBusinessOwner } from "@/lib/server/business-access";
+import { requireClinicManager } from "@/lib/server/business-access";
 
 export default async function EmployeeDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireBusinessOwner();
+  await requireClinicManager();
   const { id } = await params;
   let employee: Awaited<ReturnType<typeof getEmployee>>;
   let stats: Awaited<ReturnType<typeof getEmployeeAppointmentStats>>;

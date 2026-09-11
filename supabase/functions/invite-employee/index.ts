@@ -177,8 +177,9 @@ Deno.serve(async (req) => {
     );
   }
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + INVITATION_TTL_DAYS);
+  const expiresAt = new Date(
+    Date.now() + INVITATION_TTL_DAYS * 24 * 60 * 60 * 1000,
+  );
 
   if (action === "replace") {
     if (!body?.invitationId || typeof body.invitationId !== "string") {
@@ -207,7 +208,8 @@ Deno.serve(async (req) => {
         : error?.message.includes("invitation_not_pending")
           ? "invitation_not_pending"
           : "invitation_replace_failed";
-      return errorResponse(code, error?.message ?? "Invitation failed", 409);
+      const status = code === "invitation_replace_failed" ? 500 : 409;
+      return errorResponse(code, error?.message ?? "Invitation failed", status);
     }
 
     return Response.json(invitation, { headers: corsHeaders });
@@ -252,11 +254,7 @@ Deno.serve(async (req) => {
     .single();
 
   if (inviteError || !invitation) {
-    return errorResponse(
-      "invitation_failed",
-      "Invitation failed",
-      500,
-    );
+    return errorResponse("invitation_failed", "Invitation failed", 500);
   }
 
   return Response.json(invitation, { headers: corsHeaders });

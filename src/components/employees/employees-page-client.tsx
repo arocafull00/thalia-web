@@ -6,6 +6,9 @@ import { useCallback, useMemo, useState } from "react";
 import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeInviteForm from "@/components/employees/components/form/employee-invite-form";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/form/employee-status-confirm-dialog";
+import EmployeesFilters from "@/components/employees/components/list/employees-filters";
+import EmployeesFiltersSheet from "@/components/employees/components/list/employees-filters-sheet";
+import EmployeesTable from "@/components/employees/components/list/employees-table";
 import EmployeeInvitationActionDialog from "@/components/employees/invitations/components/employee-invitation-action-dialog";
 import EmployeeInvitationEditDialog from "@/components/employees/invitations/components/employee-invitation-edit-dialog";
 import EmployeesPageTabs, {
@@ -13,9 +16,6 @@ import EmployeesPageTabs, {
 } from "@/components/employees/invitations/components/employees-page-tabs";
 import PendingInvitationsPanel from "@/components/employees/invitations/components/pending-invitations-panel";
 import { useEmployeeInvitations } from "@/components/employees/invitations/hooks/use-employee-invitations";
-import EmployeesFilters from "@/components/employees/components/list/employees-filters";
-import EmployeesFiltersSheet from "@/components/employees/components/list/employees-filters-sheet";
-import EmployeesTable from "@/components/employees/components/list/employees-table";
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogDescription from "@/components/ui/app-dialog-description";
 import AppDialogFooter from "@/components/ui/app-dialog-footer";
@@ -50,7 +50,10 @@ import { useEmployeesPage } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import { useEmployeesStore, type EmployeesPageQuery } from "@/stores/employees-store";
+import {
+  useEmployeesStore,
+  type EmployeesPageQuery,
+} from "@/stores/employees-store";
 
 const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "", page: "" };
 
@@ -195,42 +198,42 @@ export default function EmployeesPageClient({
       />
       {activeTab === "staff" ? (
         <PageCard
-        filters={
-          <EmployeesFilters
-            role={filters.role}
-            search={filters.q}
-            status={filters.status}
-            onRoleChange={(value) => setFilterAndResetPage("role", value)}
-            onSearchChange={handleSearchChange}
-            onStatusChange={(value) => setFilterAndResetPage("status", value)}
-            onOpenSheet={handleOpenFiltersSheet}
-          />
-        }
+          filters={
+            <EmployeesFilters
+              role={filters.role}
+              search={filters.q}
+              status={filters.status}
+              onRoleChange={(value) => setFilterAndResetPage("role", value)}
+              onSearchChange={handleSearchChange}
+              onStatusChange={(value) => setFilterAndResetPage("status", value)}
+              onOpenSheet={handleOpenFiltersSheet}
+            />
+          }
         >
-        {employees.isLoading ? (
-          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
-        ) : null}
-        {employees.error ? (
-          <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
-        ) : null}
-        {showEmptyState ? (
-          <PageEmptyState message={EMPLOYEES_COPY.page.empty} />
-        ) : null}
-        {!showEmptyState && !employees.isLoading ? (
-          <EmployeesTable
-            employees={employees.employees}
-            onRowClick={handleRowClick}
-            onEdit={handleRowClick}
-            onToggleStatus={setStatusEmployeeId}
-            pagination={{
-              pageIndex,
-              pageSize: EMPLOYEES_PAGE_SIZE,
-              total: employees.total,
-              onPageChange: (next) =>
-                setFilter("page", next === 0 ? "" : String(next)),
-            }}
-          />
-        ) : null}
+          {employees.isLoading ? (
+            <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
+          ) : null}
+          {employees.error ? (
+            <Notice tone="danger" message={EMPLOYEES_COPY.page.loadError} />
+          ) : null}
+          {showEmptyState ? (
+            <PageEmptyState message={EMPLOYEES_COPY.page.empty} />
+          ) : null}
+          {!showEmptyState && !employees.isLoading ? (
+            <EmployeesTable
+              employees={employees.employees}
+              onRowClick={handleRowClick}
+              onEdit={handleRowClick}
+              onToggleStatus={setStatusEmployeeId}
+              pagination={{
+                pageIndex,
+                pageSize: EMPLOYEES_PAGE_SIZE,
+                total: employees.total,
+                onPageChange: (next) =>
+                  setFilter("page", next === 0 ? "" : String(next)),
+              }}
+            />
+          ) : null}
         </PageCard>
       ) : (
         <PendingInvitationsPanel

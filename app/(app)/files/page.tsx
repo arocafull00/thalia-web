@@ -1,6 +1,6 @@
 import FilesPageClient from "@/components/files/files-page-client";
 import { getGlobalPatientFiles } from "@/dal/patient-files.server.dal";
-import { buildFilesQueryFromSearchParams } from "@/lib/hooks/use-files-page";
+import { buildFilesQueryFromSearchParams } from "@/lib/files-page-query";
 import { getServerActiveClinicId } from "@/lib/server/active-clinic";
 import { requireBusinessOwner } from "@/lib/server/business-access";
 

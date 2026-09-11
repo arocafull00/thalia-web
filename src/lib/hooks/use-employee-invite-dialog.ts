@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import type { z } from "zod";
 
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";

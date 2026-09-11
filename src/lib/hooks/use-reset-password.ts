@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { LOGIN_COPY } from "@/copy/login-copy";
 import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";

@@ -8,7 +8,7 @@ import {
   Trash2,
   TrendingUp,
 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { ProfileInfoRow } from "@/components/ui/profile/profile-info-row";
 import ProfileQuickActionButton from "@/components/ui/profile/profile-quick-action-button";

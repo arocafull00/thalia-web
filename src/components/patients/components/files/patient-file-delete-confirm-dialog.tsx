@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";

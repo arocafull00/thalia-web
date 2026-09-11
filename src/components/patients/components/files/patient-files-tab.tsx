@@ -2,7 +2,7 @@
 
 import { Upload } from "lucide-react";
 import { useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { Notice } from "@/components/ui/primitives/notice";

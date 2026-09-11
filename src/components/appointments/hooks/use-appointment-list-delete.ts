@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import { notifySuccess } from "@/lib/sound";

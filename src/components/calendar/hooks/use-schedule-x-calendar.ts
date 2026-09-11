@@ -20,7 +20,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Temporal } from "temporal-polyfill";
 import "temporal-polyfill/global";
 

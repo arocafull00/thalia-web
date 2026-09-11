@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { employeeRoleLabel } from "@/lib/format";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
@@ -34,7 +36,6 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
     canViewClinicRequests,
   );
   const employees = useEmployees(initialEmployees);
-  const passwordMessage = useSettingsUiStore((state) => state.passwordMessage);
   const passwordSubmitting = useSettingsUiStore(
     (state) => state.passwordSubmitting,
   );
@@ -42,9 +43,6 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
     (state) => state.signOutSubmitting,
   );
   const localAvatarUri = useSettingsUiStore((state) => state.localAvatarUri);
-  const setPasswordMessage = useSettingsUiStore(
-    (state) => state.setPasswordMessage,
-  );
   const setPasswordSubmitting = useSettingsUiStore(
     (state) => state.setPasswordSubmitting,
   );
@@ -62,12 +60,11 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
 
   const handleChangePassword = async () => {
     if (!user?.email) {
-      setPasswordMessage("No hay un email asociado a esta cuenta.");
+      toast.error(SETTINGS_COPY.account.changePasswordNoEmail);
       return;
     }
 
     setPasswordSubmitting(true);
-    setPasswordMessage(null);
 
     const origin =
       typeof globalThis.location !== "undefined"
@@ -80,11 +77,11 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
     setPasswordSubmitting(false);
 
     if (error) {
-      setPasswordMessage(SETTINGS_COPY.account.changePasswordError);
+      toast.error(SETTINGS_COPY.account.changePasswordError);
       return;
     }
 
-    setPasswordMessage("Revisa tu email para crear una nueva contraseña.");
+    toast.success(SETTINGS_COPY.account.changePasswordSuccess);
   };
 
   const handleSignOut = async () => {
@@ -126,7 +123,6 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
     handleSignOut,
     canManageClinic,
     localAvatarUri,
-    passwordMessage,
     passwordSubmitting,
     pendingClinicRequests,
     profile,

@@ -10,7 +10,6 @@ type SettingsUserPanelProps = {
   onAvatarFileSelected: (file: File) => void;
   onChangePassword: () => void;
   onSignOut: () => void;
-  passwordMessage: string | null;
   passwordSubmitting: boolean;
   signOutSubmitting: boolean;
 };
@@ -23,7 +22,6 @@ export default function SettingsUserPanel({
   onAvatarFileSelected,
   onChangePassword,
   onSignOut,
-  passwordMessage,
   passwordSubmitting,
   signOutSubmitting,
 }: SettingsUserPanelProps) {
@@ -39,7 +37,6 @@ export default function SettingsUserPanel({
       <SettingsAccountPanel
         onChangePassword={onChangePassword}
         onSignOut={onSignOut}
-        passwordMessage={passwordMessage}
         passwordSubmitting={passwordSubmitting}
         signOutSubmitting={signOutSubmitting}
       />

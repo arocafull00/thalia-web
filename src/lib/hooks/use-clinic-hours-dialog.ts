@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";

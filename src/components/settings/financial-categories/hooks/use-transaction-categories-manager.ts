@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { TRANSACTION_CATEGORIES_COPY } from "@/copy/transaction-categories-copy";
 import { useTransactionCategories } from "@/lib/hooks/use-transaction-categories";

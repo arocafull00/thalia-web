@@ -2,7 +2,7 @@
 
 import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { APPOINTMENT_STATUS_COPY } from "@/copy/appointment-status-copy";
@@ -47,13 +47,13 @@ export function notifyAppointmentStatusError(cause: unknown) {
     return;
   }
 
-  toast.error(
-    ({ closeToast }) => (
+  toast.custom(
+    (t) => (
       <AppointmentStatusErrorToast
         issue={cause.stockIssue}
-        onClose={() => closeToast()}
+        onClose={() => toast.dismiss(t)}
       />
     ),
-    { autoClose: false, icon: false },
+    { duration: Infinity },
   );
 }

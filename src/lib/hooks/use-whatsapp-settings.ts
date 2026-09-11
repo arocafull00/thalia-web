@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import {

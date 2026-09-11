@@ -1,5 +1,5 @@
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 import {

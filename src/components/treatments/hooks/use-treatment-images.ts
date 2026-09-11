@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import type { TreatmentImageGalleryItem } from "@/components/treatments/treatment-images.types";
 import { TREATMENT_DETAIL_COPY } from "@/copy/treatment-detail-copy";
@@ -41,7 +41,7 @@ export function useTreatmentImages(treatmentId: string) {
     }
 
     toast.error(TREATMENT_DETAIL_COPY.errors.loadImages, {
-      toastId: `treatment-images-${treatmentId}`,
+      id: `treatment-images-${treatmentId}`,
     });
   }, [currentEntry?.error, treatmentId]);
 

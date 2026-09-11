@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { startOfDay } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import type { z } from "zod";
 
 import type { AppointmentPatientOption } from "@/components/appointments/components/appointment-create-form";

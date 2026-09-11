@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";

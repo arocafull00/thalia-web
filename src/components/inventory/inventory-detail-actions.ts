@@ -1,5 +1,5 @@
 import { Pencil, Trash2, TrendingUp } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";

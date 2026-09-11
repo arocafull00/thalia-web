@@ -1,6 +1,6 @@
 import { bind, play, setEnabled } from "cuelume";
 import type { SoundName } from "cuelume";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 function isSoundDisabled(): boolean {
   if (typeof window === "undefined") {

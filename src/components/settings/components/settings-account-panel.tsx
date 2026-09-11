@@ -3,13 +3,11 @@
 import { Lock, LogOut } from "lucide-react";
 
 import SettingsActionRow from "@/components/settings/components/settings-action-row";
-import { Notice } from "@/components/ui/primitives/notice";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 
 type SettingsAccountPanelProps = {
   onChangePassword: () => void;
   onSignOut: () => void;
-  passwordMessage: string | null;
   passwordSubmitting: boolean;
   signOutSubmitting: boolean;
 };
@@ -17,7 +15,6 @@ type SettingsAccountPanelProps = {
 export default function SettingsAccountPanel({
   onChangePassword,
   onSignOut,
-  passwordMessage,
   passwordSubmitting,
   signOutSubmitting,
 }: SettingsAccountPanelProps) {
@@ -29,11 +26,6 @@ export default function SettingsAccountPanel({
       >
         {SETTINGS_COPY.account.sectionTitle}
       </h2>
-      {passwordMessage ? (
-        <div className="pt-4" role="status" aria-live="polite">
-          <Notice message={passwordMessage} />
-        </div>
-      ) : null}
       <div className="divide-y divide-border-subtle pt-2">
         <SettingsActionRow
           description={SETTINGS_COPY.account.changePasswordHint}

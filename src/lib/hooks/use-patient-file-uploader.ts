@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";

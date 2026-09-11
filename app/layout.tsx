@@ -21,11 +21,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/*
+ * Base para resolver las URL de metadatos. WhatsApp y cualquier otro cliente
+ * que genere vista previa necesitan una URL absoluta: con una relativa no
+ * descargan la imagen y la tarjeta sale sin ella.
+ *
+ * En Vercel la variable de producción viene dada; en local cae a localhost, que
+ * es lo correcto para desarrollo.
+ */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Thalia",
   description: "Gestión de clínicas estéticas",
   icons: {
     icon: "/icon.png",
+    // Tiene que ser un PNG opaco: iOS no admite transparencia en el
+    // apple-touch-icon y la compone sobre negro, así que un icono con esquinas
+    // redondeadas transparentes se instala con las esquinas negras (#83).
     apple: [{ url: "/icon-192x192.png", sizes: "192x192" }],
   },
 };

@@ -1,3 +1,5 @@
+"use client";
+
 import { endOfDay, startOfDay } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";

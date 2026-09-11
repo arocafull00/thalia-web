@@ -1,5 +1,12 @@
 # Changelog
 
+## 87-vista-previa-del-enlace-de-confirmacion
+
+- El enlace de confirmación que viaja en el recordatorio ya genera tarjeta de vista previa en WhatsApp, con el logo, «Confirmación de cita» y el dominio. Antes no había ninguna etiqueta Open Graph en la aplicación, así que el cliente rastreaba la página y se quedaba con el favicon escalado
+- No es solo estético: el paciente recibe un enlace no solicitado con un identificador largo, y la tarjeta es lo que lo distingue de algo sospechoso
+- `metadataBase` en el layout raíz. WhatsApp necesita una URL absoluta; con una relativa no descarga la imagen y la tarjeta sale sin ella. Sale de `NEXT_PUBLIC_SITE_URL` o, si no está, de la variable que Vercel inyecta en producción
+
+
 ## 83-logo-de-la-app-en-movil
 
 - El icono instalado en el móvil deja de salir con el borde y las esquinas negras. Eran PNG con transparencia, y iOS no la admite en el `apple-touch-icon`: la compone sobre negro. Ahora son opacos sobre su propio crema, y el redondeo lo pone el sistema

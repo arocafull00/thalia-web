@@ -9,6 +9,28 @@ export const metadata: Metadata = {
   description: COPY.page.description,
   // El enlace lleva datos de una cita concreta: no debe acabar en un buscador.
   robots: { index: false, follow: false },
+  /*
+   * Vista previa del enlace en WhatsApp. Sin `og:image` el cliente rastrea la
+   * página y se queda con el favicon, que al escalarlo sale borroso.
+   *
+   * Además cumple una función: el paciente recibe un enlace no solicitado con
+   * un identificador largo, y una tarjeta con el logo y «Confirmación de cita»
+   * es lo que lo distingue de algo sospechoso.
+   */
+  openGraph: {
+    type: "website",
+    siteName: "Thalia",
+    title: COPY.page.title,
+    description: COPY.page.description,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Thalia",
+      },
+    ],
+  },
 };
 
 // El estado depende del momento en que se abre (una cita pasa a 'past' sola),

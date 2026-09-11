@@ -1,5 +1,12 @@
 # Changelog
 
+## 87-recordatorio-sin-enlace-colgando
+
+- El recordatorio salía con «Confirma la cita pinchando en este enlace:» y nada detrás cuando no se podía generar el enlace. Parecía un mensaje cortado, que es peor que no mencionarlo: ahora se retira la frase entera
+- La causa principal era que el enlace solo se generaba para citas en estado `scheduled`. Una cita ya confirmada seguía recibiendo recordatorio —y debe seguir recibiéndolo— pero se quedaba sin enlace. Ahora también lo lleva: la página responde «Tu cita ya está confirmada», que es información útil
+- Solo se omite el enlace en las citas canceladas
+
+
 ## 83-splash-de-ios
 
 - La PWA en iPhone arrancaba con la pantalla en blanco. No había ninguna etiqueta `apple-touch-startup-image`, e iOS no sabe generar el splash a partir del manifest como sí hace Android: exige una imagen por resolución

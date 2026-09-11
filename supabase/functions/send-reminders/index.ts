@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { buildMessage } from "../_shared/message-template.ts";
+import { buildMessage, dropSentenceWith } from "../_shared/message-template.ts";
 import { sendWhatsApp } from "../_shared/whatsapp.ts";
 
 const corsHeaders = {
@@ -43,8 +43,13 @@ async function buildConfirmationLink(
   clinicId: string,
   appUrl: string | undefined,
 ): Promise<string | null> {
-  // Una cita ya confirmada no necesita confirmarse otra vez.
-  if (appointment.status !== "scheduled") return null;
+  /*
+   * También para las ya confirmadas. La página resuelve ese caso y responde
+   * «Tu cita ya está confirmada», que es información útil; y lo que no se puede
+   * es mandar el recordatorio con la frase del enlace coja porque la cita
+   * cambió de estado entre que se reservó y se avisó.
+   */
+  if (appointment.status === "cancelled") return null;
 
   if (!appUrl) {
     console.error("[reminders] falta PUBLIC_APP_URL: se envía sin enlace");
@@ -374,14 +379,18 @@ Deno.serve(async (req) => {
             )
           : null;
 
-        const message = buildMessage(clinic.whatsapp_message_template, {
+        // Sin enlace se retira la frase que lo menciona. Dejarla apuntando a
+        // la nada es lo que hace que el mensaje parezca cortado.
+        const plantilla = enlace
+          ? clinic.whatsapp_message_template
+          : dropSentenceWith(clinic.whatsapp_message_template, "{enlace}");
+
+        const message = buildMessage(plantilla, {
           paciente: patient.full_name,
           clinica: clinic.name,
           fecha,
           hora,
           profesional: employee?.full_name ?? "tu profesional",
-          // Sin enlace se borra el hueco: mandar la palabra "{enlace}" en
-          // mitad del texto sería peor que no ofrecer confirmación.
           enlace: enlace ?? "",
         });
 

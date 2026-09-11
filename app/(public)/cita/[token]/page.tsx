@@ -22,11 +22,21 @@ export const metadata: Metadata = {
     siteName: "Thalia",
     title: COPY.page.title,
     description: COPY.page.description,
+    /*
+     * Cuadrada y a resolución nativa, sin reescalar. El logo de mayor
+     * resolución del proyecto son 512 px: meterlo en un lienzo apaisado de
+     * 1200x630 obligaba a remuestrearlo y a dejarlo ocupando un tercio del
+     * ancho, y WhatsApp lo mostraba blando. Así el cliente recibe cada píxel
+     * original y decide él cómo encajarlo.
+     *
+     * El techo de nitidez es esa fuente de 512 px: para una tarjeta realmente
+     * crujiente en pantallas 3x hace falta un logo vectorial o de 1500 px.
+     */
     images: [
       {
         url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        width: 512,
+        height: 512,
         alt: "Thalia",
       },
     ],

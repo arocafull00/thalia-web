@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
 import { employeeInviteSchema } from "@/lib/schemas/employee-schema";

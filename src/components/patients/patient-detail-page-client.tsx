@@ -24,6 +24,7 @@ import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientDetailTabs } from "@/lib/hooks/use-patient-detail-tabs";
+import { usePatientAppointmentStatusChange } from "@/components/patients/hooks/use-patient-appointment-status-change";
 import { usePatient, usePatientAppointments } from "@/lib/hooks/use-patients";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
@@ -62,12 +63,20 @@ export default function PatientDetailPageClient({
   const closeDeleteConfirm = usePatientImagesStore(
     (state) => state.closeDeleteConfirm,
   );
+  const openDeleteConfirm = usePatientImagesStore(
+    (state) => state.openDeleteConfirm,
+  );
   const filesDeleteConfirm = usePatientFilesStore(
     (state) => state.deleteConfirm,
   );
   const closeFilesDeleteConfirm = usePatientFilesStore(
     (state) => state.closeDeleteConfirm,
   );
+  const openFilesDeleteConfirm = usePatientFilesStore(
+    (state) => state.openDeleteConfirm,
+  );
+  const handleAppointmentStatusChange =
+    usePatientAppointmentStatusChange(patientId);
 
   const appointments = useMemo(
     () => appointmentsQuery.data ?? [],
@@ -158,8 +167,11 @@ export default function PatientDetailPageClient({
             appointments={appointments}
             isLoading={appointmentsQuery.isLoading}
             error={appointmentsQuery.error}
+            onDeleteFile={openFilesDeleteConfirm}
+            onDeleteImage={openDeleteConfirm}
             onOpenUploader={() => setUploaderOpen(true)}
             onOpenFilesUploader={() => setFilesUploaderOpen(true)}
+            onStatusChange={handleAppointmentStatusChange}
             readOnly={isExternal}
           />
         </div>

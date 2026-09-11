@@ -1,5 +1,6 @@
 "use server";
 
+import { assertActiveClinicManager } from "@/dal/clinics.server.dal";
 import {
   insertTransactionCategory,
   renameTransactionCategory,
@@ -33,18 +34,7 @@ async function requireCategoryManager() {
     throw new Error("No hay una clínica activa.");
   }
 
-  const { data: membership, error: membershipError } = await supabase
-    .from("clinic_memberships")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("clinic_id", clinicId)
-    .eq("status", "active")
-    .in("role", ["owner", "admin"])
-    .maybeSingle();
-
-  if (membershipError || !membership) {
-    throw new Error("No tienes permisos para gestionar categorías.");
-  }
+  await assertActiveClinicManager(userId, clinicId);
 
   return { clinicId, userId };
 }

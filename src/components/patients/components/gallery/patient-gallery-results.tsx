@@ -25,6 +25,7 @@ type PatientGalleryResultsProps = {
   hasActiveFilters: boolean;
   hasError: boolean;
   hasLoadMoreError: boolean;
+  onDeleteImage: (image: PatientImage) => void;
   onViewImage: (image: PatientImage) => void;
   onToggleSelect: (image: PatientImage) => void;
   onLoadMore: () => void;
@@ -45,6 +46,7 @@ export default function PatientGalleryResults({
   hasActiveFilters,
   hasError,
   hasLoadMoreError,
+  onDeleteImage,
   onViewImage,
   onToggleSelect,
   onLoadMore,
@@ -88,6 +90,7 @@ export default function PatientGalleryResults({
           selectionMode={selectionMode}
           selectedImageIds={selectedImageIds}
           eagerImageIds={eagerImageIds}
+          onDeleteImage={onDeleteImage}
           onViewImage={onViewImage}
           onToggleSelect={onToggleSelect}
           readOnly={readOnly}

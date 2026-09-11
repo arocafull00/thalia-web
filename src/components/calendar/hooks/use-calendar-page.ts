@@ -3,6 +3,7 @@
 import { addDays, addMonths, addWeeks, format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import { instantToClinicWallDate } from "@/lib/appointment-datetime";
 import { formatFullDayLabel, formatMonthLabel } from "@/lib/calendar-grid";
@@ -31,23 +32,37 @@ function formatVisibleRangeLabel(startIso: string, endIso: string) {
 
 export function useCalendarPage() {
   const timezone = useActiveClinicTimezone();
-  const weekAnchor = useCalendarStore((state) => state.weekAnchor);
-  const setWeekAnchor = useCalendarStore((state) => state.setWeekAnchor);
-  const viewMode = useCalendarStore((state) => state.viewMode);
-  const setViewMode = useCalendarStore((state) => state.setViewMode);
-  const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
-  const dialogOpen = useCalendarStore((state) => state.dialogOpen);
-  const createStartsAt = useCalendarStore((state) => state.createStartsAt);
-  const editingAppointmentId = useCalendarStore(
-    (state) => state.editingAppointmentId,
+  const {
+    weekAnchor,
+    setWeekAnchor,
+    viewMode,
+    setViewMode,
+    setEmployeeId,
+    dialogOpen,
+    createStartsAt,
+    editingAppointmentId,
+    openCreateDialog,
+    openEditDialog,
+    closeDialog,
+    visibleRangeStart,
+    visibleRangeEnd,
+  } = useCalendarStore(
+    useShallow((state) => ({
+      weekAnchor: state.weekAnchor,
+      setWeekAnchor: state.setWeekAnchor,
+      viewMode: state.viewMode,
+      setViewMode: state.setViewMode,
+      setEmployeeId: state.setEmployeeId,
+      dialogOpen: state.dialogOpen,
+      createStartsAt: state.createStartsAt,
+      editingAppointmentId: state.editingAppointmentId,
+      openCreateDialog: state.openCreateDialog,
+      openEditDialog: state.openEditDialog,
+      closeDialog: state.closeDialog,
+      visibleRangeStart: state.visibleRangeStart,
+      visibleRangeEnd: state.visibleRangeEnd,
+    })),
   );
-  const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
-  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
-  const closeDialog = useCalendarStore((state) => state.closeDialog);
-  const visibleRangeStart = useCalendarStore(
-    (state) => state.visibleRangeStart,
-  );
-  const visibleRangeEnd = useCalendarStore((state) => state.visibleRangeEnd);
 
   useEffect(() => {
     const employeeIdParam = new URLSearchParams(window.location.search).get(

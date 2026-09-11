@@ -43,6 +43,25 @@ export async function getMemberships(
   return (data ?? []) as ClinicMembershipRow[];
 }
 
+export async function assertActiveClinicManager(
+  userId: string,
+  clinicId: string,
+) {
+  const supabase = await createClient();
+  const { data: membership, error } = await supabase
+    .from("clinic_memberships")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("clinic_id", clinicId)
+    .eq("status", "active")
+    .in("role", ["owner", "admin"])
+    .maybeSingle();
+
+  if (error || !membership) {
+    throw new Error("No tienes permisos para gestionar categorías.");
+  }
+}
+
 export async function getClinicById(clinicId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase

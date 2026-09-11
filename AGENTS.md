@@ -1,6 +1,6 @@
 # Landora — Guía para agentes
 
-App de gestión inmobiliaria. **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Clerk · Neon Postgres · Drizzle ORM · Tailwind CSS v4 · shadcn/ui · Zustand · Zod · react-toastify.
+App de gestión inmobiliaria. **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Clerk · Neon Postgres · Drizzle ORM · Tailwind CSS v4 · shadcn/ui · Zustand · Zod · sonner.
 
 Arquitectura, rutas y fases de desarrollo: `docs/plan.md`.
 
@@ -89,7 +89,7 @@ components/[dominio]/[feature]/
 
 ## Notificaciones al usuario
 
-Para **todos** los mensajes de error o éxito mostrados al usuario, usa **siempre** `react-toastify`. No uses `alert`, `confirm`, ni ningún otro mecanismo nativo o custom. Llama a `toast.error(...)` para errores y `toast.success(...)` para operaciones exitosas.
+Para **todos** los mensajes de error o éxito mostrados al usuario, usa **siempre** `sonner` (`import { toast } from "sonner"`). No uses `alert`, `confirm`, ni ningún otro mecanismo nativo o custom. Llama a `toast.error(...)` para errores y `toast.success(...)` para operaciones exitosas.
 
 ## Logging y errores
 

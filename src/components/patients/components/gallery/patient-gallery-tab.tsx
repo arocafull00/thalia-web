@@ -3,7 +3,7 @@
 import BeforeAfterComparison from "@/components/patients/components/before-after-comparison/before-after-comparison";
 import { usePatientGallery } from "@/components/patients/components/gallery/hooks/use-patient-gallery";
 import { Separator } from "@/components/ui/separator";
-import type { Patient } from "@/types/database.types";
+import type { Patient, PatientImage } from "@/types/database.types";
 
 import PatientGalleryFiltersSheet from "./patient-gallery-filters-sheet";
 import PatientGalleryResults from "./patient-gallery-results";
@@ -12,12 +12,14 @@ import PatientImageViewer from "./patient-image-viewer";
 
 type PatientGalleryTabProps = {
   patient: Patient;
+  onDeleteImage: (image: PatientImage) => void;
   onOpenUploader: () => void;
   readOnly?: boolean;
 };
 
 export default function PatientGalleryTab({
   patient,
+  onDeleteImage,
   onOpenUploader,
   readOnly = false,
 }: PatientGalleryTabProps) {
@@ -62,6 +64,7 @@ export default function PatientGalleryTab({
           hasActiveFilters={gallery.hasActiveFilters}
           hasError={Boolean(gallery.imagesQuery.error)}
           hasLoadMoreError={Boolean(gallery.imagesQuery.loadMoreError)}
+          onDeleteImage={onDeleteImage}
           onViewImage={gallery.handleOpenViewer}
           onToggleSelect={gallery.handleToggleSelect}
           onLoadMore={() => void gallery.imagesQuery.loadMore()}

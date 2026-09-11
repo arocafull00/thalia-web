@@ -18,6 +18,7 @@ type SettingsSectionContentProps = {
   signOutSubmitting: boolean;
   clinic: ClinicInfo | null;
   clinicLoading: boolean;
+  onEditHours: () => void;
 };
 
 export default function SettingsSectionContent({
@@ -34,6 +35,7 @@ export default function SettingsSectionContent({
   signOutSubmitting,
   clinic,
   clinicLoading,
+  onEditHours,
 }: SettingsSectionContentProps) {
   if (section === "usuario") {
     return (
@@ -56,6 +58,7 @@ export default function SettingsSectionContent({
       clinic={clinic}
       loading={clinicLoading}
       activeEmployeesCount={activeEmployeesCount}
+      onEditHours={onEditHours}
     />
   );
 }

@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
-import { useCalendarStore } from "@/stores/calendar-store";
 
 type CalendarMobileMonthAppointmentsProps = {
   day: Date;
   dayLabel: string;
   appointments: AgendaAppointment[];
+  onAppointmentClick: (appointmentId: string) => void;
   onCreateAppointment: () => void;
 };
 
@@ -21,14 +21,14 @@ export default function CalendarMobileMonthAppointments({
   day,
   dayLabel,
   appointments,
+  onAppointmentClick,
   onCreateAppointment,
 }: CalendarMobileMonthAppointmentsProps) {
   const [dayDialogOpen, setDayDialogOpen] = useState(false);
-  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
 
   const handleAppointmentClick = (appointmentId: string) => {
     setDayDialogOpen(false);
-    openEditDialog(appointmentId);
+    onAppointmentClick(appointmentId);
   };
 
   return (

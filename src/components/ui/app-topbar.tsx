@@ -4,6 +4,7 @@ import { Bell, Download, MoreVertical, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import PwaInstallDialog from "@/components/pwa/components/pwa-install-dialog";
 import { usePwaInstall } from "@/components/pwa/hooks/use-pwa-install";
@@ -37,12 +38,21 @@ export default function AppTopbar() {
   const pathname = usePathname();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [pwaInstallOpen, setPwaInstallOpen] = useState(false);
-  const action = useTopbarActionStore((state) => state.action);
-  const breadcrumb = useTopbarActionStore((state) => state.breadcrumb);
-  const actions = useTopbarActionStore((state) => state.actions);
-  const menu = useTopbarActionStore((state) => state.menu);
-  const unreadCount = useInventoryAlertsStore((state) => state.unreadCount);
-  const markAsRead = useInventoryAlertsStore((state) => state.markAsRead);
+  const { action, breadcrumb, actions, menu } = useTopbarActionStore(
+    useShallow((state) => ({
+      action: state.action,
+      breadcrumb: state.breadcrumb,
+      actions: state.actions,
+      menu: state.menu,
+    })),
+  );
+  const { alerts, unreadCount, markAsRead } = useInventoryAlertsStore(
+    useShallow((state) => ({
+      alerts: state.alerts,
+      unreadCount: state.unreadCount,
+      markAsRead: state.markAsRead,
+    })),
+  );
   const { canPromptInstall, handleInstall, showInstallCta } = usePwaInstall();
   const title = appNavItemTitle(pathname);
   const topbarActions = action ? [action] : actions;
@@ -234,7 +244,10 @@ export default function AppTopbar() {
         </div>
       </div>
       <AppDialog open={notificationsOpen} onOpenChange={setNotificationsOpen}>
-        <NotificationsSheet onClose={() => setNotificationsOpen(false)} />
+        <NotificationsSheet
+          alerts={alerts}
+          onClose={() => setNotificationsOpen(false)}
+        />
       </AppDialog>
       <PwaInstallDialog
         open={pwaInstallOpen}

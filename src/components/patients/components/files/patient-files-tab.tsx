@@ -10,7 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";
 import { getFileUrl } from "@/dal/patient-files.dal";
 import { usePatientFiles } from "@/lib/hooks/use-patient-files";
-import { usePatientFilesStore } from "@/stores/patient-files-store";
 import type {
   Patient,
   PatientFile,
@@ -24,6 +23,7 @@ import PatientFileViewer from "./patient-file-viewer";
 
 type PatientFilesTabProps = {
   patient: Patient;
+  onDelete: (file: PatientFile, onSuccess?: () => void) => void;
   onOpenUploader: () => void;
   readOnly?: boolean;
 };
@@ -41,6 +41,7 @@ function filterFilesByCategory(
 
 export default function PatientFilesTab({
   patient,
+  onDelete,
   onOpenUploader,
   readOnly = false,
 }: PatientFilesTabProps) {
@@ -50,9 +51,6 @@ export default function PatientFilesTab({
   const [editFile, setEditFile] = useState<PatientFile | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const filesQuery = usePatientFiles(patient.id);
-  const openDeleteConfirm = usePatientFilesStore(
-    (state) => state.openDeleteConfirm,
-  );
 
   const files = useMemo(() => filesQuery.data ?? [], [filesQuery.data]);
 
@@ -86,7 +84,7 @@ export default function PatientFilesTab({
   };
 
   const handleDelete = (file: PatientFile) => {
-    openDeleteConfirm(file);
+    onDelete(file);
   };
 
   return (

@@ -1,5 +1,11 @@
 import type { PatientDetailTabId } from "@/lib/hooks/use-patient-detail-tabs";
-import type { AppointmentWithRelations, Patient } from "@/types/database.types";
+import type {
+  AppointmentStatus,
+  AppointmentWithRelations,
+  Patient,
+  PatientFile,
+  PatientImage,
+} from "@/types/database.types";
 
 import PatientFilesTab from "../files/patient-files-tab";
 import PatientGalleryTab from "../gallery/patient-gallery-tab";
@@ -14,8 +20,11 @@ type PatientDetailTabContentProps = {
   appointments: AppointmentWithRelations[];
   isLoading: boolean;
   error: Error | null | undefined;
+  onDeleteFile: (file: PatientFile, onSuccess?: () => void) => void;
+  onDeleteImage: (image: PatientImage) => void;
   onOpenUploader: () => void;
   onOpenFilesUploader: () => void;
+  onStatusChange: (id: string, status: AppointmentStatus) => Promise<void>;
   readOnly?: boolean;
 };
 
@@ -25,8 +34,11 @@ export default function PatientDetailTabContent({
   appointments,
   isLoading,
   error,
+  onDeleteFile,
+  onDeleteImage,
   onOpenUploader,
   onOpenFilesUploader,
+  onStatusChange,
   readOnly = false,
 }: PatientDetailTabContentProps) {
   if (activeTab === "summary") {
@@ -51,6 +63,7 @@ export default function PatientDetailTabContent({
     return (
       <PatientGalleryTab
         patient={patient}
+        onDeleteImage={onDeleteImage}
         onOpenUploader={onOpenUploader}
         readOnly={readOnly}
       />
@@ -61,6 +74,7 @@ export default function PatientDetailTabContent({
     return (
       <PatientFilesTab
         patient={patient}
+        onDelete={onDeleteFile}
         onOpenUploader={onOpenFilesUploader}
         readOnly={readOnly}
       />
@@ -68,6 +82,10 @@ export default function PatientDetailTabContent({
   }
 
   return (
-    <PatientAppointmentsTab appointments={appointments} readOnly={readOnly} />
+    <PatientAppointmentsTab
+      appointments={appointments}
+      onStatusChange={onStatusChange}
+      readOnly={readOnly}
+    />
   );
 }

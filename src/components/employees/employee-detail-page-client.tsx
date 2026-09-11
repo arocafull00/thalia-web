@@ -62,6 +62,9 @@ export default function EmployeeDetailPageClient({
   const fetchEmployeeAppointments = useEmployeesStore(
     (state) => state.fetchEmployeeAppointments,
   );
+  const setExternalMembershipStatus = useEmployeesStore(
+    (state) => state.setExternalMembershipStatus,
+  );
   const { activeTab, setActiveTab } = useEmployeeDetailTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -183,6 +186,7 @@ export default function EmployeeDetailPageClient({
         employee={employee}
         open={statusDialogOpen}
         onOpenChange={setStatusDialogOpen}
+        onSetExternalMembershipStatus={setExternalMembershipStatus}
         onSuccess={refetch}
       />
     </div>

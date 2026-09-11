@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/context-menu";
 import { PATIENT_GALLERY_COPY } from "@/copy/patient-gallery-copy";
 import { usePatientImageUrl } from "@/lib/hooks/use-patient-images";
-import { usePatientImagesStore } from "@/stores/patient-images-store";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientGalleryImageThumbProps = {
@@ -20,6 +19,7 @@ type PatientGalleryImageThumbProps = {
   selectionMode: boolean;
   isSelected: boolean;
   loading?: "eager" | "lazy";
+  onDelete: (image: PatientImage) => void;
   onView: () => void;
   onToggleSelect: () => void;
   readOnly?: boolean;
@@ -30,6 +30,7 @@ export default function PatientGalleryImageThumb({
   selectionMode,
   isSelected,
   loading = "lazy",
+  onDelete,
   onView,
   onToggleSelect,
   readOnly = false,
@@ -39,9 +40,6 @@ export default function PatientGalleryImageThumb({
   const actionLabel = selectionMode
     ? PATIENT_GALLERY_COPY.thumbActions.select
     : PATIENT_GALLERY_COPY.thumbActions.view;
-  const openDeleteConfirm = usePatientImagesStore(
-    (state) => state.openDeleteConfirm,
-  );
 
   const handleClick = () => {
     if (selectionMode) {
@@ -97,7 +95,7 @@ export default function PatientGalleryImageThumb({
           {!readOnly ? (
             <ContextMenuItem
               variant="destructive"
-              onClick={() => openDeleteConfirm(image)}
+              onClick={() => onDelete(image)}
             >
               <Trash2 />
               {PATIENT_GALLERY_COPY.thumbActions.delete}

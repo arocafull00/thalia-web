@@ -1,6 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
+import dynamic from "next/dynamic";
 
 import AppDialog from "@/components/ui/app-dialog";
 import AppDialogContent from "@/components/ui/app-dialog-content";
@@ -14,10 +15,12 @@ import {
 } from "@/lib/patient-file-storage";
 import type { PatientFile } from "@/types/database.types";
 
-import PatientFilePdfViewerContent from "./patient-file-pdf-viewer-content";
 import PatientFileViewerToolbar from "./patient-file-viewer-toolbar";
 
-import "@pdfslick/react/dist/pdf_viewer.css";
+const PatientFilePdfViewerContent = dynamic(
+  () => import("./patient-file-pdf-viewer-content"),
+  { ssr: false },
+);
 
 type PatientFileViewerProps = {
   file: PatientFile | null;

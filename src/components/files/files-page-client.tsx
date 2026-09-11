@@ -1,5 +1,6 @@
 "use client";
 
+import type { GlobalPatientFilesParams, PaginatedPatientFiles } from "@/dal/patient-files.dal";
 import FilesFilters from "@/components/files/components/files-filters";
 import FilesFiltersSheet from "@/components/files/components/files-filters-sheet";
 import FilesResults from "@/components/files/components/files-results";
@@ -8,8 +9,16 @@ import PatientFileViewer from "@/components/patients/components/files/patient-fi
 import PageCard from "@/components/ui/page-card";
 import { useFilesPage } from "@/lib/hooks/use-files-page";
 
-export default function FilesPageClient() {
-  const page = useFilesPage();
+type FilesPageClientProps = {
+  initialPage?: PaginatedPatientFiles;
+  initialQuery?: Omit<GlobalPatientFilesParams, "clinicId">;
+};
+
+export default function FilesPageClient({
+  initialPage,
+  initialQuery,
+}: FilesPageClientProps) {
+  const page = useFilesPage({ initialPage, initialQuery });
 
   return (
     <div data-testid="files-page" className="flex min-h-0 flex-1 flex-col">

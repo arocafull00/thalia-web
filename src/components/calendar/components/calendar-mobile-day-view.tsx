@@ -8,17 +8,17 @@ import {
   getClinicCalendarHourRange,
 } from "@/lib/calendar-grid";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
-import { useCalendarStore } from "@/stores/calendar-store";
 
 type CalendarMobileDayViewProps = {
   clinic: ClinicInfo | null;
+  onAppointmentClick: (appointmentId: string) => void;
 };
 
 export default function CalendarMobileDayView({
   clinic,
+  onAppointmentClick,
 }: CalendarMobileDayViewProps) {
   const { day, agenda } = useCalendarDayAgenda();
-  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
   const hourRange = getClinicCalendarHourRange(
     clinic?.opening_time,
     clinic?.closing_time,
@@ -36,7 +36,7 @@ export default function CalendarMobileDayView({
         day={day}
         hours={hours}
         appointments={agenda}
-        onAppointmentClick={openEditDialog}
+        onAppointmentClick={onAppointmentClick}
       />
     </div>
   );

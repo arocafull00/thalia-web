@@ -7,7 +7,7 @@ import AppDialogHeader from "@/components/ui/app-dialog-header";
 import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
-import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
+import type { QueryEntry } from "@/stores/query-state";
 import type { InventoryAlert } from "@/types/database.types";
 
 function InventoryAlertItem({
@@ -77,11 +77,12 @@ function StockAlertsSection({
 }
 
 export default function NotificationsSheet({
+  alerts,
   onClose,
 }: {
+  alerts: QueryEntry<InventoryAlert[]>;
   onClose: () => void;
 }) {
-  const alerts = useInventoryAlertsStore((state) => state.alerts);
 
   const isLoading = alerts.loading && !alerts.data;
   const items = alerts.data ?? [];

@@ -65,6 +65,10 @@ type PatientFilesStore = {
   fetchGlobalPatientFiles: (
     params: Omit<GlobalPatientFilesParams, "clinicId">,
   ) => Promise<void>;
+  seedGlobalPatientFiles: (
+    params: Omit<GlobalPatientFilesParams, "clinicId">,
+    page: PaginatedPatientFiles,
+  ) => void;
   uploadPatientFile: (input: UploadPatientFileInput) => Promise<PatientFile>;
   uploadPatientFiles: (
     input: UploadPatientFilesInput,
@@ -204,6 +208,22 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
         },
       });
     }
+  },
+
+  seedGlobalPatientFiles: (params, page) => {
+    const clinicId = getActiveClinicId();
+
+    if (!clinicId) {
+      return;
+    }
+
+    const key = globalPatientFilesKey(clinicId, params);
+    set({
+      globalFilesByQuery: {
+        ...get().globalFilesByQuery,
+        [key]: successQueryEntry(page),
+      },
+    });
   },
 
   fetchGlobalPatientFiles: async (params) => {

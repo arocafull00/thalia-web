@@ -2,6 +2,8 @@
 
 import { usePDFSlick } from "@pdfslick/react";
 
+import "@pdfslick/react/dist/pdf_viewer.css";
+
 import { PATIENT_FILES_COPY } from "@/copy/patient-files-copy";
 import type { PatientFile } from "@/types/database.types";
 

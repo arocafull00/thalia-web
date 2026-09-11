@@ -12,7 +12,7 @@ vi.mock("@/lib/auth/password-recovery", () => ({
   requestPasswordRecovery: vi.fn(),
 }));
 
-vi.mock("react-toastify", () => ({
+vi.mock("sonner", () => ({
   toast: {
     error: vi.fn(),
     success: vi.fn(),

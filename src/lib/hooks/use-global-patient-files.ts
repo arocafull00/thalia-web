@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
 
-import type { GlobalPatientFilesParams } from "@/dal/patient-files.dal";
+import type {
+  GlobalPatientFilesParams,
+  PaginatedPatientFiles,
+} from "@/dal/patient-files.dal";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import { useServerSeed } from "@/lib/hooks/use-server-seed";
 import {
   globalPatientFilesKey,
   usePatientFilesStore,
@@ -10,10 +14,21 @@ import { isInitialLoading } from "@/stores/query-state";
 
 type GlobalPatientFilesFilters = Omit<GlobalPatientFilesParams, "clinicId">;
 
-export function useGlobalPatientFiles(params: GlobalPatientFilesFilters) {
+type GlobalPatientFilesSeed = {
+  initialPage?: PaginatedPatientFiles;
+  initialQuery?: GlobalPatientFilesFilters;
+};
+
+export function useGlobalPatientFiles(
+  params: GlobalPatientFilesFilters,
+  seed?: GlobalPatientFilesSeed,
+) {
   const clinicId = useClinicId();
   const fetchGlobalPatientFiles = usePatientFilesStore(
     (state) => state.fetchGlobalPatientFiles,
+  );
+  const seedGlobalPatientFiles = usePatientFilesStore(
+    (state) => state.seedGlobalPatientFiles,
   );
   const key = useMemo(
     () => (clinicId ? globalPatientFilesKey(clinicId, params) : null),
@@ -22,6 +37,22 @@ export function useGlobalPatientFiles(params: GlobalPatientFilesFilters) {
   const entry = usePatientFilesStore((state) =>
     key ? state.globalFilesByQuery[key] : undefined,
   );
+  const seededResult = useServerSeed(
+    key ?? "",
+    seed?.initialQuery && clinicId
+      ? globalPatientFilesKey(clinicId, seed.initialQuery)
+      : "",
+    seed?.initialPage,
+  );
+  const hasClientData = entry?.data != null;
+
+  useEffect(() => {
+    if (seededResult === undefined || hasClientData) {
+      return;
+    }
+
+    seedGlobalPatientFiles(params, seededResult);
+  }, [hasClientData, params, seedGlobalPatientFiles, seededResult]);
 
   const refresh = useCallback(() => {
     if (!clinicId) {
@@ -32,13 +63,19 @@ export function useGlobalPatientFiles(params: GlobalPatientFilesFilters) {
   }, [clinicId, fetchGlobalPatientFiles, params]);
 
   useEffect(() => {
+    if (seededResult !== undefined) {
+      return;
+    }
+
     void refresh();
-  }, [refresh]);
+  }, [refresh, seededResult]);
+
+  const resolved = entry?.data ?? seededResult ?? null;
 
   return {
-    data: entry?.data ?? null,
+    data: resolved,
     error: entry?.error ?? null,
-    isLoading: isInitialLoading(entry),
+    isLoading: resolved == null && isInitialLoading(entry),
     isRefreshing: entry?.loading ?? false,
     refresh,
   };

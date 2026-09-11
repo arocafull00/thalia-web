@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 import type {
   InventoryPageResult,
@@ -76,26 +77,28 @@ export function useInventoryPage(
   );
 
   const key = inventoryPageKey(query);
-  const entry = useInventoryStore((state) => state.byPage[key]);
-  const categoriesEntry = useInventoryStore((state) => state.categories);
-  const summaryEntry = useInventoryStore((state) => state.summary);
-  const fetchInventoryItemsPage = useInventoryStore(
-    (state) => state.fetchInventoryItemsPage,
-  );
-  const seedInventoryItemsPage = useInventoryStore(
-    (state) => state.seedInventoryItemsPage,
-  );
-  const fetchInventoryCategories = useInventoryStore(
-    (state) => state.fetchInventoryCategories,
-  );
-  const seedInventoryCategories = useInventoryStore(
-    (state) => state.seedInventoryCategories,
-  );
-  const fetchInventoryStockSummary = useInventoryStore(
-    (state) => state.fetchInventoryStockSummary,
-  );
-  const seedInventoryStockSummary = useInventoryStore(
-    (state) => state.seedInventoryStockSummary,
+  const {
+    entry,
+    categoriesEntry,
+    summaryEntry,
+    fetchInventoryItemsPage,
+    seedInventoryItemsPage,
+    fetchInventoryCategories,
+    seedInventoryCategories,
+    fetchInventoryStockSummary,
+    seedInventoryStockSummary,
+  } = useInventoryStore(
+    useShallow((state) => ({
+      entry: state.byPage[key],
+      categoriesEntry: state.categories,
+      summaryEntry: state.summary,
+      fetchInventoryItemsPage: state.fetchInventoryItemsPage,
+      seedInventoryItemsPage: state.seedInventoryItemsPage,
+      fetchInventoryCategories: state.fetchInventoryCategories,
+      seedInventoryCategories: state.seedInventoryCategories,
+      fetchInventoryStockSummary: state.fetchInventoryStockSummary,
+      seedInventoryStockSummary: state.seedInventoryStockSummary,
+    })),
   );
 
   // La siembra sólo vale para la consulta exacta que resolvió el servidor: si

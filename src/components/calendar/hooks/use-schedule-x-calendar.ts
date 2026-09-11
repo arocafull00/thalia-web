@@ -22,6 +22,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Temporal } from "temporal-polyfill";
+import { useShallow } from "zustand/react/shallow";
 import "temporal-polyfill/global";
 
 import {
@@ -265,12 +266,23 @@ export function useScheduleXCalendar(
   availableGridHeight: number,
   clinic: ClinicInfo | null,
 ) {
-  const weekAnchor = useCalendarStore((state) => state.weekAnchor);
-  const viewMode = useCalendarStore((state) => state.viewMode);
-  const employeeId = useCalendarStore((state) => state.employeeId);
-  const openCreateDialog = useCalendarStore((state) => state.openCreateDialog);
-  const openEditDialog = useCalendarStore((state) => state.openEditDialog);
-  const setVisibleRange = useCalendarStore((state) => state.setVisibleRange);
+  const {
+    weekAnchor,
+    viewMode,
+    employeeId,
+    openCreateDialog,
+    openEditDialog,
+    setVisibleRange,
+  } = useCalendarStore(
+    useShallow((state) => ({
+      weekAnchor: state.weekAnchor,
+      viewMode: state.viewMode,
+      employeeId: state.employeeId,
+      openCreateDialog: state.openCreateDialog,
+      openEditDialog: state.openEditDialog,
+      setVisibleRange: state.setVisibleRange,
+    })),
+  );
   const activeClinicTimezone = useActiveClinicTimezone();
   const timezone = clinic?.timezone ?? activeClinicTimezone;
   const hourRange = useMemo(

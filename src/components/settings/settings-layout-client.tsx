@@ -158,6 +158,7 @@ export default function SettingsLayoutClient({
             signOutSubmitting={signOutSubmitting}
             clinic={clinic}
             clinicLoading={clinicLoading}
+            onEditHours={() => setHoursDialogOpen(true)}
           />
           {children}
         </div>

@@ -7,18 +7,15 @@ import { ActionButton } from "@/components/ui/primitives/action-button";
 import { CLINIC_HOURS_COPY } from "@/copy/clinic-hours-copy";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
-import { useSettingsUiStore } from "@/stores/settings-ui-store";
-
 type SettingsClinicHoursPanelProps = {
   clinic: ClinicInfo | null;
+  onEditHours: () => void;
 };
 
 export default function SettingsClinicHoursPanel({
   clinic,
+  onEditHours,
 }: SettingsClinicHoursPanelProps) {
-  const setHoursDialogOpen = useSettingsUiStore(
-    (state) => state.setHoursDialogOpen,
-  );
   const openDaysLabel = clinic
     ? CLINIC_HOURS_COPY.days
         .map((label, i) => ({ label, day: i + 1 }))
@@ -45,7 +42,7 @@ export default function SettingsClinicHoursPanel({
           title={CLINIC_HOURS_COPY.actions.edit}
           icon={Pencil}
           variant="ghost"
-          onClick={() => setHoursDialogOpen(true)}
+          onClick={onEditHours}
           disabled={!clinic}
         />
       </div>

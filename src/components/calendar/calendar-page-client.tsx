@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -21,8 +22,8 @@ import CalendarToolbar from "@/components/calendar/components/calendar-toolbar";
 import ClinicStatusBadge from "@/components/calendar/components/clinic-status-badge";
 import { useCalendarPage } from "@/components/calendar/hooks/use-calendar-page";
 import { useSwipeNavigation } from "@/components/calendar/hooks/use-swipe-navigation";
-import ScheduleXCalendar from "@/components/calendar/schedule-x-calendar";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
+import { SkeletonBlock } from "@/components/ui/primitives/skeleton-block";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { instantToClinicWallDate } from "@/lib/appointment-datetime";
@@ -48,6 +49,18 @@ const CLOSED_GROUP_SHEET: CalendarOverlapGroupSheetState = {
   subtitle: "",
   appointments: [],
 };
+
+const ScheduleXCalendar = dynamic(
+  () => import("@/components/calendar/schedule-x-calendar"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center p-6">
+        <SkeletonBlock height={480} />
+      </div>
+    ),
+  },
+);
 
 type CalendarPageClientProps = {
   initialClinic?: ClinicInfo | null;
@@ -202,7 +215,11 @@ export default function CalendarPageClient({
           // El autónomo sólo tiene su propia agenda: filtrar por profesional
           // no le ofrece nada que pueda ver.
           isExternal ? undefined : (
-            <CalendarEmployeeFilter initialEmployees={initialEmployees} />
+            <CalendarEmployeeFilter
+              employeeId={employeeId}
+              initialEmployees={initialEmployees}
+              onEmployeeIdChange={setEmployeeId}
+            />
           )
         }
         statusBadge={<ClinicStatusBadge clinic={clinic} />}
@@ -214,9 +231,12 @@ export default function CalendarPageClient({
       />
       <div ref={calendarWrapperRef} className="min-h-0 flex-1">
         {isMobile && viewMode === "month" ? (
-          <CalendarMobileMonthView />
+          <CalendarMobileMonthView onAppointmentClick={openEditDialog} />
         ) : isMobile && viewMode === "day" ? (
-          <CalendarMobileDayView clinic={clinic} />
+          <CalendarMobileDayView
+            clinic={clinic}
+            onAppointmentClick={openEditDialog}
+          />
         ) : (
           <ScheduleXCalendar clinic={clinic} />
         )}

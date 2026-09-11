@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import { requestPasswordRecovery } from "@/lib/auth/password-recovery";

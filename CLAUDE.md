@@ -156,7 +156,7 @@ Icons: Lucide React only. No emojis.
 
 ### User notifications
 
-Use `react-toastify` exclusively (`toast.success(...)` / `toast.error(...)`). No `alert`, `confirm`, or other mechanisms.
+Use `sonner` exclusively (`import { toast } from "sonner"`; `toast.success(...)` / `toast.error(...)`). No `alert`, `confirm`, or other mechanisms.
 
 ### TypeScript conventions
 

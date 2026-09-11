@@ -4,6 +4,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
   experimental: {
+    optimizePackageImports: ["lucide-react"],
     staleTimes: {
       dynamic: 31_536_000,
     },

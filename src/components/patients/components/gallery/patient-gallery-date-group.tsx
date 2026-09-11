@@ -12,6 +12,7 @@ type PatientGalleryDateGroupProps = {
   selectionMode: boolean;
   selectedImageIds: string[];
   eagerImageIds: Set<string>;
+  onDeleteImage: (image: PatientImage) => void;
   onViewImage: (image: PatientImage) => void;
   onToggleSelect: (image: PatientImage) => void;
   readOnly?: boolean;
@@ -24,6 +25,7 @@ export default function PatientGalleryDateGroup({
   selectionMode,
   selectedImageIds,
   eagerImageIds,
+  onDeleteImage,
   onViewImage,
   onToggleSelect,
   readOnly = false,
@@ -41,6 +43,7 @@ export default function PatientGalleryDateGroup({
             selectionMode={selectionMode}
             isSelected={selectedImageIds.includes(image.id)}
             loading={eagerImageIds.has(image.id) ? "eager" : "lazy"}
+            onDelete={() => onDeleteImage(image)}
             onView={() => onViewImage(image)}
             onToggleSelect={() => onToggleSelect(image)}
             readOnly={readOnly}

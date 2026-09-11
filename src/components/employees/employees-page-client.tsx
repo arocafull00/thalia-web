@@ -50,7 +50,7 @@ import { useEmployeesPage } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import type { EmployeesPageQuery } from "@/stores/employees-store";
+import { useEmployeesStore, type EmployeesPageQuery } from "@/stores/employees-store";
 
 const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "", page: "" };
 
@@ -74,6 +74,9 @@ export default function EmployeesPageClient({
   const [sheetKey, setSheetKey] = useState(0);
   const [activeTab, setActiveTab] = useState<EmployeesPageTab>("staff");
   const { platformRole } = useActiveClinic();
+  const setExternalMembershipStatus = useEmployeesStore(
+    (state) => state.setExternalMembershipStatus,
+  );
   const invitations = useEmployeeInvitations();
   const { filters, setFilter, setFilters } = useUrlFilters(
     EMPLOYEE_FILTER_DEFAULTS,
@@ -306,6 +309,7 @@ export default function EmployeesPageClient({
               setStatusEmployeeId(null);
             }
           }}
+          onSetExternalMembershipStatus={setExternalMembershipStatus}
           onSuccess={() => setStatusEmployeeId(null)}
         />
       ) : null}

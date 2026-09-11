@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";

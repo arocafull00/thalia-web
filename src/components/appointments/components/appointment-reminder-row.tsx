@@ -1,18 +1,10 @@
 "use client";
 
 import { MessageCircle, Send } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
+import { useAppointmentReminders } from "@/components/appointments/hooks/use-appointment-reminders";
 import { Button } from "@/components/ui/button";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
-import {
-  firstSkipReason,
-  getRemindersForAppointment,
-  sendManualReminder,
-} from "@/dal/appointment-reminders.dal";
-import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
-import type { AppointmentReminder } from "@/types/database.types";
 
 type AppointmentReminderRowProps = {
   appointmentId: string;
@@ -23,51 +15,10 @@ export default function AppointmentReminderRow({
   appointmentId,
   reminderSent,
 }: AppointmentReminderRowProps) {
-  const { clinicId } = useActiveClinic();
-  const [reminders, setReminders] = useState<AppointmentReminder[]>([]);
-  const [sending, setSending] = useState(false);
-
-  useEffect(() => {
-    getRemindersForAppointment(appointmentId)
-      .then((data) => setReminders(Array.isArray(data) ? data : []))
-      .catch(() => {});
-  }, [appointmentId]);
-
-  const lastSent = reminders.find((r) => r.status === "sent");
-  const hasSent = !!lastSent || !!reminderSent;
-
-  const handleSendManual = async () => {
-    if (!clinicId) return;
-
-    setSending(true);
-    try {
-      const summary = await sendManualReminder(appointmentId, clinicId);
-
-      if (summary?.sent) {
-        toast.success(APPOINTMENT_DETAIL_COPY.reminderManualSuccess);
-      } else if (summary?.failed) {
-        // El envío se intentó y WhatsApp lo rechazó. El motivo exacto de Twilio
-        // queda en appointment_reminders.error_message y en los logs.
-        toast.error(APPOINTMENT_DETAIL_COPY.reminderManualError);
-      } else {
-        // Ni enviado ni fallido: la función decidió no enviar. Decir "enviado"
-        // dejaría a la clínica esperando a un paciente que no recibió nada.
-        const reason = firstSkipReason(summary) ?? "desconocido";
-        toast.info(
-          APPOINTMENT_DETAIL_COPY.reminderSkipped[
-            reason as keyof typeof APPOINTMENT_DETAIL_COPY.reminderSkipped
-          ] ?? APPOINTMENT_DETAIL_COPY.reminderSkipped.desconocido,
-        );
-      }
-
-      const updated = await getRemindersForAppointment(appointmentId);
-      setReminders(Array.isArray(updated) ? updated : []);
-    } catch {
-      toast.error(APPOINTMENT_DETAIL_COPY.reminderManualError);
-    } finally {
-      setSending(false);
-    }
-  };
+  const { handleSendManual, hasSent, sending } = useAppointmentReminders(
+    appointmentId,
+    reminderSent,
+  );
 
   return (
     <div className="flex items-center justify-between gap-4 py-3">

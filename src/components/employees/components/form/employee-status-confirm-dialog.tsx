@@ -6,13 +6,16 @@ import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import { EMPLOYEE_STATUS_COPY } from "@/copy/employee-status-copy";
 import { useUpdateEmployee } from "@/lib/hooks/use-employees";
 import { notifySuccess } from "@/lib/sound";
-import { useEmployeesStore } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
 
 type EmployeeStatusConfirmDialogProps = {
   employee: Employee;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSetExternalMembershipStatus: (
+    employeeId: string,
+    status: "active" | "suspended",
+  ) => Promise<void>;
   onSuccess: () => void;
 };
 
@@ -20,12 +23,10 @@ export default function EmployeeStatusConfirmDialog({
   employee,
   open,
   onOpenChange,
+  onSetExternalMembershipStatus,
   onSuccess,
 }: EmployeeStatusConfirmDialogProps) {
   const { mutate, isPending } = useUpdateEmployee();
-  const setExternalMembershipStatus = useEmployeesStore(
-    (state) => state.setExternalMembershipStatus,
-  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const isActive = employee.active !== false;
   const copy = isActive
@@ -36,7 +37,7 @@ export default function EmployeeStatusConfirmDialog({
     setErrorMessage(null);
 
     if (employee.account_type === "external") {
-      void setExternalMembershipStatus(employee.id, "suspended")
+      void onSetExternalMembershipStatus(employee.id, "suspended")
         .then(() => {
           notifySuccess(copy.success);
           handleOpenChange(false);

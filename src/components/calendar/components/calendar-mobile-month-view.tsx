@@ -4,7 +4,13 @@ import CalendarMobileMonthAppointments from "@/components/calendar/components/ca
 import MonthMiniCalendar from "@/components/calendar/components/month-mini-calendar";
 import { useCalendarMobileMonth } from "@/components/calendar/hooks/use-calendar-mobile-month";
 
-export default function CalendarMobileMonthView() {
+type CalendarMobileMonthViewProps = {
+  onAppointmentClick: (appointmentId: string) => void;
+};
+
+export default function CalendarMobileMonthView({
+  onAppointmentClick,
+}: CalendarMobileMonthViewProps) {
   const {
     monthAnchor,
     hasAppointmentsOnDay,
@@ -27,6 +33,7 @@ export default function CalendarMobileMonthView() {
         day={selectedDay}
         dayLabel={selectedDayLabel}
         appointments={selectedDayAgenda}
+        onAppointmentClick={onAppointmentClick}
         onCreateAppointment={onCreateAppointment}
       />
     </div>

@@ -39,6 +39,10 @@ export function useClinicInfo(initialClinic?: ClinicInfo | null) {
       return;
     }
 
+    if (version === 0 && initialClinicMatches) {
+      return;
+    }
+
     let cancelled = false;
 
     void getClinicById(activeClinicId).then((data) => {
@@ -52,7 +56,7 @@ export function useClinicInfo(initialClinic?: ClinicInfo | null) {
     return () => {
       cancelled = true;
     };
-  }, [activeClinicId, version]);
+  }, [activeClinicId, initialClinicMatches, version]);
 
   return {
     clinic: resolvedClinic,

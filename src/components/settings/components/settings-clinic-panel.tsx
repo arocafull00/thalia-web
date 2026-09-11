@@ -12,12 +12,14 @@ type SettingsClinicPanelProps = {
   clinic: ClinicInfo | null;
   loading: boolean;
   activeEmployeesCount: number;
+  onEditHours: () => void;
 };
 
 export default function SettingsClinicPanel({
   clinic,
   loading,
   activeEmployeesCount,
+  onEditHours,
 }: SettingsClinicPanelProps) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -64,7 +66,7 @@ export default function SettingsClinicPanel({
             </>
           )}
         </section>
-        <SettingsClinicHoursPanel clinic={clinic} />
+        <SettingsClinicHoursPanel clinic={clinic} onEditHours={onEditHours} />
       </div>
 
       <SettingsWhatsAppPanel />

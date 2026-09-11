@@ -72,6 +72,7 @@ export default function AppointmentDetailSidebar({
           <AppointmentReminderRow
             appointmentId={appointment.id}
             reminderSent={appointment.reminder_sent}
+            status={appointment.status}
           />
         </dl>
       </AppointmentDetailCard>

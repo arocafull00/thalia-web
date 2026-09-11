@@ -1,5 +1,12 @@
 # Changelog
 
+## 87-recordatorio-segun-estado-de-la-cita
+
+- El recordatorio de una cita **ya confirmada** sale sin la frase del enlace. Antes lo incluía siempre, y pedirle confirmar algo que ya confirmó no tiene sentido
+- El botón «Enviar ahora» del detalle de la cita desaparece en los estados que no admiten recordatorio: completada, cancelada, en sala y no asistió. El servidor ya los rechazaba, así que el botón prometía algo que no iba a pasar
+- En esos estados la fila dice «Esta cita ya no recibe recordatorios» en lugar de «Pendiente de envío automático», que era falso
+
+
 ## 87-recordatorio-sin-enlace-colgando
 
 - El recordatorio salía con «Confirma la cita pinchando en este enlace:» y nada detrás cuando no se podía generar el enlace. Parecía un mensaje cortado, que es peor que no mencionarlo: ahora se retira la frase entera

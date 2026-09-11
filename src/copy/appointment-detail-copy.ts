@@ -20,6 +20,7 @@ export const APPOINTMENT_DETAIL_COPY = {
   created: "Creada",
   reminder: "Recordatorio WhatsApp",
   reminderScheduled: "Pendiente de envío automático",
+  reminderNotApplicable: "Esta cita ya no recibe recordatorios",
   reminderSent: "Enviado correctamente",
   noReminder: "Sin recordatorio",
   reminderSendManual: "Enviar ahora",

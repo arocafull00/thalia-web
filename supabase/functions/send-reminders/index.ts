@@ -44,12 +44,12 @@ async function buildConfirmationLink(
   appUrl: string | undefined,
 ): Promise<string | null> {
   /*
-   * También para las ya confirmadas. La página resuelve ese caso y responde
-   * «Tu cita ya está confirmada», que es información útil; y lo que no se puede
-   * es mandar el recordatorio con la frase del enlace coja porque la cita
-   * cambió de estado entre que se reservó y se avisó.
+   * Una cita ya confirmada no necesita enlace: el recordatorio sale sin la
+   * frase que lo menciona, no cojo. Eso lo resuelve `dropSentenceWith` en quien
+   * llama, que es lo que faltaba cuando esto devolvía null y el hueco se
+   * rellenaba con cadena vacía.
    */
-  if (appointment.status === "cancelled") return null;
+  if (appointment.status !== "scheduled") return null;
 
   if (!appUrl) {
     console.error("[reminders] falta PUBLIC_APP_URL: se envía sin enlace");

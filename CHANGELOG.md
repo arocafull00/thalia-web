@@ -1,5 +1,11 @@
 # Changelog
 
+## 141-147-ajustes-de-interfaz
+
+- Fuera el subtítulo y el placeholder del campo de número de envío en Ajustes. Explicaban el formato de Twilio con prefijo internacional, que no significa nada para quien usa la clínica (#141)
+- El modal de instalación deja de mostrar «Instalar Thalia» dos veces: la cabecera del diálogo ya lo dice (#147). El panel de Ajustes sí lo conserva, porque su encabezado es «Aplicación» y sin el título no se sabría qué se instala
+
+
 ## 143-politicas-rls-de-una-sola-clinica
 
 - Quien pertenece a **dos clínicas** vuelve a ver sus datos en ambas. Tras hacer globales a los empleados quedaron 18 políticas usando `current_employee_clinic_id()`, que devuelve solo la primera membresía activa: al cambiar de clínica, el selector pedía datos que RLS no permitía y la lista salía vacía, sin error. Afectaba a citas, campañas, transacciones, tratamientos de cita, materiales y ficheros de campaña

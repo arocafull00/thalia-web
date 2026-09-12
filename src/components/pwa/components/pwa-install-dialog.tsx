@@ -22,7 +22,10 @@ export default function PwaInstallDialog({
         <AppDialogHeader>
           <AppDialogTitle>{PWA_INSTALL_COPY.title}</AppDialogTitle>
         </AppDialogHeader>
-        <PwaInstallContent onInstallSuccess={() => onOpenChange(false)} />
+        <PwaInstallContent
+          showTitle={false}
+          onInstallSuccess={() => onOpenChange(false)}
+        />
       </AppSheetContent>
     </AppDialog>
   );

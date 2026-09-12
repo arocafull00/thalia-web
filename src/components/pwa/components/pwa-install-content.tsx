@@ -7,10 +7,13 @@ import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
 
 type PwaInstallContentProps = {
   onInstallSuccess?: () => void;
+  /** El contenedor ya pone el título en su cabecera y aquí sobraría. */
+  showTitle?: boolean;
 };
 
 export default function PwaInstallContent({
   onInstallSuccess,
+  showTitle = true,
 }: PwaInstallContentProps) {
   const { canPromptInstall, environment, handleInstall } = usePwaInstall();
 
@@ -26,7 +29,15 @@ export default function PwaInstallContent({
   return (
     <div className="space-y-4">
       <div>
-        <p className="font-medium text-ink">{PWA_INSTALL_COPY.title}</p>
+        {/*
+          El diálogo ya pone "Instalar Thalia" en su cabecera, así que allí
+          sobra. En el panel de ajustes no: su encabezado es "Aplicación", que
+          es el nombre de la sección, y sin esto el usuario no sabría qué se
+          instala.
+        */}
+        {showTitle ? (
+          <p className="font-medium text-ink">{PWA_INSTALL_COPY.title}</p>
+        ) : null}
         <p className="mt-1 text-sm text-ink-secondary">
           {PWA_INSTALL_COPY.description}
         </p>

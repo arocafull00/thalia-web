@@ -6,6 +6,7 @@ export default function AppToastContainer() {
   return (
     <ToastContainer
       position="bottom-right"
+      theme="light"
       autoClose={5000}
       closeOnClick
       pauseOnHover

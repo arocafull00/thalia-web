@@ -55,7 +55,7 @@ export const LOGIN_COPY = {
     success:
       "¡Listo! Contraseña actualizada correctamente. Ya puedes iniciar sesión.",
     toastSuccess: "Tu contraseña se ha reseteado correctamente.",
-    openingSession: "Abriendo sesión con las nuevas credenciales...",
+    openingSession: "Iniciando sesión con las nuevas credenciales...",
     validatingSession: "Validando el enlace de recuperación...",
     errors: {
       expired: "Este enlace de recuperación ha caducado o ya se ha utilizado.",

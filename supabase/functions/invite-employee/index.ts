@@ -14,6 +14,25 @@ function errorResponse(code: string, error: string, status: number) {
   return Response.json({ code, error }, { status, headers: corsHeaders });
 }
 
+function invitationResponse(invitation: {
+  id: string;
+  email: string;
+  role: string;
+  created_at: string;
+  expires_at: string;
+}) {
+  return Response.json(
+    {
+      id: invitation.id,
+      email: invitation.email,
+      role: invitation.role,
+      created_at: invitation.created_at,
+      expires_at: invitation.expires_at,
+    },
+    { headers: corsHeaders },
+  );
+}
+
 async function findUserByEmail(
   adminClient: ReturnType<typeof createClient>,
   email: string,
@@ -212,50 +231,32 @@ Deno.serve(async (req) => {
       return errorResponse(code, error?.message ?? "Invitation failed", status);
     }
 
-    return Response.json(invitation, { headers: corsHeaders });
+    return invitationResponse(invitation);
   }
 
-  const { data: pendingInvitation, error: pendingInvitationError } =
-    await adminClient
-      .from("invitation_tokens")
-      .select("id")
-      .eq("clinic_id", clinicId)
-      .ilike("email", normalizedEmail)
-      .is("used_at", null)
-      .gt("expires_at", new Date().toISOString())
-      .maybeSingle();
-
-  if (pendingInvitationError) {
-    return errorResponse(
-      "invitation_lookup_failed",
-      "Invitation lookup failed",
-      500,
-    );
-  }
-
-  if (pendingInvitation) {
-    return errorResponse(
-      "invitation_already_pending",
-      "Este usuario ya tiene una invitación pendiente",
-      409,
-    );
-  }
-
-  const { data: invitation, error: inviteError } = await adminClient
-    .from("invitation_tokens")
-    .insert({
-      clinic_id: clinicId,
-      role,
-      email: normalizedEmail,
-      created_by: authData.user.id,
-      expires_at: expiresAt.toISOString(),
-    })
-    .select("id, email, role, created_at, expires_at")
-    .single();
+  const { data: invitation, error: inviteError } = await adminClient.rpc(
+    "create_pending_employee_invitation",
+    {
+      p_clinic_id: clinicId,
+      p_email: normalizedEmail,
+      p_role: role,
+      p_created_by: authData.user.id,
+      p_expires_at: expiresAt.toISOString(),
+    },
+  );
 
   if (inviteError || !invitation) {
-    return errorResponse("invitation_failed", "Invitation failed", 500);
+    const alreadyPending = inviteError?.message.includes(
+      "invitation_already_pending",
+    );
+    return errorResponse(
+      alreadyPending ? "invitation_already_pending" : "invitation_failed",
+      alreadyPending
+        ? "Este usuario ya tiene una invitación pendiente"
+        : "Invitation failed",
+      alreadyPending ? 409 : 500,
+    );
   }
 
-  return Response.json(invitation, { headers: corsHeaders });
+  return invitationResponse(invitation);
 });

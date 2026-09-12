@@ -1,5 +1,26 @@
 # Changelog
 
+## 87-recordatorio-segun-estado-de-la-cita
+
+- El recordatorio de una cita **ya confirmada** sale sin la frase del enlace. Antes lo incluía siempre, y pedirle confirmar algo que ya confirmó no tiene sentido
+- El botón «Enviar ahora» del detalle de la cita desaparece en los estados que no admiten recordatorio: completada, cancelada, en sala y no asistió. El servidor ya los rechazaba, así que el botón prometía algo que no iba a pasar
+- En esos estados la fila dice «Esta cita ya no recibe recordatorios» en lugar de «Pendiente de envío automático», que era falso
+
+
+## 87-recordatorio-sin-enlace-colgando
+
+- El recordatorio salía con «Confirma la cita pinchando en este enlace:» y nada detrás cuando no se podía generar el enlace. Parecía un mensaje cortado, que es peor que no mencionarlo: ahora se retira la frase entera
+- La causa principal era que el enlace solo se generaba para citas en estado `scheduled`. Una cita ya confirmada seguía recibiendo recordatorio —y debe seguir recibiéndolo— pero se quedaba sin enlace. Ahora también lo lleva: la página responde «Tu cita ya está confirmada», que es información útil
+- Solo se omite el enlace en las citas canceladas
+
+
+## 83-splash-de-ios
+
+- La PWA en iPhone arrancaba con la pantalla en blanco. No había ninguna etiqueta `apple-touch-startup-image`, e iOS no sabe generar el splash a partir del manifest como sí hace Android: exige una imagen por resolución
+- Se añaden nueve pantallas de arranque cubriendo los iPhone en uso, del SE al 15 Pro Max, con el logo centrado sobre el crema de marca
+- La media query debe encajar exactamente con el dispositivo: una talla que falte no degrada a otra parecida, deja la pantalla en blanco
+
+
 ## 87-vista-previa-del-enlace-de-confirmacion
 
 - El enlace de confirmación que viaja en el recordatorio ya genera tarjeta de vista previa en WhatsApp, con el logo, «Confirmación de cita» y el dominio. Antes no había ninguna etiqueta Open Graph en la aplicación, así que el cliente rastreaba la página y se quedaba con el favicon escalado

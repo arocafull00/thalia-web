@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { buildMessage } from "../../../supabase/functions/_shared/message-template";
+import {
+  buildMessage,
+  dropSentenceWith,
+} from "../../../supabase/functions/_shared/message-template";
 
 const DEFAULT_TEMPLATE =
   "Hola {paciente}, te recordamos tu cita en {clinica} el {fecha} a las {hora} con {profesional}.";
@@ -50,5 +53,40 @@ describe("plantilla del recordatorio", () => {
 
   it("deja intacta una plantilla sin variables", () => {
     expect(buildMessage("Texto fijo", VARS)).toBe("Texto fijo");
+  });
+});
+
+/*
+ * Cuando no hay enlace que poner, el paciente recibía «Confirma la cita
+ * pinchando en este enlace:» y nada detrás: parecía un mensaje cortado.
+ */
+describe("plantilla sin enlace disponible", () => {
+  it("retira la frase que menciona el enlace y deja el recordatorio intacto", () => {
+    const resultado = dropSentenceWith(WITH_LINK, "{enlace}");
+
+    expect(resultado).toBe(DEFAULT_TEMPLATE);
+    expect(resultado).not.toContain("Confírmala aquí");
+  });
+
+  it("deja la plantilla igual si no menciona el enlace", () => {
+    expect(dropSentenceWith(DEFAULT_TEMPLATE, "{enlace}")).toBe(
+      DEFAULT_TEMPLATE,
+    );
+  });
+
+  it("no devuelve un mensaje vacío cuando todo el texto es la frase del enlace", () => {
+    // Mandar nada sería peor que mandar una frase coja.
+    const resultado = dropSentenceWith("Confírmala aquí: {enlace}", "{enlace}");
+
+    expect(resultado).toBe("Confírmala aquí:");
+  });
+
+  it("respeta signos de exclamación e interrogación como fin de frase", () => {
+    const resultado = dropSentenceWith(
+      "¡Hola Ana! ¿Confirmas aquí? {enlace}",
+      "{enlace}",
+    );
+
+    expect(resultado).toBe("¡Hola Ana! ¿Confirmas aquí?");
   });
 });

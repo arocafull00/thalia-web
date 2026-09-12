@@ -17,3 +17,29 @@ export function buildMessage(
     template,
   );
 }
+
+/**
+ * Quita la frase que contiene un hueco cuando no hay valor para él.
+ *
+ * Sustituirlo por cadena vacía deja la frase coja: el paciente recibía
+ * «Confirma la cita pinchando en este enlace:» y nada detrás. Peor que no
+ * mencionarlo, porque parece que el mensaje se cortó.
+ *
+ * Si TODAS las frases contienen el hueco, se deja la plantilla sin él: mandar
+ * un mensaje vacío sería peor que una frase coja.
+ */
+export function dropSentenceWith(
+  template: string,
+  placeholder: string,
+): string {
+  if (!template.includes(placeholder)) return template;
+
+  const frases = template.split(/(?<=[.!?])\s+/);
+  const restantes = frases.filter((frase) => !frase.includes(placeholder));
+
+  if (restantes.length === 0) {
+    return template.replaceAll(placeholder, "").replace(/\s+/g, " ").trim();
+  }
+
+  return restantes.join(" ").trim();
+}

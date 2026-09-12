@@ -59,7 +59,7 @@ export default function TreatmentsPageClient({
     [setFilters],
   );
 
-  const { searchQuery, handleSearchChange } = useFilterSearch(
+  const { handleSearchChange } = useFilterSearch(
     filters.q,
     setFilterAndResetPage,
   );
@@ -73,9 +73,9 @@ export default function TreatmentsPageClient({
     () => ({
       category: filters.category,
       page: pageIndex,
-      search: searchQuery,
+      search: filters.q,
     }),
-    [filters.category, pageIndex, searchQuery],
+    [filters.category, filters.q, pageIndex],
   );
 
   const { categories, category, filteredTreatments, total, treatments } =

@@ -106,17 +106,17 @@ export default function AppointmentsPageClient({
       employeeId: filters.employeeId,
       from: filters.from,
       page: pageIndex,
-      search: searchQuery,
+      search: filters.q,
       status: filters.status,
       to: filters.to,
     }),
     [
       filters.employeeId,
       filters.from,
+      filters.q,
       filters.status,
       filters.to,
       pageIndex,
-      searchQuery,
     ],
   );
 

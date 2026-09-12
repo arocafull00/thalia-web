@@ -76,7 +76,7 @@ export default function InventoryPageClient({
     [setFilters],
   );
 
-  const { searchQuery, handleSearchChange } = useFilterSearch(
+  const { handleSearchChange } = useFilterSearch(
     filters.q,
     setFilterAndResetPage,
   );
@@ -90,10 +90,10 @@ export default function InventoryPageClient({
     () => ({
       category: filters.category,
       page: pageIndex,
-      search: searchQuery,
+      search: filters.q,
       stock: filters.stock,
     }),
-    [filters.category, filters.stock, pageIndex, searchQuery],
+    [filters.category, filters.q, filters.stock, pageIndex],
   );
 
   const { categories, items, inventory, summary, total } = useInventoryPage(

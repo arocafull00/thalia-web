@@ -110,9 +110,9 @@ export default function EmployeesPageClient({
       active: parseEmployeeStatusFilter(filters.status),
       page: pageIndex,
       role: filters.role,
-      search: searchQuery,
+      search: filters.q,
     }),
-    [filters.role, filters.status, pageIndex, searchQuery],
+    [filters.q, filters.role, filters.status, pageIndex],
   );
 
   const employees = useEmployeesPage(pageFilters, {

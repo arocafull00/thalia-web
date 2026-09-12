@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import Link from "next/link";
 import type { FormEvent } from "react";
 
@@ -6,6 +7,7 @@ import LoginFormFields from "@/components/auth/login/components/login-form-field
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { LOGIN_COPY } from "@/copy/login-copy";
+import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
 
 type LoginFormPanelProps = {
   authDisabled: boolean;
@@ -16,9 +18,11 @@ type LoginFormPanelProps = {
   handleSubmit: () => void;
   isSupabaseConfigured: boolean;
   onEmailChange: (value: string) => void;
+  onInstallClick: () => void;
   onPasswordChange: (value: string) => void;
   onTogglePassword: () => void;
   password: string;
+  showInstallCta: boolean;
   showPassword: boolean;
   submitting: boolean;
 };
@@ -32,9 +36,11 @@ export default function LoginFormPanel({
   handleSubmit,
   isSupabaseConfigured,
   onEmailChange,
+  onInstallClick,
   onPasswordChange,
   onTogglePassword,
   password,
+  showInstallCta,
   showPassword,
   submitting,
 }: LoginFormPanelProps) {
@@ -130,6 +136,19 @@ export default function LoginFormPanel({
                 </svg>
                 {LOGIN_COPY.google}
               </Button>
+              {showInstallCta ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  aria-label={LOGIN_COPY.install.ariaLabel}
+                  data-testid="pwa-install-login"
+                  onClick={onInstallClick}
+                  className="min-h-11 w-64 rounded-full px-4 py-2 text-xs font-medium uppercase tracking-wide"
+                >
+                  <Download size={14} strokeWidth={1.75} aria-hidden="true" />
+                  {PWA_INSTALL_COPY.installButton}
+                </Button>
+              ) : null}
             </div>
           </form>
         </div>

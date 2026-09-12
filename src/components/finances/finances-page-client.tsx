@@ -98,7 +98,7 @@ export default function FinancesPageClient({
     [setFilters],
   );
 
-  const { searchQuery, handleSearchChange } = useFilterSearch(
+  const { handleSearchChange } = useFilterSearch(
     filters.q,
     setFilterAndResetPage,
   );
@@ -112,10 +112,10 @@ export default function FinancesPageClient({
       category: filters.category,
       month: filters.month,
       page: pageIndex,
-      search: searchQuery,
+      search: filters.q,
       tab: filters.tab as FinancesTabValue,
     }),
-    [filters.category, filters.month, filters.tab, pageIndex, searchQuery],
+    [filters.category, filters.month, filters.q, filters.tab, pageIndex],
   );
 
   const {

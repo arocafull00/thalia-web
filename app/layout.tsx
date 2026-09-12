@@ -76,7 +76,7 @@ export default function RootLayout({
               <AuthProvider>
                 {children}
                 <AppToastContainer />
-                <Toaster position="bottom-right" richColors closeButton />
+                <Toaster position="top-center" richColors />
               </AuthProvider>
             </PwaInstallProvider>
           </ServiceWorkerProvider>

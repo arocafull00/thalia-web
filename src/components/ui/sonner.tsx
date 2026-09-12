@@ -51,8 +51,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
             "cn-toast !font-sans !text-sm !shadow-panel group-[.toaster]:border-border-strong",
           title: "font-medium",
           description: "text-ink-secondary",
-          closeButton:
-            "!border-border-strong !bg-surface !text-ink-secondary hover:!bg-surface-secondary",
         },
       }}
       {...props}

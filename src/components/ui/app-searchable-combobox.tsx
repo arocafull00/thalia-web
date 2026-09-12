@@ -20,7 +20,10 @@ import {
   ComboboxTrigger,
 } from "@/components/ui/combobox";
 import { COMBOBOX_COPY } from "@/copy/combobox-copy";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { cn } from "@/lib/utils";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 export type AppSearchableComboboxOption = {
   value: string;
@@ -85,6 +88,7 @@ export default function AppSearchableCombobox({
   >(undefined);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
 
   useLayoutEffect(() => {
     const dialog = rootRef.current?.closest('[role="dialog"]');
@@ -98,7 +102,7 @@ export default function AppSearchableCombobox({
   }, []);
 
   const filteredOptions = useMemo(() => {
-    const normalizedSearch = search.trim();
+    const normalizedSearch = debouncedSearch.trim();
 
     if (!normalizedSearch) {
       return options;
@@ -117,7 +121,7 @@ export default function AppSearchableCombobox({
     }
 
     return matches;
-  }, [options, search, value]);
+  }, [debouncedSearch, options, value]);
 
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? null,

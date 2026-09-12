@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 
 import AppSearchableMultiSelectOption from "@/components/ui/app-searchable-multi-select-option";
 import { COMBOBOX_COPY } from "@/copy/combobox-copy";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 export type AppSearchableMultiSelectOption = {
   id: string;
@@ -28,9 +31,10 @@ export default function AppSearchableMultiSelect({
   searchPlaceholder = COMBOBOX_COPY.searchPlaceholder,
 }: AppSearchableMultiSelectProps) {
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
 
   const filteredOptions = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = debouncedSearch.trim().toLowerCase();
 
     if (!normalizedSearch) {
       return options;
@@ -39,7 +43,7 @@ export default function AppSearchableMultiSelect({
     return options.filter((option) =>
       option.label.toLowerCase().includes(normalizedSearch),
     );
-  }, [options, search]);
+  }, [debouncedSearch, options]);
 
   if (loading) {
     return <p className="text-sm text-ink-muted">{COMBOBOX_COPY.loading}</p>;

@@ -90,9 +90,9 @@ export default function PatientsPageClient({
     () => ({
       marketingOptIn: parseMarketingFilter(filters.marketing),
       page: pageIndex,
-      search: searchQuery,
+      search: filters.q,
     }),
-    [filters.marketing, pageIndex, searchQuery],
+    [filters.marketing, filters.q, pageIndex],
   );
 
   const patients = usePatientsPage(pageFilters, {

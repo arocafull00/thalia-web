@@ -62,7 +62,7 @@ export default function MarketingPageClient({
     [setFilters],
   );
 
-  const { searchQuery, handleSearchChange } = useFilterSearch(
+  const { handleSearchChange } = useFilterSearch(
     filters.q,
     setFilterAndResetPage,
   );
@@ -75,13 +75,13 @@ export default function MarketingPageClient({
 
   const pageFilters = useMemo(
     () => ({
-      search: searchQuery,
+      search: filters.q,
       status: filters.status,
       from: filters.from,
       to: filters.to,
       page: pageIndex,
     }),
-    [filters.from, filters.status, filters.to, pageIndex, searchQuery],
+    [filters.from, filters.q, filters.status, filters.to, pageIndex],
   );
 
   const { campaigns, hasCampaigns } = useMarketingPage(pageFilters, {

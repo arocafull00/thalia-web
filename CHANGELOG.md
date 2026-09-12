@@ -1,5 +1,13 @@
 # Changelog
 
+## 86-alinear-el-texto-de-produccion
+
+- `supabase db diff --linked` devolvía una pared de falsos positivos aunque la reconciliación anterior ya hubiese traído los cinco objetos que faltaban. El objetivo de la issue no eran esos objetos: era poder fiarse del diff
+- Una docena de funciones difería **solo en los finales de línea**: ninguna migración del repo tiene CRLF, así que los `\r\n` estaban en producción, de haberse creado desde el editor SQL del panel
+- Dos políticas usaban `auth.jwt()` en producción y `(SELECT auth.jwt())` en el repo — la optimización del asesor de Supabase, aplicada al fichero después de desplegarlo
+- Se vuelven a emitir esas definiciones tomándolas literalmente de los ficheros donde ya estaban, para que producción guarde el mismo texto. Sin cambio de comportamiento
+
+
 ## 87-recordatorio-segun-estado-de-la-cita
 
 - El recordatorio de una cita **ya confirmada** sale sin la frase del enlace. Antes lo incluía siempre, y pedirle confirmar algo que ya confirmó no tiene sentido

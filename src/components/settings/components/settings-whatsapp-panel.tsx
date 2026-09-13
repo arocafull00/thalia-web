@@ -85,15 +85,11 @@ export default function SettingsWhatsAppPanel() {
             <Input
               id="whatsapp-phone-id"
               type="text"
-              placeholder={SETTINGS_COPY.whatsapp.phoneNumberIdPlaceholder}
               value={form.phoneNumberId}
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, phoneNumberId: e.target.value }))
               }
             />
-            <p className="text-xs text-ink-muted">
-              {SETTINGS_COPY.whatsapp.phoneNumberIdHint}
-            </p>
           </div>
         ) : null}
 

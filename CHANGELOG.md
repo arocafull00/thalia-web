@@ -1,5 +1,28 @@
 # Changelog
 
+## 141-147-ajustes-de-interfaz
+
+- Fuera el subtítulo y el placeholder del campo de número de envío en Ajustes. Explicaban el formato de Twilio con prefijo internacional, que no significa nada para quien usa la clínica (#141)
+- El modal de instalación deja de mostrar «Instalar Thalia» dos veces: la cabecera del diálogo ya lo dice (#147). El panel de Ajustes sí lo conserva, porque su encabezado es «Aplicación» y sin el título no se sabría qué se instala
+
+
+## 143-politicas-rls-de-una-sola-clinica
+
+- Quien pertenece a **dos clínicas** vuelve a ver sus datos en ambas. Tras hacer globales a los empleados quedaron 18 políticas usando `current_employee_clinic_id()`, que devuelve solo la primera membresía activa: al cambiar de clínica, el selector pedía datos que RLS no permitía y la lista salía vacía, sin error. Afectaba a citas, campañas, transacciones, tratamientos de cita, materiales y ficheros de campaña
+- **Cerrada una fuga de teléfonos de pacientes.** `campaigns` solo filtraba por clínica, sin mirar rol ni si el usuario era externo, y `campaign_recipients` cuelga de ella guardando teléfonos: un autónomo que solo podía ver 1 paciente obtenía los teléfonos de 5
+- El marketing deja de ser visible para el autónomo, también a nivel de datos y no solo de navegación
+- Seis de esas políticas eran `FOR ALL`, que en PostgreSQL concede también `SELECT`. Al pasar a `can_manage_clinic` —que empieza por `NOT is_external_user()`— esa vía queda cerrada
+- Eliminada `current_membership_role()`: había dos mecanismos para saber quién es externo y ahora hay uno
+
+
+## 86-alinear-el-texto-de-produccion
+
+- `supabase db diff --linked` devolvía una pared de falsos positivos aunque la reconciliación anterior ya hubiese traído los cinco objetos que faltaban. El objetivo de la issue no eran esos objetos: era poder fiarse del diff
+- Una docena de funciones difería **solo en los finales de línea**: ninguna migración del repo tiene CRLF, así que los `\r\n` estaban en producción, de haberse creado desde el editor SQL del panel
+- Dos políticas usaban `auth.jwt()` en producción y `(SELECT auth.jwt())` en el repo — la optimización del asesor de Supabase, aplicada al fichero después de desplegarlo
+- Se vuelven a emitir esas definiciones tomándolas literalmente de los ficheros donde ya estaban, para que producción guarde el mismo texto. Sin cambio de comportamiento
+
+
 ## 87-recordatorio-segun-estado-de-la-cita
 
 - El recordatorio de una cita **ya confirmada** sale sin la frase del enlace. Antes lo incluía siempre, y pedirle confirmar algo que ya confirmó no tiene sentido

@@ -36,8 +36,7 @@ export const SETTINGS_COPY = {
     changePasswordHint: "Te enviaremos un email para restablecerla",
     changePasswordError:
       "No se pudo enviar el email para cambiar la contraseña. Inténtalo de nuevo.",
-    changePasswordSuccess:
-      "Revisa tu email para crear una nueva contraseña.",
+    changePasswordSuccess: "Revisa tu email para crear una nueva contraseña.",
     changePasswordNoEmail: "No hay un email asociado a esta cuenta.",
     signOut: "Cerrar sesión",
     signOutLoading: "Cerrando sesión...",
@@ -64,9 +63,6 @@ export const SETTINGS_COPY = {
     enableLabel: "Activar recordatorios automáticos (WhatsApp)",
     enableHint: "Envía mensajes automáticos via WhatsApp antes de las citas",
     phoneNumberIdLabel: "Número de envío",
-    phoneNumberIdPlaceholder: "Ej: +14155238886",
-    phoneNumberIdHint:
-      "Número de Twilio con prefijo internacional. En sandbox usa el número del sandbox de Twilio.",
     reminderHoursLabel: "Enviar recordatorio",
     reminderHoursHint: "Se envía un único aviso por cita",
     templateLabel: "Mensaje",

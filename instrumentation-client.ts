@@ -4,10 +4,18 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+import {
+  isSentryEnabled,
+  sentryBeforeSend,
+  sentryBeforeSendTransaction,
+} from "@/lib/sentry-init";
+
 Sentry.init({
   dsn: "https://5a40397255621fac0b460b69a844b96d@o4511728906272768.ingest.de.sentry.io/4511728914792528",
+  enabled: isSentryEnabled,
+  beforeSend: sentryBeforeSend,
+  beforeSendTransaction: sentryBeforeSendTransaction,
 
-  // Add optional integrations for additional features
   integrations: [Sentry.replayIntegration()],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.

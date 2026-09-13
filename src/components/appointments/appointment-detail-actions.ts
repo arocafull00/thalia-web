@@ -2,6 +2,7 @@ import { BadgeCheck, CheckCircle, Pencil, Trash2, XCircle } from "lucide-react";
 
 import type { ProfileActionSection } from "@/components/ui/profile/profile-action";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
+import { EXTERNAL_APPOINTMENT_COPY } from "@/copy/external-appointment-copy";
 import type { TopbarActionButtonConfig } from "@/lib/hooks/use-topbar-actions";
 import type { AppointmentStatus } from "@/types/database.types";
 
@@ -11,12 +12,16 @@ type AppointmentDetailActionHandlers = {
   onMarkCompleted: () => void;
   onCancel: () => void;
   onDelete: () => void;
+  onAcceptExternal: () => void;
+  onRejectExternal: () => void;
 };
 
 type AppointmentDetailTopbarParams = {
   status: AppointmentStatus | null;
   canChangeStatus: boolean;
   updatingStatus: boolean;
+  canRespondToExternal: boolean;
+  respondingExternal: boolean;
   handlers: AppointmentDetailActionHandlers;
 };
 
@@ -40,7 +45,20 @@ export function getAppointmentDetailPrimaryAction({
   canChangeStatus,
   updatingStatus,
   handlers,
+  canRespondToExternal,
+  respondingExternal,
 }: AppointmentDetailTopbarParams): TopbarActionButtonConfig {
+  if (canRespondToExternal && status === "pending_external") {
+    return {
+      title: respondingExternal
+        ? EXTERNAL_APPOINTMENT_COPY.actions.accepting
+        : EXTERNAL_APPOINTMENT_COPY.actions.accept,
+      icon: CheckCircle,
+      disabled: respondingExternal,
+      onClick: handlers.onAcceptExternal,
+    };
+  }
+
   const primaryLabel = resolvePrimaryLabel(status, canChangeStatus);
 
   if (primaryLabel === APPOINTMENT_DETAIL_COPY.confirm) {
@@ -74,13 +92,52 @@ export function getAppointmentDetailMenuSections({
   canChangeStatus,
   updatingStatus,
   handlers,
+  canRespondToExternal,
+  respondingExternal,
 }: AppointmentDetailTopbarParams): ProfileActionSection[] {
   const primaryLabel = resolvePrimaryLabel(status, canChangeStatus);
   const sections: ProfileActionSection[] = [];
 
   const appointmentActions = [];
 
-  if (primaryLabel !== APPOINTMENT_DETAIL_COPY.edit) {
+  if (canRespondToExternal && status === "pending_external") {
+    sections.push({
+      label: APPOINTMENT_DETAIL_COPY.menuSections.status,
+      actions: [
+        {
+          label: EXTERNAL_APPOINTMENT_COPY.actions.reject,
+          icon: XCircle,
+          disabled: respondingExternal,
+          onClick: handlers.onRejectExternal,
+          variant: "danger",
+        },
+      ],
+    });
+  }
+
+  if (
+    !canRespondToExternal &&
+    status === "pending_external" &&
+    !canChangeStatus
+  ) {
+    sections.push({
+      label: APPOINTMENT_DETAIL_COPY.menuSections.status,
+      actions: [
+        {
+          label: APPOINTMENT_DETAIL_COPY.cancel,
+          icon: XCircle,
+          disabled: updatingStatus,
+          onClick: handlers.onCancel,
+          variant: "danger",
+        },
+      ],
+    });
+  }
+
+  if (
+    primaryLabel !== APPOINTMENT_DETAIL_COPY.edit ||
+    (canRespondToExternal && status === "pending_external")
+  ) {
     appointmentActions.push({
       label: APPOINTMENT_DETAIL_COPY.edit,
       icon: Pencil,

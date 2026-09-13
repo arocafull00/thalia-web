@@ -15,6 +15,8 @@ export type InvitationTokenRole = "admin" | "employee" | "external";
 
 export type AppointmentStatus =
   | "scheduled"
+  | "pending_external"
+  | "rejected_external"
   | "confirmed"
   | "in_progress"
   | "completed"
@@ -34,6 +36,48 @@ export type InventoryAlert = {
   resolved_at: string | null;
   created_at: string | null;
 };
+
+export type ClinicNotificationType =
+  | "external_appointment_pending"
+  | "external_appointment_accepted"
+  | "external_appointment_rejected"
+  | "external_appointment_cancelled";
+
+export type ClinicNotification = {
+  id: string;
+  clinic_id: string;
+  recipient_id: string;
+  type: ClinicNotificationType;
+  appointment_id: string | null;
+  starts_at: string;
+  read_at: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ClinicNotificationWithClinic = ClinicNotification & {
+  clinics: Pick<Clinic, "name"> | null;
+};
+
+export type ExternalAppointmentResponseInput = {
+  appointmentId: string;
+  decision: "accept" | "reject";
+  allowOverlap: boolean;
+  expectedUpdatedAt: string;
+};
+
+export type ExternalAppointmentResponseResult =
+  | { outcome: "accepted" | "rejected"; appointment: Appointment }
+  | {
+      outcome: "overlap";
+      appointmentUpdatedAt: string;
+      conflict: {
+        clinicName: string;
+        startsAt: string;
+        endsAt: string;
+      };
+    };
 
 export type TransactionType = "income" | "expense";
 
@@ -537,6 +581,11 @@ type Tables = {
     Insert: Partial<Appointment>;
     Update: Partial<Appointment>;
   };
+  clinic_notifications: {
+    Row: ClinicNotification;
+    Insert: Partial<ClinicNotification>;
+    Update: Partial<ClinicNotification>;
+  };
   appointment_treatments: {
     Row: AppointmentTreatmentRow;
     Insert: Partial<AppointmentTreatmentRow>;
@@ -652,6 +701,16 @@ export type Database = {
           p_token: string;
         };
         Returns: AppointmentConfirmationView[];
+      };
+      respond_external_appointment: {
+        Args: {
+          p_appointment_id: string;
+          p_clinic_id: string;
+          p_decision: "accept" | "reject";
+          p_allow_overlap: boolean;
+          p_expected_updated_at: string;
+        };
+        Returns: ExternalAppointmentResponseResult;
       };
     };
     Enums: Record<string, never>;

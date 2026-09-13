@@ -1,5 +1,6 @@
 "use client";
 
+import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import type { AgendaAppointment } from "@/lib/calendar-agenda";
 import { buildEventSurfaceColor } from "@/lib/calendar-event-surface";
 import { formatTime } from "@/lib/format";
@@ -27,6 +28,7 @@ export default function DayAgendaAppointmentCard({
       className={cn(
         "flex shrink-0 overflow-hidden rounded-card border border-border/60 text-left",
         surfaceColor ? "" : "bg-primary-subtle",
+        appointment.status === "rejected_external" && "opacity-60",
         className,
       )}
       style={surfaceColor ? { backgroundColor: surfaceColor } : undefined}
@@ -59,6 +61,12 @@ export default function DayAgendaAppointmentCard({
         {appointment.employeeName ? (
           <span className="truncate text-xs text-ink-muted">
             {appointment.employeeName}
+          </span>
+        ) : null}
+        {appointment.status === "pending_external" ||
+        appointment.status === "rejected_external" ? (
+          <span className="self-start">
+            <AppointmentStatusBadge status={appointment.status} />
           </span>
         ) : null}
       </div>

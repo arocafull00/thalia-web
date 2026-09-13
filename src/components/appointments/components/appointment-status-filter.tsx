@@ -2,6 +2,7 @@
 
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
+import { EXTERNAL_APPOINTMENT_COPY } from "@/copy/external-appointment-copy";
 import type { AppointmentStatus } from "@/types/database.types";
 
 type AppointmentStatusFilterProps = {
@@ -12,6 +13,14 @@ type AppointmentStatusFilterProps = {
 
 const statusOptions: Array<{ label: string; value: AppointmentStatus }> = [
   { label: APPOINTMENTS_COPY.filters.scheduled, value: "scheduled" },
+  {
+    label: EXTERNAL_APPOINTMENT_COPY.status.pending,
+    value: "pending_external",
+  },
+  {
+    label: EXTERNAL_APPOINTMENT_COPY.status.rejected,
+    value: "rejected_external",
+  },
   { label: APPOINTMENTS_COPY.filters.confirmed, value: "confirmed" },
   { label: APPOINTMENTS_COPY.filters.inProgress, value: "in_progress" },
   { label: APPOINTMENTS_COPY.filters.completed, value: "completed" },

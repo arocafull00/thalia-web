@@ -11,6 +11,8 @@ const statusVariants: Record<
   "default" | "success" | "warning" | "danger" | "muted"
 > = {
   scheduled: "default",
+  pending_external: "warning",
+  rejected_external: "muted",
   confirmed: "success",
   in_progress: "warning",
   completed: "success",

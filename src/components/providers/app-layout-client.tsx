@@ -10,6 +10,7 @@ import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { hasRegistrationProfile } from "@/lib/registration-metadata";
 import { initSounds } from "@/lib/sound";
+import { useClinicNotificationsStore } from "@/stores/clinic-notifications-store";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useShellStore } from "@/stores/shell-store";
 
@@ -33,8 +34,21 @@ export default function AppLayoutClient({
     (state) => state.unsubscribeRealtime,
   );
   const fetchAlerts = useInventoryAlertsStore((state) => state.fetchAlerts);
+  const subscribeClinicNotifications = useClinicNotificationsStore(
+    (state) => state.subscribeRealtime,
+  );
+  const unsubscribeClinicNotifications = useClinicNotificationsStore(
+    (state) => state.unsubscribeRealtime,
+  );
+  const fetchClinicNotifications = useClinicNotificationsStore(
+    (state) => state.fetchNotifications,
+  );
 
   const canManageBusiness = platformRole === "owner";
+  const canReceiveClinicNotifications =
+    platformRole === "owner" ||
+    platformRole === "admin" ||
+    platformRole === "external";
 
   useEffect(() => {
     initSounds();
@@ -53,6 +67,25 @@ export default function AppLayoutClient({
     fetchAlerts,
     subscribeRealtime,
     unsubscribeRealtime,
+  ]);
+
+  useEffect(() => {
+    if (!clinicId || !canReceiveClinicNotifications) {
+      return;
+    }
+
+    void fetchClinicNotifications(clinicId);
+    subscribeClinicNotifications(clinicId);
+
+    return () => {
+      unsubscribeClinicNotifications();
+    };
+  }, [
+    canReceiveClinicNotifications,
+    clinicId,
+    fetchClinicNotifications,
+    subscribeClinicNotifications,
+    unsubscribeClinicNotifications,
   ]);
 
   useEffect(() => {

@@ -10,7 +10,10 @@ import {
   type AppointmentStockIssue,
 } from "@/lib/appointment-stock";
 import { HOUR_HEIGHT } from "@/lib/calendar-grid";
-import type { AppointmentWithRelations } from "@/types/database.types";
+import type {
+  AppointmentStatus,
+  AppointmentWithRelations,
+} from "@/types/database.types";
 
 export const AGENDA_CARD_MIN_HEIGHT = 72;
 export const AGENDA_CARD_STACK_GAP = 8;
@@ -24,6 +27,7 @@ export type AgendaAppointment = {
   treatmentName: string;
   employeeName: string | null;
   employeeColor: string | null;
+  status: AppointmentStatus | null;
   stockIssue: AppointmentStockIssue | null;
 };
 
@@ -42,6 +46,7 @@ export function toAgendaAppointments(
         CALENDAR_COPY.event.defaultTreatment,
       employeeName: appointment.employees?.full_name ?? null,
       employeeColor: appointment.employees?.color ?? null,
+      status: appointment.status,
       stockIssue: getAppointmentStockIssue(appointment),
     }))
     .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());

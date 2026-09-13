@@ -28,6 +28,13 @@ export const appointmentUpdateSchema = appointmentCommonFieldsSchema.extend({
   startsAtIso: z.string().datetime({ offset: true }),
 });
 
+export const externalAppointmentResponseSchema = z.object({
+  appointmentId: uuidSchema("La cita no es válida."),
+  decision: z.enum(["accept", "reject"]),
+  allowOverlap: z.boolean(),
+  expectedUpdatedAt: z.string().datetime({ offset: true }),
+});
+
 export type AppointmentSchemaInput = z.infer<typeof appointmentSchema>;
 export type AppointmentUpdateSchemaInput = z.infer<
   typeof appointmentUpdateSchema

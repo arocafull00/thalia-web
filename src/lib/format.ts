@@ -7,6 +7,7 @@ import {
 import { es } from "date-fns/locale";
 import { toZonedTime } from "date-fns-tz";
 
+import { EXTERNAL_APPOINTMENT_COPY } from "@/copy/external-appointment-copy";
 import { CLINIC_TIME_ZONE } from "@/lib/constants";
 import type {
   AppointmentStatus,
@@ -202,6 +203,14 @@ export function truncateText(value: string, maxLength: number) {
 }
 
 export function appointmentStatusLabel(status: AppointmentStatus | null) {
+  if (status === "pending_external") {
+    return EXTERNAL_APPOINTMENT_COPY.status.pending;
+  }
+
+  if (status === "rejected_external") {
+    return EXTERNAL_APPOINTMENT_COPY.status.rejected;
+  }
+
   if (status === "confirmed") {
     return "Confirmada";
   }
@@ -226,11 +235,19 @@ export function appointmentStatusLabel(status: AppointmentStatus | null) {
 }
 
 export function appointmentStatusVariant(status: AppointmentStatus | null) {
+  if (status === "pending_external") {
+    return "warning";
+  }
+
   if (status === "completed") {
     return "success";
   }
 
-  if (status === "cancelled" || status === "no_show") {
+  if (
+    status === "cancelled" ||
+    status === "no_show" ||
+    status === "rejected_external"
+  ) {
     return "danger";
   }
 

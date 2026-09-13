@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 
-const isDev = process.env.NODE_ENV === "development";
+import { isDev } from "@/lib/sentry-init";
 
 type SentryLogArgs =
   | [message: string, attributes?: Record<string, unknown>]

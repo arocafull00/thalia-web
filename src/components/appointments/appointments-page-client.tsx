@@ -10,7 +10,9 @@ import AppointmentFilters from "@/components/appointments/components/appointment
 import AppointmentFiltersSheet from "@/components/appointments/components/appointment-filters-sheet";
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
+import ExternalAppointmentResponseDialogs from "@/components/appointments/components/external-appointment-response-dialogs";
 import { useAppointmentListDelete } from "@/components/appointments/hooks/use-appointment-list-delete";
+import { useExternalAppointmentResponse } from "@/components/appointments/hooks/use-external-appointment-response";
 import PageCard from "@/components/ui/page-card";
 import PageEmptyState from "@/components/ui/page-empty-state";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
+import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
@@ -63,6 +66,8 @@ export default function AppointmentsPageClient({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const appointmentDelete = useAppointmentListDelete();
+  const externalResponse = useExternalAppointmentResponse();
+  const isExternalProfessional = useIsExternalProfessional();
   const filterDefaults = useMemo(
     () => ({
       // Vacío, y no `initialRange.employeeId`: al borrar un filtro de la URL,
@@ -238,6 +243,12 @@ export default function AppointmentsPageClient({
             }}
             onEdit={handleRowClick}
             onDelete={appointmentDelete.openDialog}
+            canRespondToExternal={isExternalProfessional}
+            respondingExternal={externalResponse.isPending}
+            onAccept={(appointment) => {
+              void externalResponse.accept(appointment);
+            }}
+            onReject={externalResponse.requestReject}
           />
         ) : null}
       </PageCard>
@@ -276,6 +287,25 @@ export default function AppointmentsPageClient({
         onApply={(updates) => setFilters({ ...updates, page: "" })}
         onClear={() => setFilters(filterDefaults)}
         onDismiss={() => setSheetOpen(false)}
+      />
+      <ExternalAppointmentResponseDialogs
+        rejectionOpen={Boolean(externalResponse.rejectionAppointment)}
+        overlapOpen={Boolean(externalResponse.overlap)}
+        overlapDescription={externalResponse.overlapDescription}
+        isPending={externalResponse.isPending}
+        errorMessage={externalResponse.errorMessage}
+        onRejectionOpenChange={(open) => {
+          if (!open) externalResponse.closeReject();
+        }}
+        onOverlapOpenChange={(open) => {
+          if (!open) externalResponse.closeOverlap();
+        }}
+        onConfirmRejection={() => {
+          void externalResponse.confirmReject();
+        }}
+        onConfirmOverlap={() => {
+          void externalResponse.confirmOverlap();
+        }}
       />
       <MobileFab label="Nueva cita" onClick={handleOpenCreateDialog} />
     </div>

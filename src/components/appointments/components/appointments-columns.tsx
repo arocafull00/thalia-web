@@ -6,6 +6,7 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import AppointmentStatusSelect from "@/components/appointments/components/appointment-status-select";
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
+import ExternalAppointmentResponseActions from "@/components/appointments/components/external-appointment-response-actions";
 import ListRowActions from "@/components/ui/list-row-actions";
 import type { ProfileAction } from "@/components/ui/profile/profile-action";
 import SortableTableHead from "@/components/ui/sortable-table-head";
@@ -28,6 +29,8 @@ export function buildAppointmentsColumns(
   timezone: string,
   actionHandlers: AppointmentListActionHandlers,
   readOnly = false,
+  canRespondToExternal = false,
+  respondingExternal = false,
 ): ColumnDef<AppointmentWithRelations>[] {
   return [
     {
@@ -90,7 +93,17 @@ export function buildAppointmentsColumns(
         <SortableTableHead column={column} title="Estado" />
       ),
       cell: ({ row }) =>
-        readOnly ? (
+        canRespondToExternal && row.original.status === "pending_external" ? (
+          <div onClick={(event) => event.stopPropagation()}>
+            <ExternalAppointmentResponseActions
+              disabled={respondingExternal}
+              onAccept={() => actionHandlers.onAccept?.(row.original)}
+              onReject={() => actionHandlers.onReject?.(row.original)}
+            />
+          </div>
+        ) : readOnly ||
+          row.original.status === "pending_external" ||
+          row.original.status === "rejected_external" ? (
           <AppointmentStatusBadge status={row.original.status} />
         ) : (
           <div onClick={(e) => e.stopPropagation()}>
@@ -133,6 +146,8 @@ export function buildAppointmentsColumns(
 export type AppointmentListActionHandlers = {
   onDelete?: (appointment: AppointmentWithRelations) => void;
   onEdit?: (id: string) => void;
+  onAccept?: (appointment: AppointmentWithRelations) => void;
+  onReject?: (appointment: AppointmentWithRelations) => void;
 };
 
 export function getAppointmentRowActions(

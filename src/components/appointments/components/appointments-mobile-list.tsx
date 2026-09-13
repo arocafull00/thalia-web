@@ -14,12 +14,16 @@ type AppointmentsMobileListProps = {
   appointments: AppointmentWithRelations[];
   onRowClick: (id: string) => void;
   actionHandlers: AppointmentListActionHandlers;
+  canRespondToExternal: boolean;
+  respondingExternal: boolean;
 };
 
 export default function AppointmentsMobileList({
   appointments,
   onRowClick,
   actionHandlers,
+  canRespondToExternal,
+  respondingExternal,
 }: AppointmentsMobileListProps) {
   const agendaAppointments = useMemo(
     () => toAgendaAppointments(appointments).toReversed(),
@@ -38,6 +42,23 @@ export default function AppointmentsMobileList({
           key={appointment.id}
           appointment={appointment}
           onClick={() => onRowClick(appointment.id)}
+          respondingExternal={respondingExternal}
+          onAccept={
+            canRespondToExternal && appointment.status === "pending_external"
+              ? () =>
+                  actionHandlers.onAccept?.(
+                    appointmentsById.get(appointment.id)!,
+                  )
+              : undefined
+          }
+          onReject={
+            canRespondToExternal && appointment.status === "pending_external"
+              ? () =>
+                  actionHandlers.onReject?.(
+                    appointmentsById.get(appointment.id)!,
+                  )
+              : undefined
+          }
           actions={
             appointmentsById.has(appointment.id)
               ? getAppointmentRowActions(

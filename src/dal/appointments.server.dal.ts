@@ -15,18 +15,16 @@ import {
 } from "@/dal/selects";
 import { createClient } from "@/lib/supabase/server";
 import {
+  unwrapSupabase,
   unwrapSupabaseList,
   unwrapSupabaseNullable,
 } from "@/lib/supabase-query";
-import type { AppointmentWithRelations } from "@/types/database.types";
+import type {
+  AppointmentWithRelations,
+  ExternalAppointmentResponseInput,
+  ExternalAppointmentResponseResult,
+} from "@/types/database.types";
 
-/**
- * Misma consulta que `getAppointmentsPage` del DAL de navegador, con el cliente
- * de servidor, para sembrar la primera página desde el Server Component.
- *
- * Se duplica la lógica en lugar de compartirla porque cada uno usa un cliente
- * distinto; cualquier cambio en el filtrado hay que replicarlo en los dos.
- */
 export async function getAppointmentsPage(
   params: AppointmentPageParams,
 ): Promise<AppointmentPageResult> {
@@ -125,4 +123,20 @@ export async function getAppointment(
     unknown
   > | null;
   return appointment ? normalizeAppointment(appointment) : null;
+}
+
+export async function respondExternalAppointment(
+  clinicId: string,
+  input: ExternalAppointmentResponseInput,
+): Promise<ExternalAppointmentResponseResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("respond_external_appointment", {
+    p_appointment_id: input.appointmentId,
+    p_clinic_id: clinicId,
+    p_decision: input.decision,
+    p_allow_overlap: input.allowOverlap,
+    p_expected_updated_at: input.expectedUpdatedAt,
+  });
+
+  return unwrapSupabase(data, error) as ExternalAppointmentResponseResult;
 }

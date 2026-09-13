@@ -30,6 +30,10 @@ type AppointmentsTableProps = {
   };
   onDelete?: (appointment: AppointmentWithRelations) => void;
   onEdit?: (id: string) => void;
+  canRespondToExternal?: boolean;
+  respondingExternal?: boolean;
+  onAccept?: (appointment: AppointmentWithRelations) => void;
+  onReject?: (appointment: AppointmentWithRelations) => void;
 };
 
 export default function AppointmentsTable({
@@ -40,11 +44,15 @@ export default function AppointmentsTable({
   pagination,
   onDelete,
   onEdit,
+  canRespondToExternal = false,
+  respondingExternal = false,
+  onAccept,
+  onReject,
 }: AppointmentsTableProps) {
   const timezone = useActiveClinicTimezone();
   const actionHandlers = useMemo(
-    () => ({ onDelete, onEdit }),
-    [onDelete, onEdit],
+    () => ({ onAccept, onDelete, onEdit, onReject }),
+    [onAccept, onDelete, onEdit, onReject],
   );
   const columns = useMemo(
     () =>
@@ -53,8 +61,17 @@ export default function AppointmentsTable({
         timezone,
         actionHandlers,
         readOnly,
+        canRespondToExternal,
+        respondingExternal,
       ),
-    [actionHandlers, onStatusChange, readOnly, timezone],
+    [
+      actionHandlers,
+      canRespondToExternal,
+      onStatusChange,
+      readOnly,
+      respondingExternal,
+      timezone,
+    ],
   );
 
   return (
@@ -64,6 +81,8 @@ export default function AppointmentsTable({
           appointments={appointments}
           onRowClick={onRowClick}
           actionHandlers={actionHandlers}
+          canRespondToExternal={canRespondToExternal}
+          respondingExternal={respondingExternal}
         />
       </div>
       <div className="hidden md:block">

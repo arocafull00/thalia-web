@@ -10,6 +10,8 @@ import type { AppointmentStatus } from "@/types/database.types";
  */
 export const APPOINTMENT_STATUS_COLOR: Record<AppointmentStatus, string> = {
   scheduled: "#6366f1",
+  pending_external: "var(--color-warning)",
+  rejected_external: "var(--color-ink-muted)",
   confirmed: "#eab308",
   in_progress: "#f97316",
   completed: "#14b8a6",

@@ -13,12 +13,15 @@ import AppointmentDetailSidebar from "@/components/appointments/components/appoi
 import AppointmentHeader from "@/components/appointments/components/appointment-header";
 import AppointmentMaterialsSection from "@/components/appointments/components/appointment-materials-section";
 import AppointmentTreatmentsSection from "@/components/appointments/components/appointment-treatments-section";
+import ExternalAppointmentResponseDialogs from "@/components/appointments/components/external-appointment-response-dialogs";
+import { useExternalAppointmentResponse } from "@/components/appointments/hooks/use-external-appointment-response";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
+import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 import { useAppointmentDetail } from "@/lib/hooks/use-appointment-detail";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
@@ -56,6 +59,8 @@ export default function AppointmentDetailPageClient({
   appointment: serverAppointment,
 }: AppointmentDetailPageClientProps) {
   const router = useRouter();
+  const externalResponse = useExternalAppointmentResponse();
+  const isExternalProfessional = useIsExternalProfessional();
   const { id: routeAppointmentId } = useParams<{ id: string }>();
   const {
     appointment,
@@ -91,6 +96,9 @@ export default function AppointmentDetailPageClient({
 
   const breadcrumbLabel =
     appointment?.patients?.full_name ?? APPOINTMENT_DETAIL_COPY.patient;
+  const canRespondToExternal = Boolean(
+    isExternalProfessional && appointment?.status === "pending_external",
+  );
 
   useTopbarBreadcrumb(
     appointment
@@ -110,6 +118,8 @@ export default function AppointmentDetailPageClient({
               status: appointment.status,
               canChangeStatus,
               updatingStatus,
+              canRespondToExternal,
+              respondingExternal: externalResponse.isPending,
               handlers: {
                 onEdit: openEditDialog,
                 onConfirm: () => {
@@ -120,6 +130,12 @@ export default function AppointmentDetailPageClient({
                 },
                 onCancel: openCancelConfirm,
                 onDelete: openDeleteConfirm,
+                onAcceptExternal: () => {
+                  if (appointment) void externalResponse.accept(appointment);
+                },
+                onRejectExternal: () => {
+                  if (appointment) externalResponse.requestReject(appointment);
+                },
               },
             }),
           ],
@@ -128,6 +144,8 @@ export default function AppointmentDetailPageClient({
               status: appointment.status,
               canChangeStatus,
               updatingStatus,
+              canRespondToExternal,
+              respondingExternal: externalResponse.isPending,
               handlers: {
                 onEdit: openEditDialog,
                 onConfirm: () => {
@@ -138,6 +156,12 @@ export default function AppointmentDetailPageClient({
                 },
                 onCancel: openCancelConfirm,
                 onDelete: openDeleteConfirm,
+                onAcceptExternal: () => {
+                  if (appointment) void externalResponse.accept(appointment);
+                },
+                onRejectExternal: () => {
+                  if (appointment) externalResponse.requestReject(appointment);
+                },
               },
             }),
             ariaLabel: APPOINTMENT_DETAIL_COPY.moreActions,
@@ -250,6 +274,25 @@ export default function AppointmentDetailPageClient({
           void confirmDelete();
         }}
         errorMessage={deleteError ?? undefined}
+      />
+      <ExternalAppointmentResponseDialogs
+        rejectionOpen={Boolean(externalResponse.rejectionAppointment)}
+        overlapOpen={Boolean(externalResponse.overlap)}
+        overlapDescription={externalResponse.overlapDescription}
+        isPending={externalResponse.isPending}
+        errorMessage={externalResponse.errorMessage}
+        onRejectionOpenChange={(open) => {
+          if (!open) externalResponse.closeReject();
+        }}
+        onOverlapOpenChange={(open) => {
+          if (!open) externalResponse.closeOverlap();
+        }}
+        onConfirmRejection={() => {
+          void externalResponse.confirmReject();
+        }}
+        onConfirmOverlap={() => {
+          void externalResponse.confirmOverlap();
+        }}
       />
     </div>
   );

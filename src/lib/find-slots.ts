@@ -12,10 +12,12 @@ import {
   resolveAppointmentTimezone,
 } from "@/lib/appointment-datetime";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
+import type { AppointmentStatus } from "@/types/database.types";
 
 type ExistingAppointment = {
   starts_at: string;
   ends_at: string;
+  status?: AppointmentStatus | null;
 };
 
 const STEP_MINUTES = 30;
@@ -154,6 +156,10 @@ export function findAvailableSlots(params: {
 
     const slotEnd = addMinutes(current, duration);
     const hasConflict = existing.some((appt) => {
+      if (appt.status === "cancelled" || appt.status === "rejected_external") {
+        return false;
+      }
+
       const apptStart = instantToClinicWallDate(appt.starts_at, timezone);
       const apptEnd = instantToClinicWallDate(appt.ends_at, timezone);
       return current < apptEnd && slotEnd > apptStart;

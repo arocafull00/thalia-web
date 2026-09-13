@@ -1,9 +1,10 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
+import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
+import ExternalAppointmentResponseActions from "@/components/appointments/components/external-appointment-response-actions";
 import ListRowActions from "@/components/ui/list-row-actions";
 import type { ProfileAction } from "@/components/ui/profile/profile-action";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
@@ -15,12 +16,18 @@ type AppointmentRowProps = {
   appointment: AgendaAppointment;
   onClick?: () => void;
   actions?: ProfileAction[];
+  respondingExternal?: boolean;
+  onAccept?: () => void;
+  onReject?: () => void;
 };
 
 export default function AppointmentRow({
   appointment,
   onClick,
   actions,
+  respondingExternal = false,
+  onAccept,
+  onReject,
 }: AppointmentRowProps) {
   const timezone = useActiveClinicTimezone();
   const content = (
@@ -44,12 +51,18 @@ export default function AppointmentRow({
         <p className="truncate text-sm text-ink-secondary">
           {appointment.treatmentName}
         </p>
+        {appointment.status === "pending_external" ||
+        appointment.status === "rejected_external" ? (
+          <div className="mt-1">
+            <AppointmentStatusBadge status={appointment.status} />
+          </div>
+        ) : null}
       </div>
     </>
   );
 
   return (
-    <div className="flex items-center gap-2 px-4 py-4 transition-colors hover:bg-[var(--hover-overlay)]">
+    <div className="flex flex-wrap items-center gap-2 px-4 py-4 transition-colors hover:bg-[var(--hover-overlay)]">
       {onClick ? (
         <button
           type="button"
@@ -67,6 +80,15 @@ export default function AppointmentRow({
         </Link>
       )}
       <AppointmentStockButton issue={appointment.stockIssue} />
+      {onAccept && onReject ? (
+        <div className="order-last w-full pl-16">
+          <ExternalAppointmentResponseActions
+            disabled={respondingExternal}
+            onAccept={onAccept}
+            onReject={onReject}
+          />
+        </div>
+      ) : null}
       {actions ? (
         <ListRowActions
           actions={actions}
@@ -74,7 +96,6 @@ export default function AppointmentRow({
           variant="menu"
         />
       ) : null}
-      <ChevronRight className="size-4 shrink-0 text-ink-muted" aria-hidden />
     </div>
   );
 }

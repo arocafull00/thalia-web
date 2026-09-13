@@ -348,7 +348,7 @@ export async function getFutureAppointments(
     .from("appointments")
     .select("id, starts_at, patients(full_name), employees(full_name)")
     .eq("clinic_id", clinicId)
-    .in("status", ["scheduled", "confirmed"])
+    .in("status", ["scheduled", "pending_external", "confirmed"])
     .gt("starts_at", now)
     .order("starts_at");
   return unwrapSupabaseList(data, error) as FutureAppointmentConflict[];

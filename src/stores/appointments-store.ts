@@ -49,6 +49,8 @@ import type {
   AppointmentInventoryItemWithInventory,
   AppointmentStatus,
   AppointmentWithRelations,
+  ExternalAppointmentResponseInput,
+  ExternalAppointmentResponseResult,
   Treatment,
 } from "@/types/database.types";
 
@@ -153,6 +155,8 @@ type AppointmentsStore = {
   createError: Error | null;
   updatingStatus: boolean;
   updateStatusError: Error | null;
+  respondingExternal: boolean;
+  respondExternalError: Error | null;
   rescheduling: boolean;
   rescheduleError: Error | null;
   updating: boolean;
@@ -190,6 +194,9 @@ type AppointmentsStore = {
     id: string,
     status: AppointmentStatus,
   ) => Promise<Appointment>;
+  respondToExternalAppointment: (
+    input: ExternalAppointmentResponseInput,
+  ) => Promise<ExternalAppointmentResponseResult>;
   rescheduleAppointment: (
     id: string,
     startsAtIso: string,
@@ -210,6 +217,8 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   createError: null,
   updatingStatus: false,
   updateStatusError: null,
+  respondingExternal: false,
+  respondExternalError: null,
   rescheduling: false,
   rescheduleError: null,
   updating: false,
@@ -597,6 +606,57 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         });
       }
       set({ updatingStatus: false, updateStatusError: error });
+      throw error;
+    }
+  },
+
+  respondToExternalAppointment: async (input) => {
+    set({ respondingExternal: true, respondExternalError: null });
+
+    try {
+      const { respondExternalAppointmentAction } =
+        await import("@/components/appointments/actions");
+      const result = await respondExternalAppointmentAction(input);
+
+      if (result.outcome !== "overlap") {
+        set((state) => {
+          const detailEntry = state.byId[input.appointmentId];
+
+          return {
+            byRange: updateAppointmentInRangeEntries(
+              state.byRange,
+              result.appointment,
+            ),
+            byId: detailEntry?.data
+              ? {
+                  ...state.byId,
+                  [input.appointmentId]: successQueryEntry({
+                    ...detailEntry.data,
+                    ...result.appointment,
+                  }),
+                }
+              : state.byId,
+          };
+        });
+
+        await Promise.all([
+          refreshAllAppointmentEntries(),
+          get().fetchAppointment(input.appointmentId),
+          useDashboardStore.getState().fetchDashboard(),
+        ]);
+      }
+
+      set({ respondingExternal: false });
+      return result;
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "appointments-store",
+        action: "respondToExternalAppointment",
+        appointmentId: input.appointmentId,
+        decision: input.decision,
+      });
+      set({ respondingExternal: false, respondExternalError: error });
       throw error;
     }
   },

@@ -27,17 +27,38 @@ import type {
 import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
+import { NOTIFICATIONS_COPY } from "@/copy/external-appointment-copy";
 import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
 import { TOPBAR_COPY } from "@/copy/topbar-copy";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { appNavItemTitle } from "@/lib/hooks/use-app-nav-items";
+import { useClinicNotificationsStore } from "@/stores/clinic-notifications-store";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
+import type { QueryEntry } from "@/stores/query-state";
 import { useTopbarActionStore } from "@/stores/topbar-action-store";
+import type {
+  ClinicNotificationWithClinic,
+  InventoryAlert,
+} from "@/types/database.types";
+
+const EMPTY_INVENTORY_ALERTS: QueryEntry<InventoryAlert[]> = {
+  data: [],
+  loading: false,
+  error: null,
+};
+
+const EMPTY_CLINIC_NOTIFICATIONS: QueryEntry<ClinicNotificationWithClinic[]> = {
+  data: [],
+  loading: false,
+  error: null,
+};
 
 export default function AppTopbar() {
   const pathname = usePathname();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [pwaInstallOpen, setPwaInstallOpen] = useState(false);
+  const { clinicTimezone: timezone, platformRole } = useActiveClinic();
   const { action, breadcrumb, actions, menu } = useTopbarActionStore(
     useShallow((state) => ({
       action: state.action,
@@ -54,6 +75,25 @@ export default function AppTopbar() {
     })),
   );
   const { canPromptInstall, handleInstall, showInstallCta } = usePwaInstall();
+  const {
+    notifications,
+    unreadCount: clinicUnreadCount,
+    markAsRead: markClinicNotificationsAsRead,
+  } = useClinicNotificationsStore(
+    useShallow((state) => ({
+      notifications: state.notifications,
+      unreadCount: state.unreadCount,
+      markAsRead: state.markAsRead,
+    })),
+  );
+  const canSeeInventoryAlerts = platformRole === "owner";
+  const canSeeClinicNotifications =
+    platformRole === "owner" ||
+    platformRole === "admin" ||
+    platformRole === "external";
+  const combinedUnreadCount =
+    (canSeeInventoryAlerts ? unreadCount : 0) +
+    (canSeeClinicNotifications ? clinicUnreadCount : 0);
   const title = appNavItemTitle(pathname);
   const topbarActions = action ? [action] : actions;
   const hasOverflowMenu =
@@ -72,8 +112,12 @@ export default function AppTopbar() {
     setNotificationsOpen(true);
     const clinicId = getActiveClinicId();
 
-    if (clinicId) {
+    if (clinicId && canSeeInventoryAlerts) {
       void markAsRead(clinicId);
+    }
+
+    if (canSeeClinicNotifications) {
+      void markClinicNotificationsAsRead();
     }
   };
 
@@ -86,10 +130,7 @@ export default function AppTopbar() {
   const mobileMenuSections = useMemo<ProfileActionSection[]>(() => {
     const appActions: ProfileAction[] = [
       {
-        label:
-          unreadCount > 0
-            ? `${TOPBAR_COPY.notifications} (${unreadCount > 99 ? "99+" : unreadCount})`
-            : TOPBAR_COPY.notifications,
+        label: NOTIFICATIONS_COPY.bellAriaLabel(combinedUnreadCount),
         icon: Bell,
         onClick: handleNotificationsClick,
         testId: "topbar-notifications-mobile",
@@ -125,7 +166,14 @@ export default function AppTopbar() {
       ...(menu?.sections ?? []),
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [menu, showInstallCta, topbarActions, unreadCount]);
+  }, [
+    canSeeClinicNotifications,
+    canSeeInventoryAlerts,
+    combinedUnreadCount,
+    menu,
+    showInstallCta,
+    topbarActions,
+  ]);
 
   return (
     <header data-testid="app-topbar" className="sticky top-0 z-40 mb-3.5">
@@ -170,17 +218,17 @@ export default function AppTopbar() {
               type="button"
               variant="ghost"
               size="icon"
-              aria-label={TOPBAR_COPY.notifications}
+              aria-label={NOTIFICATIONS_COPY.bellAriaLabel(combinedUnreadCount)}
               className="control-chip relative size-[38px] rounded-button text-ink-secondary hover:text-ink"
               onClick={handleNotificationsClick}
             >
               <Bell size={20} strokeWidth={1.75} />
-              {unreadCount > 0 ? (
+              {combinedUnreadCount > 0 ? (
                 <Badge
                   variant="danger"
                   className="absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
                 >
-                  {unreadCount > 99 ? "99+" : unreadCount}
+                  {combinedUnreadCount > 99 ? "99+" : combinedUnreadCount}
                 </Badge>
               ) : null}
             </Button>
@@ -229,7 +277,7 @@ export default function AppTopbar() {
               // etiquetas como «Instalar Thalia» o «Editar paciente».
               contentClassName="min-w-56"
             />
-            {unreadCount > 0 ? (
+            {combinedUnreadCount > 0 ? (
               // El contador vive dentro del menú, pero sin esta señal en el
               // disparador no habría forma de saber que hay avisos sin abrirlo.
               <Badge
@@ -237,7 +285,7 @@ export default function AppTopbar() {
                 variant="danger"
                 className="pointer-events-none absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
               >
-                {unreadCount > 99 ? "99+" : unreadCount}
+                {combinedUnreadCount > 99 ? "99+" : combinedUnreadCount}
               </Badge>
             ) : null}
           </div>
@@ -245,7 +293,13 @@ export default function AppTopbar() {
       </div>
       <AppDialog open={notificationsOpen} onOpenChange={setNotificationsOpen}>
         <NotificationsSheet
-          alerts={alerts}
+          alerts={canSeeInventoryAlerts ? alerts : EMPTY_INVENTORY_ALERTS}
+          notifications={
+            canSeeClinicNotifications
+              ? notifications
+              : EMPTY_CLINIC_NOTIFICATIONS
+          }
+          timezone={timezone}
           onClose={() => setNotificationsOpen(false)}
         />
       </AppDialog>

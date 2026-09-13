@@ -3,6 +3,7 @@
 import { type Temporal } from "temporal-polyfill";
 import "temporal-polyfill/global";
 
+import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import { calendarWeekUiRefs } from "@/components/calendar/calendar-week-ui-refs";
 import CalendarOverlapGroupEvent from "@/components/calendar/components/calendar-overlap-group-event";
 import {
@@ -54,6 +55,7 @@ export default function CalendarTimeGridEvent({
       className={cn(
         "flex h-full min-h-full flex-col justify-center gap-0.5 overflow-hidden rounded-xl border border-border-subtle border-l-4 px-2.5 py-1",
         employeeColor ? "" : "border-l-border bg-primary-subtle",
+        appointment?.status === "rejected_external" && "opacity-60",
       )}
       style={
         employeeColor && surfaceColor
@@ -72,6 +74,12 @@ export default function CalendarTimeGridEvent({
         {formatTime(start, timezone)}–{formatTime(end, timezone)}
         {employeeName ? ` · ${employeeName}` : ""}
       </small>
+      {appointment?.status === "pending_external" ||
+      appointment?.status === "rejected_external" ? (
+        <span className="truncate">
+          <AppointmentStatusBadge status={appointment.status} />
+        </span>
+      ) : null}
     </div>
   );
 }

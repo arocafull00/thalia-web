@@ -9,13 +9,10 @@ import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import { navigateAfterAuth } from "@/lib/navigation/navigate-after-auth";
-import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 
 export function useLogin() {
   const router = useRouter();
   const { signIn, user } = useAuth();
-  const intent = useOnboardingIntentStore((state) => state.intent);
-  const setIntent = useOnboardingIntentStore((state) => state.setIntent);
   const { href, ready } = usePostAuthRedirect(Boolean(user));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,10 +39,6 @@ export function useLogin() {
   const handleGoogleSignIn = async () => {
     setError(null);
     setSubmitting(true);
-
-    if (!intent) {
-      setIntent("owner");
-    }
 
     const result = await signInWithGoogleFlow();
 

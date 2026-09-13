@@ -1,7 +1,9 @@
+import type { ClinicMembershipInvitationRole } from "@/types/database.types";
+
 export type PendingClinicRequest = {
   token: string;
   clinicName: string;
-  role: string;
+  role: ClinicMembershipInvitationRole;
   expiresAt: string;
 };
 

@@ -51,6 +51,7 @@ export function useActiveClinic() {
     clinicTimezone: resolveAppointmentTimezone(membership?.clinicTimezone),
     membership,
     platformRole: membership?.role ?? null,
+    employeeRole: resolvedProfile?.role ?? null,
     accountType: resolvedProfile?.account_type ?? null,
     isExternal: resolvedProfile?.account_type === "external",
     memberships: resolvedMemberships,

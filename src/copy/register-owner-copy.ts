@@ -15,6 +15,8 @@ export const REGISTER_OWNER_COPY = {
     passwordLabel: "Contraseña",
     passwordPlaceholder: "••••••••",
     confirmPasswordLabel: "Confirmar contraseña",
+    divider: "O continúa con",
+    google: "Continuar con Google",
   },
   clinic: {
     title: "Configura tu clínica",

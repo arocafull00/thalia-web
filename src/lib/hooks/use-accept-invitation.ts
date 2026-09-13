@@ -1,13 +1,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import {
-  consumeEmployeeInvitation,
-  lookupEmployeeInvitationByToken,
-} from "@/dal/employees.dal";
+import { lookupEmployeeInvitationByToken } from "@/dal/employees.dal";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useAuthStore } from "@/stores/auth-store";
-import { useClinicStore } from "@/stores/clinic-store";
+import { useClinicRequestsStore } from "@/stores/clinic-requests-store";
 import { useOnboardingIntentStore } from "@/stores/onboarding-intent-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 import type { EmployeeRole } from "@/types/database.types";
@@ -26,6 +22,9 @@ export function useAcceptInvitation(token: string) {
   const setIntent = useOnboardingIntentStore((state) => state.setIntent);
   const setToken = usePendingInviteStore((state) => state.setToken);
   const clearToken = usePendingInviteStore((state) => state.clearToken);
+  const respondToRequest = useClinicRequestsStore(
+    (store) => store.respondToRequest,
+  );
   const [state, setState] = useState<InvitationState>({ status: "loading" });
   const [submitting, setSubmitting] = useState(false);
   const [employeeRole, setEmployeeRole] = useState<EmployeeRole>("doctor");
@@ -103,20 +102,22 @@ export function useAcceptInvitation(token: string) {
     setSubmitting(true);
 
     try {
+      if (!user) {
+        throw new Error("Debes iniciar sesión para aceptar la invitación.");
+      }
+
       const role = state.status === "ready" ? state.role : null;
-      await consumeEmployeeInvitation({
-        token,
-        action: "accept",
-        employeeRole: role === "admin" ? undefined : employeeRole,
-      });
+      await respondToRequest(
+        {
+          token,
+          action: "accept",
+          employeeRole: role === "admin" ? "admin" : employeeRole,
+        },
+        user.id,
+      );
 
       clearToken();
       setState({ status: "accepted" });
-
-      if (user) {
-        await useClinicStore.getState().fetchMemberships(user.id);
-        await useAuthStore.getState().refreshProfile();
-      }
 
       router.replace("/dashboard");
     } catch (cause) {
@@ -136,7 +137,11 @@ export function useAcceptInvitation(token: string) {
     setSubmitting(true);
 
     try {
-      await consumeEmployeeInvitation({ token, action: "reject" });
+      if (!user) {
+        throw new Error("Debes iniciar sesión para rechazar la invitación.");
+      }
+
+      await respondToRequest({ token, action: "reject" }, user.id);
 
       clearToken();
       setState({ status: "rejected" });

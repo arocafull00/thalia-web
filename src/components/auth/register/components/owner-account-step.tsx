@@ -3,20 +3,25 @@
 import { useState } from "react";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 
+import GoogleSignInButton from "@/components/auth/components/google-sign-in-button";
 import PasswordInput from "@/components/auth/components/password-input";
 import { Input } from "@/components/ui/input";
 import { REGISTER_OWNER_COPY } from "@/copy/register-owner-copy";
 import type { OwnerRegistrationFormValues } from "@/lib/schemas/register-schema";
 
 type Props = {
+  authDisabled: boolean;
   errors: FieldErrors<OwnerRegistrationFormValues>;
   hasSession: boolean;
+  onGoogleSignIn: () => void;
   register: UseFormRegister<OwnerRegistrationFormValues>;
 };
 
 export default function OwnerAccountStep({
+  authDisabled,
   errors,
   hasSession,
+  onGoogleSignIn,
   register,
 }: Props) {
   const [showPassword, setShowPassword] = useState(false);
@@ -110,6 +115,22 @@ export default function OwnerAccountStep({
                 </span>
               ) : null}
             </label>
+            <div className="relative py-2">
+              <div
+                className="absolute inset-0 flex items-center"
+                aria-hidden="true"
+              >
+                <div className="w-full border-t border-border-subtle" />
+              </div>
+              <p className="relative mx-auto w-fit bg-surface px-3 text-xs text-ink-muted">
+                {copy.divider}
+              </p>
+            </div>
+            <GoogleSignInButton
+              label={copy.google}
+              disabled={authDisabled}
+              onClick={onGoogleSignIn}
+            />
           </>
         ) : null}
       </div>

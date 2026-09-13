@@ -1,3 +1,4 @@
+import { createClinicInvitationError } from "@/lib/clinic-invitation-errors";
 import { createEmployeeInviteError } from "@/lib/employee-invite-errors";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
@@ -46,11 +47,23 @@ export type InvitationTokenLookup = Omit<InvitationLookupRow, "token"> & {
   used_at: string | null;
 };
 
-export type ConsumeEmployeeInvitationInput = {
-  token: string;
-  action: "accept" | "reject";
-  employeeRole?: Employee["role"];
-};
+export type ConsumeEmployeeInvitationInput =
+  | {
+      token: string;
+      action: "accept";
+      employeeRole: Employee["role"];
+    }
+  | {
+      token: string;
+      action: "reject";
+    };
+
+export type ConsumeEmployeeInvitationResult =
+  | {
+      clinicId: string;
+      role: ClinicMembershipInvitationRole;
+    }
+  | { rejected: true };
 
 export type EmployeeUpdate = Partial<
   Pick<
@@ -279,12 +292,15 @@ export async function cancelEmployeeInvitation(
 export async function lookupEmployeeInvitationsByEmail(
   email: string,
 ): Promise<InvitationLookupRow[]> {
-  const { data, error } = await supabase.functions.invoke<{
-    invitations: InvitationLookupRow[];
-  }>("lookup-employee-invitation", { body: { email } });
+  const { data, error } = await supabase
+    .from("invitation_tokens")
+    .select("token, email, role, expires_at, clinics(name)")
+    .ilike("email", email)
+    .is("used_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
 
-  if (error) throw error;
-  return data?.invitations ?? [];
+  return unwrapSupabaseList(data, error) as InvitationLookupRow[];
 }
 
 export async function lookupEmployeeInvitationByToken(
@@ -300,12 +316,18 @@ export async function lookupEmployeeInvitationByToken(
 
 export async function consumeEmployeeInvitation(
   input: ConsumeEmployeeInvitationInput,
-): Promise<void> {
-  const { error } = await supabase.functions.invoke("accept-invitation", {
-    body: input,
-  });
+): Promise<ConsumeEmployeeInvitationResult> {
+  const { data, error } =
+    await supabase.functions.invoke<ConsumeEmployeeInvitationResult>(
+      "accept-invitation",
+      { body: input },
+    );
 
-  if (error) throw error;
+  if (error) {
+    throw await createClinicInvitationError(error);
+  }
+
+  return unwrapSupabase(data, error);
 }
 
 export async function updateEmployee(

@@ -135,7 +135,7 @@ export default function CreateClinicForm({
                   disabled={disabled}
                   asChild
                 >
-                  <Link href="/register-employee">
+                  <Link href="/register">
                     <ArrowLeft className="size-4" aria-hidden="true" />
                     {CREATE_CLINIC_COPY.actions.back}
                   </Link>

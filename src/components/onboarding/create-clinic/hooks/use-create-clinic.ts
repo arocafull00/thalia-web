@@ -13,7 +13,6 @@ import { useAuth } from "@/lib/hooks/use-auth";
 import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import { logger } from "@/lib/logger";
 import { buildCreateClinicPayloadFromProfile } from "@/lib/owner-clinic-form";
-import { hasRegistrationProfile } from "@/lib/registration-metadata";
 import {
   createClinicSchema,
   type CreateClinicFormValues,
@@ -44,17 +43,10 @@ export function useCreateClinic() {
     defaultValues,
   });
 
-  const profileIncomplete = Boolean(user && !hasRegistrationProfile(user));
   const shouldRedirectAway = Boolean(
     user && ready && href && href !== "/create-clinic",
   );
-  const redirectHref = !user
-    ? "/login"
-    : profileIncomplete
-      ? "/register-employee"
-      : shouldRedirectAway
-        ? href
-        : null;
+  const redirectHref = !user ? "/login" : shouldRedirectAway ? href : null;
 
   const disabled = isSubmitting || !isSupabaseConfigured;
 

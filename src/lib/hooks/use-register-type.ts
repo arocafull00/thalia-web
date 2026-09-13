@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { REGISTER_COPY } from "@/copy/register-copy";
 import { lookupEmployeeInvitationsByEmail } from "@/dal/employees.dal";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import { isOwnerRegistration } from "@/lib/registration-metadata";
 import {
   registerInvitationEmailSchema,
@@ -38,9 +39,13 @@ export function useRegisterType() {
     defaultValues: { email: "" },
   });
 
+  const { href, ready } = usePostAuthRedirect(Boolean(user));
+
   const shouldResumeOwner = intent === "owner" || isOwnerRegistration(user);
   const step =
     selectedStep === "pick" && shouldResumeOwner ? "owner" : selectedStep;
+  const shouldRedirect = Boolean(user && ready && href && href !== "/register");
+  const redirectHref = shouldRedirect ? href : null;
 
   const handlePickOwner = () => {
     setIntent("owner");
@@ -98,6 +103,7 @@ export function useRegisterType() {
     emailRegister: register("email"),
     emailError: errors.email?.message,
     error: errors.root?.message ?? null,
+    redirectHref,
     submitting: isSubmitting,
     handlePickOwner,
     handlePickEmployee,

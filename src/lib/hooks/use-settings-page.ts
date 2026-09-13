@@ -27,10 +27,9 @@ export function buildProfileSubtitle(
 }
 
 export function useSettingsPageActions(initialEmployees?: Employee[]) {
-  const { platformRole } = useActiveClinic();
+  const { accountType, platformRole } = useActiveClinic();
   const { profile, signOut, user } = useAuth();
-  const canViewClinicRequests =
-    platformRole === "employee" || platformRole === "external";
+  const canViewClinicRequests = accountType === "external";
   const { requests: pendingClinicRequests } = usePendingClinicRequests(
     user?.email,
     canViewClinicRequests,

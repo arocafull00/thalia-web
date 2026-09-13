@@ -1,10 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
-import { lookupEmployeeInvitationsByEmail } from "@/dal/employees.dal";
-import {
-  normalizeEmail,
-  type PendingClinicRequest,
-} from "@/lib/clinic-requests";
+import type { PendingClinicRequest } from "@/lib/clinic-requests";
+import { useClinicRequestsStore } from "@/stores/clinic-requests-store";
 
 type UsePendingClinicRequestsResult = {
   requests: PendingClinicRequest[];
@@ -17,53 +15,36 @@ export function usePendingClinicRequests(
   email: string | undefined,
   enabled = true,
 ): UsePendingClinicRequestsResult {
-  const [requests, setRequests] = useState<PendingClinicRequest[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { entry, fetchRequests, clearRequests } = useClinicRequestsStore(
+    useShallow((state) => ({
+      entry: state.requests,
+      fetchRequests: state.fetchRequests,
+      clearRequests: state.clearRequests,
+    })),
+  );
+
+  useEffect(() => {
+    if (!enabled || !email) {
+      clearRequests();
+      return;
+    }
+
+    void fetchRequests(email);
+  }, [clearRequests, email, enabled, fetchRequests]);
 
   const refresh = useCallback(async () => {
     if (!enabled || !email) {
-      setRequests([]);
-      setLoading(false);
+      clearRequests();
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    await fetchRequests(email, true);
+  }, [clearRequests, email, enabled, fetchRequests]);
 
-    let data;
-
-    try {
-      data = await lookupEmployeeInvitationsByEmail(normalizeEmail(email));
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : String(cause));
-      setRequests([]);
-      setLoading(false);
-      return;
-    }
-
-    const mapped = data.flatMap((row) => {
-      const clinicRaw = row.clinics as
-        { name: string } | { name: string }[] | null;
-      const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;
-
-      if (!clinic?.name) {
-        return [];
-      }
-
-      return [
-        {
-          token: row.token,
-          clinicName: clinic.name,
-          role: row.role,
-          expiresAt: row.expires_at,
-        },
-      ];
-    });
-
-    setRequests(mapped);
-    setLoading(false);
-  }, [email, enabled]);
-
-  return { requests, loading, error, refresh };
+  return {
+    requests: entry.data ?? [],
+    loading: entry.loading,
+    error: entry.error?.message ?? null,
+    refresh,
+  };
 }

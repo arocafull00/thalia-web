@@ -25,7 +25,7 @@ export const SETTINGS_COPY = {
   },
   stats: {
     activeEmployees: "Empleados activos",
-    pendingRequests: "Solicitudes pendientes",
+    pendingRequests: "Invitaciones pendientes",
     platformRole: "Rol en la plataforma",
     viewClinicRequests: "Ver solicitudes de clínica",
   },

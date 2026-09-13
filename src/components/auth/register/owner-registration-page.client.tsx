@@ -18,8 +18,10 @@ type Props = {
 
 export default function OwnerRegistrationPageClient({ onExit }: Props) {
   const {
+    authDisabled,
     disabled,
     errors,
+    handleGoogleSignIn,
     hasSession,
     isSupabaseConfigured,
     onBack,
@@ -61,8 +63,10 @@ export default function OwnerRegistrationPageClient({ onExit }: Props) {
           <div className="mt-8 space-y-6">
             {step === 1 ? (
               <OwnerAccountStep
+                authDisabled={authDisabled}
                 errors={errors}
                 hasSession={hasSession}
+                onGoogleSignIn={() => void handleGoogleSignIn()}
                 register={register}
               />
             ) : null}

@@ -18,9 +18,10 @@ Deno.serve(async (req) => {
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-  if (!supabaseUrl || !serviceRoleKey) {
+  if (!supabaseUrl || !anonKey || !serviceRoleKey) {
     return response({ error: "Supabase is not configured" }, 500);
   }
 
@@ -48,10 +49,40 @@ Deno.serve(async (req) => {
       return response({ error: "Invalid email" }, 400);
     }
 
+    const authorization = req.headers.get("Authorization") ?? "";
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authorization } },
+    });
+    const { data: authData, error: authError } =
+      await userClient.auth.getUser();
+    const authenticatedEmail = authData.user?.email?.trim().toLowerCase();
+
+    if (authError || !authData.user || !authenticatedEmail) {
+      return response({ error: "Unauthorized" }, 401);
+    }
+
+    if (email !== authenticatedEmail) {
+      return response({ error: "Forbidden" }, 403);
+    }
+
+    const { data: employee, error: employeeError } = await adminClient
+      .from("employees")
+      .select("account_type")
+      .eq("id", authData.user.id)
+      .maybeSingle();
+
+    if (employeeError) {
+      return response({ error: "Employee lookup failed" }, 500);
+    }
+
+    if (employee?.account_type !== "external") {
+      return response({ error: "Forbidden" }, 403);
+    }
+
     const { data, error } = await adminClient
       .from("invitation_tokens")
       .select("token, email, role, expires_at, clinics(name)")
-      .ilike("email", email)
+      .ilike("email", authenticatedEmail)
       .is("used_at", null)
       .gt("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false });

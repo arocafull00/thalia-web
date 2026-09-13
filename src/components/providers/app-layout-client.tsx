@@ -8,6 +8,7 @@ import { RedirectScreen } from "@/components/loader/redirect-screen";
 import AppShell from "@/components/ui/app-shell";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { usePendingClinicRequests } from "@/lib/hooks/use-pending-clinic-requests";
 import { hasRegistrationProfile } from "@/lib/registration-metadata";
 import { initSounds } from "@/lib/sound";
 import { useClinicNotificationsStore } from "@/stores/clinic-notifications-store";
@@ -25,7 +26,13 @@ export default function AppLayoutClient({
 }: AppLayoutClientProps) {
   const router = useRouter();
   const { loading, user } = useAuth();
-  const { clinicId, platformRole, loading: clinicLoading } = useActiveClinic();
+  const {
+    accountType,
+    clinicId,
+    platformRole,
+    loading: clinicLoading,
+  } = useActiveClinic();
+  usePendingClinicRequests(user?.email, accountType === "external");
   const setNavVisibility = useShellStore((state) => state.setNavVisibility);
   const subscribeRealtime = useInventoryAlertsStore(
     (state) => state.subscribeRealtime,

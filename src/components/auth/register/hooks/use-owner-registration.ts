@@ -2,13 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { REGISTER_OWNER_COPY } from "@/copy/register-owner-copy";
 import { captureEvent } from "@/lib/analytics";
 import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
+import { signInWithGoogleFlow } from "@/lib/auth/sign-in-with-google-flow";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -67,6 +68,7 @@ export function useOwnerRegistration() {
   const setActiveClinic = useClinicStore((state) => state.setActiveClinic);
   const setIntent = useOnboardingIntentStore((state) => state.setIntent);
   const [step, setStep] = useState<OwnerRegistrationStep>(1);
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
   const createdClinicId = useRef<string | null>(null);
 
   const metadataFullName =
@@ -80,6 +82,7 @@ export function useOwnerRegistration() {
     formState: { errors, isSubmitting },
     handleSubmit,
     register,
+    reset,
     setError,
     trigger,
     watch,
@@ -93,6 +96,29 @@ export function useOwnerRegistration() {
   });
 
   const values = watch();
+
+  useEffect(() => {
+    reset(
+      getDefaultValues(metadataFullName, user?.email ?? "", !hasSession),
+    );
+  }, [hasSession, metadataFullName, reset, user?.email]);
+
+  const handleGoogleSignIn = async () => {
+    clearErrors("root");
+    setGoogleSubmitting(true);
+
+    const result = await signInWithGoogleFlow({
+      onboardingIntent: "owner",
+      next: "/register",
+    });
+
+    if (result.error) {
+      setError("root", { message: result.error });
+      toast.error(result.error);
+    }
+
+    setGoogleSubmitting(false);
+  };
 
   const goToStep = (nextStep: OwnerRegistrationStep) => {
     clearErrors("root");
@@ -228,9 +254,14 @@ export function useOwnerRegistration() {
     }
   });
 
+  const authDisabled =
+    isSubmitting || googleSubmitting || !isSupabaseConfigured;
+
   return {
-    disabled: isSubmitting || !isSupabaseConfigured,
+    authDisabled,
+    disabled: authDisabled,
     errors,
+    handleGoogleSignIn,
     hasSession,
     isSupabaseConfigured,
     onBack: handleBack,
@@ -239,7 +270,7 @@ export function useOwnerRegistration() {
     register,
     setStep: goToStep,
     step,
-    submitting: isSubmitting,
+    submitting: isSubmitting || googleSubmitting,
     values,
   };
 }

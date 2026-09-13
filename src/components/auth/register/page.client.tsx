@@ -1,16 +1,22 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import RegisterEmployeeEmail from "@/components/auth/register/components/register-employee-email";
 import RegisterTypePicker from "@/components/auth/register/components/register-type-picker";
 import OwnerRegistrationPageClient from "@/components/auth/register/owner-registration-page.client";
+import { RedirectScreen } from "@/components/loader/redirect-screen";
 import { useRegisterType } from "@/lib/hooks/use-register-type";
 
 export default function RegisterPageClient() {
+  const router = useRouter();
   const {
     step,
     emailRegister,
     emailError,
     error,
+    redirectHref,
     submitting,
     handlePickOwner,
     handlePickEmployee,
@@ -19,6 +25,18 @@ export default function RegisterPageClient() {
     handleOwnerExit,
     handleSignOut,
   } = useRegisterType();
+
+  useEffect(() => {
+    if (!redirectHref) {
+      return;
+    }
+
+    router.replace(redirectHref);
+  }, [redirectHref, router]);
+
+  if (redirectHref) {
+    return <RedirectScreen />;
+  }
 
   if (step === "owner") {
     return <OwnerRegistrationPageClient onExit={handleOwnerExit} />;

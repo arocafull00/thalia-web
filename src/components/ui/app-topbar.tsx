@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
+import ClinicInvitationDialog from "@/components/notifications/components/clinic-invitation-dialog";
 import PwaInstallDialog from "@/components/pwa/components/pwa-install-dialog";
 import { usePwaInstall } from "@/components/pwa/hooks/use-pwa-install";
 import AppDialog from "@/components/ui/app-dialog";
@@ -31,9 +32,12 @@ import { NOTIFICATIONS_COPY } from "@/copy/external-appointment-copy";
 import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
 import { TOPBAR_COPY } from "@/copy/topbar-copy";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import type { PendingClinicRequest } from "@/lib/clinic-requests";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { appNavItemTitle } from "@/lib/hooks/use-app-nav-items";
+import { useAuthStore } from "@/stores/auth-store";
 import { useClinicNotificationsStore } from "@/stores/clinic-notifications-store";
+import { useClinicRequestsStore } from "@/stores/clinic-requests-store";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import type { QueryEntry } from "@/stores/query-state";
 import { useTopbarActionStore } from "@/stores/topbar-action-store";
@@ -54,11 +58,26 @@ const EMPTY_CLINIC_NOTIFICATIONS: QueryEntry<ClinicNotificationWithClinic[]> = {
   error: null,
 };
 
+const EMPTY_CLINIC_REQUESTS: QueryEntry<PendingClinicRequest[]> = {
+  data: [],
+  loading: false,
+  error: null,
+};
+
 export default function AppTopbar() {
   const pathname = usePathname();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [selectedInvitation, setSelectedInvitation] =
+    useState<PendingClinicRequest | null>(null);
   const [pwaInstallOpen, setPwaInstallOpen] = useState(false);
-  const { clinicTimezone: timezone, platformRole } = useActiveClinic();
+  const {
+    accountType,
+    clinicTimezone: timezone,
+    platformRole,
+  } = useActiveClinic();
+  const sessionEmail = useAuthStore(
+    (state) => state.session?.user.email ?? null,
+  );
   const { action, breadcrumb, actions, menu } = useTopbarActionStore(
     useShallow((state) => ({
       action: state.action,
@@ -86,14 +105,30 @@ export default function AppTopbar() {
       markAsRead: state.markAsRead,
     })),
   );
+  const {
+    requests: clinicRequests,
+    fetchRequests: fetchClinicRequests,
+    clearResponseError,
+  } = useClinicRequestsStore(
+    useShallow((state) => ({
+      requests: state.requests,
+      fetchRequests: state.fetchRequests,
+      clearResponseError: state.clearResponseError,
+    })),
+  );
   const canSeeInventoryAlerts = platformRole === "owner";
   const canSeeClinicNotifications =
     platformRole === "owner" ||
     platformRole === "admin" ||
     platformRole === "external";
+  const canSeeClinicRequests = accountType === "external";
+  const clinicRequestCount = canSeeClinicRequests
+    ? (clinicRequests.data?.length ?? 0)
+    : 0;
   const combinedUnreadCount =
     (canSeeInventoryAlerts ? unreadCount : 0) +
-    (canSeeClinicNotifications ? clinicUnreadCount : 0);
+    (canSeeClinicNotifications ? clinicUnreadCount : 0) +
+    clinicRequestCount;
   const title = appNavItemTitle(pathname);
   const topbarActions = action ? [action] : actions;
   const hasOverflowMenu =
@@ -119,6 +154,16 @@ export default function AppTopbar() {
     if (canSeeClinicNotifications) {
       void markClinicNotificationsAsRead();
     }
+
+    if (canSeeClinicRequests && sessionEmail) {
+      void fetchClinicRequests(sessionEmail, true);
+    }
+  };
+
+  const handleInvitationSelect = (invitation: PendingClinicRequest) => {
+    clearResponseError();
+    setNotificationsOpen(false);
+    setSelectedInvitation(invitation);
   };
 
   /*
@@ -299,10 +344,25 @@ export default function AppTopbar() {
               ? notifications
               : EMPTY_CLINIC_NOTIFICATIONS
           }
+          invitations={
+            canSeeClinicRequests ? clinicRequests : EMPTY_CLINIC_REQUESTS
+          }
           timezone={timezone}
           onClose={() => setNotificationsOpen(false)}
+          onInvitationSelect={handleInvitationSelect}
+          onRetryInvitations={() => {
+            if (sessionEmail) {
+              void fetchClinicRequests(sessionEmail, true);
+            }
+          }}
         />
       </AppDialog>
+      {selectedInvitation ? (
+        <ClinicInvitationDialog
+          invitation={selectedInvitation}
+          onClose={() => setSelectedInvitation(null)}
+        />
+      ) : null}
       <PwaInstallDialog
         open={pwaInstallOpen}
         onOpenChange={setPwaInstallOpen}

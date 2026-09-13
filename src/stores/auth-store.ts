@@ -41,7 +41,7 @@ type AuthStore = {
     password: string,
     metadata: { full_name: string },
   ) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (next?: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -160,13 +160,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     captureEvent("signup");
   },
 
-  signInWithGoogle: async () => {
+  signInWithGoogle: async (next = "/dashboard") => {
     assertSupabaseConfigured();
+
+    const destination =
+      next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/callback?next=/dashboard`,
+        redirectTo: `${window.location.origin}/callback?next=${encodeURIComponent(destination)}`,
       },
     });
 

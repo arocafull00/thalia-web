@@ -7,6 +7,7 @@ import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth, useUploadProfileAvatar } from "@/lib/hooks/use-auth";
 import { useEmployees } from "@/lib/hooks/use-employees";
 import { usePendingClinicRequests } from "@/lib/hooks/use-pending-clinic-requests";
+import { useResendCooldown } from "@/lib/hooks/use-resend-cooldown";
 import { compressAvatarImage } from "@/lib/image-compression";
 import { canManageClinicSettings } from "@/lib/settings-sections";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
@@ -29,6 +30,11 @@ export function buildProfileSubtitle(
 export function useSettingsPageActions() {
   const { accountType, platformRole } = useActiveClinic();
   const { profile, signOut, user } = useAuth();
+  const {
+    secondsLeft: passwordCooldownSeconds,
+    isCoolingDown: isPasswordCoolingDown,
+    start: startPasswordCooldown,
+  } = useResendCooldown(user?.id ?? null);
   const canViewClinicRequests = accountType === "external";
   const { requests: pendingClinicRequests } = usePendingClinicRequests(
     user?.email,
@@ -58,6 +64,12 @@ export function useSettingsPageActions() {
     employees.data?.filter((employee) => employee.active).length ?? 0;
 
   const handleChangePassword = async () => {
+    // La espera es informativa; quien la salte se topará igualmente con el
+    // límite que aplica Supabase en el servidor.
+    if (isPasswordCoolingDown) {
+      return;
+    }
+
     if (!user?.email) {
       toast.error(SETTINGS_COPY.account.changePasswordNoEmail);
       return;
@@ -74,6 +86,7 @@ export function useSettingsPageActions() {
       }
 
       toast.success(SETTINGS_COPY.account.changePasswordSuccess);
+      startPasswordCooldown();
     } catch {
       toast.error(SETTINGS_COPY.account.changePasswordError);
     } finally {
@@ -120,6 +133,8 @@ export function useSettingsPageActions() {
     handleSignOut,
     canManageClinic,
     localAvatarUri,
+    passwordCooldownSeconds,
+    isPasswordCoolingDown,
     passwordSubmitting,
     pendingClinicRequests,
     profile,

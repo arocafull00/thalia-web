@@ -53,6 +53,7 @@ export default function SettingsLayoutClient({
     handleChangePassword,
     handleSignOut,
     canManageClinic,
+    passwordCooldownSeconds,
     passwordSubmitting,
     signOutSubmitting,
     uploadAvatar,
@@ -151,6 +152,7 @@ export default function SettingsLayoutClient({
             activeEmployeesCount={activeEmployeesCount}
             onChangePassword={() => void handleChangePassword()}
             onSignOut={() => void handleSignOut()}
+            passwordCooldownSeconds={passwordCooldownSeconds}
             passwordSubmitting={passwordSubmitting}
             signOutSubmitting={signOutSubmitting}
             clinic={clinic}

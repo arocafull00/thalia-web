@@ -1,5 +1,12 @@
 # Changelog
 
+## 107-cuenta-atras-al-reenviar-contrasena
+
+- Tras pedir el correo de cambiar contraseña, el botón muestra una cuenta atrás de 60 s y se deshabilita. Antes se podía pulsar sin parar sin ver nada distinto, y el usuario acababa pensando que la pantalla estaba rota
+- La espera se guarda por usuario y sobrevive a recargar la página. Con estado en memoria bastaba refrescar para ver el botón activo, pulsar, y que Supabase rechazase el envío igual
+- No añade protección: el límite real lo aplica Supabase Auth en el servidor. Esto lo hace visible
+
+
 ## 125-bucket-de-avatares-privado
 
 - **Las fotos de los pacientes dejan de ser públicas.** El bucket `avatars` tenía `public = true` y se servía con URL pública: cualquiera con el enlace veía la cara de un paciente sin autenticarse, y ninguna política intervenía porque en un bucket público el RLS no se aplica

@@ -14,6 +14,7 @@ type SettingsSectionContentProps = {
   activeEmployeesCount: number;
   onChangePassword: () => void;
   onSignOut: () => void;
+  passwordCooldownSeconds: number;
   passwordSubmitting: boolean;
   signOutSubmitting: boolean;
   clinic: ClinicInfo | null;
@@ -31,6 +32,7 @@ export default function SettingsSectionContent({
   activeEmployeesCount,
   onChangePassword,
   onSignOut,
+  passwordCooldownSeconds,
   passwordSubmitting,
   signOutSubmitting,
   clinic,
@@ -47,6 +49,7 @@ export default function SettingsSectionContent({
         onAvatarFileSelected={onAvatarFileSelected}
         onChangePassword={onChangePassword}
         onSignOut={onSignOut}
+        passwordCooldownSeconds={passwordCooldownSeconds}
         passwordSubmitting={passwordSubmitting}
         signOutSubmitting={signOutSubmitting}
       />

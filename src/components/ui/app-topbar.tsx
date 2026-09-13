@@ -229,9 +229,24 @@ export default function AppTopbar() {
             size="icon"
             className="shrink-0 rounded-button text-ink-secondary hover:bg-(--hover-overlay) hover:text-ink lg:hidden"
           />
+          {/*
+            En escritorio el rastro y el título van en una línea; en móvil se
+            mantienen apilados, donde el ancho no da para los dos seguidos.
+            `items-baseline` los alinea por la base del texto, que es como se
+            leen bien con tamaños tan distintos.
+
+            El corte es `xl` y no `lg`: a 1024px el selector de clínica y los
+            botones ya dejan al título sin sitio —se recortaba a una letra
+            incluso antes de este cambio—, y en una sola línea desaparecería
+            del todo. Por debajo de 1280px se mantiene apilado, donde el título
+            dispone del ancho completo del bloque.
+          */}
           {breadcrumb ? (
-            <div className="min-w-0 flex-1">
-              <Breadcrumb aria-label={breadcrumb.rootLabel} className="min-w-0">
+            <div className="min-w-0 flex-1 xl:flex xl:items-baseline xl:gap-1.5">
+              <Breadcrumb
+                aria-label={breadcrumb.rootLabel}
+                className="min-w-0 xl:shrink-0"
+              >
                 <BreadcrumbList className="min-w-0 flex-nowrap text-xs text-ink-muted">
                   <BreadcrumbItem className="shrink-0">
                     <BreadcrumbLink asChild>
@@ -243,7 +258,8 @@ export default function AppTopbar() {
                   <BreadcrumbSeparator className="shrink-0" />
                 </BreadcrumbList>
               </Breadcrumb>
-              <h1 className="truncate text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
+              {/* `min-w-0` para que `truncate` funcione dentro del flex. */}
+              <h1 className="min-w-0 truncate text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink">
                 {breadcrumb.currentLabel}
               </h1>
             </div>

@@ -1,5 +1,12 @@
 # Changelog
 
+## 81-breadcrumb-en-una-linea
+
+- En escritorio el rastro y el título de la página van en una sola línea —«Pacientes › Alejandro Blanco»— en lugar de apilados. La barra baja de 58 a 54 px
+- En móvil se mantiene apilado, donde el ancho no da para los dos seguidos
+- El corte está en `xl` (1280 px) y no en `lg`: a 1024 px el selector de clínica y los botones ya dejan al título sin sitio, y en una sola línea desaparecería del todo
+
+
 ## 107-cuenta-atras-al-reenviar-contrasena
 
 - Tras pedir el correo de cambiar contraseña, el botón muestra una cuenta atrás de 60 s y se deshabilita. Antes se podía pulsar sin parar sin ver nada distinto, y el usuario acababa pensando que la pantalla estaba rota

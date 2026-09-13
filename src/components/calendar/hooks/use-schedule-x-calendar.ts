@@ -206,6 +206,10 @@ function toDateOnlyIso(value: unknown) {
   return raw.split("T")[0].split("[")[0];
 }
 
+function eventOverlapForViewMode(viewMode: CalendarViewMode) {
+  return viewMode !== "day";
+}
+
 function getRangeForViewMode(viewMode: CalendarViewMode, anchor: Date) {
   if (viewMode === "month") {
     return { start: startOfMonth(anchor), end: endOfMonth(anchor) };
@@ -442,6 +446,7 @@ export function useScheduleXCalendar(
     weekOptions: {
       nDays: 7,
       gridHeight,
+      eventOverlap: eventOverlapForViewMode(initialConfig.viewMode),
     },
     selectedDate: initialConfig.selectedDate,
     dayBoundaries: hourRange.dayBoundaries,
@@ -494,8 +499,17 @@ export function useScheduleXCalendar(
     if (!calendarApp) return;
 
     calendarControls.setDayBoundaries(hourRange.dayBoundaries);
-    calendarControls.setWeekOptions({ gridHeight });
-  }, [calendarApp, calendarControls, gridHeight, hourRange.dayBoundaries]);
+    calendarControls.setWeekOptions({
+      gridHeight,
+      eventOverlap: eventOverlapForViewMode(viewMode),
+    });
+  }, [
+    calendarApp,
+    calendarControls,
+    gridHeight,
+    hourRange.dayBoundaries,
+    viewMode,
+  ]);
 
   useEffect(() => {
     if (!calendarApp) return;

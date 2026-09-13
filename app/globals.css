@@ -507,6 +507,10 @@ body {
   min-height: 32px;
 }
 
+.sx-react-calendar-wrapper[data-calendar-view="day"] .sx__time-grid-event {
+  padding: 2px 1px 5px 1px !important;
+}
+
 .sx-react-calendar-wrapper .sx__time-grid-event-inner {
   color: var(--color-ink);
   height: 100%;

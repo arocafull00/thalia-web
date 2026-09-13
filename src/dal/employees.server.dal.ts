@@ -11,10 +11,16 @@ import {
   unwrapSupabaseList,
   unwrapSupabaseNullable,
 } from "@/lib/supabase-query";
-import type { Employee } from "@/types/database.types";
+import type { ClinicMembershipStatus, Employee } from "@/types/database.types";
 
 const EMPLOYEE_CLINIC_SELECT =
   "*, clinic_memberships!clinic_memberships_employee_fkey!inner(clinic_id, status)";
+
+type EmployeeWithMembership = Employee & {
+  clinic_memberships:
+    | { status: ClinicMembershipStatus }
+    | Array<{ status: ClinicMembershipStatus }>;
+};
 
 export async function getEmployees(
   clinicId: string | null,
@@ -100,14 +106,50 @@ export async function getEmployee(
   return unwrapSupabaseNullable(data, error);
 }
 
+export async function getClinicEmployee(
+  employeeId: string,
+  clinicId: string,
+): Promise<Employee | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("employees")
+    .select(
+      "*, clinic_memberships!clinic_memberships_employee_fkey!inner(status)",
+    )
+    .eq("id", employeeId)
+    .eq("clinic_memberships.clinic_id", clinicId)
+    .maybeSingle();
+  const row = unwrapSupabaseNullable(
+    data,
+    error,
+  ) as EmployeeWithMembership | null;
+
+  if (!row) {
+    return null;
+  }
+
+  const { clinic_memberships, ...employee } = row;
+  const membership = Array.isArray(clinic_memberships)
+    ? clinic_memberships[0]
+    : clinic_memberships;
+
+  if (employee.account_type !== "external") {
+    return employee;
+  }
+
+  return { ...employee, active: membership?.status === "active" };
+}
+
 export async function getEmployeeAppointments(
   employeeId: string,
+  clinicId: string,
 ): Promise<EmployeeAppointmentRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("appointments")
     .select("*, patients(id, full_name)")
     .eq("employee_id", employeeId)
+    .eq("clinic_id", clinicId)
     .order("starts_at", { ascending: false })
     .limit(50);
   return unwrapSupabaseList(data, error) as EmployeeAppointmentRow[];
@@ -115,6 +157,7 @@ export async function getEmployeeAppointments(
 
 export async function getEmployeeAppointmentStats(
   employeeId: string,
+  clinicId: string,
 ): Promise<EmployeeAppointmentStats> {
   const supabase = await createClient();
   const now = new Date().toISOString();
@@ -123,22 +166,26 @@ export async function getEmployeeAppointmentStats(
       supabase
         .from("appointments")
         .select("*", { count: "exact", head: true })
-        .eq("employee_id", employeeId),
+        .eq("employee_id", employeeId)
+        .eq("clinic_id", clinicId),
       supabase
         .from("appointments")
         .select("*", { count: "exact", head: true })
         .eq("employee_id", employeeId)
+        .eq("clinic_id", clinicId)
         .eq("status", "completed"),
       supabase
         .from("appointments")
         .select("*", { count: "exact", head: true })
         .eq("employee_id", employeeId)
+        .eq("clinic_id", clinicId)
         .gte("starts_at", now)
         .in("status", ["scheduled", "confirmed", "in_progress"]),
       supabase
         .from("appointments")
         .select("*", { count: "exact", head: true })
         .eq("employee_id", employeeId)
+        .eq("clinic_id", clinicId)
         .in("status", ["cancelled", "no_show"]),
     ]);
 

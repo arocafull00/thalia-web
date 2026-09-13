@@ -1,4 +1,4 @@
-import type { EmployeeAppointmentStats } from "@/stores/employees-store";
+import type { EmployeeAppointmentStats } from "@/dal/employees.dal";
 import type { Employee } from "@/types/database.types";
 
 import EmployeeProfileHeader from "./employee-profile-header";

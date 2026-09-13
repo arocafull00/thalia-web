@@ -1,8 +1,8 @@
-import type { EmployeeDetailTabId } from "@/lib/hooks/use-employee-detail-tabs";
 import type {
   EmployeeAppointmentRow,
   EmployeeAppointmentStats,
-} from "@/stores/employees-store";
+} from "@/dal/employees.dal";
+import type { EmployeeDetailTabId } from "@/lib/hooks/use-employee-detail-tabs";
 import type { Employee } from "@/types/database.types";
 
 import EmployeeTimeline from "../history/employee-timeline";

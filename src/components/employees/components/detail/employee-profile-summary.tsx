@@ -9,8 +9,8 @@ import {
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
+import type { EmployeeAppointmentStats } from "@/dal/employees.dal";
 import { formatDate } from "@/lib/format";
-import type { EmployeeAppointmentStats } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
 
 import EmployeeStatCard from "./employee-stat-card";

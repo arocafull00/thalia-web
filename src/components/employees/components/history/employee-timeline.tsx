@@ -7,6 +7,7 @@ import {
   type ProfileTimelineItem,
 } from "@/components/ui/profile/profile-timeline";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
+import type { EmployeeAppointmentRow } from "@/dal/employees.dal";
 import {
   appointmentStatusLabel,
   appointmentStatusVariant,
@@ -15,7 +16,6 @@ import {
   formatDate,
 } from "@/lib/format";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
-import type { EmployeeAppointmentRow } from "@/stores/employees-store";
 
 type EmployeeTimelineProps = {
   appointments: EmployeeAppointmentRow[];
@@ -68,7 +68,7 @@ export default function EmployeeTimeline({
     );
   }
 
-  if (error) {
+  if (error && appointments.length === 0) {
     return (
       <section
         aria-labelledby="employee-history-heading"

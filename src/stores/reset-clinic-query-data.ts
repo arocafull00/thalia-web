@@ -1,7 +1,6 @@
 import { useAppointmentsStore } from "@/stores/appointments-store";
 import { useCampaignsStore } from "@/stores/campaigns-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
-import { useEmployeesStore } from "@/stores/employees-store";
 import { useFinancesStore } from "@/stores/finances-store";
 import { useInventoryStore } from "@/stores/inventory-store";
 import { usePatientsStore } from "@/stores/patients-store";
@@ -19,16 +18,6 @@ export function resetClinicQueryData() {
   });
   useCampaignsStore.setState({ byPage: {}, byId: {} });
   useDashboardStore.setState({ data: emptyQueryEntry() });
-  useEmployeesStore.setState({
-    list: emptyQueryEntry(),
-    byPage: {},
-    byId: {},
-    statsByEmployeeId: {},
-    appointmentsByEmployeeId: {},
-    invitations: emptyQueryEntry(),
-    invitationMutatingId: null,
-    invitationMutationError: null,
-  });
   useFinancesStore.setState({
     byPage: {},
     summaryByKey: {},

@@ -6,20 +6,17 @@ import { useMemo } from "react";
 import AppSearchableCombobox from "@/components/ui/app-searchable-combobox";
 import { CALENDAR_COPY } from "@/copy/calendar-copy";
 import { useEmployees } from "@/lib/hooks/use-employees";
-import type { Employee } from "@/types/database.types";
 
 type CalendarEmployeeFilterProps = {
   employeeId: string | null;
-  initialEmployees?: Employee[];
   onEmployeeIdChange: (employeeId: string | null) => void;
 };
 
 export default function CalendarEmployeeFilter({
   employeeId,
-  initialEmployees,
   onEmployeeIdChange,
 }: CalendarEmployeeFilterProps) {
-  const employees = useEmployees(initialEmployees);
+  const employees = useEmployees();
 
   const activeEmployees = useMemo(
     () =>

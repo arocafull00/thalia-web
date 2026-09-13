@@ -1,26 +1,50 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
-import type {
-  EmployeeAppointmentRow,
-  EmployeeAppointmentStats,
-  EmployeePageResult,
+import {
+  cancelEmployeeInvitation,
+  inviteEmployee,
+  replaceEmployeeInvitation,
+  setExternalMembershipStatus,
+  updateEmployee,
+  type EmployeeAppointmentRow,
+  type EmployeeAppointmentStats,
 } from "@/dal/employees.dal";
 import { EMPLOYEES_PAGE_SIZE } from "@/lib/employee-pagination";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import { useAuth } from "@/lib/hooks/use-auth";
 import {
-  useClinicServerSeed,
-  useServerSeed,
-} from "@/lib/hooks/use-server-seed";
+  employeeAppointmentsQuery,
+  employeeInvitationsQuery,
+  employeeQuery,
+  employeesPageQuery,
+  employeesQuery,
+  employeeStatsQuery,
+} from "@/lib/query/employees-browser-query";
 import {
-  employeesPageKey,
-  useEmployeesStore,
-  type CreateEmployeeInput,
+  employeeKeys,
+  invalidateEmployeeDirectory,
+  requireEmployeeQueryScope,
+  setEmployeeQueryData,
   type EmployeesPageQuery,
-} from "@/stores/employees-store";
-import { isInitialLoading } from "@/stores/query-state";
-import type { Employee } from "@/types/database.types";
+} from "@/lib/query/employees-query";
+import {
+  employeeInviteSchema,
+  employeeUpdateSchema,
+} from "@/lib/schemas/employee-schema";
+import { formatZodError } from "@/lib/schemas/schema-helpers";
+import type {
+  ClinicMembershipInvitationRole,
+  Employee,
+  PendingEmployeeInvitation,
+} from "@/types/database.types";
 
-export type { CreateEmployeeInput };
+export type CreateEmployeeInput = {
+  email: string;
+  role: ClinicMembershipInvitationRole;
+};
+
+export type { EmployeeAppointmentRow, EmployeeAppointmentStats };
 
 type EmployeesPageFilters = {
   active: boolean | null;
@@ -29,24 +53,37 @@ type EmployeesPageFilters = {
   search: string;
 };
 
-type EmployeesPageSeed = {
-  initialPage?: EmployeePageResult;
-  initialQuery?: EmployeesPageQuery;
+type UpdateEmployeeInput = {
+  id: string;
+  values: Partial<Employee>;
 };
 
-/**
- * Listado de personal paginado en servidor.
- *
- * Filtros, búsqueda y orden viajan al servidor: filtrar en cliente sobre una
- * página ya recortada daría recuentos falsos y rompería la paginación.
- *
- * Convive con `useEmployees`, que sigue devolviendo la lista completa para el
- * calendario y los diálogos de citas.
- */
-export function useEmployeesPage(
-  filters: EmployeesPageFilters,
-  seed?: EmployeesPageSeed,
-) {
+type ReplaceEmployeeInvitationInput = {
+  invitationId: string;
+  values: CreateEmployeeInput;
+};
+
+type SetExternalMembershipStatusInput = {
+  employeeId: string;
+  status: "active" | "suspended";
+};
+
+function useEmployeeQueryScope() {
+  const { user } = useAuth();
+  const clinicId = useClinicId();
+  const userId = user?.id ?? "";
+
+  return useMemo(
+    () => ({
+      scope: { userId, clinicId: clinicId ?? "" },
+      enabled: Boolean(userId && clinicId),
+    }),
+    [clinicId, userId],
+  );
+}
+
+export function useEmployeesPage(filters: EmployeesPageFilters) {
+  const { scope, enabled } = useEmployeeQueryScope();
   const query = useMemo<EmployeesPageQuery>(
     () => ({
       search: filters.search,
@@ -57,226 +94,251 @@ export function useEmployeesPage(
     }),
     [filters.active, filters.page, filters.role, filters.search],
   );
-
-  const key = employeesPageKey(query);
-  const entry = useEmployeesStore((state) => state.byPage[key]);
-  const fetchEmployeesPage = useEmployeesStore(
-    (state) => state.fetchEmployeesPage,
+  const result = useQuery({
+    ...employeesPageQuery(scope, query),
+    enabled,
+  });
+  const employees = useMemo(
+    () => result.data?.employees ?? [],
+    [result.data?.employees],
   );
-  const seedEmployeesPage = useEmployeesStore(
-    (state) => state.seedEmployeesPage,
-  );
-
-  // La siembra sólo vale para la consulta exacta que resolvió el servidor: si
-  // los filtros de la URL no coinciden, se descarta y el cliente vuelve a pedir.
-  const seededResult = useServerSeed(
-    key,
-    seed?.initialQuery ? employeesPageKey(seed.initialQuery) : "",
-    seed?.initialPage,
-  );
-  const hasClientData = entry?.data != null;
-
-  useEffect(() => {
-    if (seededResult === undefined || hasClientData) {
-      return;
-    }
-
-    seedEmployeesPage(query, seededResult);
-  }, [hasClientData, query, seedEmployeesPage, seededResult]);
-
-  useEffect(() => {
-    if (seededResult !== undefined) {
-      return;
-    }
-
-    void fetchEmployeesPage(query);
-  }, [fetchEmployeesPage, query, seededResult]);
-
-  const refresh = useCallback(
-    () => fetchEmployeesPage(query),
-    [fetchEmployeesPage, query],
-  );
-
-  const resolved = entry?.data ?? seededResult ?? null;
-  const employees = useMemo(() => resolved?.employees ?? [], [resolved]);
 
   return {
     employees,
-    total: resolved?.total ?? 0,
-    error: entry?.error ?? null,
-    isLoading: resolved == null && isInitialLoading(entry),
-    refresh,
+    total: result.data?.total ?? 0,
+    error: result.error,
+    isLoading: result.data == null && result.isPending,
+    isPending: result.isPending,
+    isFetching: result.isFetching,
+    refresh: result.refetch,
+    refetch: result.refetch,
   };
 }
 
-export function useEmployees(initialData?: Employee[]) {
-  const entry = useEmployeesStore((state) => state.list);
-  const fetchEmployees = useEmployeesStore((state) => state.fetchEmployees);
-  const clinicId = useClinicId();
-  const seededData = useClinicServerSeed(clinicId, initialData);
-  const hasClientData = entry.data != null;
-
-  useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
-      return;
-    }
-
-    void fetchEmployees();
-  }, [clinicId, fetchEmployees, hasClientData, seededData]);
-
-  const data = entry.data ?? seededData;
+export function useEmployees() {
+  const { scope, enabled } = useEmployeeQueryScope();
+  const result = useQuery({
+    ...employeesQuery(scope),
+    enabled,
+  });
 
   return {
-    data,
-    isLoading: data == null && isInitialLoading(entry),
-    error: entry.error,
-    refresh: fetchEmployees,
+    data: result.data ?? null,
+    error: result.error,
+    isLoading: result.data == null && result.isPending,
+    isPending: result.isPending,
+    isFetching: result.isFetching,
+    refresh: result.refetch,
+    refetch: result.refetch,
   };
 }
 
-export function useEmployee(employeeOrId: Employee | string) {
-  const employeeId =
-    typeof employeeOrId === "string" ? employeeOrId : employeeOrId.id;
-  const initialData =
-    typeof employeeOrId === "string" ? undefined : employeeOrId;
-  const entry = useEmployeesStore((state) => state.byId[employeeId]);
-  const fetchEmployee = useEmployeesStore((state) => state.fetchEmployee);
-  const seededData = useServerSeed(
-    employeeId,
-    initialData?.id ?? "",
-    initialData,
-  );
-  const hasClientData = entry?.data != null;
-
-  useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
-      return;
-    }
-
-    void fetchEmployee(employeeId);
-  }, [employeeId, fetchEmployee, hasClientData, seededData]);
-
-  const data = entry?.data ?? seededData;
+export function useEmployee(employeeId: string) {
+  const { scope, enabled } = useEmployeeQueryScope();
+  const result = useQuery({
+    ...employeeQuery(scope, employeeId),
+    enabled: enabled && Boolean(employeeId),
+  });
 
   return {
-    data,
-    isLoading: data == null && isInitialLoading(entry),
-    error: entry?.error,
+    data: result.data ?? null,
+    error: result.error,
+    isLoading: result.data == null && result.isPending,
+    isPending: result.isPending,
+    isFetching: result.isFetching,
+    refresh: result.refetch,
+    refetch: result.refetch,
   };
 }
 
-export function useEmployeeAppointmentStats(
-  employeeId: string,
-  initialData?: EmployeeAppointmentStats,
-) {
-  const entry = useEmployeesStore(
-    (state) => state.statsByEmployeeId[employeeId],
-  );
-  const fetchEmployeeStats = useEmployeesStore(
-    (state) => state.fetchEmployeeStats,
-  );
-  const seededData = useServerSeed(
-    employeeId,
-    initialData === undefined ? "" : employeeId,
-    initialData,
-  );
-  const hasClientData = entry?.data != null;
-
-  useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
-      return;
-    }
-
-    void fetchEmployeeStats(employeeId);
-  }, [employeeId, fetchEmployeeStats, hasClientData, seededData]);
-
-  const data = entry?.data ?? seededData;
+export function useEmployeeAppointmentStats(employeeId: string) {
+  const { scope, enabled } = useEmployeeQueryScope();
+  const result = useQuery({
+    ...employeeStatsQuery(scope, employeeId),
+    enabled: enabled && Boolean(employeeId),
+  });
 
   return {
-    data,
-    isLoading: data == null && isInitialLoading(entry),
-    error: entry?.error,
+    data: result.data ?? null,
+    error: result.error,
+    isLoading: result.data == null && result.isPending,
+    isPending: result.isPending,
+    isFetching: result.isFetching,
+    refresh: result.refetch,
+    refetch: result.refetch,
   };
 }
 
-export function useEmployeeAppointments(
-  employeeId: string,
-  initialData?: EmployeeAppointmentRow[],
-) {
-  const entry = useEmployeesStore(
-    (state) => state.appointmentsByEmployeeId[employeeId],
-  );
-  const fetchEmployeeAppointments = useEmployeesStore(
-    (state) => state.fetchEmployeeAppointments,
-  );
-  const seededData = useServerSeed(
-    employeeId,
-    initialData === undefined ? "" : employeeId,
-    initialData,
-  );
-  const hasClientData = entry?.data != null;
-
-  useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
-      return;
-    }
-
-    void fetchEmployeeAppointments(employeeId);
-  }, [employeeId, fetchEmployeeAppointments, hasClientData, seededData]);
-
-  const data = entry?.data ?? seededData;
+export function useEmployeeAppointments(employeeId: string) {
+  const { scope, enabled } = useEmployeeQueryScope();
+  const result = useQuery({
+    ...employeeAppointmentsQuery(scope, employeeId),
+    enabled: enabled && Boolean(employeeId),
+  });
 
   return {
-    data,
-    isLoading: data == null && isInitialLoading(entry),
-    error: entry?.error,
+    data: result.data ?? null,
+    error: result.error,
+    isLoading: result.data == null && result.isPending,
+    isPending: result.isPending,
+    isFetching: result.isFetching,
+    refresh: result.refetch,
+    refetch: result.refetch,
+  };
+}
+
+export function usePendingEmployeeInvitations() {
+  const { scope, enabled } = useEmployeeQueryScope();
+  const result = useQuery({
+    ...employeeInvitationsQuery(scope),
+    enabled,
+  });
+
+  return {
+    data: result.data ?? null,
+    error: result.error,
+    isLoading: result.data == null && result.isPending,
+    isPending: result.isPending,
+    isFetching: result.isFetching,
+    refresh: result.refetch,
+    refetch: result.refetch,
   };
 }
 
 export function useCreateEmployee() {
-  const createEmployee = useEmployeesStore((state) => state.createEmployee);
-  const isPending = useEmployeesStore((state) => state.creating);
-  const error = useEmployeesStore((state) => state.createError);
+  const queryClient = useQueryClient();
+  const { scope } = useEmployeeQueryScope();
 
-  const mutate = useCallback(
-    (
-      input: CreateEmployeeInput,
-      options?: { onSuccess?: () => void; onError?: (error: Error) => void },
-    ) => {
-      createEmployee(input)
-        .then(() => options?.onSuccess?.())
-        .catch((cause) =>
-          options?.onError?.(
-            cause instanceof Error ? cause : new Error(String(cause)),
-          ),
-        );
+  return useMutation({
+    mutationKey: [...employeeKeys.root(scope), "invite"],
+    mutationFn: async (input: CreateEmployeeInput) => {
+      const parsed = employeeInviteSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
+      return inviteEmployee({
+        ...parsed.data,
+        clinicId: requireEmployeeQueryScope(scope).clinicId,
+      });
     },
-    [createEmployee],
-  );
+    onSuccess: async (invitation) => {
+      queryClient.setQueryData<PendingEmployeeInvitation[]>(
+        employeeKeys.invitations(scope),
+        (current) => [invitation, ...(current ?? [])],
+      );
+      await queryClient.invalidateQueries({
+        queryKey: employeeKeys.invitations(scope),
+      });
+    },
+  });
+}
 
-  return { mutate, isPending, error };
+export function useReplaceEmployeeInvitation() {
+  const queryClient = useQueryClient();
+  const { scope } = useEmployeeQueryScope();
+
+  return useMutation({
+    mutationKey: [...employeeKeys.root(scope), "replace-invitation"],
+    mutationFn: async ({
+      invitationId,
+      values,
+    }: ReplaceEmployeeInvitationInput) => {
+      const parsed = employeeInviteSchema.safeParse(values);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
+      return replaceEmployeeInvitation({
+        ...parsed.data,
+        clinicId: requireEmployeeQueryScope(scope).clinicId,
+        invitationId,
+      });
+    },
+    onSuccess: async (invitation, { invitationId }) => {
+      queryClient.setQueryData<PendingEmployeeInvitation[]>(
+        employeeKeys.invitations(scope),
+        (current) =>
+          current?.map((entry) =>
+            entry.id === invitationId ? invitation : entry,
+          ) ?? [invitation],
+      );
+      await queryClient.invalidateQueries({
+        queryKey: employeeKeys.invitations(scope),
+      });
+    },
+  });
+}
+
+export function useCancelEmployeeInvitation() {
+  const queryClient = useQueryClient();
+  const { scope } = useEmployeeQueryScope();
+
+  return useMutation({
+    mutationKey: [...employeeKeys.root(scope), "cancel-invitation"],
+    mutationFn: async (invitationId: string) => {
+      await cancelEmployeeInvitation({
+        clinicId: requireEmployeeQueryScope(scope).clinicId,
+        invitationId,
+      });
+      return invitationId;
+    },
+    onSuccess: async (invitationId) => {
+      queryClient.setQueryData<PendingEmployeeInvitation[]>(
+        employeeKeys.invitations(scope),
+        (current) =>
+          current?.filter((entry) => entry.id !== invitationId) ?? [],
+      );
+      await queryClient.invalidateQueries({
+        queryKey: employeeKeys.invitations(scope),
+      });
+    },
+  });
 }
 
 export function useUpdateEmployee() {
-  const updateEmployee = useEmployeesStore((state) => state.updateEmployee);
-  const isPending = useEmployeesStore((state) => state.updating);
-  const error = useEmployeesStore((state) => state.updateError);
+  const queryClient = useQueryClient();
+  const { scope } = useEmployeeQueryScope();
 
-  const mutate = useCallback(
-    (
-      { id, values }: { id: string; values: Partial<Employee> },
-      options?: { onSuccess?: () => void; onError?: (error: Error) => void },
-    ) => {
-      updateEmployee(id, values)
-        .then(() => options?.onSuccess?.())
-        .catch((cause) =>
-          options?.onError?.(
-            cause instanceof Error ? cause : new Error(String(cause)),
-          ),
-        );
+  return useMutation({
+    mutationKey: [...employeeKeys.root(scope), "update"],
+    mutationFn: async ({ id, values }: UpdateEmployeeInput) => {
+      const parsed = employeeUpdateSchema.safeParse(values);
+
+      if (!parsed.success) {
+        throw new Error(formatZodError(parsed.error));
+      }
+
+      return updateEmployee(id, parsed.data);
     },
-    [updateEmployee],
-  );
+    onSuccess: async (employee) => {
+      setEmployeeQueryData(queryClient, scope, employee);
+      await invalidateEmployeeDirectory(queryClient, scope);
+    },
+  });
+}
 
-  return { mutate, isPending, error };
+export function useSetExternalMembershipStatus() {
+  const queryClient = useQueryClient();
+  const { scope } = useEmployeeQueryScope();
+
+  return useMutation({
+    mutationKey: [...employeeKeys.root(scope), "external-status"],
+    mutationFn: ({ employeeId, status }: SetExternalMembershipStatusInput) =>
+      setExternalMembershipStatus(
+        employeeId,
+        requireEmployeeQueryScope(scope).clinicId,
+        status,
+      ),
+    onSuccess: async (_data, { employeeId, status }) => {
+      queryClient.setQueryData<Employee>(
+        employeeKeys.detail(scope, employeeId),
+        (employee) =>
+          employee ? { ...employee, active: status === "active" } : employee,
+      );
+      await invalidateEmployeeDirectory(queryClient, scope);
+    },
+  });
 }

@@ -1,11 +1,11 @@
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
 import AppointmentsPageClient from "@/components/appointments/appointments-page-client";
 import { getAppointmentsPage } from "@/dal/appointments.server.dal";
-import { getEmployees } from "@/dal/employees.server.dal";
 import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
-import {
-  getServerActiveClinicId,
-  getServerActiveClinicTimezone,
-} from "@/lib/server/active-clinic";
+import { employeesServerQuery } from "@/lib/query/employees-server-query";
+import { getQueryClient } from "@/lib/query/query-client";
+import { getAppBootstrap } from "@/lib/server/bootstrap";
 import {
   getClinicIsoDateRange,
   getClinicIsoWeekDateParams,
@@ -24,11 +24,12 @@ export default async function AppointmentsPage({
     to?: string;
   }>;
 }) {
-  const [params, clinicId, timezone] = await Promise.all([
+  const [params, bootstrap] = await Promise.all([
     searchParams,
-    getServerActiveClinicId(),
-    getServerActiveClinicTimezone(),
+    getAppBootstrap(),
   ]);
+  const clinicId = bootstrap.activeClinicId;
+  const timezone = bootstrap.activeClinicTimezone;
 
   const defaultDateParams = getClinicIsoWeekDateParams(timezone);
   const requestedFrom = params.from?.trim() ?? "";
@@ -58,22 +59,30 @@ export default async function AppointmentsPage({
     pageSize: APPOINTMENTS_PAGE_SIZE,
   };
 
-  const [page, employees] = await Promise.all([
+  const queryClient = getQueryClient();
+  const employeesPromise =
+    bootstrap.user && clinicId
+      ? queryClient.fetchQuery(
+          employeesServerQuery({ userId: bootstrap.user.id, clinicId }),
+        )
+      : Promise.resolve(null);
+  const [page] = await Promise.all([
     getAppointmentsPage({ ...query, clinicId }),
-    getEmployees(clinicId),
+    employeesPromise,
   ]);
 
   return (
-    <AppointmentsPageClient
-      initialAppointments={page.appointments}
-      initialTotal={page.total}
-      initialQuery={query}
-      initialEmployees={employees}
-      initialRange={{
-        from: fromParam,
-        to: toParam,
-        employeeId: employeeId ?? "",
-      }}
-    />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <AppointmentsPageClient
+        initialAppointments={page.appointments}
+        initialTotal={page.total}
+        initialQuery={query}
+        initialRange={{
+          from: fromParam,
+          to: toParam,
+          employeeId: employeeId ?? "",
+        }}
+      />
+    </HydrationBoundary>
   );
 }

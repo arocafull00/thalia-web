@@ -1,12 +1,12 @@
 "use client";
 
+import type { EmployeeAppointmentRow } from "@/dal/employees.dal";
 import {
   appointmentStatusLabel,
   formatAppointmentTimeRange,
   formatDate,
 } from "@/lib/format";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
-import type { EmployeeAppointmentRow } from "@/stores/employees-store";
 
 type EmployeeAppointmentRowProps = {
   appointment: EmployeeAppointmentRow;

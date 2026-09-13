@@ -36,14 +36,12 @@ import {
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
-  Employee,
 } from "@/types/database.types";
 
 type AppointmentsPageClientProps = {
   initialAppointments: AppointmentWithRelations[];
   initialTotal: number;
   initialQuery: AppointmentsPageQuery;
-  initialEmployees: Employee[];
   initialRange: {
     employeeId: string;
     from: string;
@@ -55,7 +53,6 @@ export default function AppointmentsPageClient({
   initialAppointments,
   initialTotal,
   initialQuery,
-  initialEmployees,
   initialRange,
 }: AppointmentsPageClientProps) {
   const router = useRouter();
@@ -130,7 +127,6 @@ export default function AppointmentsPageClient({
       initialAppointments,
       initialTotal,
       initialQuery,
-      initialEmployees,
       initialRange,
     });
 
@@ -205,7 +201,6 @@ export default function AppointmentsPageClient({
           <AppointmentFilters
             employeeId={filters.employeeId}
             from={filters.from}
-            initialEmployees={initialEmployees}
             search={searchQuery}
             status={filters.status}
             to={filters.to}
@@ -283,7 +278,6 @@ export default function AppointmentsPageClient({
         key={sheetKey}
         open={sheetOpen}
         filters={filters}
-        initialEmployees={initialEmployees}
         onApply={(updates) => setFilters({ ...updates, page: "" })}
         onClear={() => setFilters(filterDefaults)}
         onDismiss={() => setSheetOpen(false)}

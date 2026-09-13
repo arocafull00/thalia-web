@@ -22,7 +22,6 @@ type EmployeeEditDialogProps = {
   employee: Employee;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
   onViewDetail?: () => void;
 };
 
@@ -30,13 +29,9 @@ export default function EmployeeEditDialog({
   employee,
   open,
   onOpenChange,
-  onSuccess,
   onViewDetail,
 }: EmployeeEditDialogProps) {
-  const dialog = useEmployeeEditDialog(employee, () => {
-    onOpenChange(false);
-    onSuccess();
-  });
+  const dialog = useEmployeeEditDialog(employee, () => onOpenChange(false));
 
   const handleOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen);

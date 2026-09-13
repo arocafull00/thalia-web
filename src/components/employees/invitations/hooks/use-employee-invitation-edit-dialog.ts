@@ -3,12 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import type { z } from "zod";
 
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
+import { useReplaceEmployeeInvitation } from "@/lib/hooks/use-employees";
 import { employeeInviteSchema } from "@/lib/schemas/employee-schema";
-import { useEmployeesStore } from "@/stores/employees-store";
 import type { PendingEmployeeInvitation } from "@/types/database.types";
 
 type InvitationEditValues = z.input<typeof employeeInviteSchema>;
@@ -23,10 +23,7 @@ export function useEmployeeInvitationEditDialog(
   invitation: PendingEmployeeInvitation,
   onSuccess: () => void,
 ) {
-  const replaceInvitation = useEmployeesStore(
-    (state) => state.replaceInvitation,
-  );
-  const mutatingId = useEmployeesStore((state) => state.invitationMutatingId);
+  const replaceInvitation = useReplaceEmployeeInvitation();
   const form = useForm<InvitationEditValues>({
     resolver: zodResolver(employeeInviteSchema),
     defaultValues: getDefaultValues(invitation),
@@ -40,7 +37,10 @@ export function useEmployeeInvitationEditDialog(
     form.clearErrors("root");
 
     try {
-      await replaceInvitation(invitation.id, values);
+      await replaceInvitation.mutateAsync({
+        invitationId: invitation.id,
+        values,
+      });
       toast.success(EMPLOYEE_INVITATIONS_COPY.edit.success);
       onSuccess();
     } catch (cause) {
@@ -58,7 +58,7 @@ export function useEmployeeInvitationEditDialog(
     control: form.control,
     errors: form.formState.errors,
     isDirty: form.formState.isDirty,
-    isPending: mutatingId === invitation.id || form.formState.isSubmitting,
+    isPending: replaceInvitation.isPending || form.formState.isSubmitting,
     submit,
   };
 }

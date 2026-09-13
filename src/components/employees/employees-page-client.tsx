@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { EMPLOYEES_COPY } from "@/copy/employees-copy";
-import type { EmployeePageResult } from "@/dal/employees.dal";
 import {
   EMPLOYEES_PAGE_SIZE,
   parseEmployeeStatusFilter,
@@ -50,22 +49,10 @@ import { useEmployeesPage } from "@/lib/hooks/use-employees";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import {
-  useEmployeesStore,
-  type EmployeesPageQuery,
-} from "@/stores/employees-store";
 
 const EMPLOYEE_FILTER_DEFAULTS = { q: "", role: "", status: "", page: "" };
 
-type EmployeesPageClientProps = {
-  initialPage: EmployeePageResult;
-  initialQuery: EmployeesPageQuery;
-};
-
-export default function EmployeesPageClient({
-  initialPage,
-  initialQuery,
-}: EmployeesPageClientProps) {
+export default function EmployeesPageClient() {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -77,9 +64,6 @@ export default function EmployeesPageClient({
   const [sheetKey, setSheetKey] = useState(0);
   const [activeTab, setActiveTab] = useState<EmployeesPageTab>("staff");
   const { platformRole } = useActiveClinic();
-  const setExternalMembershipStatus = useEmployeesStore(
-    (state) => state.setExternalMembershipStatus,
-  );
   const invitations = useEmployeeInvitations();
   const { filters, setFilter, setFilters } = useUrlFilters(
     EMPLOYEE_FILTER_DEFAULTS,
@@ -115,10 +99,7 @@ export default function EmployeesPageClient({
     [filters.q, filters.role, filters.status, pageIndex],
   );
 
-  const employees = useEmployeesPage(pageFilters, {
-    initialPage,
-    initialQuery,
-  });
+  const employees = useEmployeesPage(pageFilters);
 
   const editingEmployee = useMemo(
     () =>
@@ -296,7 +277,6 @@ export default function EmployeesPageClient({
           employee={editingEmployee}
           open={editDialogOpen}
           onOpenChange={handleEditDialogOpenChange}
-          onSuccess={() => {}}
           onViewDetail={() => {
             handleEditDialogOpenChange(false);
             router.push(`/employees/${editingEmployee.id}`);
@@ -312,8 +292,6 @@ export default function EmployeesPageClient({
               setStatusEmployeeId(null);
             }
           }}
-          onSetExternalMembershipStatus={setExternalMembershipStatus}
-          onSuccess={() => setStatusEmployeeId(null)}
         />
       ) : null}
       {invitations.editingInvitation ? (

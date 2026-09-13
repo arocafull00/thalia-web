@@ -24,14 +24,6 @@ vi.mock("@/dal/auth.dal", () => ({
   updateEmployeeAvatar: vi.fn(),
 }));
 
-vi.mock("@/stores/employees-store", () => ({
-  useEmployeesStore: {
-    getState: vi.fn(() => ({
-      fetchEmployees: vi.fn().mockResolvedValue(undefined),
-    })),
-  },
-}));
-
 vi.mock("@/lib/analytics", () => ({
   captureEvent: vi.fn(),
 }));

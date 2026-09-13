@@ -36,7 +36,6 @@ import { useClinicInfo, type ClinicInfo } from "@/lib/hooks/use-clinic-info";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import type { CalendarViewMode } from "@/stores/calendar-store";
 import { useCalendarStore } from "@/stores/calendar-store";
-import type { Employee } from "@/types/database.types";
 
 const CALENDAR_FILTER_DEFAULTS = {
   employeeId: null,
@@ -64,12 +63,10 @@ const ScheduleXCalendar = dynamic(
 
 type CalendarPageClientProps = {
   initialClinic?: ClinicInfo | null;
-  initialEmployees?: Employee[];
 };
 
 export default function CalendarPageClient({
   initialClinic = null,
-  initialEmployees,
 }: CalendarPageClientProps) {
   const router = useRouter();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -217,7 +214,6 @@ export default function CalendarPageClient({
           isExternal ? undefined : (
             <CalendarEmployeeFilter
               employeeId={employeeId}
-              initialEmployees={initialEmployees}
               onEmployeeIdChange={setEmployeeId}
             />
           )

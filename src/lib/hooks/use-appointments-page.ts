@@ -22,7 +22,6 @@ import { isInitialLoading } from "@/stores/query-state";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
-  Employee,
 } from "@/types/database.types";
 
 type AppointmentPageFilters = {
@@ -38,7 +37,6 @@ type AppointmentsPageSeed = {
   initialAppointments?: AppointmentWithRelations[];
   initialTotal?: number;
   initialQuery?: AppointmentsPageQuery;
-  initialEmployees?: Employee[];
   initialRange?: {
     employeeId: string;
     from: string;
@@ -218,7 +216,6 @@ export function useAppointmentsPage(
     flatAppointments,
     groupedAppointments,
     hasResults,
-    initialEmployees: seed?.initialEmployees,
     listData,
     pageCount,
     rangeEnd,

@@ -1,21 +1,29 @@
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
 import CalendarPageClient from "@/components/calendar/calendar-page-client";
 import { getClinicById } from "@/dal/clinics.server.dal";
-import { getEmployees } from "@/dal/employees.server.dal";
-import { getServerActiveClinicId } from "@/lib/server/active-clinic";
+import { employeesServerQuery } from "@/lib/query/employees-server-query";
+import { getQueryClient } from "@/lib/query/query-client";
+import { getAppBootstrap } from "@/lib/server/bootstrap";
 
 export default async function CalendarPage() {
-  const clinicId = await getServerActiveClinicId();
+  const bootstrap = await getAppBootstrap();
+  const clinicId = bootstrap.activeClinicId;
 
-  if (!clinicId) {
+  if (!bootstrap.user || !clinicId) {
     return <CalendarPageClient />;
   }
 
-  const [clinic, employees] = await Promise.all([
+  const scope = { userId: bootstrap.user.id, clinicId };
+  const queryClient = getQueryClient();
+  const [clinic] = await Promise.all([
     getClinicById(clinicId),
-    getEmployees(clinicId),
+    queryClient.fetchQuery(employeesServerQuery(scope)),
   ]);
 
   return (
-    <CalendarPageClient initialClinic={clinic} initialEmployees={employees} />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <CalendarPageClient initialClinic={clinic} />
+    </HydrationBoundary>
   );
 }

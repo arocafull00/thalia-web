@@ -38,7 +38,7 @@ export default function PendingInvitationsPanel({
       {!isLoading && !error && invitations.length === 0 ? (
         <PageEmptyState message={EMPLOYEE_INVITATIONS_COPY.list.empty} />
       ) : null}
-      {!isLoading && !error && invitations.length > 0 ? (
+      {!isLoading && invitations.length > 0 ? (
         <PendingInvitationsTable
           invitations={invitations}
           onEdit={onEdit}

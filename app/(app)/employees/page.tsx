@@ -1,10 +1,13 @@
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
 import EmployeesPageClient from "@/components/employees/employees-page-client";
-import { getEmployeesPage } from "@/dal/employees.server.dal";
 import {
   EMPLOYEES_PAGE_SIZE,
   parseEmployeeStatusFilter,
 } from "@/lib/employee-pagination";
-import { getServerActiveClinicId } from "@/lib/server/active-clinic";
+import { employeesPageServerQuery } from "@/lib/query/employees-server-query";
+import { getQueryClient } from "@/lib/query/query-client";
+import { getAppBootstrap } from "@/lib/server/bootstrap";
 import { requireClinicManager } from "@/lib/server/business-access";
 
 export default async function EmployeesPage({
@@ -18,14 +21,11 @@ export default async function EmployeesPage({
   }>;
 }) {
   await requireClinicManager();
-  const [params, clinicId] = await Promise.all([
+  const [params, bootstrap] = await Promise.all([
     searchParams,
-    getServerActiveClinicId(),
+    getAppBootstrap(),
   ]);
 
-  // Se siembra la consulta tal y como viene en la URL. Si no coincide con la
-  // que calcula el cliente, `useServerSeed` la descarta y refetchea; sembrar
-  // una página distinta de la que se va a mostrar sería peor que no sembrar.
   const query = {
     search: params.q?.trim() ?? "",
     role: params.role?.trim() ?? "",
@@ -34,7 +34,20 @@ export default async function EmployeesPage({
     pageSize: EMPLOYEES_PAGE_SIZE,
   };
 
-  const page = await getEmployeesPage({ ...query, clinicId });
+  if (!bootstrap.user || !bootstrap.activeClinicId) {
+    return <EmployeesPageClient />;
+  }
 
-  return <EmployeesPageClient initialPage={page} initialQuery={query} />;
+  const scope = {
+    userId: bootstrap.user.id,
+    clinicId: bootstrap.activeClinicId,
+  };
+  const queryClient = getQueryClient();
+  await queryClient.fetchQuery(employeesPageServerQuery(scope, query));
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <EmployeesPageClient />
+    </HydrationBoundary>
+  );
 }

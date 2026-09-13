@@ -17,10 +17,6 @@ import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
-import type {
-  EmployeeAppointmentRow,
-  EmployeeAppointmentStats,
-} from "@/dal/employees.dal";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useEmployeeDetailTabs } from "@/lib/hooks/use-employee-detail-tabs";
@@ -31,40 +27,15 @@ import {
 } from "@/lib/hooks/use-employees";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
-import { useEmployeesStore } from "@/stores/employees-store";
-import type { Employee } from "@/types/database.types";
 
-type EmployeeDetailPageClientProps = {
-  employee?: Employee;
-  initialStats?: EmployeeAppointmentStats;
-  initialAppointments?: EmployeeAppointmentRow[];
-};
-
-export default function EmployeeDetailPageClient({
-  employee: serverEmployee,
-  initialStats,
-  initialAppointments,
-}: EmployeeDetailPageClientProps) {
+export default function EmployeeDetailPageClient() {
   const { id: routeEmployeeId } = useParams<{ id: string }>();
-  const employeeId = serverEmployee?.id ?? routeEmployeeId;
+  const employeeId = routeEmployeeId;
   const { profile, loading: authLoading } = useAuth();
   const { platformRole, loading: clinicLoading } = useActiveClinic();
-  const employeeQuery = useEmployee(serverEmployee ?? employeeId);
-  const statsQuery = useEmployeeAppointmentStats(employeeId, initialStats);
-  const appointmentsQuery = useEmployeeAppointments(
-    employeeId,
-    initialAppointments,
-  );
-  const fetchEmployee = useEmployeesStore((state) => state.fetchEmployee);
-  const fetchEmployeeStats = useEmployeesStore(
-    (state) => state.fetchEmployeeStats,
-  );
-  const fetchEmployeeAppointments = useEmployeesStore(
-    (state) => state.fetchEmployeeAppointments,
-  );
-  const setExternalMembershipStatus = useEmployeesStore(
-    (state) => state.setExternalMembershipStatus,
-  );
+  const employeeQuery = useEmployee(employeeId);
+  const statsQuery = useEmployeeAppointmentStats(employeeId);
+  const appointmentsQuery = useEmployeeAppointments(employeeId);
   const { activeTab, setActiveTab } = useEmployeeDetailTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
@@ -73,12 +44,6 @@ export default function EmployeeDetailPageClient({
     platformRole === "owner" ||
     platformRole === "admin" ||
     profile?.role === "admin";
-
-  const refetch = () => {
-    void fetchEmployee(employeeId);
-    void fetchEmployeeStats(employeeId);
-    void fetchEmployeeAppointments(employeeId);
-  };
 
   const employee = employeeQuery.data;
 
@@ -123,7 +88,7 @@ export default function EmployeeDetailPageClient({
     );
   }
 
-  if (employeeQuery.error) {
+  if (employeeQuery.error && !employee) {
     return (
       <div className="flex min-h-0 flex-1 flex-col space-y-6 overflow-y-auto p-8">
         <BackButton
@@ -178,7 +143,6 @@ export default function EmployeeDetailPageClient({
           employee={employee}
           open={editDialogOpen}
           onOpenChange={setEditDialogOpen}
-          onSuccess={refetch}
         />
       ) : null}
 
@@ -186,8 +150,6 @@ export default function EmployeeDetailPageClient({
         employee={employee}
         open={statusDialogOpen}
         onOpenChange={setStatusDialogOpen}
-        onSetExternalMembershipStatus={setExternalMembershipStatus}
-        onSuccess={refetch}
       />
     </div>
   );

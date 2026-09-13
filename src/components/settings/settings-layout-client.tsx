@@ -22,18 +22,15 @@ import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { getSettingsSectionFromPathname } from "@/lib/settings-sections";
 import { resolveAvatarDisplayUri } from "@/lib/storage";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
-import type { Employee } from "@/types/database.types";
 
 type SettingsLayoutClientProps = {
   children: React.ReactNode;
   initialClinic?: ClinicInfo | null;
-  initialEmployees?: Employee[];
 };
 
 export default function SettingsLayoutClient({
   children,
   initialClinic = null,
-  initialEmployees,
 }: SettingsLayoutClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -59,7 +56,7 @@ export default function SettingsLayoutClient({
     passwordSubmitting,
     signOutSubmitting,
     uploadAvatar,
-  } = useSettingsPageActions(initialEmployees);
+  } = useSettingsPageActions();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [clinicEditDialogOpen, setClinicEditDialogOpen] = useState(false);
   const {

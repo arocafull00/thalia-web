@@ -8,10 +8,10 @@ import {
 } from "@/dal/auth.dal";
 import { captureEvent } from "@/lib/analytics";
 import { logger } from "@/lib/logger";
+import { clearBrowserQueryClient } from "@/lib/query/query-client";
 import { uploadFile } from "@/lib/storage";
 import { assertSupabaseConfigured, supabase } from "@/lib/supabase";
 import { useClinicStore } from "@/stores/clinic-store";
-import { useEmployeesStore } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
 
 export type UpdateProfileInput = {
@@ -86,7 +86,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       const employee = await updateEmployeeProfile(userId, values);
       await get().refreshProfile();
-      await useEmployeesStore.getState().fetchEmployees();
       set({ updating: false });
       return employee;
     } catch (cause) {
@@ -119,7 +118,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       );
       const employee = await updateEmployeeAvatar(userId, key);
       await get().refreshProfile();
-      await useEmployeesStore.getState().fetchEmployees();
       set({ uploadingAvatar: false });
       return employee;
     } catch (cause) {
@@ -186,6 +184,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
 
     useClinicStore.getState().clearClinicState();
+    clearBrowserQueryClient();
     set({ session: null, initialized: true, profile: null, loading: false });
     captureEvent("logout");
   },

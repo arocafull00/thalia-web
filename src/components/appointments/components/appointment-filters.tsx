@@ -16,12 +16,10 @@ import {
   useActiveClinicTimezone,
   useIsExternalProfessional,
 } from "@/lib/hooks/use-active-clinic";
-import type { Employee } from "@/types/database.types";
 
 type AppointmentFiltersProps = {
   employeeId: string;
   from: string;
-  initialEmployees?: Employee[];
   search: string;
   status: string;
   to: string;
@@ -36,7 +34,6 @@ type AppointmentFiltersProps = {
 export default function AppointmentFilters({
   employeeId,
   from,
-  initialEmployees,
   search,
   status,
   to,
@@ -78,7 +75,6 @@ export default function AppointmentFilters({
             <AppointmentEmployeeFilter
               id={controlId}
               employeeId={employeeId}
-              initialEmployees={initialEmployees}
               onEmployeeIdChange={onEmployeeIdChange}
             />
           )}

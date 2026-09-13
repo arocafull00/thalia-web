@@ -10,7 +10,7 @@ import { usePendingClinicRequests } from "@/lib/hooks/use-pending-clinic-request
 import { compressAvatarImage } from "@/lib/image-compression";
 import { canManageClinicSettings } from "@/lib/settings-sections";
 import { useSettingsUiStore } from "@/stores/settings-ui-store";
-import type { EmployeeRole, Employee } from "@/types/database.types";
+import type { EmployeeRole } from "@/types/database.types";
 
 export function buildProfileSubtitle(
   specialty: string | null,
@@ -26,7 +26,7 @@ export function buildProfileSubtitle(
   return roleLabel;
 }
 
-export function useSettingsPageActions(initialEmployees?: Employee[]) {
+export function useSettingsPageActions() {
   const { accountType, platformRole } = useActiveClinic();
   const { profile, signOut, user } = useAuth();
   const canViewClinicRequests = accountType === "external";
@@ -34,7 +34,7 @@ export function useSettingsPageActions(initialEmployees?: Employee[]) {
     user?.email,
     canViewClinicRequests,
   );
-  const employees = useEmployees(initialEmployees);
+  const employees = useEmployees();
   const passwordSubmitting = useSettingsUiStore(
     (state) => state.passwordSubmitting,
   );

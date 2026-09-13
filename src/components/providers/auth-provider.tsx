@@ -2,6 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 
+import { clearBrowserQueryClient } from "@/lib/query/query-client";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicRequestsStore } from "@/stores/clinic-requests-store";
@@ -19,6 +20,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       setSession(data.session);
 
       if (!data.session?.user.id) {
+        clearBrowserQueryClient();
         useClinicRequestsStore.getState().clearRequests();
         useClinicStore.getState().clearClinicState();
         useAuthStore.setState({ profile: null });
@@ -48,6 +50,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       setSession(nextSession);
 
       if (!nextSession?.user.id) {
+        clearBrowserQueryClient();
         useClinicRequestsStore.getState().clearRequests();
         useClinicStore.getState().clearClinicState();
         useAuthStore.setState({ profile: null });

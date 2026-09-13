@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 import AppLayoutClient from "@/components/providers/app-layout-client";
+import QueryProvider from "@/components/providers/query-provider";
 import StoreHydrator from "@/components/providers/store-hydrator";
 import { getAppBootstrap } from "@/lib/server/bootstrap";
 
@@ -19,15 +20,17 @@ export default async function AppLayout({
     cookieStore.get("sidebar_state")?.value !== "false";
 
   return (
-    <StoreHydrator
-      user={user}
-      profile={profile}
-      memberships={memberships}
-      activeClinicId={activeClinicId}
-    >
-      <AppLayoutClient defaultSidebarOpen={defaultSidebarOpen}>
-        {children}
-      </AppLayoutClient>
-    </StoreHydrator>
+    <QueryProvider>
+      <StoreHydrator
+        user={user}
+        profile={profile}
+        memberships={memberships}
+        activeClinicId={activeClinicId}
+      >
+        <AppLayoutClient defaultSidebarOpen={defaultSidebarOpen}>
+          {children}
+        </AppLayoutClient>
+      </StoreHydrator>
+    </QueryProvider>
   );
 }

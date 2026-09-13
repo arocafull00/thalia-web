@@ -4,13 +4,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { PROFILE_EDIT_COPY } from "@/copy/profile-edit-copy";
+import { useUpdateProfile } from "@/lib/hooks/use-auth";
 import {
   formatZodError,
   nullableSpanishPhone,
   nullableTrimmedString,
 } from "@/lib/schemas/schema-helpers";
 import { notifySuccess } from "@/lib/sound";
-import { useAuthStore } from "@/stores/auth-store";
 import type { Employee } from "@/types/database.types";
 
 const profileEditFormSchema = z.object({
@@ -38,8 +38,7 @@ function toFormValues(profile: Employee): ProfileEditFormValues {
 }
 
 export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
-  const updateProfile = useAuthStore((state) => state.updateProfile);
-  const isPending = useAuthStore((state) => state.updating);
+  const updateProfile = useUpdateProfile();
 
   const {
     register,
@@ -69,11 +68,13 @@ export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
     }
 
     try {
-      await updateProfile({
-        full_name: parsed.data.full_name,
-        specialty: parsed.data.specialty,
-        phone: parsed.data.phone,
-        color: parsed.data.color,
+      await updateProfile.mutateAsync({
+        values: {
+          full_name: parsed.data.full_name,
+          specialty: parsed.data.specialty,
+          phone: parsed.data.phone,
+          color: parsed.data.color,
+        },
       });
       notifySuccess(PROFILE_EDIT_COPY.success);
       onSuccess();
@@ -89,7 +90,7 @@ export function useProfileEditDialog(profile: Employee, onSuccess: () => void) {
     register,
     control,
     errors,
-    isPending: isPending || isSubmitting,
+    isPending: updateProfile.isPending || isSubmitting,
     reset: () => reset(toFormValues(profile)),
     handleSubmit: onSubmit,
   };

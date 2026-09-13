@@ -2,7 +2,29 @@ import { supabase } from "@/lib/supabase";
 
 const AVATARS_BUCKET = "avatars";
 
-function resolvePublicFileUrl(key: string) {
+/*
+ * El bucket es privado (#125): las fotos de pacientes no pueden servirse por URL
+ * pública. Se firman, con el mismo patrón que `patient-image-storage.ts`.
+ *
+ * La caché evita pedir la misma URL una vez por avatar al pintar un listado, y
+ * el mapa de peticiones en vuelo evita que dos componentes que montan a la vez
+ * pidan lo mismo por duplicado.
+ *
+ * El TTL va por debajo de la caducidad real de la firma, para no entregar una
+ * URL a punto de expirar.
+ */
+const SIGNED_URL_EXPIRES_IN_SECONDS = 60 * 60;
+const SIGNED_URL_CACHE_TTL_MS = 50 * 60 * 1000;
+
+type CachedSignedUrl = {
+  expiresAt: number;
+  url: string;
+};
+
+const signedUrlCache = new Map<string, CachedSignedUrl>();
+const signedUrlInflight = new Map<string, Promise<string>>();
+
+function resolveExternalFileUrl(key: string) {
   if (
     key.startsWith("http://") ||
     key.startsWith("https://") ||
@@ -39,20 +61,28 @@ export function resolveAvatarDisplayUri(
   return withFileUrlCacheBust(resolvedUrl, version ?? null);
 }
 
+/**
+ * URL ya disponible, sin pedir nada. Devuelve null si no hay nada en caché: es
+ * lo que permite a `useFileUrl` pintar el hueco y resolver después.
+ */
 export function peekCachedFileUrl(key: string | null) {
   if (!key) {
     return null;
   }
 
-  const publicUrl = resolvePublicFileUrl(key);
+  const externalUrl = resolveExternalFileUrl(key);
 
-  if (publicUrl) {
-    return publicUrl;
+  if (externalUrl) {
+    return externalUrl;
   }
 
-  const { data } = supabase.storage.from(AVATARS_BUCKET).getPublicUrl(key);
+  const cached = signedUrlCache.get(key);
 
-  return data.publicUrl;
+  if (!cached || cached.expiresAt <= Date.now()) {
+    return null;
+  }
+
+  return cached.url;
 }
 
 export async function uploadFile(
@@ -68,15 +98,55 @@ export async function uploadFile(
     throw error;
   }
 
+  // Al reemplazar un avatar, la URL firmada anterior apunta al contenido viejo.
+  signedUrlCache.delete(key);
+
   return key;
 }
 
 export async function getFileUrl(key: string) {
-  const publicUrl = peekCachedFileUrl(key);
+  const externalUrl = resolveExternalFileUrl(key);
 
-  if (!publicUrl) {
-    throw new Error("No se pudo resolver la URL del archivo");
+  if (externalUrl) {
+    return externalUrl;
   }
 
-  return publicUrl;
+  const cached = peekCachedFileUrl(key);
+
+  if (cached) {
+    return cached;
+  }
+
+  const pending = signedUrlInflight.get(key);
+
+  if (pending) {
+    return pending;
+  }
+
+  const request = supabase.storage
+    .from(AVATARS_BUCKET)
+    .createSignedUrl(key, SIGNED_URL_EXPIRES_IN_SECONDS)
+    .then(({ data, error }) => {
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.signedUrl) {
+        throw new Error("No se pudo resolver la URL del archivo");
+      }
+
+      signedUrlCache.set(key, {
+        expiresAt: Date.now() + SIGNED_URL_CACHE_TTL_MS,
+        url: data.signedUrl,
+      });
+
+      return data.signedUrl;
+    })
+    .finally(() => {
+      signedUrlInflight.delete(key);
+    });
+
+  signedUrlInflight.set(key, request);
+
+  return request;
 }

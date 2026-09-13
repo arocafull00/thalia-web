@@ -1,5 +1,14 @@
 # Changelog
 
+## 125-bucket-de-avatares-privado
+
+- **Las fotos de los pacientes dejan de ser públicas.** El bucket `avatars` tenía `public = true` y se servía con URL pública: cualquiera con el enlace veía la cara de un paciente sin autenticarse, y ninguna política intervenía porque en un bucket público el RLS no se aplica
+- Ahora es privado y se sirve con URL firmada, como los otros tres buckets
+- La regla de lectura del avatar de un paciente delega en `can_access_patient`, el mismo criterio que gobierna la tabla: un autónomo solo ve los de sus citas
+- El avatar de un paciente solo lo puede cambiar quien puede editar pacientes, y el de un empleado solo él mismo
+- Al reemplazar un avatar se invalida su URL en caché. Con `upsert`, sin eso la firma anterior seguiría sirviendo la foto vieja hasta 50 minutos
+
+
 ## 141-147-ajustes-de-interfaz
 
 - Fuera el subtítulo y el placeholder del campo de número de envío en Ajustes. Explicaban el formato de Twilio con prefijo internacional, que no significa nada para quien usa la clínica (#141)

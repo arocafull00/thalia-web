@@ -62,6 +62,16 @@ export type TransactionPageResult = {
   total: number;
 };
 
+export type TransactionExportParams = {
+  clinicId: string;
+  from: string;
+  to: string;
+  type: TransactionType | "all";
+  categoryIds: string[];
+};
+
+const TRANSACTION_EXPORT_BATCH_SIZE = 1000;
+
 export async function getTransactions(
   from: string,
   to: string,
@@ -165,4 +175,41 @@ export async function getTransactionsPage(
     transactions: normalizeTransactions(unwrapSupabaseList(data, error)),
     total: count ?? 0,
   };
+}
+
+export async function getTransactionsForExport(
+  params: TransactionExportParams,
+): Promise<Transaction[]> {
+  const transactions: Transaction[] = [];
+  let offset = 0;
+
+  while (true) {
+    let query = supabase
+      .from("transactions")
+      .select(TRANSACTION_SELECT)
+      .eq("clinic_id", params.clinicId)
+      .gte("date", params.from)
+      .lte("date", params.to)
+      .order("date", { ascending: false })
+      .order("id", { ascending: false })
+      .range(offset, offset + TRANSACTION_EXPORT_BATCH_SIZE - 1);
+
+    if (params.type !== "all") {
+      query = query.eq("type", params.type);
+    }
+
+    if (params.categoryIds.length > 0) {
+      query = query.in("category_id", params.categoryIds);
+    }
+
+    const { data, error } = await query;
+    const batch = normalizeTransactions(unwrapSupabaseList(data, error));
+    transactions.push(...batch);
+
+    if (batch.length < TRANSACTION_EXPORT_BATCH_SIZE) {
+      return transactions;
+    }
+
+    offset += TRANSACTION_EXPORT_BATCH_SIZE;
+  }
 }

@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 import {
   getTransactions,
+  getTransactionsForExport,
   getTransactionsPage,
   insertTransaction,
   updateTransaction as updateTransactionDal,
@@ -64,6 +65,13 @@ export type FinancialSummary = {
 
 export type TransactionsPageQuery = Omit<TransactionPageParams, "clinicId">;
 
+export type TransactionExportQuery = {
+  from: string;
+  to: string;
+  type: TransactionType | "all";
+  categoryIds: string[];
+};
+
 export function transactionsPageKey(query: TransactionsPageQuery) {
   return JSON.stringify({
     from: query.from,
@@ -102,6 +110,8 @@ type FinancesStore = {
   summaryByKey: Record<string, QueryEntry<FinancialSummary>>;
   creating: boolean;
   createError: Error | null;
+  exporting: boolean;
+  exportError: Error | null;
   fetchTransactionsPage: (query: TransactionsPageQuery) => Promise<void>;
   seedTransactionsPage: (
     query: TransactionsPageQuery,
@@ -114,6 +124,7 @@ type FinancesStore = {
     summary: FinancialSummary,
   ) => void;
   invalidateCaches: () => void;
+  exportTransactions: (query: TransactionExportQuery) => Promise<Transaction[]>;
   createTransaction: (input: TransactionInput) => Promise<Transaction>;
   updateTransaction: (
     id: string,
@@ -126,6 +137,8 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   summaryByKey: {},
   creating: false,
   createError: null,
+  exporting: false,
+  exportError: null,
 
   seedFinancialSummary: (month, categoryId, summary) => {
     const key = summaryKey(month, categoryId);
@@ -236,6 +249,33 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
 
   invalidateCaches: () => set({ byPage: {}, summaryByKey: {} }),
 
+  exportTransactions: async (query) => {
+    const clinicId = getActiveClinicId();
+    set({ exporting: true, exportError: null });
+
+    try {
+      if (!clinicId) {
+        throw new Error("No hay una clínica activa.");
+      }
+
+      const transactions = await getTransactionsForExport({
+        ...query,
+        clinicId,
+      });
+      set({ exporting: false });
+      return transactions;
+    } catch (cause) {
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      logger.captureException(error, {
+        store: "finances-store",
+        action: "exportTransactions",
+        clinicId,
+      });
+      set({ exporting: false, exportError: error });
+      throw error;
+    }
+  },
+
   createTransaction: async (input) => {
     set({ creating: true, createError: null });
 
@@ -280,23 +320,3 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
 }));
 
 export { summaryKey };
-
-export function transactionsToCsv(transactions: Transaction[]) {
-  const rows = [["date", "type", "category", "amount", "description"]];
-
-  transactions.forEach((transaction) => {
-    rows.push([
-      transaction.date ?? "",
-      transaction.type,
-      transaction.category?.name ?? "",
-      String(transaction.amount),
-      transaction.description ?? "",
-    ]);
-  });
-
-  return rows
-    .map((row) =>
-      row.map((value) => `"${value.replaceAll('"', '""')}"`).join(","),
-    )
-    .join("\n");
-}

@@ -1,19 +1,24 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import * as financesDal from "@/dal/finances.dal";
+import { transactionsToCsv } from "@/lib/finances-csv";
 import {
   useFinancesStore,
   transactionsPageKey,
   summaryKey,
-  transactionsToCsv,
 } from "@/stores/finances-store";
 import { CLINIC_ID } from "@/tests/mocks";
 
 vi.mock("@/dal/finances.dal", () => ({
   getTransactionsPage: vi.fn(),
   getTransactions: vi.fn(),
+  getTransactionsForExport: vi.fn(),
   insertTransaction: vi.fn(),
   updateTransaction: vi.fn(),
+}));
+
+vi.mock("@/lib/active-clinic-id", () => ({
+  getActiveClinicId: () => "00000000-0000-0000-0000-000000000001",
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -185,6 +190,8 @@ const initialState = {
   summaryByKey: {},
   creating: false,
   createError: null,
+  exporting: false,
+  exportError: null,
 };
 
 describe("finances-store", () => {
@@ -198,6 +205,8 @@ describe("finances-store", () => {
     expect(state.summaryByKey).toEqual({});
     expect(state.creating).toBe(false);
     expect(state.createError).toBeNull();
+    expect(state.exporting).toBe(false);
+    expect(state.exportError).toBeNull();
   });
 
   describe("fetchTransactionsPage", () => {
@@ -427,6 +436,52 @@ describe("finances-store", () => {
     });
   });
 
+  describe("exportTransactions", () => {
+    it("exports every row returned for the active clinic and filters", async () => {
+      vi.mocked(financesDal.getTransactionsForExport).mockResolvedValue(
+        janTransactions as never,
+      );
+      const query = {
+        from: "2024-01-01",
+        to: "2024-01-31",
+        type: "all" as const,
+        categoryIds: ["cat-consulta", "cat-material"],
+      };
+
+      const result = await useFinancesStore
+        .getState()
+        .exportTransactions(query);
+
+      expect(result).toEqual(janTransactions);
+      expect(financesDal.getTransactionsForExport).toHaveBeenCalledWith({
+        ...query,
+        clinicId: CLINIC_ID,
+      });
+      expect(useFinancesStore.getState().exporting).toBe(false);
+      expect(useFinancesStore.getState().exportError).toBeNull();
+    });
+
+    it("exposes and rethrows export failures", async () => {
+      vi.mocked(financesDal.getTransactionsForExport).mockRejectedValue(
+        new Error("export failed"),
+      );
+
+      await expect(
+        useFinancesStore.getState().exportTransactions({
+          from: "2024-01-01",
+          to: "2024-01-31",
+          type: "income",
+          categoryIds: [],
+        }),
+      ).rejects.toThrow("export failed");
+
+      expect(useFinancesStore.getState().exporting).toBe(false);
+      expect(useFinancesStore.getState().exportError?.message).toBe(
+        "export failed",
+      );
+    });
+  });
+
   describe("transactionsPageKey", () => {
     it("normalises the search so casing and spacing do not split the cache", () => {
       const base = {
@@ -463,27 +518,46 @@ describe("finances-store", () => {
   });
 
   describe("transactionsToCsv", () => {
-    it("converts transactions to CSV string", () => {
+    it("uses the Excel-compatible Spanish format", () => {
       const csv = transactionsToCsv([jan3, jan10]);
-      const lines = csv.split("\n");
+      const lines = csv.split("\r\n");
 
-      expect(lines[0]).toBe('"date","type","category","amount","description"');
-      expect(lines[1]).toContain('"2024-01-03"');
-      expect(lines[1]).toContain('"income"');
-      expect(lines[1]).toContain("100");
-      expect(lines[2]).toContain('"2024-01-10"');
-      expect(lines[2]).toContain('"expense"');
+      expect(lines[0]).toBe(
+        '\uFEFF"Fecha";"Tipo";"Categoría";"Concepto";"Importe (€)"',
+      );
+      expect(lines[1]).toBe('"03/01/2024";"Cobro";"Consulta";"";100,00');
+      expect(lines[2]).toBe('"10/01/2024";"Gasto";"Material";"";50,00');
     });
 
-    it("escapes double quotes in values", () => {
-      const withQuotes = { ...jan3, description: 'texto "con" comillas' };
-      const csv = transactionsToCsv([withQuotes]);
-      expect(csv).toContain('"texto ""con"" comillas"');
+    it("escapes quotes, separators, accents and line breaks", () => {
+      const special = {
+        ...jan3,
+        category: { ...jan3.category, name: "Sesión; revisión" },
+        description: 'Línea 1\nLínea "2"',
+      };
+      const csv = transactionsToCsv([special]);
+
+      expect(csv).toContain('"Sesión; revisión"');
+      expect(csv).toContain('"Línea 1\r\nLínea ""2"""');
+    });
+
+    it("neutralizes spreadsheet formulas in text fields", () => {
+      const formula = {
+        ...jan3,
+        category: { ...jan3.category, name: "=DDE()" },
+        description: "+SUM(1;1)",
+      };
+      const csv = transactionsToCsv([formula]);
+
+      expect(csv).toContain('"\'=DDE()"');
+      expect(csv).toContain('"\'+SUM(1;1)"');
     });
 
     it("handles empty array", () => {
       const csv = transactionsToCsv([]);
-      expect(csv).toBe('"date","type","category","amount","description"');
+      expect(csv).toBe(
+        '\uFEFF"Fecha";"Tipo";"Categoría";"Concepto";"Importe (€)"',
+      );
     });
   });
 });

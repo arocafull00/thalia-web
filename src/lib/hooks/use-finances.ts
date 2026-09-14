@@ -9,17 +9,20 @@ import {
   summaryKey,
   transactionsPageKey,
   type TransactionsPageQuery,
-  transactionsToCsv,
   useFinancesStore,
   type FinancialSummary,
+  type TransactionExportQuery,
   type TransactionInput,
   type TransactionUpdatePayload,
 } from "@/stores/finances-store";
 import { isInitialLoading } from "@/stores/query-state";
 import type { Transaction } from "@/types/database.types";
 
-export type { TransactionInput, TransactionUpdatePayload };
-export { transactionsToCsv };
+export type {
+  TransactionExportQuery,
+  TransactionInput,
+  TransactionUpdatePayload,
+};
 
 type TransactionsPageSeed = {
   initialTransactions?: Transaction[];
@@ -184,4 +187,14 @@ export function useUpdateTransaction() {
   );
 
   return { mutate, isPending, error };
+}
+
+export function useExportTransactions() {
+  const exportTransactions = useFinancesStore(
+    (state) => state.exportTransactions,
+  );
+  const isPending = useFinancesStore((state) => state.exporting);
+  const error = useFinancesStore((state) => state.exportError);
+
+  return { exportTransactions, isPending, error };
 }

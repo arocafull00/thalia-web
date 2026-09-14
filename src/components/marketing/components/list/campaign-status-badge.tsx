@@ -12,6 +12,7 @@ const statusVariants: Record<
 > = {
   draft: "muted",
   scheduled: "warning",
+  sending: "warning",
   sent: "success",
   cancelled: "danger",
 };

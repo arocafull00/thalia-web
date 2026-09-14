@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import CampaignFormDialog from "@/components/marketing/components/form/campaign-form-dialog";
 import CampaignImageDialog from "@/components/marketing/components/list/campaign-image-dialog";
@@ -18,8 +19,10 @@ import {
   SkeletonList,
 } from "@/components/ui/primitives/skeleton-list";
 import type { CampaignPageResult } from "@/dal/campaigns.dal";
+import type { CampaignQuota } from "@/lib/campaign-limits";
 import { CAMPAIGNS_PAGE_SIZE } from "@/lib/campaign-pagination";
 import { useCampaignCreateDialog } from "@/lib/hooks/use-campaign-create-dialog";
+import { useCampaignQuota } from "@/lib/hooks/use-campaigns";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useMarketingPage } from "@/lib/hooks/use-marketing-page";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -38,11 +41,13 @@ const MARKETING_FILTER_DEFAULTS = {
 type MarketingPageClientProps = {
   initialPage: CampaignPageResult;
   initialQuery: CampaignsPageQuery;
+  initialQuota: CampaignQuota;
 };
 
 export default function MarketingPageClient({
   initialPage,
   initialQuery,
+  initialQuota,
 }: MarketingPageClientProps) {
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -66,6 +71,7 @@ export default function MarketingPageClient({
     filters.q,
     setFilterAndResetPage,
   );
+  const quota = useCampaignQuota(initialQuota);
   const treatments = useTreatments();
   const dialog = useCampaignCreateDialog(() => setDialogOpen(false));
 
@@ -117,7 +123,14 @@ export default function MarketingPageClient({
   useTopbarAction({
     title: MARKETING_COPY.actions.create,
     testId: "campaign-create-trigger",
-    onClick: () => setDialogOpen(true),
+    onClick: () => {
+      if (quota.data?.reached) {
+        toast.error(MARKETING_COPY.limits.sentLimitReached);
+        return;
+      }
+
+      setDialogOpen(true);
+    },
   });
 
   return (

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import {
@@ -6,7 +7,8 @@ import {
   getCampaignRecipients,
 } from "@/dal/campaign-recipients.dal";
 import { duplicateCampaign, sendCampaign } from "@/dal/campaigns.dal";
-import { useCampaign } from "@/lib/hooks/use-campaigns";
+import { MAX_CAMPAIGN_RECIPIENTS } from "@/lib/campaign-limits";
+import { useCampaign, useCampaignQuota } from "@/lib/hooks/use-campaigns";
 import { logger } from "@/lib/logger";
 import { notifySuccess } from "@/lib/sound";
 import { useCampaignsStore } from "@/stores/campaigns-store";
@@ -14,6 +16,7 @@ import type { CampaignRecipientWithPatient } from "@/types/database.types";
 
 export function useCampaignDetail(campaignId: string) {
   const campaign = useCampaign(campaignId);
+  const { data: quota, refresh: refreshQuota } = useCampaignQuota();
   const fetchCampaign = useCampaignsStore((state) => state.fetchCampaign);
   // Enviar y duplicar van directos al DAL, sin pasar por el store, así que las
   // páginas cacheadas del listado se quedarían obsoletas: la campaña enviada
@@ -57,7 +60,30 @@ export function useCampaignDetail(campaignId: string) {
 
   useEffect(() => refresh(), [refresh]);
 
+  const canStartSend = useCallback(() => {
+    if (pendingCount == null) {
+      toast.error(MARKETING_COPY.limits.recipientCountUnavailable);
+      return false;
+    }
+
+    if (pendingCount > MAX_CAMPAIGN_RECIPIENTS) {
+      toast.error(MARKETING_COPY.limits.recipientLimitExceeded);
+      return false;
+    }
+
+    if (quota?.reached) {
+      toast.error(MARKETING_COPY.limits.sentLimitReached);
+      return false;
+    }
+
+    return true;
+  }, [pendingCount, quota?.reached]);
+
   const send = useCallback(() => {
+    if (!canStartSend()) {
+      return;
+    }
+
     setIsSending(true);
     setSendError(null);
 
@@ -69,6 +95,7 @@ export function useCampaignDetail(campaignId: string) {
         // disponible para un segundo intento.
         void fetchCampaign(campaignId);
         void refreshCampaignPages();
+        void refreshQuota().catch(() => undefined);
         refresh();
       })
       .catch((cause) => {
@@ -79,14 +106,27 @@ export function useCampaignDetail(campaignId: string) {
           campaignId,
         });
         setSendError(message || MARKETING_COPY.send.error);
+        toast.error(message || MARKETING_COPY.send.error);
       })
       .finally(() => setIsSending(false));
-  }, [campaignId, fetchCampaign, refresh, refreshCampaignPages]);
+  }, [
+    campaignId,
+    canStartSend,
+    fetchCampaign,
+    refresh,
+    refreshQuota,
+    refreshCampaignPages,
+  ]);
 
   const [isDuplicating, setIsDuplicating] = useState(false);
 
   const duplicate = useCallback(
     (onDuplicated: (newCampaignId: string) => void) => {
+      if (quota?.reached) {
+        toast.error(MARKETING_COPY.limits.sentLimitReached);
+        return;
+      }
+
       setIsDuplicating(true);
       setSendError(null);
 
@@ -94,6 +134,7 @@ export function useCampaignDetail(campaignId: string) {
         .then((created) => {
           notifySuccess(MARKETING_COPY.duplicate.success);
           void refreshCampaignPages();
+          void refreshQuota().catch(() => undefined);
           onDuplicated(created.id);
         })
         .catch((cause) => {
@@ -102,11 +143,16 @@ export function useCampaignDetail(campaignId: string) {
             action: "duplicateCampaign",
             campaignId,
           });
-          setSendError(MARKETING_COPY.duplicate.error);
+          const message =
+            cause instanceof Error
+              ? cause.message
+              : MARKETING_COPY.duplicate.error;
+          setSendError(message);
+          toast.error(message);
         })
         .finally(() => setIsDuplicating(false));
     },
-    [campaignId, refreshCampaignPages],
+    [campaignId, quota?.reached, refreshCampaignPages, refreshQuota],
   );
 
   return {
@@ -118,6 +164,7 @@ export function useCampaignDetail(campaignId: string) {
     isSending,
     sendError,
     send,
+    canStartSend,
     duplicate,
     isDuplicating,
     refresh,

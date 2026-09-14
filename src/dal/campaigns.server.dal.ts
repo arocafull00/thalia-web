@@ -4,6 +4,7 @@ import type {
   CampaignPageParams,
   CampaignPageResult,
 } from "@/dal/campaigns.dal";
+import { MAX_SENT_CAMPAIGNS, type CampaignQuota } from "@/lib/campaign-limits";
 import { createClient } from "@/lib/supabase/server";
 import { unwrapSupabaseList } from "@/lib/supabase-query";
 import type { Campaign } from "@/types/database.types";
@@ -55,5 +56,30 @@ export async function getCampaignsPage(
   return {
     campaigns: unwrapSupabaseList(data, error) as Campaign[],
     total: count ?? 0,
+  };
+}
+
+export async function getCampaignQuota(
+  clinicId: string,
+): Promise<CampaignQuota> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .rpc("get_campaign_quota", { p_clinic_id: clinicId })
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const quota = data as {
+    used: number;
+    campaign_limit: number;
+    reached: boolean;
+  };
+
+  return {
+    used: Number(quota.used),
+    limit: MAX_SENT_CAMPAIGNS,
+    reached: quota.reached,
   };
 }

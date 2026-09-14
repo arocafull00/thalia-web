@@ -1,5 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import {
+  CAMPAIGN_LIMIT_ERROR_CODES,
+  MAX_CAMPAIGN_RECIPIENTS,
+  MAX_SENT_CAMPAIGNS,
+} from "../_shared/campaign-limits.ts";
 import { resolveWhatsAppMode, sendWhatsApp } from "../_shared/whatsapp.ts";
 
 const corsHeaders = {
@@ -36,6 +41,16 @@ function jsonResponse(payload: unknown, status = 200): Response {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
+
+function errorResponse(code: string, error: string, status: number): Response {
+  return jsonResponse({ code, error }, status);
+}
+
+const CAMPAIGN_ERROR_MESSAGES = {
+  sentLimitReached: `Has alcanzado el límite de ${MAX_SENT_CAMPAIGNS} campañas enviadas.`,
+  recipientLimitExceeded: `El máximo por campaña es ${MAX_CAMPAIGN_RECIPIENTS} pacientes. Ajusta los filtros de destinatarios.`,
+  sendInProgress: "Esta campaña ya se está enviando.",
+} as const;
 
 // Debe producir el mismo texto que campaign-message-preview.tsx en la app: son
 // dos implementaciones porque Deno no puede importar del bundle de Next, así
@@ -118,6 +133,14 @@ Deno.serve(async (req) => {
 
   // Reenviar una campaña ya enviada duplicaría mensajes reales: se rechaza en
   // vez de confiar solo en el índice único de destinatarios.
+  if (campaign.status === "sending") {
+    return errorResponse(
+      CAMPAIGN_LIMIT_ERROR_CODES.sendInProgress,
+      CAMPAIGN_ERROR_MESSAGES.sendInProgress,
+      409,
+    );
+  }
+
   if (campaign.status === "sent" || campaign.status === "cancelled") {
     console.warn("[send-campaign] reenvío bloqueado", {
       campaignId,
@@ -175,6 +198,19 @@ Deno.serve(async (req) => {
     telefonos: recipients.map((patient) => patient.phone),
   });
 
+  if (recipients.length > MAX_CAMPAIGN_RECIPIENTS) {
+    console.warn("[send-campaign] segmento por encima del límite", {
+      campaignId,
+      recipients: recipients.length,
+      limit: MAX_CAMPAIGN_RECIPIENTS,
+    });
+    return errorResponse(
+      CAMPAIGN_LIMIT_ERROR_CODES.recipientLimitExceeded,
+      CAMPAIGN_ERROR_MESSAGES.recipientLimitExceeded,
+      422,
+    );
+  }
+
   if (recipients.length === 0) {
     console.warn(
       "[send-campaign] el segmento no incluye a nadie: revisa marketing_opt_in y phone",
@@ -216,116 +252,202 @@ Deno.serve(async (req) => {
   const queue = pending ?? [];
   const skipped = recipients.length - queue.length;
 
+  if (queue.length > MAX_CAMPAIGN_RECIPIENTS) {
+    console.warn("[send-campaign] cola por encima del límite", {
+      campaignId,
+      pending: queue.length,
+      limit: MAX_CAMPAIGN_RECIPIENTS,
+    });
+    return errorResponse(
+      CAMPAIGN_LIMIT_ERROR_CODES.recipientLimitExceeded,
+      CAMPAIGN_ERROR_MESSAGES.recipientLimitExceeded,
+      422,
+    );
+  }
+
   console.log("[send-campaign] cola de envío", {
     pendientes: queue.length,
     saltados: skipped,
   });
 
-  let mediaUrl: string | null = null;
+  const { data: claimResult, error: claimError } = await supabase.rpc(
+    "claim_campaign_send_slot",
+    { p_campaign_id: campaignId },
+  );
 
-  if (campaign.image_url && isSendableImageKey(campaign.image_url)) {
-    // El bucket es privado: Twilio necesita una URL firmada para descargarla.
-    const { data: signed, error: signedError } = await supabase.storage
-      .from("campaign-images")
-      .createSignedUrl(campaign.image_url, IMAGE_URL_TTL_SECONDS);
-
-    mediaUrl = signed?.signedUrl ?? null;
-
-    if (signedError || !mediaUrl) {
-      // Se sigue enviando sin imagen: perder el adjunto es mejor que perder
-      // toda la campaña, pero conviene que quede constancia.
-      console.warn("[send-campaign] no se pudo firmar la imagen", {
-        key: campaign.image_url,
-        error: signedError?.message,
-      });
-    }
-  } else if (campaign.image_url) {
-    // Campañas guardadas antes de que las imágenes se comprimieran a JPEG.
-    // Se envía el texto sin adjunto en lugar de que Twilio tumbe la campaña
-    // entera con «63021 Channel invalid content error».
-    console.warn("[send-campaign] formato de imagen no admitido por WhatsApp", {
-      key: campaign.image_url,
-      admitidos: SENDABLE_IMAGE_EXTENSIONS.join(", "),
-    });
+  if (claimError) {
+    console.error("[send-campaign] no se pudo reservar el cupo", claimError);
+    return jsonResponse({ error: claimError.message }, 500);
   }
 
-  const body = buildBody(campaign);
-  let sent = 0;
-  let failed = 0;
-
-  for (let index = 0; index < queue.length; index += BATCH_SIZE) {
-    const batch = queue.slice(index, index + BATCH_SIZE);
-
-    const results = await Promise.all(
-      batch.map(async (recipient) => {
-        const result = await sendWhatsApp({
-          from: clinic.whatsapp_phone_number_id ?? "mock",
-          to: recipient.phone,
-          body,
-          mediaUrl,
-          templateSid: campaign.template_id,
-        });
-
-        return { recipient, result };
-      }),
+  if (claimResult === CAMPAIGN_LIMIT_ERROR_CODES.sentLimitReached) {
+    return errorResponse(
+      CAMPAIGN_LIMIT_ERROR_CODES.sentLimitReached,
+      CAMPAIGN_ERROR_MESSAGES.sentLimitReached,
+      409,
     );
-
-    for (const { recipient, result } of results) {
-      if (result.ok) {
-        console.log("[send-campaign] enviado", {
-          to: recipient.phone,
-          providerMessageId: result.providerMessageId,
-        });
-      } else {
-        console.error("[send-campaign] fallo de envío", {
-          to: recipient.phone,
-          error: result.error,
-        });
-      }
-
-      await supabase
-        .from("campaign_recipients")
-        .update({
-          status: result.ok ? "sent" : "failed",
-          sent_at: result.ok ? new Date().toISOString() : null,
-          error_message: result.error,
-          provider_message_id: result.providerMessageId,
-        })
-        .eq("id", recipient.id);
-
-      if (result.ok) {
-        sent++;
-      } else {
-        failed++;
-      }
-    }
-
-    if (index + BATCH_SIZE < queue.length) {
-      await sleep(BATCH_PAUSE_MS);
-    }
   }
 
-  // La campaña se marca como enviada aunque haya fallos parciales: el detalle
-  // por destinatario queda en campaign_recipients para poder reintentar.
-  await supabase
-    .from("campaigns")
-    .update({ status: "sent", sent_at: new Date().toISOString() })
-    .eq("id", campaignId);
+  if (claimResult === CAMPAIGN_LIMIT_ERROR_CODES.sendInProgress) {
+    return errorResponse(
+      CAMPAIGN_LIMIT_ERROR_CODES.sendInProgress,
+      CAMPAIGN_ERROR_MESSAGES.sendInProgress,
+      409,
+    );
+  }
 
-  console.log("[send-campaign] fin", {
-    campaignId,
-    mode,
-    sent,
-    failed,
-    skipped,
-    total: recipients.length,
-  });
+  if (claimResult !== "claimed") {
+    return errorResponse(
+      String(claimResult),
+      "La campaña ya no se puede enviar.",
+      claimResult === "campaign_not_found" ? 404 : 409,
+    );
+  }
 
-  return jsonResponse({
-    sent,
-    failed,
-    skipped,
-    total: recipients.length,
-    mode,
-  });
+  let processed = 0;
+
+  try {
+    let mediaUrl: string | null = null;
+
+    if (campaign.image_url && isSendableImageKey(campaign.image_url)) {
+      // El bucket es privado: Twilio necesita una URL firmada para descargarla.
+      const { data: signed, error: signedError } = await supabase.storage
+        .from("campaign-images")
+        .createSignedUrl(campaign.image_url, IMAGE_URL_TTL_SECONDS);
+
+      mediaUrl = signed?.signedUrl ?? null;
+
+      if (signedError || !mediaUrl) {
+        // Se sigue enviando sin imagen: perder el adjunto es mejor que perder
+        // toda la campaña, pero conviene que quede constancia.
+        console.warn("[send-campaign] no se pudo firmar la imagen", {
+          key: campaign.image_url,
+          error: signedError?.message,
+        });
+      }
+    } else if (campaign.image_url) {
+      // Campañas guardadas antes de que las imágenes se comprimieran a JPEG.
+      // Se envía el texto sin adjunto en lugar de que Twilio tumbe la campaña
+      // entera con «63021 Channel invalid content error».
+      console.warn(
+        "[send-campaign] formato de imagen no admitido por WhatsApp",
+        {
+          key: campaign.image_url,
+          admitidos: SENDABLE_IMAGE_EXTENSIONS.join(", "),
+        },
+      );
+    }
+
+    const body = buildBody(campaign);
+    let sent = 0;
+    let failed = 0;
+
+    for (let index = 0; index < queue.length; index += BATCH_SIZE) {
+      const batch = queue.slice(index, index + BATCH_SIZE);
+
+      const results = await Promise.all(
+        batch.map(async (recipient) => {
+          const result = await sendWhatsApp({
+            from: clinic.whatsapp_phone_number_id ?? "mock",
+            to: recipient.phone,
+            body,
+            mediaUrl,
+            templateSid: campaign.template_id,
+          });
+
+          return { recipient, result };
+        }),
+      );
+
+      processed += results.length;
+
+      for (const { recipient, result } of results) {
+        if (result.ok) {
+          console.log("[send-campaign] enviado", {
+            to: recipient.phone,
+            providerMessageId: result.providerMessageId,
+          });
+        } else {
+          console.error("[send-campaign] fallo de envío", {
+            to: recipient.phone,
+            error: result.error,
+          });
+        }
+
+        const { error: recipientUpdateError } = await supabase
+          .from("campaign_recipients")
+          .update({
+            status: result.ok ? "sent" : "failed",
+            sent_at: result.ok ? new Date().toISOString() : null,
+            error_message: result.error,
+            provider_message_id: result.providerMessageId,
+          })
+          .eq("id", recipient.id);
+
+        if (recipientUpdateError) {
+          throw new Error(recipientUpdateError.message);
+        }
+
+        if (result.ok) {
+          sent++;
+        } else {
+          failed++;
+        }
+      }
+
+      if (index + BATCH_SIZE < queue.length) {
+        await sleep(BATCH_PAUSE_MS);
+      }
+    }
+
+    const { error: finishError } = await supabase
+      .from("campaigns")
+      .update({
+        status: "sent",
+        sent_at: new Date().toISOString(),
+        send_started_at: null,
+      })
+      .eq("id", campaignId);
+
+    if (finishError) {
+      throw new Error(finishError.message);
+    }
+
+    console.log("[send-campaign] fin", {
+      campaignId,
+      mode,
+      sent,
+      failed,
+      skipped,
+      total: recipients.length,
+    });
+
+    return jsonResponse({
+      sent,
+      failed,
+      skipped,
+      total: recipients.length,
+      mode,
+    });
+  } catch (cause) {
+    const message = cause instanceof Error ? cause.message : String(cause);
+    const status = processed > 0 ? "sent" : "draft";
+    const { error: recoveryError } = await supabase
+      .from("campaigns")
+      .update({
+        status,
+        sent_at: processed > 0 ? new Date().toISOString() : null,
+        send_started_at: null,
+      })
+      .eq("id", campaignId);
+
+    console.error("[send-campaign] envío abortado", {
+      campaignId,
+      processed,
+      error: message,
+      recoveryError: recoveryError?.message,
+    });
+
+    return jsonResponse({ error: message }, 500);
+  }
 });

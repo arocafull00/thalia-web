@@ -2,7 +2,13 @@ import {
   getCampaignSegments,
   replaceCampaignSegments,
 } from "@/dal/campaign-segments.dal";
-import { copyCampaignImage } from "@/lib/campaign-image-storage";
+import { createCampaignError } from "@/lib/campaign-error";
+import {
+  copyCampaignImage,
+  removeCampaignImage,
+} from "@/lib/campaign-image-storage";
+import { MAX_SENT_CAMPAIGNS, type CampaignQuota } from "@/lib/campaign-limits";
+import { logger } from "@/lib/logger";
 import { supabase } from "@/lib/supabase";
 import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type { Campaign, CampaignStatus } from "@/types/database.types";
@@ -110,7 +116,35 @@ export async function insertCampaign(input: CampaignInsert): Promise<Campaign> {
     .select("*")
     .single();
 
-  return unwrapSupabase(data, error) as Campaign;
+  if (error) {
+    throw await createCampaignError(error);
+  }
+
+  return data as Campaign;
+}
+
+export async function getCampaignQuota(
+  clinicId: string,
+): Promise<CampaignQuota> {
+  const { data, error } = await supabase
+    .rpc("get_campaign_quota", { p_clinic_id: clinicId })
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const quota = data as {
+    used: number;
+    campaign_limit: number;
+    reached: boolean;
+  };
+
+  return {
+    used: Number(quota.used),
+    limit: MAX_SENT_CAMPAIGNS,
+    reached: quota.reached,
+  };
 }
 
 const MAX_TITLE_LENGTH = 120;
@@ -140,15 +174,30 @@ export async function duplicateCampaign(
     ? await copyCampaignImage(original.image_url, original.clinic_id)
     : null;
 
-  const duplicated = await insertCampaign({
-    clinic_id: original.clinic_id,
-    title: buildCopyTitle(original.title, copyPrefix),
-    content: original.content,
-    footer_text: original.footer_text,
-    footer_website: original.footer_website,
-    footer_phone: original.footer_phone,
-    image_url: imageKey,
-  });
+  let duplicated: Campaign;
+
+  try {
+    duplicated = await insertCampaign({
+      clinic_id: original.clinic_id,
+      title: buildCopyTitle(original.title, copyPrefix),
+      content: original.content,
+      footer_text: original.footer_text,
+      footer_website: original.footer_website,
+      footer_phone: original.footer_phone,
+      image_url: imageKey,
+    });
+  } catch (cause) {
+    if (imageKey) {
+      removeCampaignImage(imageKey).catch((cleanupCause) =>
+        logger.captureException(cleanupCause, {
+          action: "cleanupDuplicatedCampaignImage",
+          imageKey,
+        }),
+      );
+    }
+
+    throw cause;
+  }
 
   const segments = await getCampaignSegments(campaignId);
 
@@ -180,7 +229,7 @@ export async function sendCampaign(
   });
 
   if (error) {
-    throw new Error(error.message);
+    throw await createCampaignError(error);
   }
 
   return data as SendCampaignResult;

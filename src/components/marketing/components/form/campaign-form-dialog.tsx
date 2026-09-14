@@ -105,13 +105,14 @@ export default function CampaignFormDialog({
                     ? editDialog.save
                     : createDialog.actions.save
               }
-              disabled={dialog.isPending}
+              disabled={dialog.isPending || !dialog.canSave}
               testId="campaign-create-submit"
               onClick={dialog.handleSubmit}
             />
           ) : (
             <ActionButton
               title={createDialog.actions.next}
+              disabled={!dialog.canContinue}
               testId="campaign-create-next"
               onClick={() => void dialog.goNext()}
             />

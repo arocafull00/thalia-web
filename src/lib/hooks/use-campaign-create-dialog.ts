@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import type { z } from "zod";
 
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
@@ -8,11 +9,16 @@ import {
   getCampaignSegments,
   replaceCampaignSegments,
 } from "@/dal/campaign-segments.dal";
-import { uploadCampaignImage } from "@/lib/campaign-image-storage";
+import {
+  removeCampaignImage,
+  uploadCampaignImage,
+} from "@/lib/campaign-image-storage";
+import { MAX_CAMPAIGN_RECIPIENTS } from "@/lib/campaign-limits";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useCampaignImageUrl } from "@/lib/hooks/use-campaign-image-url";
 import { useCampaignSegmentPreview } from "@/lib/hooks/use-campaign-segment-preview";
 import {
+  useCampaignQuota,
   useCreateCampaign,
   useUpdateCampaign,
 } from "@/lib/hooks/use-campaigns";
@@ -78,6 +84,7 @@ export function useCampaignCreateDialog(
 ) {
   const clinicId = useClinicId();
   const { mutate, isPending } = useCreateCampaign();
+  const quota = useCampaignQuota();
   const { mutate: mutateUpdate, isPending: isUpdating } = useUpdateCampaign();
   const editingId = campaign?.id ?? null;
   const [segmentInputs, setSegmentInputs] = useState<CampaignSegmentInputs>(
@@ -157,11 +164,16 @@ export function useCampaignCreateDialog(
     isSegmentValid ? clinicId : null,
     filters,
   );
+  const recipientsReady =
+    !preview.isLoading && preview.error == null && preview.count != null;
+  const recipientLimitExceeded =
+    preview.count != null && preview.count > MAX_CAMPAIGN_RECIPIENTS;
 
   const setSegmentInput = (
     field: keyof CampaignSegmentInputs,
     value: string,
   ) => {
+    clearErrors("root");
     setSegmentInputs((current) => ({ ...current, [field]: value }));
   };
 
@@ -178,8 +190,23 @@ export function useCampaignCreateDialog(
       }
     }
 
-    if (step === "segment" && !isSegmentValid) {
-      return;
+    if (step === "segment") {
+      if (!isSegmentValid) {
+        return;
+      }
+
+      if (!recipientsReady) {
+        setError("root", { message: MARKETING_COPY.segmentPreview.error });
+        return;
+      }
+
+      if (recipientLimitExceeded) {
+        setError("root", {
+          message: MARKETING_COPY.limits.recipientLimitExceeded,
+        });
+        toast.error(MARKETING_COPY.limits.recipientLimitExceeded);
+        return;
+      }
     }
 
     setStepIndex((current) => Math.min(current + 1, CAMPAIGN_STEPS.length - 1));
@@ -204,6 +231,37 @@ export function useCampaignCreateDialog(
         message: MARKETING_COPY.createDialog.validation.segmentInvalid,
       });
       return;
+    }
+
+    if (!recipientsReady) {
+      setError("root", { message: MARKETING_COPY.segmentPreview.error });
+      return;
+    }
+
+    if (recipientLimitExceeded) {
+      setError("root", {
+        message: MARKETING_COPY.limits.recipientLimitExceeded,
+      });
+      toast.error(MARKETING_COPY.limits.recipientLimitExceeded);
+      return;
+    }
+
+    if (!editingId) {
+      try {
+        const latestQuota = await quota.refresh();
+
+        if (latestQuota.reached) {
+          setError("root", {
+            message: MARKETING_COPY.limits.sentLimitReached,
+          });
+          toast.error(MARKETING_COPY.limits.sentLimitReached);
+          return;
+        }
+      } catch {
+        setError("root", { message: MARKETING_COPY.limits.quotaLoadError });
+        toast.error(MARKETING_COPY.limits.quotaLoadError);
+        return;
+      }
     }
 
     // La imagen se sube antes de crear la campaña: si falla, no queda un
@@ -231,6 +289,15 @@ export function useCampaignCreateDialog(
     });
 
     if (!parsed.success) {
+      if (imageFile && imageKey) {
+        void removeCampaignImage(imageKey).catch((cause) =>
+          logger.captureException(cause, {
+            hook: "use-campaign-create-dialog",
+            action: "cleanupCampaignImage",
+            imageKey,
+          }),
+        );
+      }
       setError("root", { message: formatZodError(parsed.error) });
       return;
     }
@@ -271,9 +338,19 @@ export function useCampaignCreateDialog(
       mutateUpdate(editingId, parsed.data, {
         onSuccess: () => void saveSegments(editingId),
         onError: (cause) => {
+          if (imageFile && imageKey) {
+            void removeCampaignImage(imageKey).catch((cleanupCause) =>
+              logger.captureException(cleanupCause, {
+                hook: "use-campaign-create-dialog",
+                action: "cleanupCampaignImage",
+                imageKey,
+              }),
+            );
+          }
           setError("root", {
             message: cause.message || MARKETING_COPY.editDialog.error,
           });
+          toast.error(cause.message || MARKETING_COPY.editDialog.error);
         },
       });
       return;
@@ -284,9 +361,19 @@ export function useCampaignCreateDialog(
         void saveSegments(campaignId);
       },
       onError: (cause) => {
+        if (imageFile && imageKey) {
+          void removeCampaignImage(imageKey).catch((cleanupCause) =>
+            logger.captureException(cleanupCause, {
+              hook: "use-campaign-create-dialog",
+              action: "cleanupCampaignImage",
+              imageKey,
+            }),
+          );
+        }
         setError("root", {
           message: cause.message || MARKETING_COPY.createDialog.error,
         });
+        toast.error(cause.message || MARKETING_COPY.createDialog.error);
       },
     });
   });
@@ -332,6 +419,10 @@ export function useCampaignCreateDialog(
     imagePreviewUrl,
     storedImageUrl,
     preview,
+    canContinue:
+      step !== "segment" ||
+      (isSegmentValid && recipientsReady && !recipientLimitExceeded),
+    canSave: recipientsReady && !recipientLimitExceeded,
     step,
     stepIndex,
     stepCount: CAMPAIGN_STEPS.length,

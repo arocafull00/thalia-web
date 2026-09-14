@@ -16,7 +16,11 @@ export function resetClinicQueryData() {
     appointmentInventoryById: {},
     defaultMaterialsByKey: {},
   });
-  useCampaignsStore.setState({ byPage: {}, byId: {} });
+  useCampaignsStore.setState({
+    byPage: {},
+    byId: {},
+    quota: emptyQueryEntry(),
+  });
   useDashboardStore.setState({ data: emptyQueryEntry() });
   useFinancesStore.setState({
     byPage: {},

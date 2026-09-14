@@ -1,5 +1,5 @@
 import MarketingPageClient from "@/components/marketing/marketing-page-client";
-import { getCampaignsPage } from "@/dal/campaigns.server.dal";
+import { getCampaignQuota, getCampaignsPage } from "@/dal/campaigns.server.dal";
 import {
   CAMPAIGNS_PAGE_SIZE,
   campaignDateRangeToIso,
@@ -35,7 +35,20 @@ export default async function MarketingPage({
     pageSize: CAMPAIGNS_PAGE_SIZE,
   };
 
-  const page = await getCampaignsPage({ ...query, clinicId });
+  if (!clinicId) {
+    throw new Error("No hay clínica activa.");
+  }
 
-  return <MarketingPageClient initialPage={page} initialQuery={query} />;
+  const [page, quota] = await Promise.all([
+    getCampaignsPage({ ...query, clinicId }),
+    getCampaignQuota(clinicId),
+  ]);
+
+  return (
+    <MarketingPageClient
+      initialPage={page}
+      initialQuery={query}
+      initialQuota={quota}
+    />
+  );
 }

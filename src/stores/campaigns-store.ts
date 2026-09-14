@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import {
   getCampaign,
+  getCampaignQuota,
   getCampaignsPage,
   insertCampaign,
   updateCampaign,
@@ -11,9 +12,11 @@ import {
   type CampaignUpdate,
 } from "@/dal/campaigns.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import type { CampaignQuota } from "@/lib/campaign-limits";
 import { logger } from "@/lib/logger";
 import {
   errorQueryEntry,
+  emptyQueryEntry,
   loadingQueryEntry,
   successQueryEntry,
   type QueryEntry,
@@ -36,6 +39,7 @@ export function campaignsPageKey(query: CampaignsPageQuery) {
 type CampaignsStore = {
   byPage: Record<string, QueryEntry<CampaignPageResult>>;
   byId: Record<string, QueryEntry<Campaign>>;
+  quota: QueryEntry<CampaignQuota>;
   creating: boolean;
   createError: Error | null;
   updating: boolean;
@@ -47,6 +51,8 @@ type CampaignsStore = {
   ) => void;
   refreshCampaignPages: () => Promise<void>;
   fetchCampaign: (campaignId: string) => Promise<void>;
+  fetchCampaignQuota: () => Promise<CampaignQuota>;
+  seedCampaignQuota: (quota: CampaignQuota) => void;
   createCampaign: (input: CampaignInsert) => Promise<Campaign>;
   updateCampaign: (
     campaignId: string,
@@ -61,6 +67,7 @@ function toError(cause: unknown): Error {
 export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
   byPage: {},
   byId: {},
+  quota: emptyQueryEntry(),
   creating: false,
   createError: null,
   updating: false,
@@ -146,6 +153,37 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
     }
   },
 
+  seedCampaignQuota: (quota) => {
+    set({ quota: successQueryEntry(quota) });
+  },
+
+  fetchCampaignQuota: async () => {
+    const previous = get().quota;
+    const clinicId = getActiveClinicId();
+    set({ quota: loadingQueryEntry(previous) });
+
+    if (!clinicId) {
+      const error = new Error("No hay clínica activa.");
+      set({ quota: errorQueryEntry(error, previous) });
+      throw error;
+    }
+
+    try {
+      const quota = await getCampaignQuota(clinicId);
+      set({ quota: successQueryEntry(quota) });
+      return quota;
+    } catch (cause) {
+      logger.captureException(cause, {
+        store: "campaigns-store",
+        action: "fetchCampaignQuota",
+        clinicId,
+      });
+      const error = toError(cause);
+      set({ quota: errorQueryEntry(error, previous) });
+      throw error;
+    }
+  },
+
   createCampaign: async (input) => {
     set({ creating: true, createError: null });
 
@@ -155,6 +193,9 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         byId: { ...get().byId, [campaign.id]: successQueryEntry(campaign) },
       });
       await get().refreshCampaignPages();
+      await get()
+        .fetchCampaignQuota()
+        .catch(() => undefined);
       set({ creating: false });
       return campaign;
     } catch (cause) {

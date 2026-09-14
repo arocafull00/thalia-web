@@ -1,3 +1,8 @@
+import {
+  MAX_CAMPAIGN_RECIPIENTS,
+  MAX_SENT_CAMPAIGNS,
+} from "@/lib/campaign-limits";
+
 export const MARKETING_COPY = {
   page: {
     title: "Marketing",
@@ -49,6 +54,7 @@ export const MARKETING_COPY = {
   status: {
     draft: "Borrador",
     scheduled: "Programada",
+    sending: "Enviando",
     sent: "Enviada",
     cancelled: "Cancelada",
   },
@@ -108,9 +114,12 @@ export const MARKETING_COPY = {
   segmentPreview: {
     loading: "Calculando destinatarios...",
     error: "No se pudo calcular el segmento.",
-    none: "Ningún paciente cumple estos criterios.",
-    one: "1 paciente recibirá esta campaña.",
-    many: (count: number) => `${count} pacientes recibirán esta campaña.`,
+    none: `Ningún paciente cumple estos criterios. Límite: ${MAX_CAMPAIGN_RECIPIENTS}.`,
+    one: `1 paciente recibirá esta campaña. Límite: ${MAX_CAMPAIGN_RECIPIENTS}.`,
+    many: (count: number) =>
+      `${count} pacientes recibirán esta campaña. Límite: ${MAX_CAMPAIGN_RECIPIENTS}.`,
+    overLimit: (count: number) =>
+      `${count} pacientes cumplen los criterios. El máximo por campaña es ${MAX_CAMPAIGN_RECIPIENTS}; ajusta los filtros.`,
     consentNote:
       "Solo se cuentan pacientes con consentimiento de marketing y teléfono.",
   },
@@ -194,5 +203,13 @@ export const MARKETING_COPY = {
         : `Campaña enviada a ${count} pacientes.`,
     error: "No se pudo enviar la campaña.",
     alreadySent: "Esta campaña ya se envió.",
+  },
+  limits: {
+    sentLimitReached: `Has alcanzado el límite de ${MAX_SENT_CAMPAIGNS} campañas enviadas.`,
+    recipientLimitExceeded: `El máximo por campaña es ${MAX_CAMPAIGN_RECIPIENTS} pacientes. Ajusta los filtros de destinatarios.`,
+    sendInProgress: "Esta campaña ya se está enviando.",
+    quotaLoadError: "No se pudo comprobar el cupo de campañas.",
+    recipientCountUnavailable:
+      "No se pudo comprobar cuántos pacientes recibirán la campaña.",
   },
 } as const;

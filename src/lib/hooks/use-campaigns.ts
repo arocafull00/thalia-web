@@ -5,6 +5,7 @@ import type {
   CampaignUpdate,
   CampaignPageResult,
 } from "@/dal/campaigns.dal";
+import type { CampaignQuota } from "@/lib/campaign-limits";
 import { CAMPAIGNS_PAGE_SIZE } from "@/lib/campaign-pagination";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
 import {
@@ -112,6 +113,39 @@ export function useCampaign(campaignId: string) {
     data: entry?.data ?? null,
     isLoading: isInitialLoading(entry),
     error: entry?.error ?? null,
+  };
+}
+
+export function useCampaignQuota(initialQuota?: CampaignQuota) {
+  const entry = useCampaignsStore((state) => state.quota);
+  const fetchCampaignQuota = useCampaignsStore(
+    (state) => state.fetchCampaignQuota,
+  );
+  const seedCampaignQuota = useCampaignsStore(
+    (state) => state.seedCampaignQuota,
+  );
+
+  useEffect(() => {
+    if (!initialQuota) {
+      return;
+    }
+
+    seedCampaignQuota(initialQuota);
+  }, [initialQuota, seedCampaignQuota]);
+
+  useEffect(() => {
+    if (initialQuota || entry.data != null || entry.loading) {
+      return;
+    }
+
+    void fetchCampaignQuota().catch(() => undefined);
+  }, [entry.data, entry.loading, fetchCampaignQuota, initialQuota]);
+
+  return {
+    data: entry.data ?? initialQuota ?? null,
+    isLoading: entry.data == null && !initialQuota && isInitialLoading(entry),
+    error: entry.error,
+    refresh: fetchCampaignQuota,
   };
 }
 

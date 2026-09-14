@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
+import { MAX_CAMPAIGN_RECIPIENTS } from "@/lib/campaign-limits";
 
 const { segmentPreview } = MARKETING_COPY;
 
@@ -30,6 +31,10 @@ function resolveMessage(
     return segmentPreview.none;
   }
 
+  if (count > MAX_CAMPAIGN_RECIPIENTS) {
+    return segmentPreview.overLimit(count);
+  }
+
   if (count === 1) {
     return segmentPreview.one;
   }
@@ -43,7 +48,10 @@ export default function CampaignRecipientsPreview({
   hasError,
   testId,
 }: CampaignRecipientsPreviewProps) {
-  const tone = hasError ? "text-danger" : "text-ink";
+  const tone =
+    hasError || (count != null && count > MAX_CAMPAIGN_RECIPIENTS)
+      ? "text-danger"
+      : "text-ink";
 
   return (
     <div

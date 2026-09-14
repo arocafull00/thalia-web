@@ -12,60 +12,91 @@ type AuthProviderProps = {
   children: React.ReactNode;
 };
 
+function clearAuthState() {
+  clearBrowserQueryClient();
+  useClinicRequestsStore.getState().clearRequests();
+  useClinicStore.getState().clearClinicState();
+  useAuthStore.setState({ profile: null });
+}
+
+async function hydrateUserData(userId: string) {
+  const authState = useAuthStore.getState();
+  const clinicState = useClinicStore.getState();
+
+  if (
+    authState.profile?.id === userId &&
+    clinicState.memberships.length > 0
+  ) {
+    return;
+  }
+
+  await useClinicStore.getState().fetchMemberships(userId);
+  await useAuthStore.getState().refreshProfile();
+}
+
 export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
-    const { setSession, setLoading, refreshProfile } = useAuthStore.getState();
+    let cancelled = false;
 
-    supabase.auth.getSession().then(async ({ data }) => {
+    async function syncSession() {
+      await supabase.auth.getUser();
+      if (cancelled) {
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      const { setSession, setLoading } = useAuthStore.getState();
       setSession(data.session);
 
       if (!data.session?.user.id) {
-        clearBrowserQueryClient();
-        useClinicRequestsStore.getState().clearRequests();
-        useClinicStore.getState().clearClinicState();
-        useAuthStore.setState({ profile: null });
+        clearAuthState();
         setLoading(false);
         return;
       }
 
-      const authState = useAuthStore.getState();
-      const clinicState = useClinicStore.getState();
-
-      if (
-        authState.profile?.id === data.session.user.id &&
-        clinicState.memberships.length > 0
-      ) {
-        setLoading(false);
+      await hydrateUserData(data.session.user.id);
+      if (cancelled) {
         return;
       }
 
-      await useClinicStore.getState().fetchMemberships(data.session.user.id);
-      await refreshProfile();
       setLoading(false);
-    });
+    }
+
+    void syncSession();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
+    } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      useAuthStore.getState().setSession(nextSession);
 
-      if (!nextSession?.user.id) {
-        clearBrowserQueryClient();
-        useClinicRequestsStore.getState().clearRequests();
-        useClinicStore.getState().clearClinicState();
-        useAuthStore.setState({ profile: null });
-        return;
-      }
+      setTimeout(() => {
+        if (cancelled) {
+          return;
+        }
 
-      useClinicStore.setState({ loading: true });
-      refreshProfile()
-        .then(() =>
-          useClinicStore.getState().fetchMemberships(nextSession.user.id),
-        )
-        .catch(() => useAuthStore.setState({ profile: null }));
+        if (!nextSession?.user.id) {
+          if (event === "SIGNED_OUT") {
+            clearAuthState();
+            useAuthStore.getState().setLoading(false);
+          }
+          return;
+        }
+
+        if (event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") {
+          return;
+        }
+
+        useClinicStore.setState({ loading: true });
+        void hydrateUserData(nextSession.user.id)
+          .catch(() => useAuthStore.setState({ profile: null }))
+          .finally(() => useClinicStore.setState({ loading: false }));
+      }, 0);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return children;

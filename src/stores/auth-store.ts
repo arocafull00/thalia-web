@@ -60,8 +60,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   setLoading: (loading) => set({ loading }),
 
   refreshProfile: async () => {
-    const { data } = await supabase.auth.getSession();
-    const userId = data.session?.user.id;
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
 
     if (!userId) {
       set({ profile: null });

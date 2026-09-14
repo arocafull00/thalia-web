@@ -57,6 +57,7 @@ export function useMarketingPage(
 export const CAMPAIGN_STATUS_VALUES: CampaignStatus[] = [
   "draft",
   "scheduled",
+  "sending",
   "sent",
   "cancelled",
 ];

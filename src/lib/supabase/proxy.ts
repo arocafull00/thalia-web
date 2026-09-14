@@ -42,9 +42,9 @@ export async function updateSession(request: NextRequest): Promise<SessionUpdate
 }
 
 export function withSessionCookies(target: NextResponse, source: NextResponse) {
-  source.cookies.getAll().forEach(({ name, value }) => {
-    target.cookies.set(name, value);
-  });
+  for (const cookie of source.cookies.getAll()) {
+    target.cookies.set(cookie);
+  }
 
   return target;
 }

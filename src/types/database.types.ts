@@ -443,7 +443,8 @@ export type Transaction = TransactionRow & {
   category: TransactionCategorySummary | null;
 };
 
-export type CampaignStatus = "draft" | "scheduled" | "sent" | "cancelled";
+export type CampaignStatus =
+  "draft" | "scheduled" | "sending" | "sent" | "cancelled";
 
 export type CampaignSegmentType =
   | "treatment_type"
@@ -483,6 +484,7 @@ export type Campaign = {
   image_url: string | null;
   status: CampaignStatus;
   scheduled_at: string | null;
+  send_started_at: string | null;
   sent_at: string | null;
   template_id: string | null;
   variable_values: Record<string, string> | null;
@@ -689,6 +691,22 @@ export type Database = {
           visit_count: number;
           last_visit_at: string | null;
         }[];
+      };
+      get_campaign_quota: {
+        Args: {
+          p_clinic_id: string;
+        };
+        Returns: {
+          used: number;
+          campaign_limit: number;
+          reached: boolean;
+        }[];
+      };
+      claim_campaign_send_slot: {
+        Args: {
+          p_campaign_id: string;
+        };
+        Returns: string;
       };
       get_appointment_confirmation: {
         Args: {

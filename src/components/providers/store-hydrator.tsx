@@ -32,7 +32,7 @@ export default function StoreHydrator({
   children,
 }: StoreHydratorProps) {
   useEffect(() => {
-    useAuthStore.setState({ profile, loading: false });
+    useAuthStore.setState({ profile });
     useClinicStore.setState({
       memberships,
       activeClinicId,

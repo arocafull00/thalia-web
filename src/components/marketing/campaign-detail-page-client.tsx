@@ -37,10 +37,12 @@ export default function CampaignDetailPageClient() {
     isSending,
     sendError,
     send: sendNow,
+    canStartSend,
     duplicate,
   } = useCampaignDetail(id);
 
   const canSend = campaign?.status === "draft";
+  const isSendingStatus = campaign?.status === "sending";
   // Sólo se edita el borrador: una vez enviada, el mensaje ya salió y cambiarlo
   // dejaría el detalle contando algo distinto de lo que recibieron.
   const isDraft = canSend;
@@ -73,23 +75,29 @@ export default function CampaignDetailPageClient() {
   useTopbarActions(
     campaign
       ? {
-          buttons: canSend
-            ? [
-                {
-                  title: send.action,
-                  icon: Send,
-                  testId: "campaign-send-trigger",
-                  onClick: () => setConfirmOpen(true),
-                },
-              ]
-            : [
-                {
-                  title: duplicateCopy.action,
-                  icon: Copy,
-                  onClick: () =>
-                    duplicate((newId) => router.push(`/marketing/${newId}`)),
-                },
-              ],
+          buttons: isSendingStatus
+            ? []
+            : canSend
+              ? [
+                  {
+                    title: send.action,
+                    icon: Send,
+                    testId: "campaign-send-trigger",
+                    onClick: () => {
+                      if (canStartSend()) {
+                        setConfirmOpen(true);
+                      }
+                    },
+                  },
+                ]
+              : [
+                  {
+                    title: duplicateCopy.action,
+                    icon: Copy,
+                    onClick: () =>
+                      duplicate((newId) => router.push(`/marketing/${newId}`)),
+                  },
+                ],
           menu: {
             // Editar acompaña a duplicar en el menú del borrador: la acción
             // principal ahí es enviar, y no conviene competir con ella.

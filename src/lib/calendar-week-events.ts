@@ -37,6 +37,7 @@ function toZonedDateTimeFromMs(ms: number, timezone: string) {
 function buildSingleEvent(
   appointment: AppointmentWithRelations,
   timezone: string,
+  endOverride?: Temporal.ZonedDateTime,
 ): ScheduleXCalendarEvent {
   return {
     id: appointment.id,
@@ -45,9 +46,62 @@ function buildSingleEvent(
       CALENDAR_COPY.event.defaultTreatment
     }`,
     start: toZonedDateTime(appointment.starts_at, timezone),
-    end: toZonedDateTime(appointment.ends_at, timezone),
+    end: endOverride ?? toZonedDateTime(appointment.ends_at, timezone),
     calendarId: appointment.employee_id,
   };
+}
+
+function nextSameEmployeeStart(
+  appointment: AppointmentWithRelations,
+  appointments: AppointmentWithRelations[],
+  timezone: string,
+): Temporal.ZonedDateTime | null {
+  const end = toZonedDateTime(appointment.ends_at, timezone);
+  let next: Temporal.ZonedDateTime | null = null;
+
+  for (const candidate of appointments) {
+    if (candidate.id === appointment.id) continue;
+    if (candidate.employee_id !== appointment.employee_id) continue;
+
+    const candidateStart = toZonedDateTime(candidate.starts_at, timezone);
+    if (Temporal.ZonedDateTime.compare(candidateStart, end) <= 0) continue;
+
+    if (
+      !next ||
+      Temporal.ZonedDateTime.compare(candidateStart, next) < 0
+    ) {
+      next = candidateStart;
+    }
+  }
+
+  return next;
+}
+
+function visualEndForDayView(
+  appointment: AppointmentWithRelations,
+  appointments: AppointmentWithRelations[],
+  timezone: string,
+): Temporal.ZonedDateTime {
+  const start = toZonedDateTime(appointment.starts_at, timezone);
+  const end = toZonedDateTime(appointment.ends_at, timezone);
+
+  if (start.minute !== 0 || start.second !== 0 || start.millisecond !== 0) {
+    return end;
+  }
+
+  const hourEnd = start.add({ hours: 1 });
+  const nextStart = nextSameEmployeeStart(appointment, appointments, timezone);
+  const stretchTarget = nextStart
+    ? Temporal.ZonedDateTime.compare(nextStart, hourEnd) < 0
+      ? nextStart
+      : hourEnd
+    : hourEnd;
+
+  if (Temporal.ZonedDateTime.compare(end, stretchTarget) >= 0) {
+    return end;
+  }
+
+  return stretchTarget;
 }
 
 function buildGroupEvent(
@@ -95,8 +149,19 @@ export function buildWeekScheduleEvents(
 export function buildIndividualScheduleEvents(
   data: AppointmentWithRelations[] | null | undefined,
   timezone: string,
+  stretchToHourGap = false,
 ): ScheduleXCalendarEvent[] {
-  return (data ?? []).map((appointment) =>
-    buildSingleEvent(appointment, timezone),
-  );
+  const appointments = data ?? [];
+
+  return appointments.map((appointment) => {
+    if (!stretchToHourGap) {
+      return buildSingleEvent(appointment, timezone);
+    }
+
+    return buildSingleEvent(
+      appointment,
+      timezone,
+      visualEndForDayView(appointment, appointments, timezone),
+    );
+  });
 }

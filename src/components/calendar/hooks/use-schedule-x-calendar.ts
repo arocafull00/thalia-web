@@ -233,7 +233,11 @@ function buildScheduleEventsForViewMode(
   }
 
   return {
-    events: buildIndividualScheduleEvents(data, timezone),
+    events: buildIndividualScheduleEvents(
+      data,
+      timezone,
+      viewMode === "day",
+    ),
     groupAppointmentsById: new Map<string, AppointmentWithRelations[]>(),
   };
 }

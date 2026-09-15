@@ -48,7 +48,7 @@ export default function CalendarOverlapGroupEvent({
   const visibleProfessionals = professionals.slice(0, 3);
 
   return (
-    <article className="flex h-full min-h-full w-full flex-col justify-center gap-1.5 overflow-hidden rounded-xl border border-primary/20 border-l-4 border-l-primary bg-primary-subtle px-2.5 py-1.5">
+    <article className="flex h-full min-h-full w-full flex-col justify-start gap-1.5 overflow-hidden rounded-xl border border-primary/20 border-l-4 border-l-primary bg-primary-subtle px-2.5 py-1.5">
       <div className="flex items-center justify-between gap-2">
         <h3 className="m-0 truncate text-[12px] leading-tight font-semibold text-ink">
           {CALENDAR_COPY.week.groupTitle(startTime, appointments.length)}

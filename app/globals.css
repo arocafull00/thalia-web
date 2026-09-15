@@ -508,7 +508,7 @@ body {
 }
 
 .sx-react-calendar-wrapper[data-calendar-view="day"] .sx__time-grid-event {
-  padding: 2px 1px 5px 1px !important;
+  padding: 0 1px !important;
 }
 
 .sx-react-calendar-wrapper .sx__time-grid-event-inner {
@@ -516,6 +516,17 @@ body {
   height: 100%;
   padding: 0;
   container-type: size;
+}
+
+.sx-react-calendar-wrapper[data-calendar-view="day"] .sx__time-grid-event-inner {
+  display: flex;
+  min-height: 100%;
+}
+
+.sx-react-calendar-wrapper[data-calendar-view="day"] .sx__time-grid-event-inner > * {
+  flex: 1;
+  min-height: 100%;
+  justify-content: flex-start;
 }
 
 .sx-react-calendar-wrapper .sx__time-grid-event[data-event-id^="group-"] {

@@ -53,7 +53,7 @@ export default function CalendarTimeGridEvent({
   return (
     <div
       className={cn(
-        "flex h-full min-h-full flex-col justify-center gap-0.5 overflow-hidden rounded-xl border border-border-subtle border-l-4 px-2.5 py-1",
+        "flex h-full min-h-full flex-col justify-start gap-0.5 overflow-hidden rounded-xl border border-border-subtle border-l-4 px-2.5 py-1",
         employeeColor ? "" : "border-l-border bg-primary-subtle",
         appointment?.status === "rejected_external" && "opacity-60",
       )}

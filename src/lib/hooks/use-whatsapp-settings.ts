@@ -46,11 +46,11 @@ export function useWhatsAppSettings() {
     getClinicReminderSettings(clinicId)
       .then((data) => {
         setForm({
-          enabled: data.whatsapp_reminder_enabled,
-          reminderHours: data.whatsapp_reminder_hours,
-          phoneNumberId: data.whatsapp_phone_number_id ?? "",
-          messageTemplate: data.whatsapp_message_template,
-          confirmationEnabled: data.whatsapp_confirmation_enabled,
+          enabled: data.reminder_enabled,
+          reminderHours: data.reminder_hours,
+          phoneNumberId: data.phone_number_id ?? "",
+          messageTemplate: data.message_template,
+          confirmationEnabled: data.confirmation_enabled,
         });
         setLoaded(true);
       })
@@ -84,12 +84,11 @@ export function useWhatsAppSettings() {
     setSaving(true);
     try {
       await updateClinicReminderSettings(clinicId, {
-        whatsapp_reminder_enabled: form.enabled,
-        whatsapp_reminder_hours: [selectedHour],
-        whatsapp_phone_number_id: form.phoneNumberId.trim() || null,
-        whatsapp_message_template:
-          form.messageTemplate.trim() || DEFAULT_TEMPLATE,
-        whatsapp_confirmation_enabled: form.confirmationEnabled,
+        reminder_enabled: form.enabled,
+        reminder_hours: [selectedHour],
+        phone_number_id: form.phoneNumberId.trim() || null,
+        message_template: form.messageTemplate.trim() || DEFAULT_TEMPLATE,
+        confirmation_enabled: form.confirmationEnabled,
       });
       toast.success("Configuración de WhatsApp guardada.");
     } catch {

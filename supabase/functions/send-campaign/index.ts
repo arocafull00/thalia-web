@@ -194,23 +194,41 @@ Deno.serve(async (req) => {
     );
   }
 
-  const { data: clinic, error: clinicError } = await supabase
-    .from("clinics")
-    .select("id, name, whatsapp_phone_number_id")
-    .eq("id", campaign.clinic_id)
-    .single();
+  const [
+    { data: clinic, error: clinicError },
+    { data: whatsappConfig, error: whatsappConfigError },
+  ] = await Promise.all([
+    supabase
+      .from("clinics")
+      .select("id, name")
+      .eq("id", campaign.clinic_id)
+      .single(),
+    supabase
+      .from("whatsapp_config")
+      .select("phone_number_id")
+      .eq("clinic_id", campaign.clinic_id)
+      .maybeSingle(),
+  ]);
 
   if (clinicError) {
     console.error("[send-campaign] error al leer la clínica", clinicError);
     return jsonResponse({ error: clinicError.message }, 500);
   }
 
+  if (whatsappConfigError) {
+    console.error(
+      "[send-campaign] error al leer la configuración de WhatsApp",
+      whatsappConfigError,
+    );
+    return jsonResponse({ error: whatsappConfigError.message }, 500);
+  }
+
   console.log("[send-campaign] clínica", {
     clinicId: clinic.id,
-    from: clinic.whatsapp_phone_number_id ?? "(sin número)",
+    from: whatsappConfig?.phone_number_id ?? "(sin número)",
   });
 
-  if (mode !== "mock" && !clinic.whatsapp_phone_number_id) {
+  if (mode !== "mock" && !whatsappConfig?.phone_number_id) {
     console.error("[send-campaign] la clínica no tiene número emisor", {
       clinicId: clinic.id,
     });
@@ -390,7 +408,7 @@ Deno.serve(async (req) => {
       const results = await Promise.all(
         batch.map(async (recipient) => {
           const result = await sendWhatsApp({
-            from: clinic.whatsapp_phone_number_id ?? "mock",
+            from: whatsappConfig?.phone_number_id ?? "mock",
             to: recipient.phone,
             body,
             mediaUrl,

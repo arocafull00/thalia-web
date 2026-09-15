@@ -57,11 +57,11 @@ export function firstSkipReason(
 
 export async function getClinicReminderSettings(clinicId: string) {
   const { data, error } = await supabase
-    .from("clinics")
+    .from("whatsapp_config")
     .select(
-      "whatsapp_reminder_enabled, whatsapp_reminder_hours, whatsapp_phone_number_id, whatsapp_message_template, whatsapp_confirmation_enabled",
+      "reminder_enabled, reminder_hours, phone_number_id, message_template, confirmation_enabled",
     )
-    .eq("id", clinicId)
+    .eq("clinic_id", clinicId)
     .single();
 
   if (error) {
@@ -72,11 +72,11 @@ export async function getClinicReminderSettings(clinicId: string) {
 }
 
 export type ClinicReminderSettingsUpdate = {
-  whatsapp_reminder_enabled: boolean;
-  whatsapp_reminder_hours: number[];
-  whatsapp_phone_number_id: string | null;
-  whatsapp_message_template: string;
-  whatsapp_confirmation_enabled: boolean;
+  reminder_enabled: boolean;
+  reminder_hours: number[];
+  phone_number_id: string | null;
+  message_template: string;
+  confirmation_enabled: boolean;
 };
 
 export async function updateClinicReminderSettings(
@@ -84,10 +84,9 @@ export async function updateClinicReminderSettings(
   settings: ClinicReminderSettingsUpdate,
 ): Promise<void> {
   const { error } = await supabase
-    .from("clinics")
-    .update(settings)
-    .eq("id", clinicId)
-    .select("id")
+    .from("whatsapp_config")
+    .upsert({ clinic_id: clinicId, ...settings }, { onConflict: "clinic_id" })
+    .select("clinic_id")
     .single();
 
   if (error) {

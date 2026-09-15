@@ -143,13 +143,17 @@ export type Clinic = {
   closing_time: string;
   open_days: number[];
   timezone: string;
-  whatsapp_reminder_enabled: boolean;
-  whatsapp_reminder_hours: number[];
-  whatsapp_phone_number_id: string | null;
-  whatsapp_message_template: string;
-  whatsapp_confirmation_enabled: boolean;
   created_at: string | null;
   updated_at: string | null;
+};
+
+export type WhatsAppConfig = {
+  clinic_id: string;
+  reminder_enabled: boolean;
+  reminder_hours: number[];
+  phone_number_id: string | null;
+  message_template: string;
+  confirmation_enabled: boolean;
 };
 
 export type AppointmentReminderStatus = "sent" | "failed";

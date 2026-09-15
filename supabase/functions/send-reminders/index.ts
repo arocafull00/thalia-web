@@ -185,18 +185,26 @@ Deno.serve(async (req) => {
     appointmentId: manualAppointmentId,
   });
 
-  const { data: clinics, error: clinicsError } = await supabase
-    .from("clinics")
+  const { data: configs, error: clinicsError } = await supabase
+    .from("whatsapp_config")
     .select(
-      "id, name, address, timezone, whatsapp_reminder_enabled, whatsapp_reminder_hours, whatsapp_phone_number_id, whatsapp_message_template, whatsapp_confirmation_enabled",
+      "clinic_id, whatsapp_reminder_enabled:reminder_enabled, whatsapp_reminder_hours:reminder_hours, whatsapp_phone_number_id:phone_number_id, whatsapp_message_template:message_template, whatsapp_confirmation_enabled:confirmation_enabled, clinic:clinics!inner(id, name, address, timezone)",
     )
-    .eq("whatsapp_reminder_enabled", true)
-    .not("whatsapp_phone_number_id", "is", null);
+    .eq("reminder_enabled", true)
+    .not("phone_number_id", "is", null);
 
   if (clinicsError) {
     console.error("[reminders] no se pudieron leer las clínicas", clinicsError);
     return new Response(clinicsError.message, { status: 500 });
   }
+
+  const clinics = (configs ?? []).map(
+    ({ clinic, clinic_id: id, ...config }) => ({
+      ...clinic,
+      ...config,
+      id,
+    }),
+  );
 
   const clinicIds = (clinics ?? []).map((clinic) => clinic.id);
   const { data: activeBilling, error: billingError } = clinicIds.length

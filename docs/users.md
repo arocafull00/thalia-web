@@ -652,7 +652,6 @@ Cada fase es desplegable de forma independiente. No avanzar a la siguiente sin c
 | RLS estricto | JWT claim o RPC |
 | Email transaccional | Resend u otro proveedor |
 | Eliminar `set-password.tsx` | legacy deprecado |
-| Analytics PostHog | eventos de onboarding |
 
 ---
 
@@ -746,7 +745,6 @@ Todos los sitios que hoy usan `profile.clinic_id` deben migrar a `useActiveClini
 - [ ] `resolvePostAuthRoute()` es la única fuente de verdad para redirects post-auth
 - [ ] Ninguna ruta `(app)/*` accesible sin `activeClinicId`
 - [ ] RLS estricto cross-clinic: Fase 5 (v1 filtra en cliente)
-- [ ] Eventos PostHog registran cada transición de flujo
 
 ---
 

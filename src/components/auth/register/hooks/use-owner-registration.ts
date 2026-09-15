@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { REGISTER_OWNER_COPY } from "@/copy/register-owner-copy";
-import { captureEvent } from "@/lib/analytics";
 import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
 import { signInWithGoogleFlow } from "@/lib/auth/sign-in-with-google-flow";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
@@ -213,7 +212,6 @@ export function useOwnerRegistration() {
 
         clinicId = clinicData.clinicId;
         createdClinicId.current = clinicId;
-        captureEvent("clinic_created", { clinicId });
       }
 
       stage = "membership";

@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { CREATE_CLINIC_COPY } from "@/copy/create-clinic-copy";
-import { captureEvent } from "@/lib/analytics";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { isSupabaseConfigured } from "@/lib/environment";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -92,8 +91,6 @@ export function useCreateClinic() {
       if (!clinicData?.clinicId) {
         throw new Error(CREATE_CLINIC_COPY.errors.createFailed);
       }
-
-      captureEvent("clinic_created", { clinicId: clinicData.clinicId });
 
       if (user?.id) {
         await fetchMemberships(user.id);

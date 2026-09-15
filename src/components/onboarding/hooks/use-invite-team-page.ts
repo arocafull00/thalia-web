@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 import { EMPLOYEE_INVITE_COPY } from "@/copy/employee-invite-copy";
 import { inviteEmployee } from "@/dal/employees.dal";
-import { captureEvent } from "@/lib/analytics";
 import { waitForAuthSessionReady } from "@/lib/auth/wait-for-auth-session";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -67,7 +66,7 @@ export function useInviteTeamPage() {
     shouldRedirectToPostAuth,
   ]);
 
-  const finishInvites = async (skipped: boolean) => {
+  const finishInvites = async () => {
     const { error: updateError } = await supabase.auth.updateUser({
       data: {
         registration_pending_invites: false,
@@ -79,9 +78,6 @@ export function useInviteTeamPage() {
       throw new Error(updateError.message);
     }
 
-    captureEvent(
-      skipped ? "onboarding_invites_skipped" : "onboarding_invites_sent",
-    );
     clearIntent();
     await waitForAuthSessionReady();
     await navigateAfterAuth();
@@ -92,7 +88,7 @@ export function useInviteTeamPage() {
     setSubmitting(true);
 
     try {
-      await finishInvites(true);
+      await finishInvites();
     } catch (nextError) {
       setError(
         nextError instanceof Error ? nextError.message : "No se pudo continuar",
@@ -123,7 +119,7 @@ export function useInviteTeamPage() {
 
     try {
       if (normalized.length === 0) {
-        await finishInvites(true);
+        await finishInvites();
         return;
       }
 
@@ -153,7 +149,7 @@ export function useInviteTeamPage() {
         );
       }
 
-      await finishInvites(false);
+      await finishInvites();
     } catch (nextError) {
       setError(
         nextError instanceof Error

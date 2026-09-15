@@ -6,7 +6,6 @@ import {
   updateEmployeeAvatar,
   updateEmployeeProfile,
 } from "@/dal/auth.dal";
-import { captureEvent } from "@/lib/analytics";
 import { logger } from "@/lib/logger";
 import { clearBrowserQueryClient } from "@/lib/query/query-client";
 import { uploadFile } from "@/lib/storage";
@@ -140,8 +139,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (error) {
       throw error;
     }
-
-    captureEvent("login");
   },
 
   signUp: async (email, password, metadata) => {
@@ -154,8 +151,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (error) {
       throw error;
     }
-
-    captureEvent("signup");
   },
 
   signInWithGoogle: async (next = "/dashboard") => {
@@ -186,6 +181,5 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     useClinicStore.getState().clearClinicState();
     clearBrowserQueryClient();
     set({ session: null, initialized: true, profile: null, loading: false });
-    captureEvent("logout");
   },
 }));

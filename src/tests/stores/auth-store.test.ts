@@ -24,10 +24,6 @@ vi.mock("@/dal/auth.dal", () => ({
   updateEmployeeAvatar: vi.fn(),
 }));
 
-vi.mock("@/lib/analytics", () => ({
-  captureEvent: vi.fn(),
-}));
-
 vi.mock("@/lib/logger", () => ({
   logger: { captureException: vi.fn(), info: vi.fn(), warn: vi.fn() },
 }));

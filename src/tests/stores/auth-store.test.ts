@@ -11,6 +11,7 @@ vi.mock("@/lib/supabase", () => ({
       signInWithPassword: vi.fn(),
       signOut: vi.fn(),
       getSession: vi.fn(),
+      getUser: vi.fn(),
       signUp: vi.fn(),
       signInWithOAuth: vi.fn(),
     },
@@ -83,8 +84,8 @@ describe("auth-store", () => {
   });
 
   it("refreshProfile sets profile to null when no session", async () => {
-    vi.mocked(supabase.auth.getSession).mockResolvedValue({
-      data: { session: null },
+    vi.mocked(supabase.auth.getUser).mockResolvedValue({
+      data: { user: null },
       error: null,
     } as never);
 
@@ -95,8 +96,8 @@ describe("auth-store", () => {
   });
 
   it("refreshProfile fetches and sets profile when session exists", async () => {
-    vi.mocked(supabase.auth.getSession).mockResolvedValue({
-      data: { session: { user: { id: EMPLOYEE_ID } } },
+    vi.mocked(supabase.auth.getUser).mockResolvedValue({
+      data: { user: { id: EMPLOYEE_ID } },
       error: null,
     } as never);
     vi.mocked(authDal.getEmployeeProfile).mockResolvedValue(

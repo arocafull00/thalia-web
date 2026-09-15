@@ -71,6 +71,21 @@ VALUES (
   'Medicina estética'
 );
 
+INSERT INTO public.clinic_billing (
+  clinic_id,
+  subscription_status,
+  current_period_ends_at
+)
+VALUES (
+  '10000000-0000-4000-8000-000000000001',
+  'active',
+  now() + interval '1 year'
+)
+ON CONFLICT (clinic_id) DO UPDATE
+SET
+  subscription_status = EXCLUDED.subscription_status,
+  current_period_ends_at = EXCLUDED.current_period_ends_at;
+
 INSERT INTO public.employees (
   id,
   account_type,

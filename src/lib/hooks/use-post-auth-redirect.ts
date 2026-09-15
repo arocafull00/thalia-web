@@ -12,7 +12,7 @@ import { useOnboardingStore } from "@/stores/onboarding-store";
 import { usePendingInviteStore } from "@/stores/pending-invite-store";
 
 export function usePostAuthRedirect(enabled: boolean) {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const introSeen = useOnboardingStore((state) => state.introSeen);
   const introCompleted = useOnboardingStore((state) => state.completed);
   const intent = useOnboardingIntentStore((state) => state.intent);
@@ -55,6 +55,7 @@ export function usePostAuthRedirect(enabled: boolean) {
 
       const result = resolvedUser
         ? resolvePostAuthRoute({
+            accountType: profile?.account_type ?? null,
             pendingInviteToken: pendingToken,
             onboardingIntent: intent,
             introCompleted,
@@ -90,6 +91,7 @@ export function usePostAuthRedirect(enabled: boolean) {
     user?.user_metadata?.registration_profile_complete,
     user?.user_metadata?.registration_pending_invites,
     user?.user_metadata?.intended_operational_role,
+    profile?.account_type,
     introSeen,
     introCompleted,
     intent,

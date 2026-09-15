@@ -107,6 +107,24 @@ Deno.serve(async (req) => {
     return errorResponse("forbidden", "Forbidden", 403);
   }
 
+  const { data: billing, error: billingError } = await adminClient
+    .from("clinic_billing")
+    .select("subscription_status")
+    .eq("clinic_id", clinicId)
+    .maybeSingle();
+
+  if (
+    billingError ||
+    !billing ||
+    !["trialing", "active"].includes(billing.subscription_status)
+  ) {
+    return errorResponse(
+      "billing_inactive",
+      "Clinic subscription is not active",
+      403,
+    );
+  }
+
   if (action === "cancel") {
     if (!body?.invitationId || typeof body.invitationId !== "string") {
       return errorResponse(

@@ -198,9 +198,30 @@ Deno.serve(async (req) => {
     return new Response(clinicsError.message, { status: 500 });
   }
 
+  const clinicIds = (clinics ?? []).map((clinic) => clinic.id);
+  const { data: activeBilling, error: billingError } = clinicIds.length
+    ? await supabase
+        .from("clinic_billing")
+        .select("clinic_id")
+        .in("clinic_id", clinicIds)
+        .in("subscription_status", ["trialing", "active"])
+    : { data: [], error: null };
+
+  if (billingError) {
+    console.error("[reminders] no se pudo validar billing", billingError);
+    return new Response(billingError.message, { status: 500 });
+  }
+
+  const billableClinicIds = new Set(
+    (activeBilling ?? []).map((billing) => billing.clinic_id),
+  );
+
   const targetClinics = manualClinicId
-    ? (clinics ?? []).filter((c) => c.id === manualClinicId)
-    : (clinics ?? []);
+    ? (clinics ?? []).filter(
+        (clinic) =>
+          clinic.id === manualClinicId && billableClinicIds.has(clinic.id),
+      )
+    : (clinics ?? []).filter((clinic) => billableClinicIds.has(clinic.id));
 
   summary.clinicsMatched = targetClinics.length;
 

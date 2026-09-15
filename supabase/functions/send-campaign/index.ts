@@ -86,10 +86,21 @@ Deno.serve(async (req) => {
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-  if (!supabaseUrl || !serviceRoleKey) {
+  if (!supabaseUrl || !anonKey || !serviceRoleKey) {
     return jsonResponse({ error: "Missing configuration" }, 500);
+  }
+
+  const authorization = req.headers.get("Authorization") ?? "";
+  const userClient = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: authorization } },
+  });
+  const { data: authData, error: authError } = await userClient.auth.getUser();
+
+  if (authError || !authData.user) {
+    return errorResponse("unauthorized", "Unauthorized", 401);
   }
 
   let campaignId: string | null = null;
@@ -129,6 +140,37 @@ Deno.serve(async (req) => {
   if (!campaign) {
     console.error("[send-campaign] campaña no encontrada", { campaignId });
     return jsonResponse({ error: "Campaña no encontrada." }, 404);
+  }
+
+  const [{ data: membership }, { data: employee }, { data: billing }] =
+    await Promise.all([
+      supabase
+        .from("clinic_memberships")
+        .select("id")
+        .eq("clinic_id", campaign.clinic_id)
+        .eq("user_id", authData.user.id)
+        .eq("status", "active")
+        .maybeSingle(),
+      supabase
+        .from("employees")
+        .select("account_type, role")
+        .eq("id", authData.user.id)
+        .maybeSingle(),
+      supabase
+        .from("clinic_billing")
+        .select("subscription_status")
+        .eq("clinic_id", campaign.clinic_id)
+        .maybeSingle(),
+    ]);
+
+  if (
+    !membership ||
+    employee?.account_type !== "internal" ||
+    !["admin", "reception"].includes(employee.role) ||
+    !billing ||
+    !["trialing", "active"].includes(billing.subscription_status)
+  ) {
+    return errorResponse("forbidden", "Forbidden", 403);
   }
 
   // Reenviar una campaña ya enviada duplicaría mensajes reales: se rechaza en

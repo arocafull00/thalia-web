@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 import { getMemberships } from "@/dal/clinics.dal";
 import { writeActiveClinicCookie } from "@/lib/active-clinic-cookie";
+import { normalizeBillingSummary } from "@/lib/billing";
 import { createWebPersistStorage } from "@/lib/web-storage";
 import type { ClinicMembershipView } from "@/types/clinic-membership";
 import type {
@@ -44,12 +45,14 @@ export const useClinicStore = create<ClinicStore>()(
                   name: string;
                   logo_url: string | null;
                   timezone: string | null;
+                  clinic_billing: Parameters<typeof normalizeBillingSummary>[1];
                 }
               | {
                   id: string;
                   name: string;
                   logo_url: string | null;
                   timezone: string | null;
+                  clinic_billing: Parameters<typeof normalizeBillingSummary>[1];
                 }[]
               | null;
             const clinic = Array.isArray(clinicRaw) ? clinicRaw[0] : clinicRaw;
@@ -60,6 +63,10 @@ export const useClinicStore = create<ClinicStore>()(
               clinicName: clinic?.name ?? "Clínica",
               clinicLogoUrl: clinic?.logo_url ?? null,
               clinicTimezone: clinic?.timezone ?? null,
+              billing: normalizeBillingSummary(
+                row.clinic_id,
+                clinic?.clinic_billing,
+              ),
               role: row.role as ClinicMembershipRole,
               status: row.status as ClinicMembershipStatus,
             };

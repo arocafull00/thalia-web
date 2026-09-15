@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 
+import { hasClinicBillingAccess } from "@/lib/billing";
 import {
   hasPendingTeamInvites,
   hasRegistrationProfile,
@@ -9,6 +10,7 @@ import type { OnboardingIntent } from "@/stores/onboarding-intent-store";
 import type { ClinicMembershipView } from "@/types/clinic-membership";
 
 export type PostAuthRouteInput = {
+  accountType: "internal" | "external" | null;
   pendingInviteToken: string | null;
   onboardingIntent: OnboardingIntent | null;
   introCompleted: boolean;
@@ -67,6 +69,24 @@ export function resolvePostAuthRoute(
     (membership) => membership.status === "active",
   );
 
+  const selectedMembership =
+    activeMemberships.find(
+      (membership) => membership.clinicId === input.activeClinicId,
+    ) ?? activeMemberships[0];
+
+  if (
+    selectedMembership &&
+    !hasClinicBillingAccess(
+      input.accountType,
+      selectedMembership.billing.subscription_status,
+    )
+  ) {
+    return {
+      href: "/subscription",
+      setActiveClinicId: selectedMembership.clinicId,
+    };
+  }
+
   if (activeMemberships.length === 1 && hasPendingTeamInvites(input.user)) {
     return {
       href: "/invite-team",
@@ -102,6 +122,13 @@ export function resolvePostAuthRoute(
   }
 
   if (activeMemberships.length === 0 && input.isAuthenticated) {
+    if (
+      input.accountType === "external" &&
+      hasRegistrationProfile(input.user)
+    ) {
+      return { href: "/no-membership" };
+    }
+
     if (input.onboardingIntent === "employee") {
       if (!hasRegistrationProfile(input.user)) {
         return { href: "/register-employee" };

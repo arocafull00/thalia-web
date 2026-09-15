@@ -28,6 +28,7 @@ export default function AppLayoutClient({
   const { loading, user } = useAuth();
   const {
     accountType,
+    hasBillingAccess,
     clinicId,
     platformRole,
     loading: clinicLoading,
@@ -106,10 +107,28 @@ export default function AppLayoutClient({
     }
 
     if (!clinicId && !clinicLoading) {
+      if (accountType === "external") {
+        router.replace("/no-membership");
+        return;
+      }
+
       const profileComplete = hasRegistrationProfile(user);
       router.replace(profileComplete ? "/create-clinic" : "/register-employee");
+      return;
     }
-  }, [clinicId, clinicLoading, loading, router, user]);
+
+    if (clinicId && accountType !== "external" && !hasBillingAccess) {
+      router.replace("/subscription");
+    }
+  }, [
+    accountType,
+    clinicId,
+    clinicLoading,
+    hasBillingAccess,
+    loading,
+    router,
+    user,
+  ]);
 
   useEffect(() => {
     setNavVisibility({
@@ -129,7 +148,10 @@ export default function AppLayoutClient({
 
   const clientReady = !loading && !clinicLoading;
 
-  if (clientReady && (!user || !clinicId)) {
+  if (
+    clientReady &&
+    (!user || !clinicId || (accountType !== "external" && !hasBillingAccess))
+  ) {
     return <RedirectScreen />;
   }
 

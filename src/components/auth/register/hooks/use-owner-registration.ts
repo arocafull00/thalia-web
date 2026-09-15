@@ -97,9 +97,7 @@ export function useOwnerRegistration() {
   const values = watch();
 
   useEffect(() => {
-    reset(
-      getDefaultValues(metadataFullName, user?.email ?? "", !hasSession),
-    );
+    reset(getDefaultValues(metadataFullName, user?.email ?? "", !hasSession));
   }, [hasSession, metadataFullName, reset, user?.email]);
 
   const handleGoogleSignIn = async () => {
@@ -229,7 +227,7 @@ export function useOwnerRegistration() {
 
       await syncAuthenticatedUser();
       await waitForAuthSessionReady();
-      router.replace("/invite-team");
+      router.replace("/subscription");
     } catch (cause) {
       const message =
         cause instanceof Error &&

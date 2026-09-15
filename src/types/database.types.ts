@@ -2,6 +2,41 @@ export type EmployeeRole = "admin" | "reception" | "doctor" | "auxiliary";
 
 export type EmployeeAccountType = "internal" | "external";
 
+export type BillingStatus =
+  | "not_started"
+  | "incomplete"
+  | "incomplete_expired"
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "canceled"
+  | "unpaid"
+  | "paused";
+
+export type ClinicBilling = {
+  clinic_id: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  subscription_status: BillingStatus;
+  trial_ends_at: string | null;
+  current_period_ends_at: string | null;
+  cancel_at_period_end: boolean;
+  last_stripe_event_id: string | null;
+  last_stripe_event_created_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ClinicBillingSummary = Pick<
+  ClinicBilling,
+  | "clinic_id"
+  | "subscription_status"
+  | "trial_ends_at"
+  | "current_period_ends_at"
+  | "cancel_at_period_end"
+  | "updated_at"
+>;
+
 export type ClinicMembershipRole = "owner" | "admin" | "employee" | "external";
 
 export type ClinicMembershipInvitationRole = Exclude<
@@ -543,6 +578,11 @@ export type InventoryMovementWithEmployee = InventoryMovement & {
 
 type Tables = {
   clinics: { Row: Clinic; Insert: Partial<Clinic>; Update: Partial<Clinic> };
+  clinic_billing: {
+    Row: ClinicBilling;
+    Insert: Partial<ClinicBilling>;
+    Update: Partial<ClinicBilling>;
+  };
   clinic_memberships: {
     Row: ClinicMembership;
     Insert: Partial<ClinicMembership>;
@@ -652,9 +692,26 @@ type Tables = {
 
 export type Database = {
   public: {
-    Tables: Tables;
+    Tables: {
+      [Name in keyof Tables]: Tables[Name] & { Relationships: [] };
+    };
     Views: Record<string, never>;
     Functions: {
+      apply_stripe_billing_event: {
+        Args: {
+          p_event_id: string;
+          p_event_type: string;
+          p_event_created_at: string;
+          p_clinic_id: string;
+          p_stripe_customer_id: string | null;
+          p_stripe_subscription_id: string | null;
+          p_subscription_status: BillingStatus;
+          p_trial_ends_at: string | null;
+          p_current_period_ends_at: string | null;
+          p_cancel_at_period_end: boolean;
+        };
+        Returns: boolean;
+      };
       delete_appointment: {
         Args: {
           p_appointment_id: string;

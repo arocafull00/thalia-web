@@ -4,6 +4,7 @@ import { Building2, MapPin, Phone, Stethoscope, Users } from "lucide-react";
 
 import ClinicInfoRow from "@/components/settings/components/clinic-info-row";
 import SettingsClinicHoursPanel from "@/components/settings/components/settings-clinic-hours-panel";
+import SettingsSubscriptionPanelContainer from "@/components/settings/components/settings-subscription-panel-container";
 import SettingsWhatsAppPanel from "@/components/settings/components/settings-whatsapp-panel";
 import { SETTINGS_COPY } from "@/copy/settings-copy";
 import type { ClinicInfo } from "@/lib/hooks/use-clinic-info";
@@ -69,7 +70,10 @@ export default function SettingsClinicPanel({
         <SettingsClinicHoursPanel clinic={clinic} onEditHours={onEditHours} />
       </div>
 
-      <SettingsWhatsAppPanel />
+      <div className="flex flex-col gap-6">
+        <SettingsSubscriptionPanelContainer />
+        <SettingsWhatsAppPanel />
+      </div>
     </div>
   );
 }

@@ -1,24 +1,20 @@
 import { supabase } from "@/lib/supabase";
+import type { ClinicBillingSummary } from "@/types/database.types";
+
+type ClinicMembershipClinic = {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  timezone: string | null;
+  clinic_billing: ClinicBillingSummary | ClinicBillingSummary[] | null;
+};
 
 export type ClinicMembershipRow = {
   id: string;
   clinic_id: string;
   role: string;
   status: string;
-  clinics:
-    | {
-        id: string;
-        name: string;
-        logo_url: string | null;
-        timezone: string | null;
-      }
-    | {
-        id: string;
-        name: string;
-        logo_url: string | null;
-        timezone: string | null;
-      }[]
-    | null;
+  clinics: ClinicMembershipClinic | ClinicMembershipClinic[] | null;
 };
 
 export async function getMemberships(
@@ -27,7 +23,7 @@ export async function getMemberships(
   const { data, error } = await supabase
     .from("clinic_memberships")
     .select(
-      "id, clinic_id, role, status, clinics(id, name, logo_url, timezone)",
+      "id, clinic_id, role, status, clinics(id, name, logo_url, timezone, clinic_billing(clinic_id, subscription_status, trial_ends_at, current_period_ends_at, cancel_at_period_end, updated_at))",
     )
     .eq("user_id", userId)
     .eq("status", "active");

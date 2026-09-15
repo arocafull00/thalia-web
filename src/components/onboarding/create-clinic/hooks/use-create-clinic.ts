@@ -106,7 +106,7 @@ export function useCreateClinic() {
       }
 
       await waitForAuthSessionReady();
-      router.replace("/invite-team");
+      router.replace("/subscription");
     } catch (cause) {
       const message =
         cause instanceof Error

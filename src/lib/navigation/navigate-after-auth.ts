@@ -25,9 +25,11 @@ export async function navigateAfterAuth() {
   }
 
   await useAuthStore.getState().refreshProfile();
+  const accountType = useAuthStore.getState().profile?.account_type ?? null;
   const memberships = await useClinicStore.getState().fetchMemberships(user.id);
 
   const result = resolvePostAuthRoute({
+    accountType,
     pendingInviteToken: usePendingInviteStore.getState().token,
     onboardingIntent: useOnboardingIntentStore.getState().intent,
     introCompleted: useOnboardingStore.getState().completed,

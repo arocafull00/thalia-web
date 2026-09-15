@@ -2,6 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useServerBootstrap } from "@/components/providers/store-hydrator";
 import { resolveAppointmentTimezone } from "@/lib/appointment-datetime";
+import { hasClinicBillingAccess } from "@/lib/billing";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicStore } from "@/stores/clinic-store";
 
@@ -43,6 +44,8 @@ export function useActiveClinic() {
       (item) => item.clinicId === resolvedActiveClinicId,
     ) ?? null;
   const clinicId = resolvedActiveClinicId;
+  const accountType = resolvedProfile?.account_type ?? null;
+  const billing = membership?.billing ?? null;
 
   return {
     clinicId,
@@ -50,9 +53,13 @@ export function useActiveClinic() {
     clinicLogoUrl: membership?.clinicLogoUrl ?? null,
     clinicTimezone: resolveAppointmentTimezone(membership?.clinicTimezone),
     membership,
+    billing,
     platformRole: membership?.role ?? null,
     employeeRole: resolvedProfile?.role ?? null,
-    accountType: resolvedProfile?.account_type ?? null,
+    accountType,
+    hasBillingAccess: billing
+      ? hasClinicBillingAccess(accountType, billing.subscription_status)
+      : accountType === "external",
     isExternal: resolvedProfile?.account_type === "external",
     memberships: resolvedMemberships,
     loading: loading && !canUseBootstrap,

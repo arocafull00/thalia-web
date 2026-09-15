@@ -1,4 +1,5 @@
 import type {
+  ClinicBillingSummary,
   ClinicMembershipRole,
   ClinicMembershipStatus,
 } from "@/types/database.types";
@@ -9,6 +10,7 @@ export type ClinicMembershipView = {
   clinicName: string;
   clinicLogoUrl: string | null;
   clinicTimezone: string | null;
+  billing: ClinicBillingSummary;
   role: ClinicMembershipRole;
   status: ClinicMembershipStatus;
 };

@@ -10,6 +10,7 @@ import {
 } from "@/dal/clinics.server.dal";
 import { getEmployee } from "@/dal/employees.server.dal";
 import { ACTIVE_CLINIC_COOKIE_NAME } from "@/lib/active-clinic-cookie";
+import { normalizeBillingSummary } from "@/lib/billing";
 import { createClient } from "@/lib/supabase/server";
 import type { ClinicMembershipView } from "@/types/clinic-membership";
 import type {
@@ -84,6 +85,7 @@ function mapMembershipRow(row: ClinicMembershipRow): ClinicMembershipView {
     clinicName: clinic?.name ?? "Clínica",
     clinicLogoUrl: clinic?.logo_url ?? null,
     clinicTimezone: clinic?.timezone ?? null,
+    billing: normalizeBillingSummary(row.clinic_id, clinic?.clinic_billing),
     role: row.role as ClinicMembershipRole,
     status: row.status as ClinicMembershipStatus,
   };

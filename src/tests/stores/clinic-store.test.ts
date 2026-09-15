@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import * as clinicsDal from "@/dal/clinics.dal";
+import { createEmptyBillingSummary } from "@/lib/billing";
 import { useClinicStore } from "@/stores/clinic-store";
 
 vi.mock("@/dal/clinics.dal", () => ({
@@ -79,6 +80,7 @@ describe("clinic-store", () => {
         clinicTimezone: "Europe/Madrid",
         role: "admin",
         status: "active",
+        billing: createEmptyBillingSummary("clinic-1"),
       });
       expect(useClinicStore.getState().activeClinicId).toBe("clinic-1");
       expect(useClinicStore.getState().loading).toBe(false);
@@ -130,6 +132,7 @@ describe("clinic-store", () => {
             clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
+            billing: createEmptyBillingSummary("clinic-1"),
           },
         ],
       });
@@ -164,6 +167,7 @@ describe("clinic-store", () => {
             clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
+            billing: createEmptyBillingSummary("clinic-1"),
           },
         ],
         activeClinicId: "clinic-1",
@@ -188,6 +192,7 @@ describe("clinic-store", () => {
         clinicTimezone: null,
         role: "admin" as const,
         status: "active" as const,
+        billing: createEmptyBillingSummary("clinic-1"),
       };
       useClinicStore.setState({
         memberships: [membership],
@@ -219,6 +224,7 @@ describe("clinic-store", () => {
             clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
+            billing: createEmptyBillingSummary("clinic-1"),
           },
         ],
         activeClinicId: "nonexistent",
@@ -241,6 +247,7 @@ describe("clinic-store", () => {
             clinicTimezone: null,
             role: "admin" as const,
             status: "active" as const,
+            billing: createEmptyBillingSummary("clinic-1"),
           },
           {
             id: "mem-2",
@@ -250,6 +257,7 @@ describe("clinic-store", () => {
             clinicTimezone: null,
             role: "external" as const,
             status: "active" as const,
+            billing: createEmptyBillingSummary("clinic-2"),
           },
           {
             id: "mem-3",
@@ -259,6 +267,7 @@ describe("clinic-store", () => {
             clinicTimezone: null,
             role: "external" as const,
             status: "active" as const,
+            billing: createEmptyBillingSummary("clinic-3"),
           },
         ],
       });

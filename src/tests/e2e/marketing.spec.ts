@@ -167,7 +167,7 @@ test("no deja avanzar con 0 meses sin visitar", async ({ page }) => {
 
   // El 0 se marca como error y el asistente no pasa al paso de revisión.
   await expect(dialog.getByText("Debe ser 1 mes o más.")).toBeVisible();
-  await page.getByTestId("campaign-create-next").click();
+  await expect(page.getByTestId("campaign-create-next")).toBeDisabled();
   await expect(dialog.getByText("Debe ser 1 mes o más.")).toBeVisible();
   await expect(page.getByTestId("campaign-create-submit")).toHaveCount(0);
 

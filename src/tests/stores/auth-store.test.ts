@@ -115,6 +115,6 @@ describe("auth-store", () => {
 
     await useAuthStore.getState().signOut();
 
-    expect(supabase.auth.signOut).toHaveBeenCalled();
+    expect(supabase.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
   });
 });

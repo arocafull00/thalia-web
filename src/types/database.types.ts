@@ -15,6 +15,7 @@ export type BillingStatus =
 
 export type ClinicBilling = {
   clinic_id: string;
+  billing_exempt: boolean;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   subscription_status: BillingStatus;
@@ -30,6 +31,7 @@ export type ClinicBilling = {
 export type ClinicBillingSummary = Pick<
   ClinicBilling,
   | "clinic_id"
+  | "billing_exempt"
   | "subscription_status"
   | "trial_ends_at"
   | "current_period_ends_at"

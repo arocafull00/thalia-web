@@ -23,7 +23,7 @@ export async function getMemberships(
   const { data, error } = await supabase
     .from("clinic_memberships")
     .select(
-      "id, clinic_id, role, status, clinics(id, name, logo_url, timezone, clinic_billing(clinic_id, subscription_status, trial_ends_at, current_period_ends_at, cancel_at_period_end, updated_at))",
+      "id, clinic_id, role, status, clinics(id, name, logo_url, timezone, clinic_billing(clinic_id, billing_exempt, subscription_status, trial_ends_at, current_period_ends_at, cancel_at_period_end, updated_at))",
     )
     .eq("user_id", userId)
     .eq("status", "active");

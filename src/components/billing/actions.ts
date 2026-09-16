@@ -74,6 +74,10 @@ export async function createCheckoutSessionAction(
       getClinicBillingRecord(context.clinicId),
     ]);
 
+    if (billing?.billing_exempt) {
+      throw new Error("Esta clínica dispone de acceso gratuito.");
+    }
+
     if (
       billing &&
       !["not_started", "canceled", "incomplete_expired"].includes(
@@ -156,6 +160,10 @@ export async function createBillingPortalSessionAction(
     }
 
     const billing = await getClinicBillingRecord(context.clinicId);
+
+    if (billing?.billing_exempt) {
+      throw new Error("Esta clínica dispone de acceso gratuito.");
+    }
 
     if (!billing?.stripe_customer_id) {
       throw new Error("La clínica todavía no tiene una cuenta de facturación.");

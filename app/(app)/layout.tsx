@@ -33,7 +33,7 @@ export default async function AppLayout({
     activeMembership &&
     !hasClinicBillingAccess(
       profile?.account_type ?? null,
-      activeMembership.billing.subscription_status,
+      activeMembership.billing,
     )
   ) {
     redirect("/subscription");

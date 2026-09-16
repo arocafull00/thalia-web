@@ -45,7 +45,7 @@ export async function getClinicBillingSummary(
   const { data, error } = await supabase
     .from("clinic_billing")
     .select(
-      "clinic_id, subscription_status, trial_ends_at, current_period_ends_at, cancel_at_period_end, updated_at",
+      "clinic_id, billing_exempt, subscription_status, trial_ends_at, current_period_ends_at, cancel_at_period_end, updated_at",
     )
     .eq("clinic_id", clinicId)
     .maybeSingle();

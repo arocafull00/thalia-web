@@ -11,6 +11,7 @@ export function createEmptyBillingSummary(
 ): ClinicBillingSummary {
   return {
     clinic_id: clinicId,
+    billing_exempt: false,
     subscription_status: "not_started",
     trial_ends_at: null,
     current_period_ends_at: null,
@@ -21,9 +22,13 @@ export function createEmptyBillingSummary(
 
 export function hasClinicBillingAccess(
   accountType: EmployeeAccountType | null,
-  status: BillingStatus,
+  billing: Pick<ClinicBillingSummary, "billing_exempt" | "subscription_status">,
 ): boolean {
-  return accountType === "external" || BILLING_ACCESS_STATUSES.has(status);
+  return (
+    accountType === "external" ||
+    billing.billing_exempt ||
+    BILLING_ACCESS_STATUSES.has(billing.subscription_status)
+  );
 }
 
 export function normalizeBillingSummary(

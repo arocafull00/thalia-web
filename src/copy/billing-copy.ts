@@ -34,6 +34,7 @@ export const BILLING_COPY = {
   portalError: "No se pudo abrir el portal de facturación.",
   settingsTitle: "Suscripción",
   status: "Estado",
+  exemptStatus: "Acceso gratuito",
   trialEnds: "Fin de la prueba",
   periodEnds: "Fin del periodo actual",
   signOut: "Cerrar sesión",

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import SubscriptionPageClient from "@/components/billing/subscription/page.client";
 import StoreHydrator from "@/components/providers/store-hydrator";
+import { hasClinicBillingAccess } from "@/lib/billing";
 import { hasPendingTeamInvites } from "@/lib/registration-metadata";
 import { getAppBootstrap } from "@/lib/server/bootstrap";
 
@@ -30,8 +31,7 @@ export default async function SubscriptionPage({
   }
 
   if (
-    membership.billing.subscription_status === "trialing" ||
-    membership.billing.subscription_status === "active"
+    hasClinicBillingAccess(profile?.account_type ?? null, membership.billing)
   ) {
     redirect(hasPendingTeamInvites(user) ? "/invite-team" : "/dashboard");
   }

@@ -76,10 +76,7 @@ export function resolvePostAuthRoute(
 
   if (
     selectedMembership &&
-    !hasClinicBillingAccess(
-      input.accountType,
-      selectedMembership.billing.subscription_status,
-    )
+    !hasClinicBillingAccess(input.accountType, selectedMembership.billing)
   ) {
     return {
       href: "/subscription",

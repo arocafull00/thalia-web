@@ -37,7 +37,7 @@ export default function SettingsSubscriptionPanel({
         >
           {BILLING_COPY.settingsTitle}
         </h2>
-        {canManage ? (
+        {canManage && !billing.billing_exempt ? (
           <Button
             type="button"
             variant="outline"
@@ -54,23 +54,29 @@ export default function SettingsSubscriptionPanel({
         <ClinicInfoRow
           icon={ReceiptText}
           label={BILLING_COPY.status}
-          value={BILLING_STATUS_LABELS[billing.subscription_status]}
-        />
-        <ClinicInfoRow
-          icon={CalendarClock}
-          label={
-            billing.subscription_status === "trialing"
-              ? BILLING_COPY.trialEnds
-              : BILLING_COPY.periodEnds
+          value={
+            billing.billing_exempt
+              ? BILLING_COPY.exemptStatus
+              : BILLING_STATUS_LABELS[billing.subscription_status]
           }
-          value={formatDate(
-            billing.subscription_status === "trialing"
-              ? billing.trial_ends_at
-              : billing.current_period_ends_at,
-          )}
         />
+        {!billing.billing_exempt ? (
+          <ClinicInfoRow
+            icon={CalendarClock}
+            label={
+              billing.subscription_status === "trialing"
+                ? BILLING_COPY.trialEnds
+                : BILLING_COPY.periodEnds
+            }
+            value={formatDate(
+              billing.subscription_status === "trialing"
+                ? billing.trial_ends_at
+                : billing.current_period_ends_at,
+            )}
+          />
+        ) : null}
       </div>
-      {billing.cancel_at_period_end ? (
+      {!billing.billing_exempt && billing.cancel_at_period_end ? (
         <p className="border-t border-border-subtle pt-4 text-sm text-warning">
           {BILLING_COPY.scheduledCancellation}
         </p>

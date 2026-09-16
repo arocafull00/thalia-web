@@ -12,10 +12,7 @@ export default async function InviteTeamPage() {
 
   if (
     membership &&
-    !hasClinicBillingAccess(
-      profile?.account_type ?? null,
-      membership.billing.subscription_status,
-    )
+    !hasClinicBillingAccess(profile?.account_type ?? null, membership.billing)
   ) {
     redirect("/subscription");
   }

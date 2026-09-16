@@ -58,7 +58,7 @@ export function useActiveClinic() {
     employeeRole: resolvedProfile?.role ?? null,
     accountType,
     hasBillingAccess: billing
-      ? hasClinicBillingAccess(accountType, billing.subscription_status)
+      ? hasClinicBillingAccess(accountType, billing)
       : accountType === "external",
     isExternal: resolvedProfile?.account_type === "external",
     memberships: resolvedMemberships,

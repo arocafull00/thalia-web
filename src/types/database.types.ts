@@ -794,7 +794,25 @@ export type Database = {
         Returns: ExternalAppointmentResponseResult;
       };
     };
-    Enums: Record<string, never>;
+    Enums: {
+      employee_role: EmployeeRole;
+      employee_account_type: EmployeeAccountType;
+      clinic_membership_role: ClinicMembershipRole;
+      clinic_membership_status: ClinicMembershipStatus;
+      invitation_token_role: InvitationTokenRole;
+      appointment_status: AppointmentStatus;
+      inventory_movement_type: InventoryMovementType;
+      transaction_type: TransactionType;
+      patient_image_phase: PatientImagePhase;
+      patient_file_category: PatientFileCategory;
+      appointment_reminder_status: AppointmentReminderStatus;
+      clinic_notification_type: ClinicNotificationType;
+      campaign_template_approval_status: CampaignTemplateApprovalStatus;
+      campaign_status: CampaignStatus;
+      campaign_segment_type: CampaignSegmentType;
+      campaign_recipient_status: CampaignRecipientStatus;
+      billing_status: BillingStatus;
+    };
     CompositeTypes: Record<string, never>;
   };
 };

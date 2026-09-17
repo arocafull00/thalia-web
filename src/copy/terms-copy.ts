@@ -240,7 +240,7 @@ export const TERMS_COPY = {
       id: "integridad-contractual",
       number: 37,
       title: "Integridad contractual",
-      body: "Estos Términos, junto con las condiciones de contratación mostradas al Cliente y los demás documentos contractuales que resulten aplicables, regulan la relación relativa a la utilización de Thalia.\n\nEn particular, podrán complementar estos Términos:\n\n* el contrato de encargo del tratamiento;\n* la Política de Privacidad;\n* el Aviso Legal;\n* la Política de Cookies;\n* las condiciones comerciales aceptadas durante la contratación; y\n* cualesquiera anexos expresamente acordados entre las partes.\n\nEn caso de contradicción entre estos Términos y un acuerdo específico firmado entre Thalia y un Cliente, prevalecerán las condiciones específicamente pactadas para dicho Cliente respecto de la materia objeto de contradicción.",
+      body: "Estos Términos, junto con las condiciones de contratación mostradas al Cliente y los demás documentos contractuales que resulten aplicables, regulan la relación relativa a la utilización de Thalia.\n\nEn particular, podrán complementar estos Términos:\n\n* el contrato de encargo del tratamiento;\n* la [Política de Privacidad](/privacidad);\n* las condiciones comerciales aceptadas durante la contratación; y\n* cualesquiera anexos expresamente acordados entre las partes.\n\nEn caso de contradicción entre estos Términos y un acuerdo específico firmado entre Thalia y un Cliente, prevalecerán las condiciones específicamente pactadas para dicho Cliente respecto de la materia objeto de contradicción.",
     },
     {
       id: "contacto",
@@ -252,6 +252,6 @@ export const TERMS_COPY = {
   complementary: {
     id: "documentacion-complementaria",
     title: "Documentación complementaria",
-    body: "La aceptación de estos Términos no sustituye otros documentos que puedan resultar necesarios para utilizar Thalia de forma conforme con la normativa aplicable.\n\nEn particular, antes de utilizar Thalia con datos reales de pacientes deberá formalizarse, cuando resulte aplicable, el correspondiente **contrato de encargo del tratamiento** entre Thalia y el Cliente.\n\nAsimismo, Thalia dispondrá de la correspondiente documentación relativa a privacidad, cookies e información legal del prestador.",
+    body: "La aceptación de estos Términos no sustituye otros documentos que puedan resultar necesarios para utilizar Thalia de forma conforme con la normativa aplicable.\n\nEn particular, antes de utilizar Thalia con datos reales de pacientes deberá formalizarse, cuando resulte aplicable, el correspondiente **contrato de encargo del tratamiento** entre Thalia y el Cliente.\n\nAsimismo, Thalia dispone de la [Política de Privacidad](/privacidad) de la web corporativa.",
   },
 } satisfies TermsCopy;

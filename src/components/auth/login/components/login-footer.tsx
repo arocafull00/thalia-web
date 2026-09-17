@@ -10,9 +10,9 @@ export default function LoginFooter() {
         <Link href="/terms" className="text-primary hover:text-primary-hover">
           {LOGIN_COPY.footer.terms}
         </Link>
-        <a href="#" className="text-primary hover:text-primary-hover">
+        <Link href="/privacidad" className="text-primary hover:text-primary-hover">
           {LOGIN_COPY.footer.privacy}
-        </a>
+        </Link>
       </div>
     </footer>
   );

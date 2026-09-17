@@ -10,10 +10,14 @@ import { RedirectScreen } from "@/components/loader/redirect-screen";
 import { useRegisterType } from "@/lib/hooks/use-register-type";
 
 type RegisterFlowProps = {
+  showBranding: boolean;
   showExit: boolean;
 };
 
-export default function RegisterFlow({ showExit }: RegisterFlowProps) {
+export default function RegisterFlow({
+  showBranding,
+  showExit,
+}: RegisterFlowProps) {
   const router = useRouter();
   const {
     step,
@@ -64,6 +68,7 @@ export default function RegisterFlow({ showExit }: RegisterFlowProps) {
       onPickOwner={handlePickOwner}
       onPickEmployee={handlePickEmployee}
       onSignOut={handleSignOut}
+      showBranding={showBranding}
       showExit={showExit}
     />
   );

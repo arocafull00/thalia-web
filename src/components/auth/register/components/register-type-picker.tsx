@@ -7,6 +7,7 @@ type Props = {
   onPickOwner: () => void;
   onPickEmployee: () => void;
   onSignOut: () => void;
+  showBranding: boolean;
   showExit: boolean;
 };
 
@@ -14,22 +15,31 @@ export default function RegisterTypePicker({
   onPickOwner,
   onPickEmployee,
   onSignOut,
+  showBranding,
   showExit,
 }: Props) {
   return (
     <div className="mx-auto w-full max-w-110 space-y-6">
-      <div className="space-y-1 text-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/icon.png"
-          alt="Thalia"
-          width={56}
-          height={56}
-          className="mx-auto mb-4 rounded-xl"
-        />
-        <h1 className="text-2xl font-medium text-ink">{REGISTER_COPY.title}</h1>
-        <p className="text-sm text-ink-secondary">{REGISTER_COPY.subtitle}</p>
-      </div>
+      {showBranding ? (
+        <div className="space-y-1 text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icon.png"
+            alt="Thalia"
+            width={56}
+            height={56}
+            className="mx-auto mb-4 rounded-xl"
+          />
+          <h1 className="text-2xl font-medium text-ink">
+            {REGISTER_COPY.title}
+          </h1>
+          <p className="text-sm text-ink-secondary">{REGISTER_COPY.subtitle}</p>
+        </div>
+      ) : (
+        <p className="text-center text-sm font-medium text-ink">
+          {REGISTER_COPY.subtitle}
+        </p>
+      )}
       <div className="divide-y divide-border-subtle border-y border-border-subtle">
         <button
           type="button"

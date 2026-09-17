@@ -25,7 +25,7 @@ export default function LoginRegisterSlider({
   } = useLoginRegisterSlider();
 
   return (
-    <div className="w-full max-w-130">
+    <div className="w-full">
       <LoginAuthTabs
         loginTabId={loginTabId}
         mode={mode}

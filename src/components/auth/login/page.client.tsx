@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import LoginBranding from "@/components/auth/login/components/login-branding";
 import LoginFooter from "@/components/auth/login/components/login-footer";
 import LoginFormPanel from "@/components/auth/login/components/login-form-panel";
 import LoginRegisterSlider from "@/components/auth/login/components/login-register-slider";
@@ -57,27 +58,34 @@ export default function LoginPageClient() {
     <>
       <section className="flex min-h-screen min-w-0 flex-1 flex-col bg-surface">
         <div className="flex flex-1 items-center justify-center px-6 py-10 lg:px-8">
-          <LoginRegisterSlider
-            loginContent={
-              <LoginFormPanel
-                authDisabled={authDisabled}
-                email={email}
-                error={error}
-                handleGoogleSignIn={handleGoogleSignIn}
-                handleSubmit={handleSubmit}
-                isSupabaseConfigured={isSupabaseConfigured}
-                onEmailChange={setEmail}
-                onInstallClick={handlePwaInstallClick}
-                onPasswordChange={setPassword}
-                onTogglePassword={() => setShowPassword((current) => !current)}
-                password={password}
-                showInstallCta={showInstallCta}
-                showPassword={showPassword}
-                submitting={submitting}
-              />
-            }
-            registerContent={<RegisterFlow showExit={false} />}
-          />
+          <div className="w-full max-w-130 space-y-6">
+            <LoginBranding />
+            <LoginRegisterSlider
+              loginContent={
+                <LoginFormPanel
+                  authDisabled={authDisabled}
+                  email={email}
+                  error={error}
+                  handleGoogleSignIn={handleGoogleSignIn}
+                  handleSubmit={handleSubmit}
+                  isSupabaseConfigured={isSupabaseConfigured}
+                  onEmailChange={setEmail}
+                  onInstallClick={handlePwaInstallClick}
+                  onPasswordChange={setPassword}
+                  onTogglePassword={() =>
+                    setShowPassword((current) => !current)
+                  }
+                  password={password}
+                  showInstallCta={showInstallCta}
+                  showPassword={showPassword}
+                  submitting={submitting}
+                />
+              }
+              registerContent={
+                <RegisterFlow showBranding={false} showExit={false} />
+              }
+            />
+          </div>
         </div>
         <LoginFooter />
       </section>

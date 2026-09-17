@@ -12,9 +12,7 @@ test("cambia entre inicio de sesión y registro sin salir de la pantalla", async
   await page.getByRole("tab", { name: "Registrarse" }).click();
 
   await expect(page).toHaveURL(/\/login$/);
-  await expect(
-    page.getByRole("heading", { name: "Empieza a usar Thalia en pasos" }),
-  ).toBeVisible();
+  await expect(page.getByText("¿Cómo quieres registrarte?")).toBeVisible();
 
   await page.getByRole("button", { name: /Soy propietario/ }).click();
   await expect(page.getByLabel("Nombre completo")).toBeVisible();

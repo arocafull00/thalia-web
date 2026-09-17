@@ -14,7 +14,6 @@ import type { TreatmentWithInventory } from "@/types/database.types";
 
 type TreatmentsTableProps = {
   treatments: TreatmentWithInventory[];
-  onRowClick: (id: string) => void;
   onDelete?: (id: string) => void;
   onEdit?: (id: string) => void;
   showPrices?: boolean;
@@ -29,7 +28,6 @@ type TreatmentsTableProps = {
 
 export default function TreatmentsTable({
   treatments,
-  onRowClick,
   onDelete,
   onEdit,
   showPrices = true,
@@ -58,7 +56,7 @@ export default function TreatmentsTable({
           variant="menu"
         />
       )}
-      onRowClick={(treatment) => onRowClick(treatment.id)}
+      getRowHref={(treatment) => `/treatments/${treatment.id}`}
     />
   );
 }

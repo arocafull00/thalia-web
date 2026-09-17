@@ -73,4 +73,8 @@ export const FINANCES_COPY = {
   movements: {
     title: "Movimientos recientes",
   },
+  views: {
+    summary: "Resumen",
+    movements: "Movimientos",
+  },
 } as const;

@@ -17,30 +17,23 @@
   --surface-secondary: #f3f6f4;
   --ink: #24322e;
   --ink-secondary: #5c6b66;
-  --ink-muted: #96a09b;
+  --ink-muted: #5f6a65;
   --border: rgba(28, 48, 44, 0.08);
   --border-strong: rgba(28, 48, 44, 0.16);
   --border-subtle: rgba(28, 48, 44, 0.05);
   --border-highlight: rgba(28, 48, 44, 0.04);
   --border-field: var(--border-strong);
   --on-primary: #ffffff;
-  /* Degradados de marca: derivados de --primary para que se recalibren solos
-     si cambia el color principal. */
-  --gradient-primary: linear-gradient(
-    112deg,
-    var(--primary),
-    color-mix(in srgb, var(--primary) 72%, var(--surface))
-  );
   --gradient-avatar: linear-gradient(
     140deg,
     color-mix(in srgb, var(--primary) 16%, var(--surface)),
     color-mix(in srgb, var(--primary) 34%, var(--surface))
   );
   --success: #e8f5ef;
-  --success-text: #3a9970;
+  --success-text: #256b47;
   --success-subtle: var(--success);
   --warning: #faf3e4;
-  --warning-text: #a07520;
+  --warning-text: #6b4d0f;
   --warning-subtle: var(--warning);
   --danger: #faecec;
   --danger-text: #b54848;
@@ -54,11 +47,6 @@
     0 0 24px rgba(28, 48, 44, 0.05), 0 0 2px rgba(28, 48, 44, 0.035);
   --shadow-dialog:
     0 0 28px rgba(28, 48, 44, 0.14), 0 0 2px rgba(28, 48, 44, 0.08);
-  --shadow-glow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
-  --shadow-glow-strong: 0 0 26px
-    color-mix(in srgb, var(--primary) 50%, transparent);
-  --shadow-nav-active: 0 0 16px
-    color-mix(in srgb, var(--primary) 28%, transparent);
   /* Colapso del sidebar. Los comparten el hueco reservado, el panel, el logo y
      las etiquetas: si cualquiera de ellos usa otra curva o duración, las piezas
      llegan desacompasadas y el movimiento se ve a saltos. */
@@ -197,11 +185,6 @@
     0 0 24px rgba(28, 48, 44, 0.05), 0 0 2px rgba(28, 48, 44, 0.035);
   --shadow-dialog:
     0 0 28px rgba(28, 48, 44, 0.14), 0 0 2px rgba(28, 48, 44, 0.08);
-  --shadow-glow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
-  --shadow-glow-strong: 0 0 26px
-    color-mix(in srgb, var(--primary) 50%, transparent);
-  --shadow-nav-active: 0 0 16px
-    color-mix(in srgb, var(--primary) 28%, transparent);
   --spacing-safe-top: var(--safe-area-top);
   --spacing-safe-bottom: var(--safe-area-bottom);
   --spacing-safe-left: var(--safe-area-left);
@@ -221,8 +204,8 @@
   --animate-boot-spin-reverse: bootOrbitSpin 2.4s linear infinite reverse;
   --animate-boot-breathe: bootBreathe 2.8s ease-in-out infinite;
   --animate-boot-pulse: bootPulse 1.6s ease-in-out infinite;
-  --animate-boot-progress: bootProgress 3.2s cubic-bezier(0.22, 1, 0.36, 1)
-    infinite;
+  --animate-boot-progress-indeterminate: bootProgressIndeterminate 1.8s
+    ease-in-out infinite;
   --animate-boot-travel: bootTravel 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   --animate-boot-reveal-check: bootRevealCheck 2.6s ease-in-out infinite;
 }
@@ -325,18 +308,12 @@
   }
 }
 
-@keyframes bootProgress {
+@keyframes bootProgressIndeterminate {
   0% {
-    width: 10%;
     transform: translateX(-100%);
   }
-  55% {
-    width: 72%;
-    transform: translateX(0);
-  }
   100% {
-    width: 100%;
-    transform: translateX(0);
+    transform: translateX(400%);
   }
 }
 
@@ -610,25 +587,12 @@ body {
   background: var(--surface);
 }
 
-/* ---------- shell: fondo del beige ----------
-   Barrido cónico centrado en la pantalla. Como lo único que se ve del fondo es
-   el marco entre tarjetas, el ángulo se traduce directamente en posición
-   alrededor del borde: cada lado recibe un tono distinto del mismo beige.
-   Abre y cierra en el mismo color, así que no hay costura en los 0°/360°. */
 .app-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: conic-gradient(
-    from 160deg at 50% 50%,
-    var(--backdrop-tint) 0deg,
-    color-mix(in srgb, var(--backdrop-tint) 55%, var(--surface)) 85deg,
-    var(--backdrop-tint) 170deg,
-    color-mix(in srgb, var(--backdrop-tint) 82%, var(--ink-muted)) 255deg,
-    var(--backdrop-tint) 360deg
-  );
-  opacity: 0.2;
+  background: var(--backdrop-tint);
 }
 
 /* Alfa del barrido de fila: registrada para poder transicionarla. */
@@ -687,10 +651,28 @@ input[type="search"],
     transition: none;
   }
 
-  /* El sidebar cambia de ancho de golpe en vez de animarse. */
   :root {
     --sidebar-duration: 0ms;
     --sidebar-stagger: 0ms;
+  }
+
+  [data-open].animate-in,
+  [data-state="open"].animate-in,
+  [data-state="delayed-open"].animate-in {
+    animation: none !important;
+  }
+
+  [data-closed].animate-out,
+  [data-state="closed"].animate-out {
+    animation: none !important;
+  }
+
+  [data-slot="sheet-content"],
+  [data-slot="sheet-overlay"],
+  [data-slot="combobox-content"],
+  [role="menu"],
+  [role="dialog"] {
+    transition: none !important;
   }
 }
 

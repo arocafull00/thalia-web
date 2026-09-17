@@ -6,6 +6,7 @@ import { useState } from "react";
 import InventoryDetailHeader from "@/components/inventory/components/detail/inventory-detail-header";
 import InventoryDetailTabBar from "@/components/inventory/components/detail/inventory-detail-tab-bar";
 import InventoryDetailTabContent from "@/components/inventory/components/detail/inventory-detail-tab-content";
+import { Tabs } from "@/components/ui/tabs";
 import InventoryItemAdjustStockDialog from "@/components/inventory/components/form/inventory-item-adjust-stock-dialog";
 import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
 import {
@@ -123,21 +124,19 @@ export default function InventoryDetailPageClient({
     >
       <InventoryDetailHeader item={item} />
 
-      <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
-        <InventoryDetailTabBar
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+        className="flex flex-col gap-6 px-4 pb-8 lg:px-8"
+      >
+        <InventoryDetailTabBar />
+        <InventoryDetailTabContent
+          item={item}
+          movements={movements}
+          movementsLoading={movementsQuery.isLoading}
+          movementsError={movementsQuery.error}
         />
-        <div role="tabpanel">
-          <InventoryDetailTabContent
-            activeTab={activeTab}
-            item={item}
-            movements={movements}
-            movementsLoading={movementsQuery.isLoading}
-            movementsError={movementsQuery.error}
-          />
-        </div>
-      </div>
+      </Tabs>
 
       <InventoryItemAdjustStockDialog
         item={item}

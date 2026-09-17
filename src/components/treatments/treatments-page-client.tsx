@@ -161,13 +161,6 @@ export default function TreatmentsPageClient({
         {!treatments.isLoading && !treatments.error ? (
           <TreatmentsTable
             treatments={filteredTreatments}
-            onRowClick={(id) => {
-              if (isExternal) {
-                router.push(`/treatments/${id}`);
-                return;
-              }
-              page.openEditDialog(id);
-            }}
             onEdit={isExternal ? undefined : page.openEditDialog}
             onDelete={isExternal ? undefined : page.openDeleteDialog}
             showPrices={!isExternal}

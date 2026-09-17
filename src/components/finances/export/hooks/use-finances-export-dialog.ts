@@ -26,8 +26,8 @@ type FinancesExportDefaults = {
   categoryId: string;
 };
 
-function exportTypeForTab(tab: FinancesTabValue) {
-  return tab === "summary" ? "all" : tab;
+function exportTypeForTab(tab: FinancesTabValue): TransactionType {
+  return tab;
 }
 
 function createDefaultValues({

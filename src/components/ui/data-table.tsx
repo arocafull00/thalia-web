@@ -9,6 +9,7 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import Link from "next/link";
 import { type CSSProperties, type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,9 @@ import {
 
 const EMPTY_SORTING: SortingState = [];
 
+const rowPrimaryControlClassName =
+  "block w-full rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary";
+
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -34,15 +38,10 @@ type DataTableProps<TData, TValue> = {
   enablePagination?: boolean;
   enableSorting?: boolean;
   initialSorting?: SortingState;
-  onRowClick?: (row: TData) => void;
-  /** Estilo por fila; lo usa la pantalla de citas para tintar el barrido con --glow. */
+  getRowHref?: (row: TData) => string | undefined;
+  onRowActivate?: (row: TData) => void;
   getRowStyle?: (row: TData) => CSSProperties | undefined;
   pageSize?: number;
-  /**
-   * Paginación en servidor: `data` es ya la página visible y el recuento
-   * total llega aparte. Sin esto la tabla pagina en cliente sobre el array
-   * completo, que es lo que siguen haciendo inventario y campañas.
-   */
   manualPagination?: {
     pageIndex: number;
     pageSize: number;
@@ -55,6 +54,36 @@ type DataTableProps<TData, TValue> = {
   getMobileRowKey?: (row: TData, index: number) => string;
 };
 
+function wrapPrimaryCellContent<TData>(
+  content: ReactNode,
+  row: TData,
+  getRowHref: DataTableProps<TData, unknown>["getRowHref"],
+  onRowActivate: DataTableProps<TData, unknown>["onRowActivate"],
+) {
+  const href = getRowHref?.(row);
+  if (href) {
+    return (
+      <Link href={href} className={rowPrimaryControlClassName}>
+        {content}
+      </Link>
+    );
+  }
+
+  if (!onRowActivate) {
+    return content;
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onRowActivate(row)}
+      className={rowPrimaryControlClassName}
+    >
+      {content}
+    </button>
+  );
+}
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -62,7 +91,8 @@ export function DataTable<TData, TValue>({
   enablePagination = false,
   enableSorting = false,
   initialSorting = EMPTY_SORTING,
-  onRowClick,
+  getRowHref,
+  onRowActivate,
   getRowStyle,
   pageSize = 10,
   manualPagination,
@@ -72,13 +102,12 @@ export function DataTable<TData, TValue>({
   getMobileRowKey,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
+  const rowInteractive = Boolean(getRowHref ?? onRowActivate);
 
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    // Explícito para que `column.getCanSort()` sea falso y las cabeceras se
-    // pinten como texto plano en vez de botones de ordenar inertes.
     enableSorting,
     ...(enableSorting
       ? {
@@ -87,8 +116,6 @@ export function DataTable<TData, TValue>({
           state: { sorting },
         }
       : {}),
-    // Manual manda sobre la de cliente: si el servidor ya paginó, volver a
-    // recortar aquí dejaría la página en blanco a partir de la segunda.
     ...(manualPagination
       ? {
           manualPagination: true,
@@ -136,7 +163,8 @@ export function DataTable<TData, TValue>({
             columns={mobileColumns}
             actions={mobileActions}
             renderActions={renderMobileActions}
-            onRowClick={onRowClick}
+            getRowHref={getRowHref}
+            onRowActivate={onRowActivate}
             emptyMessage={emptyMessage}
             getRowKey={resolveMobileRowKey}
           />
@@ -172,23 +200,34 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   className={
-                    onRowClick
-                      ? "table-row-wash cursor-pointer"
+                    rowInteractive
+                      ? "table-row-wash"
                       : "hover:bg-transparent"
                   }
                   style={getRowStyle?.(row.original)}
-                  onClick={
-                    onRowClick ? () => onRowClick(row.original) : undefined
-                  }
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-3.5 py-3.5 text-sm">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell, cellIndex) => {
+                    const cellContent = flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext(),
+                    );
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className="px-3.5 py-3.5 text-sm"
+                      >
+                        {cellIndex === 0
+                          ? wrapPrimaryCellContent(
+                              cellContent,
+                              row.original,
+                              getRowHref,
+                              onRowActivate,
+                            )
+                          : cellContent}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (

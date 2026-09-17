@@ -12,21 +12,13 @@ import {
   formatFinancesMonthParam,
   parseFinancesMonthParam,
 } from "@/lib/finances-summary";
-import { parseFinancesTabParam } from "@/lib/finances-url";
+import {
+  parseFinancesTabParam,
+  parseFinancesViewParam,
+} from "@/lib/finances-url";
 import { getServerActiveClinicId } from "@/lib/server/active-clinic";
 import { requireBusinessOwner } from "@/lib/server/business-access";
 import { summaryKey } from "@/stores/finances-store";
-import type { TransactionType } from "@/types/database.types";
-
-function transactionTypeForTab(
-  tab: ReturnType<typeof parseFinancesTabParam>,
-): TransactionType | "all" {
-  if (tab === "summary") {
-    return "all";
-  }
-
-  return tab;
-}
 
 export default async function FinancesPage({
   searchParams,
@@ -37,6 +29,7 @@ export default async function FinancesPage({
     page?: string;
     q?: string;
     tab?: string;
+    view?: string;
   }>;
 }) {
   await requireBusinessOwner();
@@ -46,6 +39,7 @@ export default async function FinancesPage({
   ]);
   const month = parseFinancesMonthParam(params.month);
   const tab = parseFinancesTabParam(params.tab);
+  const view = parseFinancesViewParam(params.view);
   const currentRange = financesMonthRange(month);
   const previousRange = financesPreviousMonthRange(month);
   const categories = await getTransactionCategories(clinicId);
@@ -61,7 +55,7 @@ export default async function FinancesPage({
   const query = {
     from: currentRange.from,
     to: currentRange.to,
-    type: transactionTypeForTab(tab),
+    type: tab,
     categoryId,
     search: params.q?.trim() ?? "",
     page: Math.max(0, Number.parseInt(params.page ?? "", 10) || 0),
@@ -80,6 +74,7 @@ export default async function FinancesPage({
   return (
     <FinancesPageClient
       initialMonth={formatFinancesMonthParam(month)}
+      initialView={view}
       initialTab={tab}
       initialTransactions={page.transactions}
       initialTotal={page.total}

@@ -4,13 +4,9 @@ import { LOADER_COPY } from "@/copy/loader-copy";
 
 type LoaderStatusListProps = {
   activeStepIndex: number;
-  progressValue: number;
 };
 
-export function LoaderStatusList({
-  activeStepIndex,
-  progressValue,
-}: LoaderStatusListProps) {
+export function LoaderStatusList({ activeStepIndex }: LoaderStatusListProps) {
   const { steps, tags, progressLabel } = LOADER_COPY.boot;
 
   return (
@@ -42,10 +38,7 @@ export function LoaderStatusList({
           />
         );
       })}
-      <LoaderProgressBar
-        ariaLabel={progressLabel}
-        progressValue={progressValue}
-      />
+      <LoaderProgressBar ariaLabel={progressLabel} />
     </div>
   );
 }

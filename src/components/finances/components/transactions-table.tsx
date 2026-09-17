@@ -7,7 +7,7 @@ import type { Transaction } from "@/types/database.types";
 
 type TransactionsTableProps = {
   transactions: Transaction[];
-  onRowClick: (id: string) => void;
+  onRowActivate: (id: string) => void;
   /** Paginación en servidor: `transactions` es ya la página visible. */
   pagination?: {
     pageIndex: number;
@@ -19,7 +19,7 @@ type TransactionsTableProps = {
 
 export default function TransactionsTable({
   transactions,
-  onRowClick,
+  onRowActivate,
   pagination,
 }: TransactionsTableProps) {
   return (
@@ -28,7 +28,7 @@ export default function TransactionsTable({
       data={transactions}
       manualPagination={pagination}
       mobileColumns={transactionsMobileColumns}
-      onRowClick={(transaction) => onRowClick(transaction.id)}
+      onRowActivate={(transaction) => onRowActivate(transaction.id)}
     />
   );
 }

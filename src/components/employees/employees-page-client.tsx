@@ -24,6 +24,7 @@ import AppDialogTitle from "@/components/ui/app-dialog-title";
 import AppSheetContent from "@/components/ui/app-sheet-content";
 import { Button } from "@/components/ui/button";
 import PageCard from "@/components/ui/page-card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import PageEmptyState from "@/components/ui/page-empty-state";
 import PageSurface from "@/components/ui/page-surface";
 import { ActionButton } from "@/components/ui/primitives/action-button";
@@ -139,12 +140,7 @@ export default function EmployeesPageClient() {
     setEditDialogOpen(nextOpen);
   };
 
-  const handleRowClick = (id: string) => {
-    const employee = employees.employees.find((entry) => entry.id === id);
-    if (employee?.account_type === "external") {
-      router.push(`/employees/${id}`);
-      return;
-    }
+  const handleEdit = (id: string) => {
     setEditingEmployeeId(id);
     setEditDialogOpen(true);
   };
@@ -168,16 +164,14 @@ export default function EmployeesPageClient() {
   }
 
   return (
-    <div
-      data-testid="employees-page"
-      className="flex min-h-0 flex-1 flex-col gap-3"
-    >
-      <EmployeesPageTabs
-        activeTab={activeTab}
-        invitationCount={invitations.invitations.length}
-        onTabChange={setActiveTab}
-      />
-      {activeTab === "staff" ? (
+    <div data-testid="employees-page" className="flex min-h-0 flex-1 flex-col">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as EmployeesPageTab)}
+        className="flex min-h-0 flex-1 flex-col gap-3"
+      >
+        <EmployeesPageTabs invitationCount={invitations.invitations.length} />
+        <TabsContent value="staff" className="flex min-h-0 flex-1 flex-col">
         <PageCard
           filters={
             <EmployeesFilters
@@ -203,8 +197,7 @@ export default function EmployeesPageClient() {
           {!showEmptyState && !employees.isLoading ? (
             <EmployeesTable
               employees={employees.employees}
-              onRowClick={handleRowClick}
-              onEdit={handleRowClick}
+              onEdit={handleEdit}
               onToggleStatus={setStatusEmployeeId}
               pagination={{
                 pageIndex,
@@ -216,7 +209,8 @@ export default function EmployeesPageClient() {
             />
           ) : null}
         </PageCard>
-      ) : (
+        </TabsContent>
+        <TabsContent value="invitations" className="flex min-h-0 flex-1 flex-col">
         <PendingInvitationsPanel
           invitations={invitations.invitations}
           isLoading={invitations.isLoading}
@@ -229,7 +223,8 @@ export default function EmployeesPageClient() {
             invitations.requestAction("cancel", invitation)
           }
         />
-      )}
+        </TabsContent>
+      </Tabs>
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
           <AppDialogHeader>

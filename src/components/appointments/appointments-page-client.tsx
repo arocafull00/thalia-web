@@ -147,7 +147,7 @@ export default function AppointmentsPageClient({
     setDialogOpen(true);
   };
 
-  const handleRowClick = (id: string) => {
+  const handleEdit = (id: string) => {
     setEditingAppointmentId(id);
     setDialogOpen(true);
   };
@@ -227,7 +227,6 @@ export default function AppointmentsPageClient({
         {!showEmptyState && appointments.data ? (
           <AppointmentsTable
             appointments={flatAppointments}
-            onRowClick={handleRowClick}
             onStatusChange={handleStatusChange}
             pagination={{
               pageIndex,
@@ -236,7 +235,7 @@ export default function AppointmentsPageClient({
               onPageChange: (next) =>
                 setFilter("page", next === 0 ? "" : String(next)),
             }}
-            onEdit={handleRowClick}
+            onEdit={handleEdit}
             onDelete={appointmentDelete.openDialog}
             canRespondToExternal={isExternalProfessional}
             respondingExternal={externalResponse.isPending}

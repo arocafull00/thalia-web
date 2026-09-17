@@ -133,11 +133,7 @@ export default function PatientsPageClient({
     setEditDialogOpen(nextOpen);
   };
 
-  const handleRowClick = (id: string) => {
-    if (isExternal) {
-      router.push(`/patients/${id}`);
-      return;
-    }
+  const handleEdit = (id: string) => {
     setEditingPatientId(id);
     setEditDialogOpen(true);
   };
@@ -196,8 +192,7 @@ export default function PatientsPageClient({
         {!showEmptyState && !patients.isLoading ? (
           <PatientsTable
             patients={patients.patients}
-            onRowClick={handleRowClick}
-            onEdit={isExternal ? undefined : handleRowClick}
+            onEdit={isExternal ? undefined : handleEdit}
             pagination={{
               pageIndex,
               pageSize: PATIENTS_PAGE_SIZE,

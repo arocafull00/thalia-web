@@ -123,14 +123,14 @@ The one exception: dynamic colors persisted in the database (e.g. employee color
 
 Radii are contained: buttons and inputs `rounded-button` (8px), cards `rounded-card` (10px), panels and dialogs `rounded-dialog` (14px).
 
-Brand gradients and glows come from tokens derived from `--primary` with `color-mix` (`--gradient-primary`, `--gradient-avatar`, `shadow-glow`, `shadow-nav-active`). Never write the teal by hand — change `--primary` and everything recalibrates.
+Avatar fills may use `--gradient-avatar` (derived from `--primary` via `color-mix`). Primary actions use flat `bg-primary` / `hover:bg-primary-hover` — no glows or gradient buttons. Never write the teal by hand — change `--primary` and everything recalibrates.
 
 #### Aurora layout
 
 White opaque cards floating on a beige canvas, separated by a 14px gutter that is the only place the background shows through:
 
 ```
-z-0   AppBackdrop    --backdrop-tint with a conic sweep, opacity .2
+z-0   AppBackdrop    flat --backdrop-tint
 z-10  Sidebar        floating card
 z-20  SidebarInset   navbar card + content card
 z-30  AppBottomNav   mobile bar

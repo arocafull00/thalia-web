@@ -132,7 +132,7 @@ export default function InventoryPageClient({
     setEditDialogOpen(nextOpen);
   };
 
-  const handleRowClick = (id: string) => {
+  const handleEdit = (id: string) => {
     setEditingItemId(id);
     setEditDialogOpen(true);
   };
@@ -175,8 +175,7 @@ export default function InventoryPageClient({
         {!inventory.isLoading ? (
           <InventoryTable
             items={items}
-            onRowClick={handleRowClick}
-            onEdit={handleRowClick}
+            onEdit={handleEdit}
             pagination={{
               pageIndex,
               pageSize: INVENTORY_PAGE_SIZE,

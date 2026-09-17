@@ -24,11 +24,7 @@ import type {
   TransactionType,
 } from "@/types/database.types";
 
-function transactionTypeForTab(tab: FinancesTabValue): TransactionType | "all" {
-  if (tab === "summary") {
-    return "all";
-  }
-
+function transactionTypeForTab(tab: FinancesTabValue): TransactionType {
   return tab;
 }
 
@@ -82,10 +78,7 @@ export function useFinancesPage(
 
   const { categories } = useTransactionCategories(seed?.initialCategories);
   const categoryOptions = useMemo(
-    () =>
-      categories.filter(
-        (category) => tab === "summary" || category.type === tab,
-      ),
+    () => categories.filter((category) => category.type === tab),
     [categories, tab],
   );
 

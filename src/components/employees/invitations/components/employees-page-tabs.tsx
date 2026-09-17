@@ -1,44 +1,35 @@
 "use client";
 
-import EmployeesPageTabButton from "@/components/employees/invitations/components/employees-page-tab-button";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EMPLOYEE_INVITATIONS_COPY } from "@/copy/employee-invitations-copy";
 
 export type EmployeesPageTab = "staff" | "invitations";
 
 type EmployeesPageTabsProps = {
-  activeTab: EmployeesPageTab;
   invitationCount: number;
-  onTabChange: (tab: EmployeesPageTab) => void;
 };
 
 export default function EmployeesPageTabs({
-  activeTab,
   invitationCount,
-  onTabChange,
 }: EmployeesPageTabsProps) {
-  const items: Array<{ id: EmployeesPageTab; label: string }> = [
-    { id: "staff", label: EMPLOYEE_INVITATIONS_COPY.tabs.staff },
-    {
-      id: "invitations",
-      label: `${EMPLOYEE_INVITATIONS_COPY.tabs.invitations} (${invitationCount})`,
-    },
-  ];
-
   return (
-    <nav
-      role="tablist"
+    <TabsList
+      variant="line"
       aria-label={EMPLOYEE_INVITATIONS_COPY.tabs.ariaLabel}
-      className="no-scrollbar flex shrink-0 gap-2 overflow-x-auto border-b border-border-subtle"
+      className="no-scrollbar flex w-full shrink-0 justify-start overflow-x-auto border-b border-border-subtle"
     >
-      {items.map((item) => (
-        <EmployeesPageTabButton
-          key={item.id}
-          id={item.id}
-          label={item.label}
-          isActive={item.id === activeTab}
-          onTabChange={onTabChange}
-        />
-      ))}
-    </nav>
+      <TabsTrigger
+        value="staff"
+        className="shrink-0 rounded-none px-4 py-3 text-[0.8rem] font-medium whitespace-nowrap"
+      >
+        {EMPLOYEE_INVITATIONS_COPY.tabs.staff}
+      </TabsTrigger>
+      <TabsTrigger
+        value="invitations"
+        className="shrink-0 rounded-none px-4 py-3 text-[0.8rem] font-medium whitespace-nowrap"
+      >
+        {`${EMPLOYEE_INVITATIONS_COPY.tabs.invitations} (${invitationCount})`}
+      </TabsTrigger>
+    </TabsList>
   );
 }

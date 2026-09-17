@@ -27,8 +27,9 @@ export const BILLING_COPY = {
   trialTotalValue: "0,00 €",
   afterTrialLabel: "Al finalizar la prueba",
   afterTrialValue: "80 € + IVA/mes con tarjeta",
-  trialChargeDisclaimer:
-    "No se cobra nada al empezar. Tras 30 días se facturan 80 € + IVA al mes solo si has añadido un método de pago; si no, la suscripción se pausa.",
+  trialChargeDisclaimerLead: "No se cobra nada al empezar.",
+  trialChargeDisclaimerRest:
+    "Tras 30 días se facturan 80 € + IVA al mes solo si has añadido un método de pago; si no, la suscripción se pausa.",
   checkoutAction: "Empezar prueba gratuita",
   portalAction: "Gestionar suscripción",
   ownerBlockedTitle: "Empieza tu prueba gratuita",

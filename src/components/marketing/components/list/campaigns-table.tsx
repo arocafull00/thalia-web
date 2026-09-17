@@ -9,7 +9,6 @@ import type { Campaign } from "@/types/database.types";
 
 type CampaignsTableProps = {
   campaigns: Campaign[];
-  onRowClick: (id: string) => void;
   onOpenImage: (storageKey: string) => void;
   /** Paginación en servidor: `campaigns` es ya la página visible. */
   pagination?: {
@@ -22,7 +21,6 @@ type CampaignsTableProps = {
 
 export default function CampaignsTable({
   campaigns,
-  onRowClick,
   onOpenImage,
   pagination,
 }: CampaignsTableProps) {
@@ -37,7 +35,7 @@ export default function CampaignsTable({
       data={campaigns}
       manualPagination={pagination}
       emptyMessage={MARKETING_COPY.list.emptyFiltered}
-      onRowClick={(campaign) => onRowClick(campaign.id)}
+      getRowHref={(campaign) => `/marketing/${campaign.id}`}
     />
   );
 }

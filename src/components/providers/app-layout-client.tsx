@@ -160,8 +160,6 @@ export default function AppLayoutClient({
   }
 
   return (
-    <div className="animate-in fade-in-0 duration-500">
-      <AppShell defaultSidebarOpen={defaultSidebarOpen}>{children}</AppShell>
-    </div>
+    <AppShell defaultSidebarOpen={defaultSidebarOpen}>{children}</AppShell>
   );
 }

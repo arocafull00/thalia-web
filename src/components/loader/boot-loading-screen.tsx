@@ -13,7 +13,7 @@ export function BootLoadingScreen({
   authLoading,
   clinicLoading,
 }: BootLoadingScreenProps) {
-  const { activeStepIndex, progressValue } = useBootLoadingPhase({
+  const { activeStepIndex } = useBootLoadingPhase({
     authLoading,
     clinicLoading,
   });
@@ -32,10 +32,7 @@ export function BootLoadingScreen({
       <p className="mt-4 max-w-[430px] text-base leading-relaxed text-ink-secondary">
         {description}
       </p>
-      <LoaderStatusList
-        activeStepIndex={activeStepIndex}
-        progressValue={progressValue}
-      />
+      <LoaderStatusList activeStepIndex={activeStepIndex} />
     </LoaderScreenShell>
   );
 }

@@ -14,7 +14,6 @@ import type { Employee } from "@/types/database.types";
 
 type EmployeesTableProps = {
   employees: Employee[];
-  onRowClick: (id: string) => void;
   onEdit: (id: string) => void;
   onToggleStatus: (id: string) => void;
   /** Paginación en servidor: `employees` es ya la página visible. */
@@ -28,7 +27,6 @@ type EmployeesTableProps = {
 
 export default function EmployeesTable({
   employees,
-  onRowClick,
   onEdit,
   onToggleStatus,
   pagination,
@@ -55,7 +53,7 @@ export default function EmployeesTable({
           variant="menu"
         />
       )}
-      onRowClick={(employee) => onRowClick(employee.id)}
+      getRowHref={(employee) => `/employees/${employee.id}`}
     />
   );
 }

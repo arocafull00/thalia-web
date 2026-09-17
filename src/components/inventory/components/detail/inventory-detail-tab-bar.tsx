@@ -1,7 +1,6 @@
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import type { InventoryDetailTabId } from "@/lib/hooks/use-inventory-detail-tabs";
-
-import InventoryDetailTabButton from "./inventory-detail-tab-button";
 
 const INVENTORY_DETAIL_TAB_ITEMS: ReadonlyArray<{
   id: InventoryDetailTabId;
@@ -11,31 +10,22 @@ const INVENTORY_DETAIL_TAB_ITEMS: ReadonlyArray<{
   { id: "movements", label: INVENTORY_ITEM_DETAIL_COPY.tabs.movements },
 ];
 
-type InventoryDetailTabBarProps = {
-  activeTab: InventoryDetailTabId;
-  onTabChange: (tabId: InventoryDetailTabId) => void;
-};
-
-export default function InventoryDetailTabBar({
-  activeTab,
-  onTabChange,
-}: InventoryDetailTabBarProps) {
+export default function InventoryDetailTabBar() {
   return (
-    <nav
-      role="tablist"
+    <TabsList
+      variant="line"
       aria-label={INVENTORY_ITEM_DETAIL_COPY.breadcrumbRoot}
-      className="shrink-0 border-b border-border-subtle bg-surface"
+      className="no-scrollbar w-full shrink-0 justify-start overflow-x-auto border-b border-border-subtle bg-surface px-4"
     >
-      <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
-        {INVENTORY_DETAIL_TAB_ITEMS.map((tab) => (
-          <InventoryDetailTabButton
-            key={tab.id}
-            label={tab.label}
-            isActive={activeTab === tab.id}
-            onClick={() => onTabChange(tab.id)}
-          />
-        ))}
-      </div>
-    </nav>
+      {INVENTORY_DETAIL_TAB_ITEMS.map((tab) => (
+        <TabsTrigger
+          key={tab.id}
+          value={tab.id}
+          className="shrink-0 rounded-none px-4 py-3 text-[0.8rem] font-medium whitespace-nowrap"
+        >
+          {tab.label}
+        </TabsTrigger>
+      ))}
+    </TabsList>
   );
 }

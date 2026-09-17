@@ -15,7 +15,6 @@ import type { Patient } from "@/types/database.types";
 type PatientsTableProps = {
   patients: Patient[];
   emptyMessage?: string;
-  onRowClick: (id: string) => void;
   onEdit?: (id: string) => void;
   /** Paginación en servidor: `patients` es ya la página visible. */
   pagination?: {
@@ -29,7 +28,6 @@ type PatientsTableProps = {
 export default function PatientsTable({
   patients,
   emptyMessage,
-  onRowClick,
   onEdit,
   pagination,
 }: PatientsTableProps) {
@@ -53,7 +51,7 @@ export default function PatientsTable({
           variant="menu"
         />
       )}
-      onRowClick={(patient) => onRowClick(patient.id)}
+      getRowHref={(patient) => `/patients/${patient.id}`}
     />
   );
 }

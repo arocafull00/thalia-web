@@ -22,7 +22,8 @@ type MobileCardViewProps<T> = {
   columns: MobileCardColumn<T>[];
   actions?: MobileCardAction<T>[];
   renderActions?: (row: T) => ReactNode;
-  onRowClick?: (row: T) => void;
+  getRowHref?: (row: T) => string | undefined;
+  onRowActivate?: (row: T) => void;
   emptyMessage?: string;
   getRowKey: (row: T, index: number) => string;
 };
@@ -32,7 +33,8 @@ export default function MobileCardView<T>({
   columns,
   actions,
   renderActions,
-  onRowClick,
+  getRowHref,
+  onRowActivate,
   emptyMessage = "No hay resultados.",
   getRowKey,
 }: MobileCardViewProps<T>) {
@@ -53,7 +55,8 @@ export default function MobileCardView<T>({
           columns={columns}
           actions={actions}
           renderActions={renderActions}
-          onRowClick={onRowClick}
+          getRowHref={getRowHref}
+          onRowActivate={onRowActivate}
         />
       ))}
     </div>

@@ -163,7 +163,6 @@ export default function MarketingPageClient({
         {!campaigns.isLoading && hasCampaigns ? (
           <CampaignsTable
             campaigns={campaigns.campaigns}
-            onRowClick={(campaignId) => router.push(`/marketing/${campaignId}`)}
             onOpenImage={handleOpenImage}
             pagination={{
               pageIndex,

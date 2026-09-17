@@ -1,8 +1,8 @@
-# Landora — Guía para agentes
+# Thalia — Guía para agentes
 
-App de gestión inmobiliaria. **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Clerk · Neon Postgres · Drizzle ORM · Tailwind CSS v4 · shadcn/ui · Zustand · Zod · sonner.
+App de gestión de clínicas estéticas y dentales en España. **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Supabase · Tailwind CSS v4 · shadcn/ui · Zustand · Zod · sonner.
 
-Arquitectura, rutas y fases de desarrollo: `docs/plan.md`.
+Arquitectura y convenciones: `CLAUDE.md` y `DESIGN.md`.
 
 ## Documentación
 

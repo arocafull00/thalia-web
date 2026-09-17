@@ -3,11 +3,10 @@
 import { notFound, useParams } from "next/navigation";
 import { useState } from "react";
 
-import EmployeeDetailHeader from "@/components/employees/components/detail/employee-detail-header";
-import EmployeeDetailTabBar from "@/components/employees/components/detail/employee-detail-tab-bar";
-import EmployeeDetailTabContent from "@/components/employees/components/detail/employee-detail-tab-content";
+import EmployeeDetailSidebar from "@/components/employees/components/detail/employee-detail-sidebar";
 import EmployeeEditDialog from "@/components/employees/components/form/employee-edit-dialog";
 import EmployeeStatusConfirmDialog from "@/components/employees/components/form/employee-status-confirm-dialog";
+import EmployeeTimeline from "@/components/employees/components/history/employee-timeline";
 import {
   getEmployeeDetailMenuSections,
   getEmployeeDetailPrimaryAction,
@@ -19,7 +18,6 @@ import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
 import { EMPLOYEE_DETAIL_COPY } from "@/copy/employee-detail-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useEmployeeDetailTabs } from "@/lib/hooks/use-employee-detail-tabs";
 import {
   useEmployee,
   useEmployeeAppointmentStats,
@@ -36,7 +34,6 @@ export default function EmployeeDetailPageClient() {
   const employeeQuery = useEmployee(employeeId);
   const statsQuery = useEmployeeAppointmentStats(employeeId);
   const appointmentsQuery = useEmployeeAppointments(employeeId);
-  const { activeTab, setActiveTab } = useEmployeeDetailTabs();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
 
@@ -116,24 +113,29 @@ export default function EmployeeDetailPageClient() {
   const appointments = appointmentsQuery.data ?? [];
 
   return (
-    <div className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog">
-      <EmployeeDetailHeader employee={employee} />
-
-      <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
-        <EmployeeDetailTabBar
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 px-8 pt-6 pb-4">
+        <BackButton
+          fallbackHref="/employees"
+          label={EMPLOYEE_DETAIL_COPY.back}
         />
-        <div role="tabpanel">
-          <EmployeeDetailTabContent
-            activeTab={activeTab}
-            employee={employee}
-            stats={statsQuery.data ?? undefined}
-            statsLoading={statsQuery.isLoading}
-            statsError={statsQuery.error}
+      </div>
+
+      <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
+        <EmployeeDetailSidebar
+          employee={employee}
+          stats={statsQuery.data ?? undefined}
+          statsLoading={statsQuery.isLoading}
+          statsError={statsQuery.error}
+          onEdit={employeeActionHandlers.onEdit}
+          onToggleStatus={employeeActionHandlers.onToggleStatus}
+        />
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8">
+          <EmployeeTimeline
             appointments={appointments}
-            appointmentsLoading={appointmentsQuery.isLoading}
-            appointmentsError={appointmentsQuery.error}
+            isLoading={appointmentsQuery.isLoading}
+            error={appointmentsQuery.error}
           />
         </div>
       </div>

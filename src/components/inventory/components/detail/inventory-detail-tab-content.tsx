@@ -1,4 +1,4 @@
-import type { InventoryDetailTabId } from "@/lib/hooks/use-inventory-detail-tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import type {
   InventoryItem,
   InventoryMovementWithEmployee,
@@ -9,7 +9,6 @@ import InventoryMovementsList from "../history/inventory-movements-list";
 import InventoryItemSummary from "./inventory-item-summary";
 
 type InventoryDetailTabContentProps = {
-  activeTab: InventoryDetailTabId;
   item: InventoryItem;
   movements: InventoryMovementWithEmployee[];
   movementsLoading: boolean;
@@ -17,22 +16,24 @@ type InventoryDetailTabContentProps = {
 };
 
 export default function InventoryDetailTabContent({
-  activeTab,
   item,
   movements,
   movementsLoading,
   movementsError,
 }: InventoryDetailTabContentProps) {
-  if (activeTab === "summary") {
-    return <InventoryItemSummary item={item} />;
-  }
-
   return (
-    <InventoryMovementsList
-      item={item}
-      movements={movements}
-      isLoading={movementsLoading}
-      error={movementsError}
-    />
+    <>
+      <TabsContent value="summary">
+        <InventoryItemSummary item={item} />
+      </TabsContent>
+      <TabsContent value="movements">
+        <InventoryMovementsList
+          item={item}
+          movements={movements}
+          isLoading={movementsLoading}
+          error={movementsError}
+        />
+      </TabsContent>
+    </>
   );
 }

@@ -99,7 +99,7 @@ export default function FilesTable({
       data={files}
       mobileColumns={mobileColumns}
       mobileActions={mobileActions}
-      onRowClick={onView}
+      onRowActivate={onView}
       getMobileRowKey={(file) => file.id}
     />
   );

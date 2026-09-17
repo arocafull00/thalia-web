@@ -1,45 +1,31 @@
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import type { PatientDetailTabId } from "@/lib/hooks/use-patient-detail-tabs";
-
-import PatientDetailTabButton from "./patient-detail-tab-button";
 
 const PATIENT_DETAIL_TAB_ITEMS: ReadonlyArray<{
   id: PatientDetailTabId;
   label: string;
 }> = [
-  { id: "summary", label: PATIENT_DETAIL_COPY.tabs.summary },
-  { id: "clinical-history", label: PATIENT_DETAIL_COPY.tabs.clinicalHistory },
-  { id: "treatments", label: PATIENT_DETAIL_COPY.tabs.treatments },
-  { id: "appointments", label: PATIENT_DETAIL_COPY.tabs.appointments },
   { id: "gallery", label: PATIENT_DETAIL_COPY.tabs.gallery },
   { id: "files", label: PATIENT_DETAIL_COPY.tabs.files },
 ];
 
-type PatientDetailTabBarProps = {
-  activeTab: PatientDetailTabId;
-  onTabChange: (tabId: PatientDetailTabId) => void;
-};
-
-export default function PatientDetailTabBar({
-  activeTab,
-  onTabChange,
-}: PatientDetailTabBarProps) {
+export default function PatientDetailTabBar() {
   return (
-    <nav
-      role="tablist"
+    <TabsList
+      variant="line"
       aria-label={PATIENT_DETAIL_COPY.breadcrumbRoot}
-      className="shrink-0 border-b border-border-subtle bg-surface"
+      className="no-scrollbar w-full shrink-0 justify-start overflow-x-auto border-b border-border-subtle"
     >
-      <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
-        {PATIENT_DETAIL_TAB_ITEMS.map((tab) => (
-          <PatientDetailTabButton
-            key={tab.id}
-            label={tab.label}
-            isActive={activeTab === tab.id}
-            onClick={() => onTabChange(tab.id)}
-          />
-        ))}
-      </div>
-    </nav>
+      {PATIENT_DETAIL_TAB_ITEMS.map((tab) => (
+        <TabsTrigger
+          key={tab.id}
+          value={tab.id}
+          className="shrink-0 rounded-none px-4 py-3 text-[0.8rem] font-medium whitespace-nowrap"
+        >
+          {tab.label}
+        </TabsTrigger>
+      ))}
+    </TabsList>
   );
 }

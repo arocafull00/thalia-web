@@ -316,7 +316,7 @@ export default function AppTopbar() {
                 className={
                   topbarAction.variant === "ghost"
                     ? "control-chip h-[38px] rounded-button text-[13.5px]"
-                    : "h-[38px] rounded-button bg-[image:var(--gradient-primary)] text-[13.5px] shadow-glow transition-shadow hover:shadow-glow-strong"
+                    : "h-[38px] rounded-button bg-primary text-[13.5px] hover:bg-primary-hover"
                 }
               />
             ))}

@@ -8,12 +8,12 @@ export function useBootLoadingPhase({
   clinicLoading,
 }: UseBootLoadingPhaseInput) {
   if (authLoading) {
-    return { activeStepIndex: 0, progressValue: 25 };
+    return { activeStepIndex: 0 };
   }
 
   if (clinicLoading) {
-    return { activeStepIndex: 1, progressValue: 58 };
+    return { activeStepIndex: 1 };
   }
 
-  return { activeStepIndex: 2, progressValue: 88 };
+  return { activeStepIndex: 2 };
 }

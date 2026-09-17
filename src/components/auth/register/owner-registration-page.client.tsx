@@ -5,7 +5,6 @@ import { ArrowLeft, ArrowRight, Building2 } from "lucide-react";
 import OwnerAccountStep from "@/components/auth/register/components/owner-account-step";
 import OwnerClinicStep from "@/components/auth/register/components/owner-clinic-step";
 import OwnerConfirmationStep from "@/components/auth/register/components/owner-confirmation-step";
-import OwnerRegistrationProgress from "@/components/auth/register/components/owner-registration-progress";
 import { useOwnerRegistration } from "@/components/auth/register/hooks/use-owner-registration";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/primitives/action-button";
@@ -57,8 +56,7 @@ export default function OwnerRegistrationPageClient({ onExit }: Props) {
         void onNext();
       }}
     >
-      <OwnerRegistrationProgress currentStep={step} />
-      <div className="mt-8 space-y-6">
+      <div className="space-y-6">
         {step === 1 ? (
           <OwnerAccountStep
             authDisabled={authDisabled}

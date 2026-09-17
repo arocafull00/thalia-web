@@ -75,7 +75,10 @@ export default function SubscriptionPlanSummary() {
       </dl>
 
       <p className="text-sm leading-relaxed text-ink-secondary">
-        {BILLING_COPY.trialChargeDisclaimer}
+        <span className="font-semibold text-ink">
+          {BILLING_COPY.trialChargeDisclaimerLead}
+        </span>{" "}
+        {BILLING_COPY.trialChargeDisclaimerRest}
       </p>
 
       <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-border-strong pt-5">

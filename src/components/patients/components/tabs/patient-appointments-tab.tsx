@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import AppointmentsTable from "@/components/appointments/components/appointments-table";
 import type {
   AppointmentStatus,
@@ -19,13 +17,10 @@ export default function PatientAppointmentsTab({
   onStatusChange,
   readOnly = false,
 }: PatientAppointmentsTabProps) {
-  const router = useRouter();
-
   return (
     <div className="space-y-4">
       <AppointmentsTable
         appointments={appointments}
-        onRowClick={(id) => router.push(`/appointments/${id}`)}
         onStatusChange={onStatusChange}
         readOnly={readOnly}
       />

@@ -15,7 +15,6 @@ import type { InventoryItem } from "@/types/database.types";
 type InventoryTableProps = {
   items: InventoryItem[];
   emptyMessage?: string;
-  onRowClick: (id: string) => void;
   /** Paginación en servidor: `items` es ya la página visible. */
   pagination?: {
     pageIndex: number;
@@ -29,7 +28,6 @@ type InventoryTableProps = {
 export default function InventoryTable({
   items,
   emptyMessage,
-  onRowClick,
   onEdit,
   pagination,
 }: InventoryTableProps) {
@@ -53,7 +51,7 @@ export default function InventoryTable({
         />
       )}
       emptyMessage={emptyMessage ?? "No hay materiales con ese criterio."}
-      onRowClick={(item) => onRowClick(item.id)}
+      getRowHref={(item) => `/inventory/${item.id}`}
     />
   );
 }

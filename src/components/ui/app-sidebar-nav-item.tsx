@@ -82,7 +82,7 @@ export default function AppSidebarNavItem({
     // icono 4px a la izquierda.
     "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0!",
     "text-ink-secondary hover:bg-(--hover-overlay) hover:text-primary-hover",
-    "data-active:bg-[image:var(--gradient-primary)] data-active:font-medium data-active:text-on-primary data-active:shadow-nav-active data-active:hover:text-on-primary data-active:[&_svg]:text-on-primary",
+    "data-active:bg-primary data-active:font-medium data-active:text-on-primary data-active:hover:bg-primary-hover data-active:hover:text-on-primary data-active:[&_svg]:text-on-primary",
   );
 
   if (hasSubmenu && item.subItems) {

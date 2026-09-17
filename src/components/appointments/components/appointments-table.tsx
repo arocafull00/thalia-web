@@ -14,7 +14,6 @@ import type {
 
 type AppointmentsTableProps = {
   appointments: AppointmentWithRelations[];
-  onRowClick: (id: string) => void;
   onStatusChange: (id: string, status: AppointmentStatus) => void;
   readOnly?: boolean;
   /**
@@ -38,7 +37,6 @@ type AppointmentsTableProps = {
 
 export default function AppointmentsTable({
   appointments,
-  onRowClick,
   onStatusChange,
   readOnly = false,
   pagination,
@@ -79,7 +77,6 @@ export default function AppointmentsTable({
       <div className="md:hidden">
         <AppointmentsMobileList
           appointments={appointments}
-          onRowClick={onRowClick}
           actionHandlers={actionHandlers}
           canRespondToExternal={canRespondToExternal}
           respondingExternal={respondingExternal}
@@ -90,7 +87,7 @@ export default function AppointmentsTable({
           columns={columns}
           data={appointments}
           manualPagination={pagination}
-          onRowClick={(appointment) => onRowClick(appointment.id)}
+          getRowHref={(appointment) => `/appointments/${appointment.id}`}
           getRowStyle={(appointment) =>
             ({
               "--glow": appointmentStatusColor(appointment.status),

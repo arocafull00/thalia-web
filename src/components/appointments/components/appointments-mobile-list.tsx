@@ -12,7 +12,6 @@ import type { AppointmentWithRelations } from "@/types/database.types";
 
 type AppointmentsMobileListProps = {
   appointments: AppointmentWithRelations[];
-  onRowClick: (id: string) => void;
   actionHandlers: AppointmentListActionHandlers;
   canRespondToExternal: boolean;
   respondingExternal: boolean;
@@ -20,7 +19,6 @@ type AppointmentsMobileListProps = {
 
 export default function AppointmentsMobileList({
   appointments,
-  onRowClick,
   actionHandlers,
   canRespondToExternal,
   respondingExternal,
@@ -41,7 +39,6 @@ export default function AppointmentsMobileList({
         <AppointmentRow
           key={appointment.id}
           appointment={appointment}
-          onClick={() => onRowClick(appointment.id)}
           respondingExternal={respondingExternal}
           onAccept={
             canRespondToExternal && appointment.status === "pending_external"

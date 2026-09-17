@@ -1,67 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-import RegisterEmployeeEmail from "@/components/auth/register/components/register-employee-email";
-import RegisterTypePicker from "@/components/auth/register/components/register-type-picker";
-import OwnerRegistrationPageClient from "@/components/auth/register/owner-registration-page.client";
-import { RedirectScreen } from "@/components/loader/redirect-screen";
-import { useRegisterType } from "@/lib/hooks/use-register-type";
+import RegisterFlow from "@/components/auth/register/register-flow";
 
 export default function RegisterPageClient() {
-  const router = useRouter();
-  const {
-    step,
-    emailRegister,
-    emailError,
-    error,
-    redirectHref,
-    submitting,
-    handlePickOwner,
-    handlePickEmployee,
-    handleBack,
-    handleEmployeeEmailSubmit,
-    handleOwnerExit,
-    handleSignOut,
-  } = useRegisterType();
-
-  useEffect(() => {
-    if (!redirectHref) {
-      return;
-    }
-
-    router.replace(redirectHref);
-  }, [redirectHref, router]);
-
-  if (redirectHref) {
-    return <RedirectScreen />;
-  }
-
-  if (step === "owner") {
-    return <OwnerRegistrationPageClient onExit={handleOwnerExit} />;
-  }
-
   return (
     <section className="flex min-h-screen flex-1 flex-col bg-surface">
       <div className="flex flex-1 items-center justify-center px-6 py-10 lg:px-8">
-        <div className="w-full max-w-110">
-          {step === "employee-email" ? (
-            <RegisterEmployeeEmail
-              emailRegister={emailRegister}
-              emailError={emailError}
-              error={error}
-              submitting={submitting}
-              onSubmit={handleEmployeeEmailSubmit}
-              onBack={handleBack}
-            />
-          ) : (
-            <RegisterTypePicker
-              onPickOwner={handlePickOwner}
-              onPickEmployee={handlePickEmployee}
-              onSignOut={handleSignOut}
-            />
-          )}
+        <div className="w-full max-w-130">
+          <RegisterFlow showExit />
         </div>
       </div>
     </section>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { getAuthErrorMessage } from "@/lib/auth/get-auth-error-message";
@@ -11,7 +10,6 @@ import { usePostAuthRedirect } from "@/lib/hooks/use-post-auth-redirect";
 import { navigateAfterAuth } from "@/lib/navigation/navigate-after-auth";
 
 export function useLogin() {
-  const router = useRouter();
   const { signIn, user } = useAuth();
   const { href, ready } = usePostAuthRedirect(Boolean(user));
   const [email, setEmail] = useState("");
@@ -49,16 +47,11 @@ export function useLogin() {
     setSubmitting(false);
   };
 
-  const handleRegisterPress = () => {
-    router.push("/register");
-  };
-
   return {
     authDisabled,
     email,
     error,
     handleGoogleSignIn,
-    handleRegisterPress,
     handleSubmit,
     isSupabaseConfigured,
     password,

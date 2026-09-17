@@ -2,6 +2,34 @@ import { expect, test } from "@playwright/test";
 
 import { E2E_USER } from "./e2e-constants";
 
+test("cambia entre inicio de sesión y registro sin salir de la pantalla", async ({
+  context,
+  page,
+}) => {
+  await context.clearCookies();
+  await page.goto("/login");
+
+  await page.getByRole("tab", { name: "Registrarse" }).click();
+
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(
+    page.getByRole("heading", { name: "Empieza a usar Thalia en pasos" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: /Soy propietario/ }).click();
+  await expect(page.getByLabel("Nombre completo")).toBeVisible();
+
+  await page.getByRole("tab", { name: "Iniciar sesión" }).click();
+
+  await expect(page).toHaveURL(/\/login$/);
+  const loginPanel = page.getByRole("tabpanel", { name: "Iniciar sesión" });
+  await expect(loginPanel.getByLabel(/Correo electrónico/)).toBeVisible();
+  await expect(loginPanel.getByLabel(/^Contraseña/)).toBeVisible();
+
+  await page.getByRole("tab", { name: "Registrarse" }).click();
+  await expect(page.getByLabel("Nombre completo")).toBeVisible();
+});
+
 test("protege las rutas privadas y permite cerrar sesión", async ({
   context,
   page,

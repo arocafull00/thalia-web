@@ -60,9 +60,25 @@ export default function SubscriptionPlanSummary() {
             {BILLING_COPY.billingCycleValue}
           </dd>
         </div>
+        <div className="grid grid-cols-[auto_1fr_auto] items-end gap-2">
+          <dt className="text-xs text-ink-secondary sm:text-sm">
+            {BILLING_COPY.afterTrialLabel}
+          </dt>
+          <div
+            aria-hidden="true"
+            className="mb-1 border-b border-dotted border-border-strong"
+          />
+          <dd className="text-right text-xs font-medium text-ink sm:text-sm">
+            {BILLING_COPY.afterTrialValue}
+          </dd>
+        </div>
       </dl>
 
-      <div className="flex items-baseline justify-between gap-4 border-t border-border-strong pt-5">
+      <p className="text-sm leading-relaxed text-ink-secondary">
+        {BILLING_COPY.trialChargeDisclaimer}
+      </p>
+
+      <div className="mt-5 flex items-baseline justify-between gap-4 border-t border-border-strong pt-5">
         <span className="text-sm text-ink-secondary">
           {BILLING_COPY.trialTotalLabel}
         </span>

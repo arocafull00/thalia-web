@@ -27,7 +27,7 @@ export default function RegisterEmployeeEmail({
 
   return (
     <form
-      className="space-y-6"
+      className="mx-auto w-full max-w-110 space-y-6"
       onSubmit={(event) => {
         event.preventDefault();
         void onSubmit();

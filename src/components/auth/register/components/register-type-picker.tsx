@@ -7,15 +7,17 @@ type Props = {
   onPickOwner: () => void;
   onPickEmployee: () => void;
   onSignOut: () => void;
+  showExit: boolean;
 };
 
 export default function RegisterTypePicker({
   onPickOwner,
   onPickEmployee,
   onSignOut,
+  showExit,
 }: Props) {
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-110 space-y-6">
       <div className="space-y-1 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -62,17 +64,19 @@ export default function RegisterTypePicker({
           </div>
         </button>
       </div>
-      <div className="flex justify-center">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={onSignOut}
-          className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
-        >
-          <LogOut size={14} aria-hidden="true" />
-          Salir
-        </Button>
-      </div>
+      {showExit ? (
+        <div className="flex justify-center">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onSignOut}
+            className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs uppercase tracking-wide"
+          >
+            <LogOut size={14} aria-hidden="true" />
+            Salir
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import { CreditCard, LogOut } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 import SubscriptionPaywallHero from "@/components/billing/subscription/components/subscription-paywall-hero";
 import SubscriptionPlanSummary from "@/components/billing/subscription/components/subscription-plan-summary";
 import { useSubscriptionPage } from "@/components/billing/subscription/hooks/use-subscription-page";
 import { Button } from "@/components/ui/button";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
-import { BILLING_COPY, BILLING_STATUS_LABELS } from "@/copy/billing-copy";
+import { BILLING_COPY } from "@/copy/billing-copy";
 import type {
   ClinicBillingSummary,
   ClinicMembershipRole,
@@ -61,25 +61,12 @@ export default function SubscriptionPageClient({
                 : description}
             </p>
 
-            <div
-              aria-live="polite"
-              className="mt-6 inline-flex items-center gap-2 rounded-badge border border-border-strong bg-surface px-3 py-1.5 text-sm text-ink-secondary shadow-float"
-            >
-              <span
-                aria-hidden="true"
-                className={`size-1.5 rounded-full bg-primary ${page.waitingForWebhook ? "animate-pulse motion-reduce:animate-none" : ""}`}
-              />
-              <span>
-                {BILLING_COPY.status} —{" "}
-                {BILLING_STATUS_LABELS[billing.subscription_status]}
-              </span>
-            </div>
-
             <div className="mt-8">
               <SubscriptionPlanSummary />
             </div>
 
-            <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="mt-8 flex flex-col gap-3">
+              {membershipCount > 1 ? <TopbarClinicSelector /> : null}
               {isOwner ? (
                 <Button
                   type="button"
@@ -88,7 +75,7 @@ export default function SubscriptionPageClient({
                   onClick={
                     canStartCheckout ? page.openCheckout : page.openPortal
                   }
-                  className="rounded-full px-6"
+                  className="w-full rounded-full px-6"
                 >
                   <CreditCard aria-hidden="true" />
                   {canStartCheckout
@@ -98,15 +85,13 @@ export default function SubscriptionPageClient({
               ) : null}
               <Button
                 type="button"
-                variant="ghost"
+                variant="link"
                 disabled={page.isPending}
                 onClick={() => void page.signOut()}
-                className="rounded-full"
+                className="w-full justify-center text-ink-secondary"
               >
-                <LogOut aria-hidden="true" />
                 {BILLING_COPY.signOut}
               </Button>
-              {membershipCount > 1 ? <TopbarClinicSelector /> : null}
             </div>
           </div>
         </div>

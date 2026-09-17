@@ -1,5 +1,12 @@
 # Changelog
 
+## 161-login-con-google-en-thalia-app-es
+
+- **La causa estaba en la configuración, no en el código**: la lista de Redirect URLs de Supabase no cubría el `redirect_to` porque este lleva query (`/callback?next=%2Fdashboard`) y una entrada literal no la empareja. Se resolvió con el comodín `https://www.thalia-app.es/**`
+- Cuando Supabase descarta el `redirect_to` no da error: cae al Site URL con el código pegado. La raíz redirigía a `/dashboard` sin mirarlo, así que nadie lo canjeaba y el usuario acababa en `/login` sin un solo error en toda la cascada. Ahora la raíz reenvía el código a `/callback` en vez de tragárselo
+- Un intercambio fallido en `/callback` se reporta a Sentry con el host y el destino. Antes se descartaba el error, y como la ruta devuelve un redirect en vez de lanzar, tampoco lo veía la instrumentación automática: el fallo no dejaba rastro en ningún sitio
+
+
 ## 81-breadcrumb-en-una-linea
 
 - En escritorio el rastro y el título de la página van en una sola línea —«Pacientes › Alejandro Blanco»— en lugar de apilados. La barra baja de 58 a 54 px

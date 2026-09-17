@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { logger } from "@/lib/logger";
 import { createClient } from "@/lib/supabase/server";
 
 const DEFAULT_AUTH_DESTINATION = "/dashboard";
@@ -36,6 +37,19 @@ export async function GET(request: Request) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
+    /*
+     * El motivo es lo único que distingue una causa de otra: "code verifier
+     * should be non-empty" significa que el flujo empezó en otro host y la
+     * cookie no viajó, y no se parece en nada a un código ya canjeado. Sin
+     * esto el fallo no deja rastro en ningún sitio —ni aquí ni en Sentry—
+     * porque la ruta devuelve un redirect normal en vez de lanzar (#161).
+     */
+    logger.captureException(error, {
+      action: "exchangeCodeForSession",
+      host: url.host,
+      next,
+    });
+
     return NextResponse.redirect(createAuthErrorDestination(url.origin, next));
   }
 

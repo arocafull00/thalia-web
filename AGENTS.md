@@ -141,6 +141,55 @@ src/dal/
 - Los stores llaman a `getActiveClinicId()` y pasan el resultado como argumento al DAL.
 - Nunca importes `supabase` fuera de `src/dal/`. Los stores importan exclusivamente desde `@/dal/*`.
 
+## Enums en PostgreSQL (Supabase Studio)
+
+Para conjuntos cerrados de valores (estados, roles, tipos), usa **tipos `ENUM` nativos de PostgreSQL**, no `TEXT + CHECK (... IN (...))`. Supabase Studio solo muestra un selector desplegable con enums nativos.
+
+**Cuándo usar enum:** valores fijos definidos por la app (p. ej. `appointment_status`, `employee_role`).
+
+**Cuándo no:** validaciones de formato (`CHECK (name ~ '...')`), conjuntos abiertos o propensos a crecer sin control (p. ej. canales de recordatorio), o campos de texto libre.
+
+### Nueva columna o conversión
+
+1. Crear el tipo en `public`: `CREATE TYPE public.appointment_status AS ENUM ('scheduled', ...);`
+2. Validar datos existentes antes de convertir.
+3. Si la columna tiene dependencias, eliminarlas y recrearlas en la misma migración:
+   - vistas que exponen la columna (p. ej. `appointments_search`)
+   - políticas RLS que la referencian directamente
+   - triggers, índices parciales o FKs compuestas que la usen
+4. `DROP DEFAULT` si la columna tiene default.
+5. Eliminar el `CHECK` de conjunto cerrado (no los de negocio ni formato).
+6. Convertir: `ALTER COLUMN status TYPE public.appointment_status USING status::text::public.appointment_status;`
+7. Restaurar defaults con cast explícito: `SET DEFAULT 'scheduled'::public.appointment_status`
+8. Recrear vista, políticas, triggers, FKs y grants tal como estaban.
+9. Conceder uso del tipo: `GRANT USAGE ON TYPE public.appointment_status TO anon, authenticated, service_role;`
+
+Referencia completa: `supabase/migrations/20260916165000_native_enum_types.sql`.
+
+### Añadir un valor
+
+```sql
+ALTER TYPE public.appointment_status ADD VALUE 'new_status';
+```
+
+No se puede eliminar ni renombrar un label de enum sin crear un tipo sustituto y volver a convertir todas las columnas que lo usan.
+
+### Funciones y RPC
+
+Conserva firmas públicas con `TEXT` para no romper PostgREST ni Edge Functions. Haz el cast en el límite:
+
+- lectura: `employee.role::text`
+- escritura: `p_status::public.clinic_membership_status`
+- comparación con `TEXT[]`: `employee.role::text = ANY(p_roles)`
+
+Los literales SQL en triggers y políticas (`status = 'active'`) siguen funcionando.
+
+### TypeScript
+
+PostgREST serializa enums como strings; la app no cambia. Actualiza `Database.public.Enums` en `src/types/database.types.ts` mapeando cada nombre de enum al alias exportado existente. Compara con `pnpm exec supabase gen types typescript --local` sin reemplazar el archivo curado entero.
+
+Tras desplegar, recarga el schema cache de PostgREST si Studio no refleja el cambio (`NOTIFY pgrst, 'reload schema'`).
+
 ## Estructura prevista
 
 - `app/` — rutas Next.js App Router
@@ -179,7 +228,7 @@ const fullName = user?.name ?? "";
 > Si un `useEffect` setea estado que está en sus propias `deps`, rediseña: el valor es derivado, no independiente.
 
 Utiliza siempre pnpm.
-Para comandos remotos de Supabase, usa la sesión autenticada de la CLI y el proyecto enlazado mediante `pnpm exec supabase`. No uses `--profile thalia`: `--profile` selecciona un perfil de plataforma avanzada, no la cuenta autenticada. Si la sesión no tiene acceso al proyecto, vuelve a autenticarla con `pnpm exec supabase login --no-browser`.
+Para comandos remotos de Supabase, usa la sesión autenticada de la CLI y el proyecto enlazado mediante `pnpm exec supabase`. No uses `--profile thalia`: `--profile` selecciona un perfil de plataforma avanzada, no la cuenta autenticada. Si la sesión no tiene acceso al proyecto, vuelve a autenticarla con `pnpm db:login`.
 Utiliza siempre tailwind.
 Utiliza siempre lucide icons, nunca emojis.
 Los estados deben ser globales en muchas ocasiones. Evita el prop drilling. Si un componente no usa una prop, no deberia pasarlo a su hijo. Deberia accederse desde un estado de zustand.

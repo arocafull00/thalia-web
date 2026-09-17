@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -27,6 +28,7 @@ const defaultValues: CreateClinicFormValues = {
 
 export function useCreateClinic() {
   const router = useRouter();
+  const [isEnteringClinic, setIsEnteringClinic] = useState(false);
   const { user, loading, signOut } = useAuth();
   const { href, ready } = usePostAuthRedirect(Boolean(user));
   const fetchMemberships = useClinicStore((state) => state.fetchMemberships);
@@ -43,11 +45,16 @@ export function useCreateClinic() {
   });
 
   const shouldRedirectAway = Boolean(
-    user && ready && href && href !== "/create-clinic",
+    !isSubmitting &&
+      !isEnteringClinic &&
+      user &&
+      ready &&
+      href &&
+      href !== "/create-clinic",
   );
   const redirectHref = !user ? "/login" : shouldRedirectAway ? href : null;
 
-  const disabled = isSubmitting || !isSupabaseConfigured;
+  const disabled = isSubmitting || isEnteringClinic || !isSupabaseConfigured;
 
   const onSubmit = handleSubmit(async (data) => {
     const fullName =
@@ -106,6 +113,7 @@ export function useCreateClinic() {
       }
 
       await waitForAuthSessionReady();
+      setIsEnteringClinic(true);
       router.replace("/subscription");
     } catch (cause) {
       const message =
@@ -131,6 +139,6 @@ export function useCreateClinic() {
     onSubmit,
     redirectHref,
     register,
-    submitting: isSubmitting,
+    submitting: isSubmitting || isEnteringClinic,
   };
 }

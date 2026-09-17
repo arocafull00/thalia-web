@@ -9,7 +9,10 @@ import {
   createCheckoutSessionAction,
 } from "@/components/billing/actions";
 import { BILLING_COPY } from "@/copy/billing-copy";
+import { hasClinicBillingAccess } from "@/lib/billing";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { hasPendingTeamInvites } from "@/lib/registration-metadata";
+import { useClinicStore } from "@/stores/clinic-store";
 import type { BillingStatus } from "@/types/database.types";
 
 type UseSubscriptionPageInput = {
@@ -24,7 +27,8 @@ export function useSubscriptionPage({
   checkoutResult,
 }: UseSubscriptionPageInput) {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { profile, signOut, user } = useAuth();
+  const fetchMemberships = useClinicStore((state) => state.fetchMemberships);
   const [isPending, startTransition] = useTransition();
   const waitingForWebhook =
     checkoutResult === "success" &&
@@ -38,21 +42,59 @@ export function useSubscriptionPage({
   }, [checkoutResult]);
 
   useEffect(() => {
-    if (!waitingForWebhook) {
+    if (!waitingForWebhook || !user) {
       return;
     }
 
-    const interval = globalThis.setInterval(() => router.refresh(), 1500);
-    const timeout = globalThis.setTimeout(
-      () => globalThis.clearInterval(interval),
-      30000,
-    );
+    let cancelled = false;
+    let timeout: ReturnType<typeof globalThis.setTimeout> | undefined;
+    const deadline = Date.now() + 30000;
+
+    const pollBillingAccess = async () => {
+      const memberships = await fetchMemberships(user.id);
+
+      if (cancelled) {
+        return;
+      }
+
+      const membership = memberships.find((item) => item.clinicId === clinicId);
+
+      if (
+        membership &&
+        hasClinicBillingAccess(
+          profile?.account_type ?? null,
+          membership.billing,
+        )
+      ) {
+        cancelled = true;
+        router.replace(
+          hasPendingTeamInvites(user) ? "/invite-team" : "/dashboard",
+        );
+        return;
+      }
+
+      if (Date.now() < deadline) {
+        timeout = globalThis.setTimeout(() => void pollBillingAccess(), 1500);
+      }
+    };
+
+    void pollBillingAccess();
 
     return () => {
-      globalThis.clearInterval(interval);
-      globalThis.clearTimeout(timeout);
+      cancelled = true;
+
+      if (timeout) {
+        globalThis.clearTimeout(timeout);
+      }
     };
-  }, [router, waitingForWebhook]);
+  }, [
+    clinicId,
+    fetchMemberships,
+    profile?.account_type,
+    router,
+    user,
+    waitingForWebhook,
+  ]);
 
   const openCheckout = () => {
     startTransition(async () => {
@@ -80,11 +122,22 @@ export function useSubscriptionPage({
     });
   };
 
+  const handleSignOut = () => {
+    startTransition(async () => {
+      try {
+        await signOut();
+        router.replace("/login");
+      } catch {
+        toast.error(BILLING_COPY.signOutError);
+      }
+    });
+  };
+
   return {
     isPending,
     openCheckout,
     openPortal,
-    signOut,
+    signOut: handleSignOut,
     waitingForWebhook,
   };
 }

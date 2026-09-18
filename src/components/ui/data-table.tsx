@@ -181,7 +181,9 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="h-auto border-0 bg-transparent px-3.5 pb-2.5 pt-3.5"
+                    className={`h-auto border-0 bg-transparent px-3.5 pb-2.5 pt-3.5${
+                      header.column.id === "actions" ? " text-center" : ""
+                    }`}
                   >
                     {header.isPlaceholder
                       ? null
@@ -215,7 +217,9 @@ export function DataTable<TData, TValue>({
                     return (
                       <TableCell
                         key={cell.id}
-                        className="px-3.5 py-3.5 text-sm"
+                        className={`px-3.5 py-3.5 text-sm${
+                          cell.column.id === "actions" ? " text-center" : ""
+                        }`}
                       >
                         {cellIndex === 0
                           ? wrapPrimaryCellContent(

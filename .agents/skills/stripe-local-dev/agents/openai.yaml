@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stripe local"
+  short_description: "Prepara Stripe local: env, webhooks y dev server"
+  default_prompt: "Usa $stripe-local-dev para preparar y levantar el entorno local de Stripe de Thalia."

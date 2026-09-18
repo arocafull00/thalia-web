@@ -120,26 +120,21 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
     timeout: 15_000,
   });
 
-  /*
-   * El detalle dejó de ser seis pestañas. Resumen, Historial clínico,
-   * Tratamientos y Citas son ahora secciones fijas de la página, y solo Galería
-   * y Archivos siguen siendo pestañas. Se comprueban las dos formas para no
-   * perder la cobertura de lo que se movió fuera de la barra.
-   */
-  for (const sectionName of ["Historial clínico", "Tratamientos", "Citas"]) {
-    /*
-     * Se comprueba el encabezado y no la `section`: la del historial es un hijo
-     * flex con `min-h-0`, así que su caja calcula altura cero —el contenido
-     * desborda y se ve, pero Playwright la considera oculta—.
-     */
-    await expect(
-      page.getByRole("heading", { name: sectionName, level: 2 }),
-    ).toBeVisible({ timeout: 15_000 });
-  }
-
-  for (const tabName of ["Galería", "Archivos"]) {
+  for (const tabName of [
+    "Historial clínico",
+    "Tratamientos",
+    "Citas",
+    "Galería",
+    "Archivos",
+  ]) {
     const tab = page.getByRole("tab", { name: tabName, exact: true });
     await tab.click();
     await expect(tab).toHaveAttribute("aria-selected", "true");
+
+    if (tabName === "Historial clínico") {
+      await expect(
+        page.getByRole("heading", { name: tabName, level: 2 }),
+      ).toBeVisible({ timeout: 15_000 });
+    }
   }
 });

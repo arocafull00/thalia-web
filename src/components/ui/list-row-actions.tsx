@@ -21,7 +21,10 @@ export default function ListRowActions({
 
   if (variant === "menu") {
     return (
-      <div onClick={(event) => event.stopPropagation()}>
+      <div
+        className="flex justify-center"
+        onClick={(event) => event.stopPropagation()}
+      >
         <ProfileActionsMenu
           ariaLabel={label}
           sections={[{ label: "Acciones", actions }]}
@@ -32,7 +35,7 @@ export default function ListRowActions({
 
   return (
     <div
-      className="flex items-center justify-end gap-1"
+      className="flex items-center justify-center gap-1"
       onClick={(event) => event.stopPropagation()}
     >
       {actions.map((action) => (

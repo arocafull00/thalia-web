@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
@@ -12,6 +12,8 @@ import FinancesMovementsSection from "@/components/finances/components/finances-
 import FinancesSummaryMetrics from "@/components/finances/components/finances-summary-metrics";
 import FinancesWeeklyBreakdown from "@/components/finances/components/finances-weekly-breakdown";
 import TransactionCreateForm from "@/components/finances/components/transaction-create-form";
+import FinancesExportDialog from "@/components/finances/export/components/finances-export-dialog";
+import { useFinancesExportDialog } from "@/components/finances/export/hooks/use-finances-export-dialog";
 import FinancesMonthSelector, {
   financesMonthToParam,
 } from "@/components/finances/finances-month-selector";
@@ -40,7 +42,7 @@ import { TRANSACTIONS_PAGE_SIZE } from "@/lib/finances-pagination";
 import { parseFinancesMonthParam } from "@/lib/finances-summary";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
-import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import type {
@@ -77,6 +79,7 @@ export default function FinancesPageClient({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const filterDefaults = useMemo(
     () => ({
       category: "",
@@ -125,6 +128,7 @@ export default function FinancesPageClient({
     fabType,
     isAdmin,
     listData,
+    month,
     summary,
     tab,
     total,
@@ -137,6 +141,13 @@ export default function FinancesPageClient({
     initialTotal,
     initialTransactions,
   });
+  const exportDefaults = useMemo(
+    () => ({ categoryId: filters.category, month, tab }),
+    [filters.category, month, tab],
+  );
+  const exportDialog = useFinancesExportDialog(exportDefaults, categories, () =>
+    setExportOpen(false),
+  );
 
   const editingTransaction = useMemo(
     () =>
@@ -223,6 +234,19 @@ export default function FinancesPageClient({
     categoryManager.openCreate(fabType);
   };
 
+  const handleOpenExport = () => {
+    exportDialog.prepare();
+    setExportOpen(true);
+  };
+
+  const handleExportOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && exportDialog.isPending) {
+      return;
+    }
+
+    setExportOpen(nextOpen);
+  };
+
   const handleMonthChange = (nextMonth: Date) => {
     setFilter("month", financesMonthToParam(nextMonth));
   };
@@ -244,13 +268,24 @@ export default function FinancesPageClient({
     setFilter("tab", nextTab);
   };
 
-  useTopbarAction(
+  useTopbarActions(
     isAdmin
       ? {
-          title: FINANCES_COPY.newMovement,
-          icon: Plus,
-          testId: "transaction-create-trigger",
-          onClick: handleOpenCreateDialog,
+          buttons: [
+            {
+              title: FINANCES_COPY.export.action,
+              icon: Download,
+              variant: "ghost",
+              testId: "finances-export-trigger",
+              onClick: handleOpenExport,
+            },
+            {
+              title: FINANCES_COPY.newMovement,
+              icon: Plus,
+              testId: "transaction-create-trigger",
+              onClick: handleOpenCreateDialog,
+            },
+          ],
         }
       : null,
   );
@@ -411,6 +446,18 @@ export default function FinancesPageClient({
           })
         }
         onDismiss={() => setSheetOpen(false)}
+      />
+      <FinancesExportDialog
+        availableCategories={exportDialog.availableCategories}
+        categoryIds={exportDialog.categoryIds}
+        control={exportDialog.control}
+        errors={exportDialog.errors}
+        isPending={exportDialog.isPending}
+        open={exportOpen}
+        onOpenChange={handleExportOpenChange}
+        onSubmit={() => void exportDialog.submit()}
+        onToggleCategory={exportDialog.toggleCategory}
+        onTypeChange={exportDialog.handleTypeChange}
       />
       <MobileFab
         label={FINANCES_COPY.newMovement}

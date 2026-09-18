@@ -43,6 +43,12 @@ test("crea un ingreso", async ({ page }) => {
     page.getByText("Movimiento creado correctamente."),
   ).toBeVisible();
 
+  /*
+   * La pantalla abre en «Resumen», que no lleva listado ni buscador: el
+   * movimiento recién creado solo es visible desde «Movimientos».
+   */
+  await page.getByRole("tab", { name: "Movimientos" }).click();
+
   await page.getByPlaceholder("Buscar por concepto...").fill(description);
   await expect(
     page.getByRole("row", { name: new RegExp(description) }),

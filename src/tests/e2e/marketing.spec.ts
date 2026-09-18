@@ -5,6 +5,7 @@ import {
   clickTopbarMenuAction,
   clickTopbarTrigger,
   expectSearchParam,
+  openRowDetail,
   selectComboboxOption,
 } from "./e2e-helpers";
 
@@ -237,8 +238,8 @@ test("abre el detalle de una campaña y confirma a cuántos se enviará", async 
   await page.getByTestId("campaign-create-submit").click();
   await expect(dialog).toBeHidden({ timeout: 15_000 });
 
-  // Al pinchar la fila se navega al detalle.
-  await page.getByRole("row", { name: new RegExp(title) }).click();
+  // Al pinchar el nombre de la campaña se navega al detalle.
+  await openRowDetail(page, new RegExp(title));
   await expect(page).toHaveURL(/\/marketing\/[^/?#]+/, { timeout: 15_000 });
   await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
   await expect(page.getByTestId("campaign-message-preview")).toContainText(
@@ -289,7 +290,7 @@ test("envía la campaña y la marca como enviada", async ({ page }) => {
   await page.getByTestId("campaign-create-submit").click();
   await expect(dialog).toBeHidden({ timeout: 15_000 });
 
-  await page.getByRole("row", { name: new RegExp(title) }).click();
+  await openRowDetail(page, new RegExp(title));
   await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
 
   await clickTopbarTrigger(page, "campaign-send-trigger");
@@ -336,7 +337,7 @@ test("duplica una campaña en un borrador nuevo", async ({ page }) => {
   await page.getByTestId("campaign-create-next").click();
   await page.getByTestId("campaign-create-submit").click();
 
-  await page.getByRole("row", { name: new RegExp(title) }).click();
+  await openRowDetail(page, new RegExp(title));
   await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
   const originalUrl = page.url();
 

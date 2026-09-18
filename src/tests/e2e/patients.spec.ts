@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 
 import { E2E_DATA } from "./e2e-constants";
 import {
-  clickPatientTableRow,
   clickTopbarTrigger,
   expectSearchParam,
-  openPatientDetailFromEditDialog,
+  openPatientEditDialog,
+  openRowDetail,
   selectComboboxOption,
 } from "./e2e-helpers";
 
@@ -45,7 +45,7 @@ test("crea y edita un paciente con el formulario completo", async ({
 
   await page.getByPlaceholder("Buscar pacientes...").fill(patientName);
   await expectSearchParam(page, "q", patientName);
-  await clickPatientTableRow(page, new RegExp(patientName));
+  await openPatientEditDialog(page, new RegExp(patientName));
 
   const editDialog = page.getByRole("dialog", { name: "Editar paciente" });
   // El consentimiento sobrevivió al guardado y vuelve marcado desde la BD.
@@ -115,20 +115,29 @@ test("busca, filtra y navega por las pestañas del paciente", async ({
       .getByRole("table")
       .getByRole("row", { name: new RegExp(E2E_DATA.patient) }),
   ).toBeVisible({ timeout: 15_000 });
-  await clickPatientTableRow(page, new RegExp(E2E_DATA.patient));
-  await openPatientDetailFromEditDialog(page);
+  await openRowDetail(page, new RegExp(E2E_DATA.patient));
   await expect(page.getByTestId("patient-detail-page")).toBeVisible({
     timeout: 15_000,
   });
 
-  for (const tabName of [
-    "Resumen",
-    "Historial clínico",
-    "Tratamientos",
-    "Citas",
-    "Galería",
-    "Archivos",
-  ]) {
+  /*
+   * El detalle dejó de ser seis pestañas. Resumen, Historial clínico,
+   * Tratamientos y Citas son ahora secciones fijas de la página, y solo Galería
+   * y Archivos siguen siendo pestañas. Se comprueban las dos formas para no
+   * perder la cobertura de lo que se movió fuera de la barra.
+   */
+  for (const sectionName of ["Historial clínico", "Tratamientos", "Citas"]) {
+    /*
+     * Se comprueba el encabezado y no la `section`: la del historial es un hijo
+     * flex con `min-h-0`, así que su caja calcula altura cero —el contenido
+     * desborda y se ve, pero Playwright la considera oculta—.
+     */
+    await expect(
+      page.getByRole("heading", { name: sectionName, level: 2 }),
+    ).toBeVisible({ timeout: 15_000 });
+  }
+
+  for (const tabName of ["Galería", "Archivos"]) {
     const tab = page.getByRole("tab", { name: tabName, exact: true });
     await tab.click();
     await expect(tab).toHaveAttribute("aria-selected", "true");

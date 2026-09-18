@@ -1,5 +1,13 @@
 # Changelog
 
+## suite-e2e-y-politica-de-privacidad-publica
+
+- **La política de privacidad era inaccesible para quien no ha iniciado sesión.** El pie del login enlaza a `/privacidad`, pero esa ruta no estaba entre las públicas del proxy, así que devolvía a `/login` — justo a las personas a las que va dirigida. Añadida, y con un test unitario que fija la lista entera: es la tercera vez que se olvida una ruta pública
+- Cinco tests E2E llevaban rotos desde `14c721e` por cambios de interfaz sin cobertura actualizada. `DataTable` ganó `getRowHref`, que envuelve en enlace solo la celda principal: pinchar la fila dejó de abrir el diálogo de paciente y de navegar al detalle de campaña. Finanzas se partió en «Resumen» y «Movimientos», y el listado —con su buscador— ya no es lo primero que se ve. El detalle de paciente pasó de seis pestañas a dos, con el resto convertido en secciones fijas
+- Los helpers pinchan el enlace **por nombre** y no con `.first()`: la fila lleva un segundo enlace, el de «Ver detalle», y apoyarse en el orden del DOM volvería a dejarlo frágil
+- El test de envío de campañas tenía la misma interacción rota sin que se notase, porque se salta mientras el edge runtime está desactivado. Arreglado también, para que no explote el día que se active
+
+
 ## 161-login-con-google-en-thalia-app-es
 
 - **La causa estaba en la configuración, no en el código**: la lista de Redirect URLs de Supabase no cubría el `redirect_to` porque este lleva query (`/callback?next=%2Fdashboard`) y una entrada literal no la empareja. Se resolvió con el comodín `https://www.thalia-app.es/**`

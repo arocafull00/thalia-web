@@ -20,22 +20,29 @@ export async function expectSearchParam(
     .toBe(value);
 }
 
-export async function clickPatientTableRow(page: Page, name: string | RegExp) {
+/*
+ * La fila ya no navega entera: `DataTable` envuelve en un enlace únicamente la
+ * celda principal (`getRowHref`), así que hay que pinchar ese enlace. Se busca
+ * por nombre y no con `.first()` porque la fila lleva un segundo enlace, el de
+ * la acción «Ver detalle», y el orden del DOM no es algo en lo que apoyarse.
+ */
+export async function openRowDetail(page: Page, name: string | RegExp) {
   const row = page.getByRole("table").getByRole("row", { name });
   await expect(row).toBeVisible();
-  await row.click();
+  await row.getByRole("link", { name }).click();
+}
+
+/*
+ * Editar dejó de abrirse pinchando la fila —eso ahora lleva al detalle— y es un
+ * botón de acción de la propia fila, rotulado por su `aria-label`.
+ */
+export async function openPatientEditDialog(page: Page, name: string | RegExp) {
+  const row = page.getByRole("table").getByRole("row", { name });
+  await expect(row).toBeVisible();
+  await row.getByRole("button", { name: "Editar paciente" }).click();
   await expect(
     page.getByRole("dialog", { name: "Editar paciente" }),
   ).toBeVisible();
-}
-
-export async function openPatientDetailFromEditDialog(page: Page) {
-  const editDialog = page.getByRole("dialog", { name: "Editar paciente" });
-  await expect(editDialog).toBeVisible();
-  await editDialog
-    .getByRole("button", { name: "Ver detalle", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/patients\/[^/?#]+/);
 }
 
 export async function selectComboboxOption(

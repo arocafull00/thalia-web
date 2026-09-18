@@ -14,6 +14,7 @@ const publicRoutes = [
   "/reset-password",
   "/no-membership",
   "/terms",
+  "/privacidad",
   "/cita",
   "/api/stripe/webhook",
 ];

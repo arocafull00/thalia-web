@@ -26,7 +26,11 @@ type FinancesExportDefaults = {
   categoryId: string;
 };
 
-function exportTypeForTab(tab: FinancesTabValue): TransactionType {
+function exportTypeForTab(tab: FinancesTabValue): TransactionType | "all" {
+  if (tab === "summary") {
+    return "all";
+  }
+
   return tab;
 }
 

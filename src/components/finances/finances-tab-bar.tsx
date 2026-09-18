@@ -1,23 +1,39 @@
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FINANCES_COPY } from "@/copy/finances-copy";
+import { Button } from "@/components/ui/button";
 
-export type FinancesTabValue = "income" | "expense";
+export type FinancesTabValue = "income" | "expense" | "summary";
 
-export default function FinancesTabBar() {
+type FinancesTabBarProps = {
+  selectedTab: FinancesTabValue;
+  onTabChange: (tab: FinancesTabValue) => void;
+};
+
+export default function FinancesTabBar({
+  selectedTab,
+  onTabChange,
+}: FinancesTabBarProps) {
+  const tabs: FinancesTabValue[] = ["income", "expense", "summary"];
+
   return (
-    <TabsList variant="default" className="h-auto gap-1 bg-transparent p-0">
-      <TabsTrigger
-        value="income"
-        className="rounded-full px-3 py-1.5 text-sm data-active:bg-primary-subtle data-active:text-primary"
-      >
-        {FINANCES_COPY.export.types.income}
-      </TabsTrigger>
-      <TabsTrigger
-        value="expense"
-        className="rounded-full px-3 py-1.5 text-sm data-active:bg-primary-subtle data-active:text-primary"
-      >
-        {FINANCES_COPY.export.types.expense}
-      </TabsTrigger>
-    </TabsList>
+    <div className="flex gap-2">
+      {tabs.map((tab) => (
+        <Button
+          key={tab}
+          type="button"
+          variant="ghost"
+          onClick={() => onTabChange(tab)}
+          className={`rounded-full px-3 py-1.5 text-sm ${
+            selectedTab === tab
+              ? "bg-primary-subtle text-primary hover:bg-primary-subtle hover:text-primary"
+              : "text-ink-muted hover:bg-(--hover-overlay) hover:text-ink-secondary"
+          }`}
+        >
+          {tab === "income"
+            ? "Ingresos"
+            : tab === "expense"
+              ? "Gastos"
+              : "Resumen"}
+        </Button>
+      ))}
+    </div>
   );
 }

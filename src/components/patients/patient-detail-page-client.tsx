@@ -4,18 +4,14 @@ import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
-import PatientDetailSidebar from "@/components/patients/components/detail/patient-detail-sidebar";
+import PatientDetailHeader from "@/components/patients/components/detail/patient-detail-header";
 import PatientDetailTabBar from "@/components/patients/components/detail/patient-detail-tab-bar";
 import PatientDetailTabContent from "@/components/patients/components/detail/patient-detail-tab-content";
-import PatientTimeline from "@/components/patients/components/detail/patient-timeline";
 import PatientFileDeleteConfirmDialog from "@/components/patients/components/files/patient-file-delete-confirm-dialog";
 import PatientFileUploaderDialog from "@/components/patients/components/files/patient-file-uploader-dialog";
 import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
 import PatientImageDeleteConfirmDialog from "@/components/patients/components/gallery/patient-image-delete-confirm-dialog";
 import PatientImageUploaderDialog from "@/components/patients/components/gallery/patient-image-uploader-dialog";
-import PatientAppointmentsTab from "@/components/patients/components/tabs/patient-appointments-tab";
-import PatientTreatmentsTab from "@/components/patients/components/tabs/patient-treatments-tab";
-import { usePatientAppointmentStatusChange } from "@/components/patients/hooks/use-patient-appointment-status-change";
 import {
   getPatientDetailMenuSections,
   getPatientDetailPrimaryAction,
@@ -24,11 +20,11 @@ import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
-import { Tabs } from "@/components/ui/tabs";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientDetailTabs } from "@/lib/hooks/use-patient-detail-tabs";
+import { usePatientAppointmentStatusChange } from "@/components/patients/hooks/use-patient-appointment-status-change";
 import { usePatient, usePatientAppointments } from "@/lib/hooks/use-patients";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
@@ -152,82 +148,32 @@ export default function PatientDetailPageClient({
   return (
     <div
       data-testid="patient-detail-page"
-      className="flex min-h-0 flex-1 flex-col"
+      className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
     >
-      <div className="shrink-0 px-8 pt-6 pb-4">
-        <BackButton fallbackHref="/patients" label={PATIENT_DETAIL_COPY.back} />
-      </div>
+      <PatientDetailHeader
+        patient={patient}
+        avatarDisplayUri={patientAvatar.avatarDisplayUri}
+        avatarUploadPending={patientAvatar.avatarUploadPending}
+        onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
+        readOnly={isExternal}
+      />
 
-      <div className="grid min-h-0 flex-1 lg:grid-cols-[20%_1fr]">
-        <PatientDetailSidebar
-          patient={patient}
-          appointments={appointments}
-          avatarDisplayUri={patientAvatar.avatarDisplayUri}
-          avatarUploadPending={patientAvatar.avatarUploadPending}
-          onAvatarFileSelected={patientAvatar.onAvatarFileSelected}
-          onEdit={patientActionHandlers.onEdit}
-          onCreateAppointment={patientActionHandlers.onCreateAppointment}
-          readOnly={isExternal}
-        />
-
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-8">
-          <PatientTimeline
+      <div className="flex flex-col gap-6 px-4 pb-8 lg:px-8">
+        <PatientDetailTabBar activeTab={activeTab} onTabChange={setActiveTab} />
+        <div role="tabpanel">
+          <PatientDetailTabContent
+            activeTab={activeTab}
+            patient={patient}
             appointments={appointments}
             isLoading={appointmentsQuery.isLoading}
             error={appointmentsQuery.error}
-            heading={PATIENT_DETAIL_COPY.tabs.clinicalHistory}
-            headingId="patient-clinical-history-heading"
+            onDeleteFile={openFilesDeleteConfirm}
+            onDeleteImage={openDeleteConfirm}
+            onOpenUploader={() => setUploaderOpen(true)}
+            onOpenFilesUploader={() => setFilesUploaderOpen(true)}
+            onStatusChange={handleAppointmentStatusChange}
+            readOnly={isExternal}
           />
-
-          <section
-            aria-labelledby="patient-treatments-heading"
-            className="mt-12 border-t border-border-subtle pt-8"
-          >
-            <h2
-              id="patient-treatments-heading"
-              className="border-b border-border-subtle pb-4 text-base font-medium text-ink"
-            >
-              {PATIENT_DETAIL_COPY.tabs.treatments}
-            </h2>
-            <div className="pt-6">
-              <PatientTreatmentsTab appointments={appointments} />
-            </div>
-          </section>
-
-          <section
-            aria-labelledby="patient-appointments-heading"
-            className="mt-12 border-t border-border-subtle pt-8"
-          >
-            <h2
-              id="patient-appointments-heading"
-              className="border-b border-border-subtle pb-4 text-base font-medium text-ink"
-            >
-              {PATIENT_DETAIL_COPY.tabs.appointments}
-            </h2>
-            <div className="pt-6">
-              <PatientAppointmentsTab
-                appointments={appointments}
-                onStatusChange={handleAppointmentStatusChange}
-                readOnly={isExternal}
-              />
-            </div>
-          </section>
-
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as typeof activeTab)}
-            className="mt-12 flex flex-col gap-6 border-t border-border-subtle pt-8"
-          >
-            <PatientDetailTabBar />
-            <PatientDetailTabContent
-              patient={patient}
-              onDeleteFile={openFilesDeleteConfirm}
-              onDeleteImage={openDeleteConfirm}
-              onOpenUploader={() => setUploaderOpen(true)}
-              onOpenFilesUploader={() => setFilesUploaderOpen(true)}
-              readOnly={isExternal}
-            />
-          </Tabs>
         </div>
       </div>
 

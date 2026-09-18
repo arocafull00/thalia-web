@@ -592,7 +592,7 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: var(--backdrop-tint);
+  background: color-mix(in srgb, var(--backdrop-tint) 20%, var(--canvas));
 }
 
 /* Alfa del barrido de fila: registrada para poder transicionarla. */

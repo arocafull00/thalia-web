@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
@@ -12,15 +12,10 @@ import FinancesMovementsSection from "@/components/finances/components/finances-
 import FinancesSummaryMetrics from "@/components/finances/components/finances-summary-metrics";
 import FinancesWeeklyBreakdown from "@/components/finances/components/finances-weekly-breakdown";
 import TransactionCreateForm from "@/components/finances/components/transaction-create-form";
-import FinancesExportDialog from "@/components/finances/export/components/finances-export-dialog";
-import { useFinancesExportDialog } from "@/components/finances/export/hooks/use-finances-export-dialog";
 import FinancesMonthSelector, {
   financesMonthToParam,
 } from "@/components/finances/finances-month-selector";
 import type { FinancesTabValue } from "@/components/finances/finances-tab-bar";
-import FinancesViewTabBar, {
-  type FinancesViewValue,
-} from "@/components/finances/finances-view-tab-bar";
 import TransactionCategoryFormDialog from "@/components/settings/financial-categories/components/transaction-category-form-dialog";
 import { useTransactionCategoriesManager } from "@/components/settings/financial-categories/hooks/use-transaction-categories-manager";
 import AppDialog from "@/components/ui/app-dialog";
@@ -39,14 +34,13 @@ import {
 } from "@/components/ui/primitives/form-action-icons";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
 import { TRANSACTIONS_PAGE_SIZE } from "@/lib/finances-pagination";
 import { parseFinancesMonthParam } from "@/lib/finances-summary";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
-import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
+import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import { useTransactionCreateDialog } from "@/lib/hooks/use-transaction-create-dialog";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import type {
@@ -57,7 +51,6 @@ import type { Transaction, TransactionCategory } from "@/types/database.types";
 
 type FinancesPageClientProps = {
   initialMonth: string;
-  initialView: FinancesViewValue;
   initialTab: FinancesTabValue;
   initialTransactions: Transaction[];
   initialTotal: number;
@@ -69,7 +62,6 @@ type FinancesPageClientProps = {
 
 export default function FinancesPageClient({
   initialMonth,
-  initialView,
   initialTab,
   initialTransactions,
   initialTotal,
@@ -85,7 +77,6 @@ export default function FinancesPageClient({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false);
-  const [exportOpen, setExportOpen] = useState(false);
   const filterDefaults = useMemo(
     () => ({
       category: "",
@@ -93,12 +84,13 @@ export default function FinancesPageClient({
       page: "",
       q: "",
       tab: initialTab,
-      view: initialView,
     }),
-    [initialMonth, initialTab, initialView],
+    [initialMonth, initialTab],
   );
   const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
 
+  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
+  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
   const setFilterAndResetPage = useCallback(
     (key: string, value: string) => {
       setFilters({ [key]: value, page: "" });
@@ -106,23 +98,24 @@ export default function FinancesPageClient({
     [setFilters],
   );
 
-  const { handleSearchChange } = useFilterSearch(
+  const { searchQuery, handleSearchChange } = useFilterSearch(
     filters.q,
     setFilterAndResetPage,
   );
 
+  // La página vive en la URL para que un enlace compartido abra donde estaba.
+  // El tope a 0 evita que un `?page=-3` escrito a mano llegue al offset del DAL.
   const pageIndex = Math.max(0, Number.parseInt(filters.page, 10) || 0);
-  const view = filters.view as FinancesViewValue;
 
   const pageFilters = useMemo(
     () => ({
       category: filters.category,
       month: filters.month,
       page: pageIndex,
-      search: filters.q,
+      search: searchQuery,
       tab: filters.tab as FinancesTabValue,
     }),
-    [filters.category, filters.month, filters.q, filters.tab, pageIndex],
+    [filters.category, filters.month, filters.tab, pageIndex, searchQuery],
   );
 
   const {
@@ -132,7 +125,6 @@ export default function FinancesPageClient({
     fabType,
     isAdmin,
     listData,
-    month,
     summary,
     tab,
     total,
@@ -145,13 +137,6 @@ export default function FinancesPageClient({
     initialTotal,
     initialTransactions,
   });
-  const exportDefaults = useMemo(
-    () => ({ categoryId: filters.category, month, tab }),
-    [filters.category, month, tab],
-  );
-  const exportDialog = useFinancesExportDialog(exportDefaults, categories, () =>
-    setExportOpen(false),
-  );
 
   const editingTransaction = useMemo(
     () =>
@@ -234,19 +219,6 @@ export default function FinancesPageClient({
     categoryManager.openCreate(dialog.type);
   };
 
-  const handleOpenExport = () => {
-    exportDialog.prepare();
-    setExportOpen(true);
-  };
-
-  const handleExportOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && exportDialog.isPending) {
-      return;
-    }
-
-    setExportOpen(nextOpen);
-  };
-
   const handleOpenSummaryCategoryCreate = () => {
     categoryManager.openCreate(fabType);
   };
@@ -260,7 +232,11 @@ export default function FinancesPageClient({
       (category) => category.id === filters.category,
     );
 
-    if (selectedCategory && selectedCategory.type !== nextTab) {
+    if (
+      selectedCategory &&
+      nextTab !== "summary" &&
+      selectedCategory.type !== nextTab
+    ) {
       setFilters({ category: "", page: "", tab: nextTab });
       return;
     }
@@ -268,28 +244,13 @@ export default function FinancesPageClient({
     setFilter("tab", nextTab);
   };
 
-  const handleViewChange = (nextView: FinancesViewValue) => {
-    setFilter("view", nextView);
-  };
-
-  useTopbarActions(
+  useTopbarAction(
     isAdmin
       ? {
-          buttons: [
-            {
-              title: FINANCES_COPY.export.action,
-              icon: Download,
-              variant: "ghost",
-              testId: "finances-export-trigger",
-              onClick: handleOpenExport,
-            },
-            {
-              title: FINANCES_COPY.newMovement,
-              icon: Plus,
-              testId: "transaction-create-trigger",
-              onClick: handleOpenCreateDialog,
-            },
-          ],
+          title: FINANCES_COPY.newMovement,
+          icon: Plus,
+          testId: "transaction-create-trigger",
+          onClick: handleOpenCreateDialog,
         }
       : null,
   );
@@ -302,91 +263,74 @@ export default function FinancesPageClient({
     );
   }
 
-  const monthSelector = (
-    <div className="flex items-center justify-center border-b border-border-subtle pb-3">
-      <FinancesMonthSelector
-        month={parseFinancesMonthParam(filters.month)}
-        onMonthChange={handleMonthChange}
-      />
-    </div>
-  );
-
   return (
     <div data-testid="finances-page" className="flex min-h-0 flex-1 flex-col">
-      <Tabs
-        value={view}
-        onValueChange={(value) => handleViewChange(value as FinancesViewValue)}
-        className="flex min-h-0 flex-1 flex-col"
+      <PageCard
+        filters={
+          <div className="space-y-3">
+            {/* El mes también es un filtro: va en la zona fija, no scrollea. */}
+            <div className="flex items-center justify-center border-b border-border-subtle pb-3">
+              <FinancesMonthSelector
+                month={parseFinancesMonthParam(filters.month)}
+                onMonthChange={handleMonthChange}
+              />
+            </div>
+            <FinancesFilters
+              category={filters.category}
+              categoryOptions={comboboxCategoryOptions}
+              search={filters.q}
+              onCategoryChange={(value) => setFilter("category", value)}
+              onSearchChange={handleSearchChange}
+              onOpenSheet={handleOpenFiltersSheet}
+            />
+          </div>
+        }
       >
-        <FinancesViewTabBar />
+        {summary.error ? (
+          <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
+        ) : null}
 
-        <TabsContent value="summary" className="flex min-h-0 flex-1 flex-col">
-          <PageCard filters={monthSelector}>
-            {summary.error ? (
-              <Notice tone="danger" message={FINANCES_COPY.errors.summary} />
-            ) : null}
-
-            {summary.data ? (
-              <>
-                <FinancesSummaryMetrics summary={summary.data} />
-                <div className="grid gap-8 py-4 xl:grid-cols-[minmax(28rem,1fr)_minmax(0,1.5fr)] 2xl:grid-cols-[minmax(28rem,1fr)_minmax(12rem,0.55fr)_minmax(0,1.4fr)]">
-                  <div className="xl:col-start-1 xl:row-start-1">
-                    <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
-                  </div>
-                  <div className="xl:col-start-1 xl:row-start-2 2xl:col-start-2 2xl:row-start-1">
-                    <FinancesIncomeExpenseRatio
-                      income={summary.data.income}
-                      expenses={summary.data.expenses}
-                    />
-                  </div>
-                  <div className="xl:col-start-2 xl:row-span-2 xl:row-start-1 2xl:col-start-3 2xl:row-span-1">
-                    <FinancesCategoryBreakdown
-                      items={categoryBreakdown}
-                      disabled={categoryManager.isPending}
-                      onCreateCategory={handleOpenSummaryCategoryCreate}
-                      onManageCategories={() => setCategoryManagerOpen(true)}
-                    />
-                  </div>
-                </div>
-              </>
-            ) : null}
-          </PageCard>
-        </TabsContent>
-
-        <TabsContent value="movements" className="flex min-h-0 flex-1 flex-col">
-          <PageCard
-            filters={
-              <div className="space-y-3">
-                {monthSelector}
-                <FinancesFilters
-                  category={filters.category}
-                  categoryOptions={comboboxCategoryOptions}
-                  search={filters.q}
-                  onCategoryChange={(value) => setFilter("category", value)}
-                  onSearchChange={handleSearchChange}
-                  onOpenSheet={handleOpenFiltersSheet}
+        {summary.data ? (
+          <>
+            <FinancesSummaryMetrics summary={summary.data} />
+            <div className="grid gap-8 py-4 xl:grid-cols-[minmax(28rem,1fr)_minmax(0,1.5fr)] 2xl:grid-cols-[minmax(28rem,1fr)_minmax(12rem,0.55fr)_minmax(0,1.4fr)]">
+              <div className="xl:col-start-1 xl:row-start-1">
+                <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
+              </div>
+              <div className="xl:col-start-1 xl:row-start-2 2xl:col-start-2 2xl:row-start-1">
+                <FinancesIncomeExpenseRatio
+                  income={summary.data.income}
+                  expenses={summary.data.expenses}
                 />
               </div>
-            }
-          >
-            <FinancesMovementsSection
-              tab={tab}
-              onTabChange={handleTabChange}
-              transactions={listData}
-              isLoading={transactions.isLoading}
-              error={transactions.error}
-              pagination={{
-                pageIndex,
-                pageSize: TRANSACTIONS_PAGE_SIZE,
-                total,
-                onPageChange: (next) =>
-                  setFilter("page", next === 0 ? "" : String(next)),
-              }}
-              onRowActivate={handleRowActivate}
-            />
-          </PageCard>
-        </TabsContent>
-      </Tabs>
+              <div className="xl:col-start-2 xl:row-span-2 xl:row-start-1 2xl:col-start-3 2xl:row-span-1">
+                <FinancesCategoryBreakdown
+                  items={categoryBreakdown}
+                  disabled={categoryManager.isPending}
+                  onCreateCategory={handleOpenSummaryCategoryCreate}
+                  onManageCategories={() => setCategoryManagerOpen(true)}
+                />
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        <FinancesMovementsSection
+          tab={tab}
+          onTabChange={handleTabChange}
+          transactions={listData}
+          isLoading={transactions.isLoading}
+          error={transactions.error}
+          pagination={{
+            pageIndex,
+            pageSize: TRANSACTIONS_PAGE_SIZE,
+            total,
+            onPageChange: (next) =>
+              setFilter("page", next === 0 ? "" : String(next)),
+          }}
+          onRowActivate={handleRowActivate}
+        />
+      </PageCard>
 
       <AppDialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
         <AppSheetContent>
@@ -449,18 +393,6 @@ export default function FinancesPageClient({
         onOpenChange={categoryManager.setFormDialogOpen}
         onSubmit={() => void categoryManager.submit()}
       />
-      <FinancesExportDialog
-        availableCategories={exportDialog.availableCategories}
-        categoryIds={exportDialog.categoryIds}
-        control={exportDialog.control}
-        errors={exportDialog.errors}
-        isPending={exportDialog.isPending}
-        open={exportOpen}
-        onOpenChange={handleExportOpenChange}
-        onSubmit={() => void exportDialog.submit()}
-        onToggleCategory={exportDialog.toggleCategory}
-        onTypeChange={exportDialog.handleTypeChange}
-      />
       <FinancesCategoryManagementDialogs
         manager={categoryManager}
         open={categoryManagerOpen}
@@ -480,13 +412,11 @@ export default function FinancesPageClient({
         }
         onDismiss={() => setSheetOpen(false)}
       />
-      {view === "movements" ? (
-        <MobileFab
-          label={FINANCES_COPY.newMovement}
-          icon={Plus}
-          onClick={handleOpenCreateDialog}
-        />
-      ) : null}
+      <MobileFab
+        label={FINANCES_COPY.newMovement}
+        icon={Plus}
+        onClick={handleOpenCreateDialog}
+      />
     </div>
   );
 }

@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 
-export type PatientDetailTabId = "gallery" | "files";
+export type PatientDetailTabId =
+  | "summary"
+  | "clinical-history"
+  | "treatments"
+  | "appointments"
+  | "gallery"
+  | "files";
 
 export function usePatientDetailTabs() {
-  const [activeTab, setActiveTab] = useState<PatientDetailTabId>("gallery");
+  const [activeTab, setActiveTab] = useState<PatientDetailTabId>("summary");
 
   return { activeTab, setActiveTab };
 }

@@ -11,4 +11,4 @@ export const googleWebClientId = process.env.NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 
 export const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.NODE_ENV === "production" ? "https://thalia-app.es" : null);
+  (process.env.NODE_ENV === "production" ? "https://www.thalia-app.es" : null);

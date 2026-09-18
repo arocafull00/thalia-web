@@ -138,7 +138,7 @@ stripe listen → localhost:3000/api/stripe/webhook → Supabase
 
 ### Por qué no basta el webhook del Dashboard en local
 
-El webhook de test en Stripe apunta a `https://thalia-app.es/api/stripe/webhook`. Ese endpoint corre en **Vercel** con el secret de **producción (live)**. Los eventos de test llevan firma distinta y no actualizan tu servidor local.
+El webhook de test en Stripe apunta a `https://www.thalia-app.es/api/stripe/webhook`. Ese endpoint corre en **Vercel** con el secret de **producción (live)**. Los eventos de test llevan firma distinta y no actualizan tu servidor local.
 
 Para desarrollo local hace falta `stripe listen` o un túnel (ngrok/cloudflared) registrado en Stripe apuntando a tu máquina.
 
@@ -150,7 +150,7 @@ Referencia en `.env.local.example`.
 
 | Variable | Local | Producción (Vercel) |
 |----------|-------|---------------------|
-| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | `https://thalia-app.es` |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | `https://www.thalia-app.es` |
 | `STRIPE_SECRET_KEY` | `sk_test_...` | `sk_live_...` |
 | `STRIPE_WEBHOOK_SECRET` | `whsec_...` del `stripe listen` | `whsec_...` del webhook live en Dashboard |
 | `STRIPE_PRICE_THALIA_NORMAL` | `price_...` de test | `price_...` de live |
@@ -169,6 +169,12 @@ Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) pu
 - Comprobar que `stripe listen` sigue en ejecución.
 - Comprobar que `STRIPE_WEBHOOK_SECRET` en `.env.local` coincide con el secret que imprimió el listener (y reiniciar `pnpm dev` tras cambiarlo).
 - Revisar errores en la terminal del listener o en logs del servidor Next.
+
+### Webhooks fallan con HTTP 308
+
+- Vercel redirige `thalia-app.es` → `www.thalia-app.es`. Stripe **no sigue redirects**.
+- La URL del webhook en Stripe Dashboard debe ser `https://www.thalia-app.es/api/stripe/webhook` (con `www`).
+- `NEXT_PUBLIC_SITE_URL` en Vercel debe usar el mismo dominio canónico.
 
 ### «Firma no válida» (400)
 
@@ -195,8 +201,8 @@ Configuración de referencia (cuenta Thalia):
 
 | Modo | URL |
 |------|-----|
-| Test | `https://thalia-app.es/api/stripe/webhook` |
-| Live | `https://thalia-app.es/api/stripe/webhook` |
+| Test | `https://www.thalia-app.es/api/stripe/webhook` |
+| Live | `https://www.thalia-app.es/api/stripe/webhook` |
 
 API version: `2026-08-26.dahlia`.
 

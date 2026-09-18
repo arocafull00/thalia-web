@@ -60,6 +60,23 @@ if (supabaseHostname !== "127.0.0.1" && supabaseHostname !== "localhost") {
   process.exit(1);
 }
 
+const resetResult = spawnSync(
+  "pnpm",
+  ["exec", "supabase", "db", "reset", "--yes"],
+  {
+    encoding: "utf8",
+    shell: process.platform === "win32",
+    stdio: "inherit",
+  },
+);
+
+if (resetResult.status !== 0) {
+  process.stderr.write(
+    "No se pudo resetear la base de datos local antes de los tests E2E.\n",
+  );
+  process.exit(resetResult.status ?? 1);
+}
+
 async function requestAuth(pathname, apiKey, options) {
   const response = await fetch(`${apiUrl}/auth/v1${pathname}`, {
     ...options,

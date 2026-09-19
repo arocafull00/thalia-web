@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import {
@@ -30,6 +30,8 @@ export function useSubscriptionPage({
   const { profile, signOut, user } = useAuth();
   const fetchMemberships = useClinicStore((state) => state.fetchMemberships);
   const [isPending, startTransition] = useTransition();
+  const [webhookTimedOut, setWebhookTimedOut] = useState(false);
+  const [pollAttempt, setPollAttempt] = useState(0);
   const waitingForWebhook =
     checkoutResult === "success" &&
     status !== "trialing" &&
@@ -41,8 +43,13 @@ export function useSubscriptionPage({
     }
   }, [checkoutResult]);
 
+  const retryWebhookPoll = useCallback(() => {
+    setWebhookTimedOut(false);
+    setPollAttempt((attempt) => attempt + 1);
+  }, []);
+
   useEffect(() => {
-    if (!waitingForWebhook || !user) {
+    if (!waitingForWebhook || !user || webhookTimedOut) {
       return;
     }
 
@@ -73,9 +80,12 @@ export function useSubscriptionPage({
         return;
       }
 
-      if (Date.now() < deadline) {
-        timeout = globalThis.setTimeout(() => void pollBillingAccess(), 1500);
+      if (Date.now() >= deadline) {
+        setWebhookTimedOut(true);
+        return;
       }
+
+      timeout = globalThis.setTimeout(() => void pollBillingAccess(), 1500);
     };
 
     void pollBillingAccess();
@@ -90,10 +100,12 @@ export function useSubscriptionPage({
   }, [
     clinicId,
     fetchMemberships,
+    pollAttempt,
     profile?.account_type,
     router,
     user,
     waitingForWebhook,
+    webhookTimedOut,
   ]);
 
   const openCheckout = () => {
@@ -137,7 +149,9 @@ export function useSubscriptionPage({
     isPending,
     openCheckout,
     openPortal,
+    retryWebhookPoll,
     signOut: handleSignOut,
     waitingForWebhook,
+    webhookTimedOut,
   };
 }

@@ -103,6 +103,8 @@ Patrones obligatorios:
 
 El único archivo autorizado a importar `@sentry/nextjs` es `src/lib/logger.ts` y los archivos de configuración raíz (`sentry.*.config.ts`).
 
+**Dashboard Sentry (proyecto `thalia-project`, org `thalia-tu`):** los eventos del deploy en Vercel llegan con environment `vercel-production`, no `production`. En Issues, filtra por `vercel-production` o All Environments; con `production` no aparece nada.
+
 ## Alcance del trabajo
 
 - Cambios mínimos y enfocados: no toques código no relacionado con la tarea.

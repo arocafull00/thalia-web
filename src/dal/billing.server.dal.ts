@@ -86,18 +86,35 @@ export async function findClinicBillingByStripeReferences(
   subscriptionId: string | null,
 ): Promise<ClinicBilling | null> {
   const supabase = createAdminClient();
-  let query = supabase.from("clinic_billing").select("*");
 
   if (subscriptionId) {
-    query = query.eq("stripe_subscription_id", subscriptionId);
-  } else if (customerId) {
-    query = query.eq("stripe_customer_id", customerId);
-  } else {
+    const bySubscription = await supabase
+      .from("clinic_billing")
+      .select("*")
+      .eq("stripe_subscription_id", subscriptionId)
+      .maybeSingle();
+
+    const subscriptionBilling = unwrapSupabaseNullable(
+      bySubscription.data,
+      bySubscription.error,
+    );
+
+    if (subscriptionBilling) {
+      return subscriptionBilling;
+    }
+  }
+
+  if (!customerId) {
     return null;
   }
 
-  const { data, error } = await query.maybeSingle();
-  return unwrapSupabaseNullable(data, error);
+  const byCustomer = await supabase
+    .from("clinic_billing")
+    .select("*")
+    .eq("stripe_customer_id", customerId)
+    .maybeSingle();
+
+  return unwrapSupabaseNullable(byCustomer.data, byCustomer.error);
 }
 
 export type StripeBillingEventInput = {

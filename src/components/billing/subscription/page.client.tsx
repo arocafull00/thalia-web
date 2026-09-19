@@ -39,12 +39,20 @@ export default function SubscriptionPageClient({
     "canceled",
     "incomplete_expired",
   ].includes(billing.subscription_status);
-  const title = isOwner
-    ? BILLING_COPY.ownerBlockedTitle
-    : BILLING_COPY.memberBlockedTitle;
-  const description = isOwner
-    ? BILLING_COPY.ownerBlockedDescription
-    : BILLING_COPY.memberBlockedDescription;
+  const title = page.webhookTimedOut
+    ? BILLING_COPY.waitingTimeoutTitle
+    : page.waitingForWebhook
+      ? BILLING_COPY.waitingTitle
+      : isOwner
+        ? BILLING_COPY.ownerBlockedTitle
+        : BILLING_COPY.memberBlockedTitle;
+  const description = page.webhookTimedOut
+    ? BILLING_COPY.waitingTimeoutDescription
+    : page.waitingForWebhook
+      ? BILLING_COPY.waitingDescription
+      : isOwner
+        ? BILLING_COPY.ownerBlockedDescription
+        : BILLING_COPY.memberBlockedDescription;
 
   return (
     <main className="flex min-h-screen bg-surface">
@@ -53,12 +61,10 @@ export default function SubscriptionPageClient({
           <div className="w-full max-w-[520px]">
             <p className="text-sm font-medium text-primary">{clinicName}</p>
             <h1 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-ink text-wrap-balance sm:text-4xl sm:leading-[1.1]">
-              {page.waitingForWebhook ? BILLING_COPY.waitingTitle : title}
+              {title}
             </h1>
             <p className="mt-4 max-w-lg text-sm leading-relaxed text-ink-secondary sm:text-base">
-              {page.waitingForWebhook
-                ? BILLING_COPY.waitingDescription
-                : description}
+              {description}
             </p>
 
             <div className="mt-8">
@@ -67,6 +73,17 @@ export default function SubscriptionPageClient({
 
             <div className="mt-8 flex flex-col gap-3">
               {membershipCount > 1 ? <TopbarClinicSelector /> : null}
+              {page.webhookTimedOut ? (
+                <Button
+                  type="button"
+                  size="lg"
+                  disabled={page.isPending}
+                  onClick={page.retryWebhookPoll}
+                  className="w-full rounded-full px-6"
+                >
+                  {BILLING_COPY.waitingRetryAction}
+                </Button>
+              ) : null}
               {isOwner ? (
                 <Button
                   type="button"

@@ -41,6 +41,10 @@ export const BILLING_COPY = {
   waitingTitle: "Confirmando tu suscripción",
   waitingDescription:
     "Stripe está confirmando el periodo de prueba. Esta pantalla se actualizará automáticamente.",
+  waitingTimeoutTitle: "No pudimos confirmar la suscripción",
+  waitingTimeoutDescription:
+    "El pago se completó en Stripe, pero aún no hemos recibido la confirmación. Reintenta en unos segundos o contacta con soporte si el problema continúa.",
+  waitingRetryAction: "Reintentar",
   checkoutCancelled: "No se ha iniciado la suscripción.",
   checkoutError: "No se pudo abrir el pago seguro de Stripe.",
   portalError: "No se pudo abrir el portal de facturación.",

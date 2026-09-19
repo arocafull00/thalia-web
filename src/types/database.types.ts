@@ -582,8 +582,30 @@ export type InventoryMovementWithEmployee = InventoryMovement & {
   employees: Pick<Employee, "id" | "full_name"> | null;
 };
 
+export type GoogleCalendarConnectionStatus = "active" | "needs_reauth";
+
+/*
+ * Solo las columnas que el navegador puede leer: el resto de la tabla
+ * —el puntero al token en Vault y `last_error`— está revocado para
+ * `authenticated`, así que pedirlas desde el cliente devuelve un error.
+ */
+export type GoogleCalendarConnection = {
+  employee_id: string;
+  google_email: string;
+  calendar_id: string | null;
+  status: GoogleCalendarConnectionStatus;
+  last_sync_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 type Tables = {
   clinics: { Row: Clinic; Insert: Partial<Clinic>; Update: Partial<Clinic> };
+  google_calendar_connections: {
+    Row: GoogleCalendarConnection;
+    Insert: Partial<GoogleCalendarConnection>;
+    Update: Partial<GoogleCalendarConnection>;
+  };
   clinic_billing: {
     Row: ClinicBilling;
     Insert: Partial<ClinicBilling>;
@@ -718,6 +740,23 @@ export type Database = {
         };
         Returns: boolean;
       };
+      store_google_calendar_connection: {
+        Args: {
+          p_employee_id: string;
+          p_google_email: string;
+          p_refresh_token: string;
+          p_granted_scopes: string[];
+        };
+        Returns: undefined;
+      };
+      google_calendar_refresh_token: {
+        Args: { p_employee_id: string };
+        Returns: string | null;
+      };
+      delete_google_calendar_connection: {
+        Args: { p_employee_id: string };
+        Returns: undefined;
+      };
       delete_appointment: {
         Args: {
           p_appointment_id: string;
@@ -812,6 +851,7 @@ export type Database = {
       campaign_segment_type: CampaignSegmentType;
       campaign_recipient_status: CampaignRecipientStatus;
       billing_status: BillingStatus;
+      google_calendar_connection_status: GoogleCalendarConnectionStatus;
     };
     CompositeTypes: Record<string, never>;
   };

@@ -82,4 +82,29 @@ export const SETTINGS_COPY = {
     saveLabel: "Guardar",
     savingLabel: "Guardando...",
   },
+  calendar: {
+    sectionTitle: "Google Calendar",
+    connect: "Conectar Google Calendar",
+    connectHint:
+      "Tus citas aparecerán en un calendario propio de tu cuenta de Google",
+    connectLoading: "Abriendo Google...",
+    connectedAs: (email: string) => `Conectado como ${email}`,
+    /*
+     * Se dice explícitamente qué NO viaja a Google. Es la garantía que sostiene
+     * toda la integración y quien la lee tiene derecho a saberla antes de dar
+     * permiso, no después.
+     */
+    connectedHint:
+      "Solo se envían la fecha y la hora. Ni el paciente, ni el tratamiento, ni las notas.",
+    disconnect: "Desconectar",
+    disconnectLoading: "Desconectando...",
+    disconnectHint: "Se borrará el calendario de Thalia de tu cuenta de Google",
+    disconnected: "Google Calendar desconectado.",
+    disconnectError: "No se pudo desconectar el calendario.",
+    needsReauth: "La conexión ha caducado",
+    needsReauthHint: "Vuelve a conectar para seguir sincronizando tus citas",
+    connectedToast: "Google Calendar conectado.",
+    cancelledToast: "Conexión cancelada.",
+    errorToast: "No se pudo conectar con Google Calendar.",
+  },
 } as const;

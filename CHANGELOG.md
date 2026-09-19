@@ -1,5 +1,23 @@
 # Changelog
 
+## 96-cimientos-de-google-calendar
+
+- Almacenamiento y captura de cambios para sincronizar las citas con Google Calendar. Todavía no habla con Google: falta el cliente OAuth
+- La conexión es **por profesional**, no por clínica. La cita lleva `employee_id` y quien quiere su agenda en el móvil es el profesional; una cuenta de clínica obligaría a decidir de quién es, y al marcharse esa persona la clínica perdería el calendario. Google empuja igual: el dueño de un calendario secundario es la cuenta que lo crea
+- Permisos por columna: Ajustes ve con qué cuenta está conectado y cuándo sincronizó. El puntero al token y `last_error` no salen al navegador, y escribir en la conexión está denegado — conectar pasa por el servidor, porque si no se podría apuntar a otra cuenta
+- Los cambios se capturan con un **trigger a una cola**, no desde el DAL. Hay escrituras sobre `appointments` que no pasan por la aplicación —la confirmación del paciente por WhatsApp y la aceptación del autónomo son UPDATE dentro de la base— y un enganche en el código las perdería. Además, si Google se cae, dar una cita tiene que seguir funcionando
+- El borrado se captura **antes** y no después: `appointment_calendar_events` referencia la cita con `ON DELETE CASCADE`, así que para cuando corre un trigger `AFTER` ya no existe el `google_event_id` y el evento se quedaría colgado en el calendario para siempre
+- Tabla puente en lugar de una columna `google_event_id` sobre `appointments`: al reasignar una cita hay que borrar el evento de un calendario y crearlo en otro, y una sola columna no puede decir en cuál vive cada uno
+- El trigger solo encola si el profesional tiene conexión activa, así que hoy la cola se queda vacía y no añade peso a la base
+- **Conectar y desconectar desde Ajustes → Usuario.** El refresh token se guarda cifrado en Vault y la conexión solo conserva un puntero; las tres funciones que lo tocan están cerradas a `service_role`, porque viven en `public` para que las alcance la API y sin eso cualquier usuario podría pedir el token de un compañero pasando su id
+- El flujo se fuerza al host canónico antes de empezar. La URI de retorno que Google exige es fija, así que el callback aterriza en el dominio raíz sí o sí; si alguien arrancase desde `www`, la cookie del estado se quedaría allí y no volvería — la #161 otra vez
+- Se piden también `openid email`, no sensibles como el de Calendar: sin ellos Google no dice con qué cuenta te has conectado y quien tenga dos no sabría cuál acaba de enlazar
+- Desconectar revoca el permiso en Google además de borrar la copia local. Si solo borrásemos la nuestra, Thalia seguiría apareciendo indefinidamente entre las aplicaciones con acceso a esa cuenta. Y si Google no responde, la desconexión se completa igual
+- El panel dice explícitamente qué no viaja: solo fecha y hora, ni paciente, ni tratamiento, ni notas
+- `SettingsActionRow` deja de pintar la flecha cuando la fila no tiene destino ni acción. Una fila que parece un botón y no responde se lee como que la aplicación está rota
+- Alias de `server-only` en la configuración de Vitest: el paquete lanza nada más importarse fuera de Next, así que hasta ahora ningún test podía tocar un módulo de `src/lib/server/` ni de Stripe
+
+
 ## suite-e2e-y-politica-de-privacidad-publica
 
 - **La política de privacidad era inaccesible para quien no ha iniciado sesión.** El pie del login enlaza a `/privacidad`, pero esa ruta no estaba entre las públicas del proxy, así que devolvía a `/login` — justo a las personas a las que va dirigida. Añadida, y con un test unitario que fija la lista entera: es la tercera vez que se olvida una ruta pública

@@ -1,4 +1,5 @@
 import SettingsAccountPanel from "@/components/settings/components/settings-account-panel";
+import SettingsCalendarPanel from "@/components/settings/components/settings-calendar-panel";
 import SettingsDetailHeader from "@/components/settings/components/settings-detail-header";
 import type { Employee } from "@/types/database.types";
 
@@ -36,6 +37,7 @@ export default function SettingsUserPanel({
         avatarUploadPending={avatarUploadPending}
         onAvatarFileSelected={onAvatarFileSelected}
       />
+      <SettingsCalendarPanel />
       <SettingsAccountPanel
         onChangePassword={onChangePassword}
         onSignOut={onSignOut}

@@ -143,6 +143,76 @@ src/dal/
 - Los stores llaman a `getActiveClinicId()` y pasan el resultado como argumento al DAL.
 - Nunca importes `supabase` fuera de `src/dal/`. Los stores importan exclusivamente desde `@/dal/*`.
 
+## Migraciones de Supabase
+
+### La regla
+
+**Todo cambio de esquema vive en un fichero commiteado de `supabase/migrations/`.** Sin excepciones: ni el SQL editor del panel, ni un `db push` desde una rama sin fusionar, ni «es un arreglo rápido de un minuto».
+
+Cuando esto se salta, producción y el repositorio dejan de coincidir. A partir de ahí `supabase db reset` en local ya no reproduce producción, los tests pasan en una y fallan en la otra, y nadie entiende por qué. Ya ha pasado.
+
+### Nunca contra producción
+
+- **`supabase db reset --linked` borra la base de producción.** No lo ejecutes nunca, con ningún pretexto.
+- El SQL editor del panel es para **consultar**. Para modificar esquema, una migración.
+
+### Flujo
+
+1. Crear el fichero: `supabase/migrations/AAAAMMDDHHMMSS_descripcion_en_snake_case.sql`
+2. `pnpm exec supabase db reset` — reaplica todo desde cero en local
+3. **Verificar el comportamiento, no solo que no dé error.** Una migración que aplica limpia puede seguir haciendo lo contrario de lo que pretendía
+4. `pnpm typecheck && pnpm test:run && pnpm test:e2e`
+5. **Commitear el fichero**
+6. `pnpm exec supabase db push`
+
+El orden de 5 y 6 importa. Si empujas primero y luego renombras el fichero, el historial remoto se queda con un nombre que ya no existe en el repositorio.
+
+### Si sale «Remote migration versions not found»
+
+Significa que producción tiene aplicada una migración que en local no existe. Antes de tocar nada:
+
+```bash
+pnpm exec supabase migration list
+pnpm exec supabase db query --linked \
+  "select version, name from supabase_migrations.schema_migrations where version = '<la que falta>';"
+```
+
+Para ver el SQL exacto que se ejecutó:
+
+```sql
+select statements from supabase_migrations.schema_migrations where version = '<version>';
+```
+
+**No lances `migration repair --status reverted` solo porque el CLI lo sugiera.** Ese comando marca la migración como no aplicada; si de verdad lo está y el fichero local no la reproduce, el historial pasa a mentir y el esquema deja de estar descrito por el repositorio.
+
+Solo es seguro cuando se cumplen las dos cosas:
+
+- El SQL remoto y el local son **idénticos** (compáralos, no lo supongas)
+- Las sentencias son **idempotentes**, así que reaplicarlas no cambia nada
+
+Si difieren, la salida no es reparar: es traer el fichero que falta al repositorio con su marca de tiempo original.
+
+### Escribe migraciones reaplicables
+
+`CREATE OR REPLACE FUNCTION`, `CREATE INDEX IF NOT EXISTS`, `ON CONFLICT DO NOTHING`. Cuesta lo mismo escribirlo así y convierte un incidente de historial en un no-evento.
+
+### Migraciones que dependen del entorno
+
+Si una migración necesita algo que puede no existir —`pg_cron`, un secreto en Vault, una extensión—, **comprueba y avisa en lugar de fallar**, para que el entorno local no se quede a medias:
+
+```sql
+IF to_regnamespace('cron') IS NULL THEN
+  RAISE NOTICE '[#96] pg_cron no está disponible: no se programa nada.';
+  RETURN;
+END IF;
+```
+
+Referencias reales: `20260910100000_schedule_send_reminders_cron.sql` y `20260919150000_schedule_calendar_sync_cron.sql`.
+
+### Secretos
+
+Nunca incrustes un secreto en el cuerpo de una migración: `cron.job.command` es una tabla legible. Guárdalo en Vault y resuélvelo en cada ejecución.
+
 ## Enums en PostgreSQL (Supabase Studio)
 
 Para conjuntos cerrados de valores (estados, roles, tipos), usa **tipos `ENUM` nativos de PostgreSQL**, no `TEXT + CHECK (... IN (...))`. Supabase Studio solo muestra un selector desplegable con enums nativos.

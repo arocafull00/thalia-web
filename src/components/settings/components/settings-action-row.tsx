@@ -31,6 +31,12 @@ export default function SettingsActionRow({
   titleClassName = "text-ink",
 }: SettingsActionRowProps) {
   const label = loading ? loadingLabel : title;
+  /*
+   * Sin destino ni acción la fila solo informa, así que no lleva flecha: el
+   * chevron promete que al pulsar pasa algo, y una fila que parece un botón y
+   * no responde se lee como que la aplicación está rota.
+   */
+  const interactive = Boolean(href ?? onClick);
   const content = (
     <>
       <div
@@ -42,10 +48,12 @@ export default function SettingsActionRow({
         <p className={`text-sm font-medium ${titleClassName}`}>{label}</p>
         <p className="text-xs text-ink-muted">{description}</p>
       </div>
-      <ChevronRight
-        className="h-4 w-4 shrink-0 text-ink-muted"
-        aria-hidden="true"
-      />
+      {interactive ? (
+        <ChevronRight
+          className="h-4 w-4 shrink-0 text-ink-muted"
+          aria-hidden="true"
+        />
+      ) : null}
     </>
   );
 
@@ -58,6 +66,10 @@ export default function SettingsActionRow({
         {content}
       </Link>
     );
+  }
+
+  if (!interactive) {
+    return <div className={`${className} hover:bg-transparent`}>{content}</div>;
   }
 
   return (

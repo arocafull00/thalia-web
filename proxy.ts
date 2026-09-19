@@ -17,6 +17,11 @@ const publicRoutes = [
   "/privacidad",
   "/cita",
   "/api/stripe/webhook",
+  /*
+   * La llama pg_cron de servidor a servidor, sin sesión. No queda desprotegida:
+   * la ruta exige un secreto compartido en la cabecera y responde 401 sin él.
+   */
+  "/api/google-calendar/sync",
 ];
 
 const pwaRoutes = ["/manifest.webmanifest", "/sw.js"];

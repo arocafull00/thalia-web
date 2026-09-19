@@ -740,6 +740,39 @@ export type Database = {
         };
         Returns: boolean;
       };
+      claim_calendar_sync_batch: {
+        Args: {
+          p_limit?: number;
+          p_max_attempts?: number;
+        };
+        Returns: {
+          id: number;
+          appointment_id: string;
+          employee_id: string;
+          operation: "upsert" | "delete";
+          payload: Record<string, unknown>;
+          attempts: number;
+          calendar_id: string | null;
+          connection_status: GoogleCalendarConnectionStatus | null;
+          google_event_id: string | null;
+        }[];
+      };
+      complete_calendar_sync: {
+        Args: {
+          p_id: number;
+          p_google_event_id?: string | null;
+          p_removed?: boolean;
+        };
+        Returns: undefined;
+      };
+      fail_calendar_sync: {
+        Args: { p_id: number; p_error: string };
+        Returns: undefined;
+      };
+      mark_google_calendar_needs_reauth: {
+        Args: { p_employee_id: string; p_error: string };
+        Returns: undefined;
+      };
       store_google_calendar_connection: {
         Args: {
           p_employee_id: string;

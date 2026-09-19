@@ -155,15 +155,18 @@ async function requestToken(
 
   if (!response.ok) {
     /*
-     * El cuerpo del error trae `error` y `error_description`, que es lo único
-     * que distingue un código caducado de un secreto mal configurado. Se
-     * incluye en el mensaje porque sin eso el diagnóstico es imposible; no
-     * lleva el token, solo el motivo.
+     * Se conservan LOS DOS campos. `error` es el código legible por máquina
+     * —`invalid_grant` cuando el usuario ha revocado el permiso— y es el que
+     * decide si merece la pena reintentar; `error_description` es el texto para
+     * quien lea el fallo. Quedarse solo con la descripción, como hacía la
+     * primera versión, deja «Bad Request» y pierde la única señal accionable.
      */
+    const body = payload as {
+      error?: string;
+      error_description?: string;
+    } | null;
     const reason =
-      (payload as { error_description?: string; error?: string } | null)
-        ?.error_description ??
-      (payload as { error?: string } | null)?.error ??
+      [body?.error, body?.error_description].filter(Boolean).join(": ") ||
       `HTTP ${response.status}`;
 
     throw new Error(`Google rechazó la petición de token: ${reason}`);

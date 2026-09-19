@@ -30,14 +30,18 @@ describe("proxy public routes", () => {
    * precisamente quien no ha iniciado sesión. Fuera de esta lista el proxy la
    * devolvía a /login y el documento quedaba inaccesible.
    */
-  it.each(["/privacidad", "/terms", "/login", "/cita/token-de-prueba"])(
-    "deja pasar a un anónimo por %s",
-    async (pathname) => {
-      const response = await proxy(requestFor(pathname));
+  it.each([
+    "/privacidad",
+    "/terms",
+    "/login",
+    "/cita/token-de-prueba",
+    // La llama pg_cron sin sesión; se protege con su propio secreto.
+    "/api/google-calendar/sync",
+  ])("deja pasar a un anónimo por %s", async (pathname) => {
+    const response = await proxy(requestFor(pathname));
 
-      expect(response.headers.get("location")).toBeNull();
-    },
-  );
+    expect(response.headers.get("location")).toBeNull();
+  });
 
   it("sigue protegiendo las rutas privadas", async () => {
     const response = await proxy(requestFor("/dashboard"));

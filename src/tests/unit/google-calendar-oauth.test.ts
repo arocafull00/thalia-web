@@ -102,4 +102,27 @@ describe("google calendar oauth", () => {
       "Code was already redeemed",
     );
   });
+
+  /*
+   * El código de error importa más que la descripción: `invalid_grant` es lo
+   * que dice que el usuario revocó el permiso y que hay que marcar la conexión
+   * para reconectar. Una primera versión se quedaba solo con la descripción y
+   * dejaba «Bad Request», perdiendo la única señal accionable — la conexión se
+   * habría reintentado para siempre sin avisar a nadie.
+   */
+  it("conserva el código de error, no solo la descripción", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json(
+          { error: "invalid_grant", error_description: "Bad Request" },
+          { status: 400 },
+        ),
+      ),
+    );
+
+    await expect(exchangeCodeForTokens("codigo")).rejects.toThrow(
+      "invalid_grant",
+    );
+  });
 });

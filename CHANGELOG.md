@@ -2,7 +2,7 @@
 
 ## 96-cimientos-de-google-calendar
 
-- Almacenamiento y captura de cambios para sincronizar las citas con Google Calendar. Todavía no habla con Google: falta el cliente OAuth
+- Las citas se sincronizan con Google Calendar. Cada profesional conecta su cuenta desde Ajustes y sus citas aparecen en un calendario «Thalia» propio, que Thalia crea y es lo único que puede tocar
 - La conexión es **por profesional**, no por clínica. La cita lleva `employee_id` y quien quiere su agenda en el móvil es el profesional; una cuenta de clínica obligaría a decidir de quién es, y al marcharse esa persona la clínica perdería el calendario. Google empuja igual: el dueño de un calendario secundario es la cuenta que lo crea
 - Permisos por columna: Ajustes ve con qué cuenta está conectado y cuándo sincronizó. El puntero al token y `last_error` no salen al navegador, y escribir en la conexión está denegado — conectar pasa por el servidor, porque si no se podría apuntar a otra cuenta
 - Los cambios se capturan con un **trigger a una cola**, no desde el DAL. Hay escrituras sobre `appointments` que no pasan por la aplicación —la confirmación del paciente por WhatsApp y la aceptación del autónomo son UPDATE dentro de la base— y un enganche en el código las perdería. Además, si Google se cae, dar una cita tiene que seguir funcionando
@@ -16,6 +16,12 @@
 - El panel dice explícitamente qué no viaja: solo fecha y hora, ni paciente, ni tratamiento, ni notas
 - `SettingsActionRow` deja de pintar la flecha cuando la fila no tiene destino ni acción. Una fila que parece un botón y no responde se lee como que la aplicación está rota
 - Alias de `server-only` en la configuración de Vitest: el paquete lanza nada más importarse fuera de Next, así que hasta ahora ningún test podía tocar un módulo de `src/lib/server/` ni de Stripe
+- **Las citas ya llegan a Google.** Un worker vacía la cola cada cinco minutos, pero el cron solo lo despierta si hay algo pendiente: con la base al límite de memoria, 288 llamadas diarias en vacío no se sostienen
+- **A Google viaja el cuándo, nunca el qué.** El evento lleva la franja horaria y un enlace de vuelta a Thalia; ni paciente, ni tratamiento, ni notas. El nombre de un paciente ahí revelaría que se trata en una clínica estética —dato de salud cedido a un tercero—, así que hay un test que recorre el evento entero y se rompe si alguien lo añade
+- Una cita cancelada o con el paciente ausente retira su evento en lugar de actualizarlo: dejarlo llevaría al profesional a creer que sigue ocupado
+- La cola se reclama con `FOR UPDATE SKIP LOCKED` y el reintento se programa **antes** de intentar nada, para que una fila que tumbe al worker no vuelva de inmediato a tumbarlo otra vez. La espera crece de 1 a 60 minutos
+- `/api/google-calendar/sync` entra en las rutas públicas del proxy. La llama pg_cron sin sesión, y sin esto habría recibido un redirect a `/login` indefinidamente sin que saltara ninguna alarma. No queda abierta: exige un secreto compartido
+- El error de Google conserva el código además de la descripción. Quedarse con la descripción dejaba «Bad Request» y perdía el `invalid_grant`, que es lo único que distingue un permiso revocado de un fallo pasajero: la conexión se habría reintentado para siempre en vez de pedir reconectar
 
 
 ## suite-e2e-y-politica-de-privacidad-publica

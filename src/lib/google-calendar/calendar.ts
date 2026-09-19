@@ -55,6 +55,59 @@ export function createThaliaCalendar(
   });
 }
 
+function eventsPath(calendarId: string, eventId?: string) {
+  const base = `/calendars/${encodeURIComponent(calendarId)}/events`;
+
+  return eventId ? `${base}/${encodeURIComponent(eventId)}` : base;
+}
+
+export function insertEvent(
+  accessToken: string,
+  calendarId: string,
+  body: unknown,
+) {
+  return googleCalendarRequest<{ id: string }>(
+    accessToken,
+    eventsPath(calendarId),
+    { method: "POST", body: JSON.stringify(body) },
+  );
+}
+
+export function patchEvent(
+  accessToken: string,
+  calendarId: string,
+  eventId: string,
+  body: unknown,
+) {
+  return googleCalendarRequest<{ id: string }>(
+    accessToken,
+    eventsPath(calendarId, eventId),
+    { method: "PATCH", body: JSON.stringify(body) },
+  );
+}
+
+/*
+ * Un 404 o un 410 no son un fallo: significan que el evento ya no está, que es
+ * justo lo que queríamos. Tratarlos como error dejaría la fila reintentándose
+ * hasta agotar los intentos por un trabajo que ya está hecho.
+ */
+export async function deleteEvent(
+  accessToken: string,
+  calendarId: string,
+  eventId: string,
+) {
+  const response = await fetch(
+    `${GOOGLE_CALENDAR_API}${eventsPath(calendarId, eventId)}`,
+    { method: "DELETE", headers: { Authorization: `Bearer ${accessToken}` } },
+  );
+
+  if (response.ok || response.status === 404 || response.status === 410) {
+    return;
+  }
+
+  throw new Error(`Google Calendar respondió ${response.status} al borrar`);
+}
+
 export function deleteThaliaCalendar(accessToken: string, calendarId: string) {
   return fetch(
     `${GOOGLE_CALENDAR_API}/calendars/${encodeURIComponent(calendarId)}`,

@@ -56,11 +56,17 @@ export type FinancialSummary = {
   difference: number;
   weekly: { week: number; income: number; expenses: number }[];
   /**
-   * Top 4 de categorías del mes. Va en el resumen y no en el hook porque el
-   * hook ya sólo ve la página visible; el resumen, en cambio, se calcula sobre
-   * el mes completo y no cuesta ninguna consulta extra.
+   * Top 4 de categorías del mes, separado por tipo. Va en el resumen y no en el
+   * hook porque el hook ya sólo ve la página visible; el resumen, en cambio, se
+   * calcula sobre el mes completo y no cuesta ninguna consulta extra.
+   *
+   * Se calculan los dos de una vez para que el selector de la pantalla cambie
+   * de uno a otro sin volver a consultar.
    */
-  breakdown: CategoryBreakdownEntry[];
+  breakdown: {
+    income: CategoryBreakdownEntry[];
+    expense: CategoryBreakdownEntry[];
+  };
 };
 
 export type TransactionsPageQuery = Omit<TransactionPageParams, "clinicId">;

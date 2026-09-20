@@ -4,14 +4,23 @@ import type { FinancialSummary } from "@/stores/finances-store";
 import type { Transaction } from "@/types/database.types";
 
 /**
- * Top 4 de categorías del mes por importe.
+ * Top 4 de categorías del mes por importe, **de un solo tipo**.
  *
  * Vivía en `use-finances-page`, derivado del array completo de transacciones.
  * Con el listado paginado ese array pasa a ser sólo la página visible, así que
  * el desglose se calcularía sobre 20 filas y los porcentajes mentirían. Aquí
  * recibe el mes entero, que es lo que el resumen ya consulta de todos modos.
+ *
+ * Y se calcula por tipo porque antes no lo estaba: el denominador era la suma
+ * de ingresos MÁS gastos, así que con 3.000 € de ingresos —todos de una
+ * categoría— y 1.000 € de gastos, esa categoría salía al 75 % cuando es el
+ * 100 % de lo que se ingresó. Separando los tipos el porcentaje vuelve a
+ * significar algo, y de paso es lo que permite filtrar por tipo en pantalla.
  */
-function buildCategoryBreakdown(current: Transaction[]) {
+function buildCategoryBreakdown(
+  current: Transaction[],
+  type: Transaction["type"],
+) {
   const totals = new Map<
     string,
     {
@@ -21,12 +30,13 @@ function buildCategoryBreakdown(current: Transaction[]) {
       type: Transaction["type"];
     }
   >();
-  const total = current.reduce(
+  const delTipo = current.filter((transaction) => transaction.type === type);
+  const total = delTipo.reduce(
     (sum, transaction) => sum + transaction.amount,
     0,
   );
 
-  for (const transaction of current) {
+  for (const transaction of delTipo) {
     const categoryId = transaction.category_id;
     const key = categoryId ?? `${transaction.type}:uncategorized`;
     const previous = totals.get(key);
@@ -87,7 +97,10 @@ export function buildFinancialSummary(
           .reduce((total, transaction) => total + transaction.amount, 0),
       };
     }),
-    breakdown: buildCategoryBreakdown(current),
+    breakdown: {
+      income: buildCategoryBreakdown(current, "income"),
+      expense: buildCategoryBreakdown(current, "expense"),
+    },
   };
 }
 

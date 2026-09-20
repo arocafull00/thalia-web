@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import type { FinancesTabValue } from "@/components/finances/finances-tab-bar";
 import { TRANSACTIONS_PAGE_SIZE } from "@/lib/finances-pagination";
@@ -23,6 +23,8 @@ import type {
   TransactionCategory,
   TransactionType,
 } from "@/types/database.types";
+
+type BreakdownType = "income" | "expense";
 
 function transactionTypeForTab(tab: FinancesTabValue): TransactionType | "all" {
   if (tab === "summary") {
@@ -99,9 +101,15 @@ export function useFinancesPage(
 
   // El desglose por categoría se calcula ahora en el resumen, sobre el mes
   // completo. Antes salía del array de transacciones, que ya sólo es la página.
+  /*
+   * El tipo del desglose vive aquí y no en la URL: es una preferencia de
+   * lectura de un instante, no un estado que merezca compartirse por enlace ni
+   * sobrevivir a una recarga, como sí hacen el mes o los filtros del listado.
+   */
+  const [breakdownType, setBreakdownType] = useState<BreakdownType>("income");
   const categoryBreakdown = useMemo(
-    () => summary.data?.breakdown ?? [],
-    [summary.data],
+    () => summary.data?.breakdown[breakdownType] ?? [],
+    [summary.data, breakdownType],
   );
 
   const fabType: TransactionType = tab === "expense" ? "expense" : "income";
@@ -111,6 +119,8 @@ export function useFinancesPage(
   const refresh = useCallback(() => page.refresh(), [page]);
 
   return {
+    breakdownType,
+    setBreakdownType,
     categoryBreakdown,
     categoryOptions,
     categories,

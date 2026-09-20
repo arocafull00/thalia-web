@@ -1,5 +1,16 @@
 # Changelog
 
+## 158-restyling-de-finanzas
+
+- **El porcentaje del desglose por categoría estaba mal.** El denominador era la suma de ingresos MÁS gastos, así que con 4.000 € ingresados —3.000 de «Tratamientos»— y 800 € de gastos, esa categoría salía al 63 % cuando es el 75 % de lo que entró. La barra de progreso pintaba esa cifra: el número no era raro, era falso
+- Se arregla calculando el desglose **por tipo en origen**, no filtrando en pantalla: el resumen devuelve los dos y el selector cambia de uno a otro sin volver a consultar. Así el porcentaje es correcto por construcción y no depende de que alguien recuerde filtrar
+- Selector de tipo de movimiento en el desglose, que es lo que pedía la issue y lo que hace que la cifra signifique algo
+- Las barras del desglose toman el color del tipo: verde lo que entra, rojo lo que sale. Con un único color, dos desgloses de significado opuesto se leían idénticos y había que mirar el selector para saber cuál estabas viendo
+- La fila de desgloses pasa a tres columnas iguales —semanal, por categoría y gastos sobre ingresos— en lugar de una rejilla asimétrica que dejaba un hueco en el centro
+- Las tarjetas de Finanzas pasan a ser las mismas que las de Inventario: `rounded-card`, canto verde y superficie plana. Las métricas eran una rejilla con divisores, que leía como una tabla en vez de como cuatro cifras independientes
+- El estado del selector vive en el hook y no en la URL: es una preferencia de lectura del momento, no algo que merezca compartirse por enlace como el mes o los filtros del listado
+
+
 ## 163-el-autonomo-no-escribe-sobre-las-citas
 
 - **Un autónomo podía borrar la cita de otro profesional de su clínica.** `delete_appointment` es `SECURITY DEFINER` y comprobaba el rol, no el tipo de cuenta: un autónomo tiene `role = 'doctor'`, que es lo natural para un profesional sanitario, así que pasaba el filtro. Y como la función se salta la RLS, buscaba la cita por identificador sin mirar de quién era. Verificado, y cerrado

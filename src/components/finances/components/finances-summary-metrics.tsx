@@ -48,7 +48,10 @@ export default function FinancesSummaryMetrics({
   ];
 
   return (
-    <div className="grid grid-cols-2 divide-x divide-y divide-border-subtle border-b border-border-subtle sm:grid-cols-4 sm:divide-y-0">
+    // Mismas tarjetas que los indicadores de stock: `rounded-card`, canto
+    // verde y fondo plano. Antes era una rejilla con divisores, que leía como
+    // una tabla y no como cuatro cifras independientes.
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {metrics.map((metric) => (
         <FinancesMetricItem key={metric.label} {...metric} />
       ))}

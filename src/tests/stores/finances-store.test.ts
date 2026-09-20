@@ -379,7 +379,7 @@ describe("finances-store", () => {
               previousNet: 0,
               difference: 0,
               weekly: [],
-              breakdown: [],
+              breakdown: { income: [], expense: [] },
             },
             loading: false,
             error: null,

@@ -122,6 +122,8 @@ export default function FinancesPageClient({
   );
 
   const {
+    breakdownType,
+    setBreakdownType,
     categoryBreakdown,
     categories,
     categoryOptions,
@@ -328,22 +330,29 @@ export default function FinancesPageClient({
         {summary.data ? (
           <>
             <FinancesSummaryMetrics summary={summary.data} />
-            <div className="grid gap-8 py-4 xl:grid-cols-[minmax(28rem,1fr)_minmax(0,1.5fr)] 2xl:grid-cols-[minmax(28rem,1fr)_minmax(12rem,0.55fr)_minmax(0,1.4fr)]">
-              <div className="xl:col-start-1 xl:row-start-1">
+            {/*
+              Tres tarjetas en una fila, cada una con su asunto: el reparto por
+              semanas, el reparto por categoría y la proporción entre lo que
+              entra y lo que sale. En pantallas estrechas se apilan.
+            */}
+            <div className="grid gap-4 py-4 lg:grid-cols-3">
+              <div className="rounded-card border border-primary bg-surface p-4">
                 <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
               </div>
-              <div className="xl:col-start-1 xl:row-start-2 2xl:col-start-2 2xl:row-start-1">
-                <FinancesIncomeExpenseRatio
-                  income={summary.data.income}
-                  expenses={summary.data.expenses}
-                />
-              </div>
-              <div className="xl:col-start-2 xl:row-span-2 xl:row-start-1 2xl:col-start-3 2xl:row-span-1">
+              <div className="rounded-card border border-primary bg-surface p-4">
                 <FinancesCategoryBreakdown
                   items={categoryBreakdown}
+                  type={breakdownType}
+                  onTypeChange={setBreakdownType}
                   disabled={categoryManager.isPending}
                   onCreateCategory={handleOpenSummaryCategoryCreate}
                   onManageCategories={() => setCategoryManagerOpen(true)}
+                />
+              </div>
+              <div className="rounded-card border border-primary bg-surface p-4">
+                <FinancesIncomeExpenseRatio
+                  income={summary.data.income}
+                  expenses={summary.data.expenses}
                 />
               </div>
             </div>

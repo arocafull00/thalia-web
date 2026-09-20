@@ -155,7 +155,11 @@ type AppointmentsStore = {
   createError: Error | null;
   updatingStatus: boolean;
   updateStatusError: Error | null;
-  respondingExternal: boolean;
+  /*
+   * Qué cita se está respondiendo, no si se está respondiendo alguna. Con un
+   * booleano, aceptar una dejaba inertes los botones de todas las demás.
+   */
+  respondingExternalId: string | null;
   respondExternalError: Error | null;
   rescheduling: boolean;
   rescheduleError: Error | null;
@@ -217,7 +221,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   createError: null,
   updatingStatus: false,
   updateStatusError: null,
-  respondingExternal: false,
+  respondingExternalId: null,
   respondExternalError: null,
   rescheduling: false,
   rescheduleError: null,
@@ -611,7 +615,10 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   },
 
   respondToExternalAppointment: async (input) => {
-    set({ respondingExternal: true, respondExternalError: null });
+    set({
+      respondingExternalId: input.appointmentId,
+      respondExternalError: null,
+    });
 
     try {
       const { respondExternalAppointmentAction } =
@@ -646,7 +653,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         ]);
       }
 
-      set({ respondingExternal: false });
+      set({ respondingExternalId: null });
       return result;
     } catch (cause) {
       const error = cause instanceof Error ? cause : new Error(String(cause));
@@ -656,7 +663,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         appointmentId: input.appointmentId,
         decision: input.decision,
       });
-      set({ respondingExternal: false, respondExternalError: error });
+      set({ respondingExternalId: null, respondExternalError: error });
       throw error;
     }
   },

@@ -110,8 +110,19 @@ export default function AppointmentDetailPageClient({
       : null,
   );
 
+  /*
+   * Un profesional externo solo responde a los huecos que le proponen: ni crea,
+   * ni edita, ni cambia el estado, ni borra. Si necesita mover o anular una cita
+   * ya aceptada, lo pide a la clínica y lo hace el personal interno.
+   *
+   * La base de datos ya lo impide; esto es para que no se le ofrezca un botón
+   * que solo puede terminar en un error.
+   */
+  const sinAccionesParaExterno =
+    isExternalProfessional && !canRespondToExternal;
+
   useTopbarActions(
-    appointment
+    appointment && !sinAccionesParaExterno
       ? {
           buttons: [
             getAppointmentDetailPrimaryAction({
@@ -119,7 +130,8 @@ export default function AppointmentDetailPageClient({
               canChangeStatus,
               updatingStatus,
               canRespondToExternal,
-              respondingExternal: externalResponse.isPending,
+              respondingExternal:
+                externalResponse.respondingId === appointment?.id,
               handlers: {
                 onEdit: openEditDialog,
                 onConfirm: () => {
@@ -145,7 +157,8 @@ export default function AppointmentDetailPageClient({
               canChangeStatus,
               updatingStatus,
               canRespondToExternal,
-              respondingExternal: externalResponse.isPending,
+              respondingExternal:
+                externalResponse.respondingId === appointment?.id,
               handlers: {
                 onEdit: openEditDialog,
                 onConfirm: () => {

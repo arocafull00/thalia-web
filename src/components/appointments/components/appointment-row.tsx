@@ -16,7 +16,7 @@ type AppointmentRowProps = {
   appointment: AgendaAppointment;
   onClick?: () => void;
   actions?: ProfileAction[];
-  respondingExternal?: boolean;
+  respondingExternalId?: string | null;
   onAccept?: () => void;
   onReject?: () => void;
 };
@@ -25,7 +25,7 @@ export default function AppointmentRow({
   appointment,
   onClick,
   actions,
-  respondingExternal = false,
+  respondingExternalId = null,
   onAccept,
   onReject,
 }: AppointmentRowProps) {
@@ -83,7 +83,7 @@ export default function AppointmentRow({
       {onAccept && onReject ? (
         <div className="order-last w-full pl-16">
           <ExternalAppointmentResponseActions
-            disabled={respondingExternal}
+            disabled={respondingExternalId === appointment.id}
             onAccept={onAccept}
             onReject={onReject}
           />

@@ -62,7 +62,7 @@ Un autónomo (`account_type = 'external'`) no recibe citas impuestas. Tiene que 
 
 **Si la clínica cambia la hora o el profesional de una cita ya aceptada, vuelve a `pending_external`** y hay que aceptarla otra vez. El compromiso era para una hora concreta.
 
-Excepción razonable: si es el propio autónomo quien mueve su cita, se queda en `scheduled`. No se pide permiso a sí mismo.
+El trigger contempla una excepción —si fuese el propio autónomo quien mueve su cita, se quedaría en `scheduled`— pero hoy no puede darse: un externo no modifica citas. Queda ahí por si algún día se le devuelve esa capacidad.
 
 ---
 
@@ -72,11 +72,15 @@ Excepción razonable: si es el propio autónomo quien mueve su cita, se queda en
 |---|---|
 | Crear una cita | Personal interno (`admin`, `reception`, `doctor`) |
 | Aceptar o rechazar | Solo el autónomo al que se le asigna |
-| Cambiar hora o profesional | Personal interno, y el propio autónomo sobre las suyas |
+| Cambiar hora o profesional | Personal interno |
 | Confirmar | **El paciente**, desde el enlace de WhatsApp. Nadie más |
-| Cancelar | Personal interno |
+| Cancelar o borrar | Personal interno |
 
-> **Fallo conocido:** la interfaz ofrece «Nueva cita» también a los autónomos, y la base les deja crearla — pero no añadirle tratamientos, así que queda vacía y con un error confuso. Ver **#163**.
+**Un profesional externo no escribe nada sobre las citas.** Ve las suyas y responde a las que le proponen; nada más. Si necesita mover o anular una ya aceptada, lo habla con la clínica y lo hace el personal interno.
+
+Está cerrado en la base de datos, no solo en la interfaz: las políticas de alta y modificación exigen personal interno, y `delete_appointment` comprueba el tipo de cuenta además del rol. Esto último importa porque un autónomo tiene `role = 'doctor'` —lo natural para un sanitario— y esa función se salta la RLS: sin la comprobación podía borrar la cita de un compañero conociendo su identificador.
+
+> Pendiente: un sistema para que el profesional **solicite** aplazar o anular una cita, en lugar de tener que llamar a la clínica.
 
 ---
 

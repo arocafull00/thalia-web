@@ -20,7 +20,16 @@ type OverlapState = {
 
 export function useExternalAppointmentResponse() {
   const timezone = useActiveClinicTimezone();
-  const isPending = useAppointmentsStore((state) => state.respondingExternal);
+  const respondingId = useAppointmentsStore(
+    (state) => state.respondingExternalId,
+  );
+  /*
+   * Los diálogos de rechazo y solapamiento son de una cita cada vez, así que
+   * para ellos basta saber si hay algo en curso. El listado sí necesita el id:
+   * con un booleano compartido, responder a una cita dejaba inertes los botones
+   * de todas las demás.
+   */
+  const isPending = respondingId !== null;
   const [rejectionAppointment, setRejectionAppointment] =
     useState<AppointmentWithRelations | null>(null);
   const [overlap, setOverlap] = useState<OverlapState | null>(null);
@@ -74,6 +83,9 @@ export function useExternalAppointmentResponse() {
   );
 
   return {
+    /** Id de la cita que se está respondiendo, o null. Para el listado. */
+    respondingId,
+    /** Si hay alguna respuesta en curso. Para los diálogos. */
     isPending,
     errorMessage,
     rejectionAppointment,

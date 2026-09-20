@@ -30,7 +30,7 @@ type AppointmentsTableProps = {
   onDelete?: (appointment: AppointmentWithRelations) => void;
   onEdit?: (id: string) => void;
   canRespondToExternal?: boolean;
-  respondingExternal?: boolean;
+  respondingExternalId?: string | null;
   onAccept?: (appointment: AppointmentWithRelations) => void;
   onReject?: (appointment: AppointmentWithRelations) => void;
 };
@@ -43,7 +43,7 @@ export default function AppointmentsTable({
   onDelete,
   onEdit,
   canRespondToExternal = false,
-  respondingExternal = false,
+  respondingExternalId = null,
   onAccept,
   onReject,
 }: AppointmentsTableProps) {
@@ -60,14 +60,14 @@ export default function AppointmentsTable({
         actionHandlers,
         readOnly,
         canRespondToExternal,
-        respondingExternal,
+        respondingExternalId,
       ),
     [
       actionHandlers,
       canRespondToExternal,
       onStatusChange,
       readOnly,
-      respondingExternal,
+      respondingExternalId,
       timezone,
     ],
   );
@@ -79,7 +79,7 @@ export default function AppointmentsTable({
           appointments={appointments}
           actionHandlers={actionHandlers}
           canRespondToExternal={canRespondToExternal}
-          respondingExternal={respondingExternal}
+          respondingExternalId={respondingExternalId}
         />
       </div>
       <div className="hidden md:block">

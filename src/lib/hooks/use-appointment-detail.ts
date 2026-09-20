@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
+import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 import { useAppointment } from "@/lib/hooks/use-appointments";
 import { notifySuccess } from "@/lib/sound";
 import { useAppointmentsStore } from "@/stores/appointments-store";
@@ -14,6 +15,7 @@ import type {
 export function useAppointmentDetail(
   appointmentOrId: AppointmentWithRelations | string,
 ) {
+  const isExternalProfessional = useIsExternalProfessional();
   const {
     data: appointment,
     isLoading,
@@ -123,10 +125,15 @@ export function useAppointmentDetail(
     }
   }, [appointment, restoreStock]);
 
+  /*
+   * Cambiar el estado es escritura, y un profesional externo no escribe sobre
+   * las citas: solo acepta o rechaza los huecos que le proponen.
+   */
   const canChangeStatus =
-    appointment?.status === "scheduled" ||
-    appointment?.status === "confirmed" ||
-    appointment?.status === "in_progress";
+    !isExternalProfessional &&
+    (appointment?.status === "scheduled" ||
+      appointment?.status === "confirmed" ||
+      appointment?.status === "in_progress");
 
   return {
     appointment,

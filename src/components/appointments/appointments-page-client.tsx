@@ -237,6 +237,7 @@ export default function AppointmentsPageClient({
           <AppointmentsTable
             appointments={flatAppointments}
             onStatusChange={handleStatusChange}
+            readOnly={isExternalProfessional}
             pagination={{
               pageIndex,
               pageSize: APPOINTMENTS_PAGE_SIZE,
@@ -244,10 +245,12 @@ export default function AppointmentsPageClient({
               onPageChange: (next) =>
                 setFilter("page", next === 0 ? "" : String(next)),
             }}
-            onEdit={handleEdit}
-            onDelete={appointmentDelete.openDialog}
+            onEdit={isExternalProfessional ? undefined : handleEdit}
+            onDelete={
+              isExternalProfessional ? undefined : appointmentDelete.openDialog
+            }
             canRespondToExternal={isExternalProfessional}
-            respondingExternal={externalResponse.isPending}
+            respondingExternalId={externalResponse.respondingId}
             onAccept={(appointment) => {
               void externalResponse.accept(appointment);
             }}

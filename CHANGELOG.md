@@ -1,5 +1,15 @@
 # Changelog
 
+## 163-el-autonomo-no-escribe-sobre-las-citas
+
+- **Un autónomo podía borrar la cita de otro profesional de su clínica.** `delete_appointment` es `SECURITY DEFINER` y comprobaba el rol, no el tipo de cuenta: un autónomo tiene `role = 'doctor'`, que es lo natural para un profesional sanitario, así que pasaba el filtro. Y como la función se salta la RLS, buscaba la cita por identificador sin mirar de quién era. Verificado, y cerrado
+- Un profesional externo pasa a **no escribir nada** sobre las citas: ni crear, ni editar, ni cambiar el estado, ni borrar. Conserva ver las suyas y aceptar o rechazar las que le proponen
+- Las cuatro políticas de escritura de `appointments` llevaban una rama `employee_id = auth.uid() AND is_external_member(...)`. Como se suman con `OR`, bastaba una para dejarle pasar. Sustituidas por una de alta y otra de modificación, ambas solo para personal interno
+- De paso desaparece la duplicidad que señalaba la #163: `appointments_insert_active_clinic` englobaba a `appointments_insert_internal` y la segunda no añadía nada
+- Editar no fallaba del todo, que era lo peor: la cita se guardaba, el borrado de los tratamientos viejos devolvía éxito sin borrar nada —RLS no le deja ver esas filas— y solo reventaba al insertar los nuevos. La cita quedaba con la duración recalculada de unos tratamientos que no eran los que tenía guardados
+- Aceptar y rechazar siguen funcionando: van por `respond_external_appointment`, que es `SECURITY DEFINER` con sus propias comprobaciones. Verificado, no supuesto
+
+
 ## 163-mitigacion-crear-citas-como-externo
 
 - Un profesional externo deja de ver el botón «Nueva cita» en Inicio, Citas y Agenda, en escritorio y en móvil. La base le permitía crear la cita pero no añadirle tratamientos, así que quedaba vacía y con un error que hablaba de una tabla que él no había tocado — y desde que existe la sincronización, además le aparecía en su Google Calendar

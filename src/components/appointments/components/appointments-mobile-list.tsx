@@ -14,14 +14,14 @@ type AppointmentsMobileListProps = {
   appointments: AppointmentWithRelations[];
   actionHandlers: AppointmentListActionHandlers;
   canRespondToExternal: boolean;
-  respondingExternal: boolean;
+  respondingExternalId: string | null;
 };
 
 export default function AppointmentsMobileList({
   appointments,
   actionHandlers,
   canRespondToExternal,
-  respondingExternal,
+  respondingExternalId,
 }: AppointmentsMobileListProps) {
   const agendaAppointments = useMemo(
     () => toAgendaAppointments(appointments).toReversed(),
@@ -39,7 +39,7 @@ export default function AppointmentsMobileList({
         <AppointmentRow
           key={appointment.id}
           appointment={appointment}
-          respondingExternal={respondingExternal}
+          respondingExternalId={respondingExternalId}
           onAccept={
             canRespondToExternal && appointment.status === "pending_external"
               ? () =>

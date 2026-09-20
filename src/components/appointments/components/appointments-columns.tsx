@@ -30,7 +30,7 @@ export function buildAppointmentsColumns(
   actionHandlers: AppointmentListActionHandlers,
   readOnly = false,
   canRespondToExternal = false,
-  respondingExternal = false,
+  respondingExternalId: string | null = null,
 ): ColumnDef<AppointmentWithRelations>[] {
   return [
     {
@@ -96,7 +96,7 @@ export function buildAppointmentsColumns(
         canRespondToExternal && row.original.status === "pending_external" ? (
           <div onClick={(event) => event.stopPropagation()}>
             <ExternalAppointmentResponseActions
-              disabled={respondingExternal}
+              disabled={respondingExternalId === row.original.id}
               onAccept={() => actionHandlers.onAccept?.(row.original)}
               onReject={() => actionHandlers.onReject?.(row.original)}
             />

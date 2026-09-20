@@ -135,7 +135,7 @@ export default function SettingsLayoutClient({
   }
 
   return (
-    <div className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog lg:overflow-hidden">
+    <div className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog lg:overflow-hidden">
       <div className="flex min-h-0 flex-1 flex-col">
         <SettingsNav
           activeSection={activeSection}

@@ -25,7 +25,7 @@ export default function PageSurface({
     <div
       aria-busy={busy}
       className={cn(
-        "surface-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog p-8",
+        "surface-card-glass flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog p-8",
         className,
       )}
     >

@@ -5,12 +5,17 @@ type PageStickyFiltersSectionProps = {
 };
 
 /**
- * Barra de filtros fijada arriba dentro de una `PageCard`.
+ * Barra de filtros en la cabecera de una `PageCard`.
  *
- * Lleva el fondo de la tarjeta —no es transparente— para tapar las filas que
- * pasan por debajo al hacer scroll, y repite el radio superior: al ser sticky
- * se promociona a capa propia y el recorte redondeado del contenedor puede no
- * aplicársele, dejando asomar sus esquinas cuadradas.
+ * No pinta superficie de ninguna clase: se apoya en el cristal de la tarjeta,
+ * el mismo que se ve bajo la lista. Es lo que hace que toda la sección central
+ * sea un único fondo y no dos parecidos.
+ *
+ * Puede permitírselo porque `PageCard` la coloca FUERA del contenedor que
+ * scrollea, así que nada le pasa por debajo. Mientras estuvo dentro necesitaba
+ * ser `sticky` y opacar el contenido, y cualquier relleno se sumaba al de la
+ * tarjeta y la dejaba de otro tono. Si alguien la devuelve al área de scroll,
+ * vuelve el problema.
  */
 export default function PageStickyFiltersSection({
   children,
@@ -18,7 +23,8 @@ export default function PageStickyFiltersSection({
   return (
     <div
       data-slot="sticky-filters"
-      className="sticky top-0 z-20 rounded-t-dialog bg-surface px-3.5 pb-3 pt-3.5"
+      // `shrink-0` para que no la encoja el área de scroll al crecer la lista.
+      className="shrink-0 px-3.5 pb-3 pt-3.5"
     >
       {children}
     </div>

@@ -127,28 +127,58 @@ Avatar fills may use `--gradient-avatar` (derived from `--primary` via `color-mi
 
 #### Aurora layout
 
-White opaque cards floating on a beige canvas, separated by a 14px gutter that is the only place the background shows through:
+An opaque white frame — sidebar and navbar — around a glass content section, all
+over a turquoise gradient backdrop. The 14px gutter between cards is where the
+gradient reads strongest:
 
 ```
-z-0   AppBackdrop    flat --backdrop-tint
-z-10  Sidebar        floating card
-z-20  SidebarInset   navbar card + content card
+z-0   AppBackdrop    gradient --primary -> --secondary over --canvas
+z-10  Sidebar        opaque card, primary hairline
+z-20  SidebarInset   navbar card (opaque, primary hairline) + content card (glass)
 z-30  AppBottomNav   mobile bar
 ```
 
+Two surface classes, and the split is the point:
+
+- `.surface-card` — opaque `--surface`, no blur. The **frame**: navbar and
+  sidebar. A translucent frame competes with the content it is framing.
+- `.surface-card-glass` — `--surface` at 74% plus `backdrop-filter`. The
+  **content section** only: the one surface that changes with the menu and the
+  one with a real gradient behind it, so the blur buys something.
+
+Both frame surfaces take their hairline from `--border-frame`
+(`1.5px solid var(--primary)`), in one place so they cannot drift apart.
+
 Every screen inside the shell puts its content in a card:
 
-- `PageCard` for lists — owns the scroll, the sticky filter bar and an optional footer
-- `PageSurface` for full-screen states that are not a list — loading, error, no permission
-- `.surface-card rounded-dialog` directly only when the screen manages its own scrolling, as the calendar does with schedule-x
+- `PageCard` for lists — filter bar, scroll area and optional footer as three
+  flex rows
+- `PageSurface` for full-screen states that are not a list — loading, error, no
+  permission
+- `.surface-card-glass rounded-dialog` directly only when the screen manages its
+  own scrolling, as the calendar does with schedule-x
 
-No glassmorphism and no `backdrop-filter`: surfaces are opaque, and blurring behind something opaque is cost with no effect.
+**Nothing inside the glass card paints its own surface.** A child's background
+composites *on top of* the card's, so that patch always lands lighter than the
+list beside it — it reads as a pale island, not as the same panel. The filter bar
+carries no background for this reason, and `PageCard` keeps it **outside** the
+scrolling container so it never needs one: nothing passes underneath it. Put it
+back inside and the problem returns. Form controls in the bar are the exception
+and keep a light veil, or they stop reading as fields.
 
-Three constraints that are easy to get wrong, each of which cost real debugging time:
+Four constraints that are easy to get wrong, each of which cost real debugging
+time:
 
-- `backdrop-filter` creates a containing block for `fixed` children. Keep `MobileFab` **outside** the card or `overflow-hidden` clips it.
-- A `sticky` element with a background inside a rounded container is promoted to its own layer and its square corners escape the radius. `PageStickyFiltersSection` carries its own `rounded-t-dialog` for that reason.
-- Two `box-shadow`s with zero offset accumulate at the corners and draw grey wedges outside the radius. Use one shadow with an offset.
+- `backdrop-filter` creates a containing block for `fixed` children. Keep
+  `MobileFab` **outside** the card or `overflow-hidden` clips it.
+- `backdrop-filter` also creates a backdrop root: a descendant that uses it
+  samples only down to that ancestor, never the page behind it. Nesting one
+  inside the content card applies `saturate` twice and shifts the colour.
+- In `background`, only the **last** layer may be a colour. A bare colour in an
+  earlier layer invalidates the whole declaration and the browser drops it
+  silently. Wrap a flat tint in `linear-gradient(c, c)`.
+- Two `box-shadow`s with zero offset accumulate at the corners and draw grey
+  wedges outside the radius. Use one shadow with an offset.
 
 Typography is Geist. Outfit and Inter were trialled to match the Aurora prototype and rejected: Outfit is geometric, has less x-height and read worse in dense form and dialog text. Numbers in columns or totals use `font-numeric tabular-nums`.
 

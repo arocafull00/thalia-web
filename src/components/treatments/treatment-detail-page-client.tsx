@@ -98,7 +98,7 @@ export default function TreatmentDetailPageClient({
   }
 
   return (
-    <div className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog">
+    <div className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog">
       <TreatmentDetailHeader treatment={treatment} />
 
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">

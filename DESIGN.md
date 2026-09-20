@@ -103,7 +103,7 @@ components:
 
 Thalia is a product UI for staff who move between reception, treatment rooms, and back-office tasks. The visual system stays calm: a cool off-white canvas, white content panels, and turquoise for actions, selection, and active states. Typography reads quickly at arm's length on a desktop monitor or tablet.
 
-Density is moderate. Lists and tables carry real clinic data without decorative chrome. Surfaces are flat at rest; depth comes from white panels on a light canvas and 1px borders, not glass effects or heavy shadows.
+Density is moderate. Lists and tables carry real clinic data without decorative chrome. Surfaces are flat at rest: depth comes from panels and 1px borders, not from heavy shadows. The one translucent surface is the content section, which floats on a turquoise gradient backdrop; the frame around it — sidebar and navbar — stays opaque white.
 
 **Key Characteristics:**
 
@@ -146,7 +146,7 @@ The palette is restrained: soft black ink on a cool neutral canvas, turquoise fo
 
 **The One Accent Rule.** Clinic Turquoise carries primary actions, active navigation, and focus. Semantic colors appear only where status is the message. No decorative color blocks.
 
-**The Flat Canvas Rule.** Backgrounds stay canvas or surface. Do not stack tinted neutrals for decoration.
+**The Flat Canvas Rule.** Inside a panel, backgrounds stay canvas or surface. Do not stack tinted neutrals for decoration. The app backdrop is the single exception: one gradient from `--primary` to `--secondary`, behind everything, defined once in `.app-backdrop`.
 
 ## 3. Typography
 
@@ -172,7 +172,7 @@ The palette is restrained: soft black ink on a cool neutral canvas, turquoise fo
 
 ## 4. Elevation
 
-Depth is tonal, not shadow-driven. White panels sit on canvas; borders define edges. A light `shadow-sm` is acceptable on auth and onboarding cards only.
+Depth is tonal, not shadow-driven. Panels sit on the backdrop; borders define edges. A light `shadow-sm` is acceptable on auth and onboarding cards only.
 
 ### Shadow Vocabulary
 
@@ -183,7 +183,7 @@ Depth is tonal, not shadow-driven. White panels sit on canvas; borders define ed
 
 **The Flat-By-Default Rule.** Dashboard tables, sidebar, and lists have no drop shadow. If it needs depth, use a white surface and a border first.
 
-**The No Glass Rule.** No backdrop blur on navigation or modals. PRODUCT.md explicitly rejects decorative glassmorphism.
+**The One Glass Rule.** `backdrop-filter` belongs to exactly one surface: the content section (`.surface-card-glass`). Navigation, modals, popovers and anything nested inside the content card stay opaque. Two reasons, and neither is taste: blur behind an opaque surface is GPU cost with nothing to show for it, and a nested `backdrop-filter` samples only down to its glass ancestor, so it double-applies the filter and shifts the colour.
 
 ## 5. Components
 
@@ -214,8 +214,8 @@ Depth is tonal, not shadow-driven. White panels sit on canvas; borders define ed
 
 ### Navigation
 
-- **Sidebar:** Fixed 280px, canvas background, border-r. Items: rounded-xl, 14px. Active item: primary fill, on-primary text. Idle: ink-secondary, hover primary-subtle.
-- **Topbar:** 72px min-height, canvas background, border-b. Search input matches field style with left icon inset.
+- **Sidebar:** Floating card, opaque surface, `--border-frame` hairline, `rounded-dialog`. Items: rounded-xl, 14px. Active item: primary fill, on-primary text. Idle: ink-secondary, hover primary-subtle.
+- **Topbar:** Floating card, opaque surface, `--border-frame` hairline, `rounded-dialog`. Search input matches field style with left icon inset.
 - **Profile chip:** Surface bordered pill in sidebar footer and topbar link.
 
 ### Notices
@@ -230,7 +230,7 @@ Depth is tonal, not shadow-driven. White panels sit on canvas; borders define ed
 
 ### Do:
 
-- **Do** keep the canvas + surface panel rhythm on every app screen.
+- **Do** keep the rhythm on every app screen: opaque frame, glass content card, gradient in the gutter between them.
 - **Do** use pill buttons with verb + object labels in Spanish ("Entrar", "Continuar con Google").
 - **Do** show focus rings on all interactive controls for keyboard users.
 - **Do** use skeleton loaders for list and block loading states.
@@ -238,8 +238,8 @@ Depth is tonal, not shadow-driven. White panels sit on canvas; borders define ed
 
 ### Don't:
 
-- **Don't** use glassmorphism used purely for decoration.
-- **Don't** use excessive gradients or gradient text.
+- **Don't** extend glass beyond the content card, or give anything inside it a surface of its own.
+- **Don't** use gradients anywhere but the app backdrop, and never on text or buttons.
 - **Don't** use oversized rounded cards beyond the xl/2xl scale already in code.
 - **Don't** use generic illustration packs or marketing metric hero blocks inside the app shell.
 - **Don't** use unnecessary animations or orchestrated page-load sequences.

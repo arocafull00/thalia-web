@@ -56,6 +56,11 @@
   --sidebar-stagger: 20ms;
   --sidebar-ease: cubic-bezier(0.32, 0.72, 0, 1);
 
+  /* Filete del marco: lo comparten la navbar y el sidebar, las dos únicas
+     superficies opacas que quedan. En un sitio para no tener que acordarse de
+     tocar los dos. */
+  --border-frame: 1.5px solid var(--primary);
+
   --radius-button: 8px;
   --radius-input: 8px;
   --radius-card: 10px;
@@ -558,14 +563,49 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Superficie opaca: sin borde y sin backdrop-filter, que sobre algo opaco es
-   coste de GPU sin efecto. La recorta el halo, y es una sola sombra a
-   propósito: dos halos de desplazamiento cero se suman en las esquinas, donde
-   se solapan los de dos lados, y dibujan cuñas grises fuera del radio. */
+/* Superficie opaca: sin backdrop-filter, que sobre algo opaco es coste de GPU
+   sin efecto. Es una sola sombra a propósito: dos halos de desplazamiento cero
+   se suman en las esquinas, donde se solapan los de dos lados, y dibujan cuñas
+   grises fuera del radio.
+
+   El filete de primary es lo que separa el marco —navbar y sidebar, los dos
+   blancos y opacos— del cristal de la sección central. Va en `--border-frame`
+   junto al del sidebar para que los dos se muevan a la vez. */
 .surface-card {
   background: var(--surface);
-  border: 0;
   box-shadow: 0 2px 18px rgba(28, 48, 44, 0.07);
+}
+
+/* Cristal, solo para la sección central: la única superficie que cambia con el
+   menú y la única con fondo de verdad detrás, así que aquí el `backdrop-filter`
+   no es coste vacío. El sidebar y la navbar siguen con `.surface-card`, opacos:
+   son el marco, y un marco translúcido compite con el contenido.
+
+   Dos avisos que ya costaron depuración en este proyecto:
+   - `backdrop-filter` crea bloque contenedor para los hijos `fixed`, así que el
+     FAB de móvil tiene que seguir FUERA de esta tarjeta;
+   - nada de lo que vaya dentro debe pintar superficie propia: se sumaría a
+     esta y saldría de otro tono. La barra de filtros no lleva fondo por eso. */
+.surface-card-glass {
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  /* Un solo halo con desplazamiento: dos sombras de offset cero se suman en las
+     esquinas y dibujan cuñas fuera del radio. */
+  box-shadow: 0 2px 20px rgba(28, 48, 44, 0.12);
+  backdrop-filter: blur(26px) saturate(180%);
+}
+
+/* El cristal llega también a los controles de la barra, o la franja queda con
+   islas blancas flotando encima. No llevan difuminado propio: ya están sobre el
+   de la barra, y apilar un segundo es coste de GPU sin efecto visible. Lo que
+   los dibuja es el canto, no el relleno.
+
+   Acotado a `[data-slot="sticky-filters"]` a propósito: esos mismos controles
+   dentro de un diálogo o un formulario están sobre superficie opaca, donde
+   volverlos translúcidos los dejaría sucios. */
+[data-slot="sticky-filters"] input,
+[data-slot="sticky-filters"] button[role="combobox"],
+[data-slot="sticky-filters"] [data-slot="input"] {
+  background: color-mix(in srgb, var(--surface) 52%, transparent);
 }
 
 .control-chip {
@@ -577,7 +617,6 @@ body {
 /* ---------- shell: sidebar flotante, opaco como las tarjetas ---------- */
 [data-slot="sidebar-inner"] {
   background: var(--surface);
-  border: 0;
   border-radius: var(--radius-dialog);
   box-shadow: 0 2px 18px rgba(28, 48, 44, 0.07);
 }
@@ -592,7 +631,20 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: color-mix(in srgb, var(--backdrop-tint) 20%, var(--canvas));
+  /* Degradado de marca, de primary a secondary. Antes era un beige plano que
+     apenas se veía por los huecos; ahora es el fondo que sube a través del
+     cristal de la tarjeta central, así que tiene que aguantar mirarse.
+
+     Cada parada va diluida sobre `--canvas` en lugar de a plena saturación: el
+     verde puro detrás del cristal teñía todo el contenido y competía con él.
+     Diluyendo aquí —y no bajando la opacidad de la capa— el color es
+     predecible, porque no depende de lo que haya debajo. */
+  background: linear-gradient(
+    148deg,
+    color-mix(in srgb, var(--primary) 26%, var(--canvas)) 0%,
+    color-mix(in srgb, var(--primary) 13%, var(--canvas)) 48%,
+    var(--secondary) 100%
+  );
 }
 
 /* Alfa del barrido de fila: registrada para poder transicionarla. */

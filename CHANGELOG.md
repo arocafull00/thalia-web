@@ -1,5 +1,14 @@
 # Changelog
 
+## aurora-cristal-en-la-seccion-central
+
+- La sección central de la app pasa a ser cristal sobre un fondo en degradado de `--primary` a `--secondary`. El sidebar y la navbar se quedan opacos y ganan un filete de 1,5px en primary: son el marco, y un marco translúcido compite con lo que enmarca
+- El filete sale de `--border-frame`, un único token que comparten los dos. Estaban en dos reglas distintas y era cuestión de tiempo tocar una y olvidar la otra
+- **La barra de filtros nunca llegaba a ser del mismo color que la lista.** Vivía dentro del contenedor que scrollea, así que tenía que ser `sticky` y pintar algo opaco para tapar las filas que le pasaban por debajo — y ese relleno se sumaba al de la tarjeta de cristal. La banda salía más pálida siempre, se le pusiera el valor que se le pusiera: dos capas contra una
+- Se arregla sacándola del área de scroll, hermana del pie, que ya estaba resuelto así. Como no se solapa con nada, no necesita fondo y enseña la tarjeta tal cual. Ahora las dos zonas son la misma superficie **por construcción**, no por haber acertado un número: si mañana cambia la opacidad de la tarjeta, se mueven juntas. `.surface-glass-sticky` desaparece
+- Tres intentos anteriores fallaron por cosas que conviene no repetir, y quedan escritas en `CLAUDE.md`: en `background` solo la última capa puede ser un color, y una capa intermedia de color invalida la declaración entera sin avisar; y un `backdrop-filter` dentro de otro solo muestrea hasta su ancestro, así que aplica el `saturate` dos veces y cambia el color en lugar de igualarlo
+- `CLAUDE.md` y `DESIGN.md` decían «nada de glassmorphism ni `backdrop-filter`». La regla que las sustituye no es «ahora sí»: es **una sola** superficie con blur —la tarjeta de contenido—, porque es la única con fondo de verdad detrás. Sobre algo opaco el blur es coste de GPU sin efecto, y anidado rompe el color
+
 ## 158-restyling-de-finanzas
 
 - **El porcentaje del desglose por categoría estaba mal.** El denominador era la suma de ingresos MÁS gastos, así que con 4.000 € ingresados —3.000 de «Tratamientos»— y 800 € de gastos, esa categoría salía al 63 % cuando es el 75 % de lo que entró. La barra de progreso pintaba esa cifra: el número no era raro, era falso

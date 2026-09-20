@@ -152,7 +152,7 @@ export default function CampaignDetailPageClient() {
   return (
     <div
       data-testid="campaign-detail-page"
-      className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
+      className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
     >
       <CampaignDetailHeader campaign={campaign} />
       <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">

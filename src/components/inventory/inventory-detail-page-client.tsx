@@ -6,7 +6,6 @@ import { useState } from "react";
 import InventoryDetailHeader from "@/components/inventory/components/detail/inventory-detail-header";
 import InventoryDetailTabBar from "@/components/inventory/components/detail/inventory-detail-tab-bar";
 import InventoryDetailTabContent from "@/components/inventory/components/detail/inventory-detail-tab-content";
-import { Tabs } from "@/components/ui/tabs";
 import InventoryItemAdjustStockDialog from "@/components/inventory/components/form/inventory-item-adjust-stock-dialog";
 import InventoryItemEditDialog from "@/components/inventory/components/form/inventory-item-edit-dialog";
 import {
@@ -17,6 +16,7 @@ import PageSurface from "@/components/ui/page-surface";
 import { BackButton } from "@/components/ui/primitives/back-button";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
+import { Tabs } from "@/components/ui/tabs";
 import { INVENTORY_ITEM_DETAIL_COPY } from "@/copy/inventory-item-detail-copy";
 import {
   useInventoryItem,
@@ -120,7 +120,7 @@ export default function InventoryDetailPageClient({
   return (
     <div
       data-testid="inventory-detail-page"
-      className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
+      className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
     >
       <InventoryDetailHeader item={item} />
 

@@ -212,7 +212,7 @@ export default function CalendarPageClient({
     // directamente.
     <div
       data-testid="calendar-page"
-      className="surface-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog"
+      className="surface-card-glass flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog"
     >
       <CalendarToolbar
         rangeLabel={rangeLabel}

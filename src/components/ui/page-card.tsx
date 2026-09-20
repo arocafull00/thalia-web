@@ -19,11 +19,18 @@ type PageCardProps = {
  */
 export default function PageCard({ children, filters, footer }: PageCardProps) {
   return (
-    <div className="surface-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog">
+    <div className="surface-card-glass relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog">
+      {/*
+        Fuera del contenedor que scrollea, igual que el pie. Dentro tenía que
+        ser `sticky` y llevar fondo propio para tapar las filas que le pasaban
+        por debajo, y ese fondo se sumaba al de la tarjeta: la banda salía
+        siempre de otro tono que la lista. Como hermana no se solapa con nada,
+        así que no necesita fondo y enseña la tarjeta tal cual.
+      */}
+      {filters ? (
+        <PageStickyFiltersSection>{filters}</PageStickyFiltersSection>
+      ) : null}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
-        {filters ? (
-          <PageStickyFiltersSection>{filters}</PageStickyFiltersSection>
-        ) : null}
         <div className="space-y-4 px-3.5 pb-3.5">{children}</div>
       </div>
       {footer}

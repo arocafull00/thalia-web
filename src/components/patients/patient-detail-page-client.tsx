@@ -12,6 +12,7 @@ import PatientFileUploaderDialog from "@/components/patients/components/files/pa
 import PatientEditDialog from "@/components/patients/components/form/patient-edit-dialog";
 import PatientImageDeleteConfirmDialog from "@/components/patients/components/gallery/patient-image-delete-confirm-dialog";
 import PatientImageUploaderDialog from "@/components/patients/components/gallery/patient-image-uploader-dialog";
+import { usePatientAppointmentStatusChange } from "@/components/patients/hooks/use-patient-appointment-status-change";
 import {
   getPatientDetailMenuSections,
   getPatientDetailPrimaryAction,
@@ -24,7 +25,6 @@ import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { usePatientAvatar } from "@/lib/hooks/use-patient-avatar";
 import { usePatientDetailTabs } from "@/lib/hooks/use-patient-detail-tabs";
-import { usePatientAppointmentStatusChange } from "@/components/patients/hooks/use-patient-appointment-status-change";
 import { usePatient, usePatientAppointments } from "@/lib/hooks/use-patients";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
 import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
@@ -148,7 +148,7 @@ export default function PatientDetailPageClient({
   return (
     <div
       data-testid="patient-detail-page"
-      className="surface-card no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
+      className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
     >
       <PatientDetailHeader
         patient={patient}

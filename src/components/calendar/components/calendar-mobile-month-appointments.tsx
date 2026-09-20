@@ -14,7 +14,8 @@ type CalendarMobileMonthAppointmentsProps = {
   dayLabel: string;
   appointments: AgendaAppointment[];
   onAppointmentClick: (appointmentId: string) => void;
-  onCreateAppointment: () => void;
+  /** Ausente para un profesional externo, que no crea citas (#163). */
+  onCreateAppointment?: () => void;
 };
 
 export default function CalendarMobileMonthAppointments({
@@ -51,10 +52,12 @@ export default function CalendarMobileMonthAppointments({
           <p className="text-sm text-ink-secondary">
             {CALENDAR_COPY.mobileMonth.empty}
           </p>
-          <ActionButton
-            title={CALENDAR_COPY.toolbar.newAppointment}
-            onClick={onCreateAppointment}
-          />
+          {onCreateAppointment ? (
+            <ActionButton
+              title={CALENDAR_COPY.toolbar.newAppointment}
+              onClick={onCreateAppointment}
+            />
+          ) : null}
         </div>
       ) : (
         <div className="divide-y divide-border-subtle">

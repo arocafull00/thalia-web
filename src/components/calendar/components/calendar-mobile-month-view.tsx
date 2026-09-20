@@ -3,6 +3,7 @@
 import CalendarMobileMonthAppointments from "@/components/calendar/components/calendar-mobile-month-appointments";
 import MonthMiniCalendar from "@/components/calendar/components/month-mini-calendar";
 import { useCalendarMobileMonth } from "@/components/calendar/hooks/use-calendar-mobile-month";
+import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 
 type CalendarMobileMonthViewProps = {
   onAppointmentClick: (appointmentId: string) => void;
@@ -20,6 +21,7 @@ export default function CalendarMobileMonthView({
     onSelectDay,
     onCreateAppointment,
   } = useCalendarMobileMonth();
+  const isExternal = useIsExternalProfessional();
 
   return (
     <div className="h-full overflow-y-auto">
@@ -34,7 +36,7 @@ export default function CalendarMobileMonthView({
         dayLabel={selectedDayLabel}
         appointments={selectedDayAgenda}
         onAppointmentClick={onAppointmentClick}
-        onCreateAppointment={onCreateAppointment}
+        onCreateAppointment={isExternal ? undefined : onCreateAppointment}
       />
     </div>
   );

@@ -10,6 +10,7 @@ import { DASHBOARD_COPY } from "@/components/dashboard/dashboard-copy";
 import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { toAgendaAppointments } from "@/lib/calendar-agenda";
+import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDashboard } from "@/lib/hooks/use-dashboard";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
@@ -23,6 +24,7 @@ export default function DashboardPageClient({
   initialData,
 }: DashboardPageClientProps) {
   const { profile } = useAuth();
+  const isExternal = useIsExternalProfessional();
   const { data, isLoading, error } = useDashboard(initialData);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -40,10 +42,19 @@ export default function DashboardPageClient({
   const firstName =
     profile?.full_name?.split(" ")[0] ?? DASHBOARD_COPY.fallbackName;
 
-  useTopbarAction({
-    title: DASHBOARD_COPY.actions.newAppointment,
-    onClick: () => setDialogOpen(true),
-  });
+  /*
+   * Un profesional externo no crea citas: la base le deja insertar la cita pero
+   * no añadirle tratamientos, así que quedaría vacía y con un error que habla
+   * de una tabla que él no ha tocado. Mitigación mientras se decide la #163.
+   */
+  useTopbarAction(
+    isExternal
+      ? null
+      : {
+          title: DASHBOARD_COPY.actions.newAppointment,
+          onClick: () => setDialogOpen(true),
+        },
+  );
 
   return (
     <div data-testid="dashboard-page" className="flex min-h-0 flex-1 flex-col">
@@ -65,10 +76,12 @@ export default function DashboardPageClient({
         </div>
       </PageCard>
       <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-      <MobileFab
-        label={DASHBOARD_COPY.actions.newAppointmentLabel}
-        onClick={() => setDialogOpen(true)}
-      />
+      {isExternal ? null : (
+        <MobileFab
+          label={DASHBOARD_COPY.actions.newAppointmentLabel}
+          onClick={() => setDialogOpen(true)}
+        />
+      )}
     </div>
   );
 }

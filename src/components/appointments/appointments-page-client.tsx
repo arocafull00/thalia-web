@@ -166,6 +166,11 @@ export default function AppointmentsPageClient({
     setSheetOpen(true);
   };
 
+  /*
+   * Un profesional externo no crea citas: la base le deja insertar la cita pero
+   * no añadirle tratamientos, así que quedaría vacía y con un error que habla de
+   * una tabla que él no ha tocado. Mitigación mientras se decide la #163.
+   */
   useTopbarActions({
     buttons: [
       {
@@ -181,11 +186,15 @@ export default function AppointmentsPageClient({
         testId: "appointments-refresh-trigger",
         onClick: () => void appointments.refresh(),
       },
-      {
-        title: "Nueva cita",
-        testId: "appointment-create-trigger",
-        onClick: handleOpenCreateDialog,
-      },
+      ...(isExternalProfessional
+        ? []
+        : [
+            {
+              title: "Nueva cita",
+              testId: "appointment-create-trigger",
+              onClick: handleOpenCreateDialog,
+            },
+          ]),
     ],
   });
 
@@ -300,7 +309,9 @@ export default function AppointmentsPageClient({
           void externalResponse.confirmOverlap();
         }}
       />
-      <MobileFab label="Nueva cita" onClick={handleOpenCreateDialog} />
+      {isExternalProfessional ? null : (
+        <MobileFab label="Nueva cita" onClick={handleOpenCreateDialog} />
+      )}
     </div>
   );
 }

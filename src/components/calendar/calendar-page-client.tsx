@@ -191,11 +191,20 @@ export default function CalendarPageClient({
     onChangeViewMode(isMobile ? "month" : CALENDAR_FILTER_DEFAULTS.viewMode);
   }, [isMobile, onChangeViewMode, setEmployeeId]);
 
-  useTopbarAction({
-    title: CALENDAR_COPY.toolbar.newAppointment,
-    testId: "calendar-create-trigger",
-    onClick: () => openCreateDialog(),
-  });
+  /*
+   * Un profesional externo no crea citas: la base le deja insertar la cita pero
+   * no añadirle tratamientos, así que quedaría vacía y con un error que habla de
+   * una tabla que él no ha tocado. Mitigación mientras se decide la #163.
+   */
+  useTopbarAction(
+    isExternal
+      ? null
+      : {
+          title: CALENDAR_COPY.toolbar.newAppointment,
+          testId: "calendar-create-trigger",
+          onClick: () => openCreateDialog(),
+        },
+  );
 
   return (
     // No usa PageCard: schedule-x gestiona su propio scroll y el
@@ -274,10 +283,12 @@ export default function CalendarPageClient({
         }}
         onSelectAppointment={handleSelectGroupAppointment}
       />
-      <MobileFab
-        label={CALENDAR_COPY.toolbar.newAppointment}
-        onClick={() => openCreateDialog()}
-      />
+      {isExternal ? null : (
+        <MobileFab
+          label={CALENDAR_COPY.toolbar.newAppointment}
+          onClick={() => openCreateDialog()}
+        />
+      )}
     </div>
   );
 }

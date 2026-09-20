@@ -1,14 +1,31 @@
 import { siteUrl } from "@/lib/environment";
 
 /*
- * Estados en los que la cita deja de ocupar hueco en la agenda. El evento se
- * retira del calendario en lugar de actualizarse: mantener una cita cancelada
- * ahí llevaría al profesional a reservar mal su tiempo.
+ * Estados que SÍ viajan a Google. Lista blanca y no lista negra, a propósito:
+ * si mañana alguien añade un estado nuevo, por defecto no sale del sistema en
+ * lugar de colarse sin que nadie lo note. Para algo que cede datos a un tercero
+ * ese es el fallo seguro.
+ *
+ * Fuera quedan, y cada uno por su motivo:
+ *
+ * - `pending_external`: la clínica se la ha propuesto al profesional y este
+ *   todavía no la ha aceptado. Verla en su calendario le haría reservar un
+ *   hueco al que no se ha comprometido.
+ * - `rejected_external`: la ha rechazado.
+ * - `cancelled` y `no_show`: el hueco queda libre.
+ *
+ * Un evento ya creado que pasa a cualquiera de estos estados se retira del
+ * calendario, no se actualiza.
  */
-const RELEASED_STATUSES = new Set(["cancelled", "no_show"]);
+const SYNCED_STATUSES = new Set([
+  "scheduled",
+  "confirmed",
+  "in_progress",
+  "completed",
+]);
 
-export function isReleasedStatus(status: string): boolean {
-  return RELEASED_STATUSES.has(status);
+export function shouldSyncStatus(status: string): boolean {
+  return SYNCED_STATUSES.has(status);
 }
 
 export type CalendarSyncPayload = {
@@ -43,12 +60,19 @@ export type GoogleEventBody = {
 export function buildGoogleEvent(
   appointmentId: string,
   payload: CalendarSyncPayload,
+  clinicName: string | null,
 ): GoogleEventBody {
   const base = siteUrl ?? "http://localhost:3000";
   const link = new URL(`/appointments/${appointmentId}`, base).toString();
 
   return {
-    summary: "Cita",
+    /*
+     * El nombre de la clínica sí puede ir: es de la clínica, no del paciente, y
+     * no dice nada de su salud. Además es lo único que distingue las citas de
+     * un profesional que pasa consulta en varios sitios, porque todas caen en
+     * el mismo calendario.
+     */
+    summary: clinicName ? `Cita · ${clinicName}` : "Cita",
     description: `Ver la cita en Thalia: ${link}\n\nGestionado desde Thalia. Los cambios hechos aquí no se sincronizan.`,
     start: { dateTime: payload.starts_at },
     end: { dateTime: payload.ends_at },

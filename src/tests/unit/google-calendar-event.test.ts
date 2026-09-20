@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildGoogleEvent,
-  isReleasedStatus,
+  shouldSyncStatus,
 } from "@/lib/google-calendar/event";
 
 const PAYLOAD = {
@@ -13,25 +13,26 @@ const PAYLOAD = {
 };
 
 const APPOINTMENT_ID = "70000000-0000-4000-8000-000000000030";
+const CLINICA = "Clínica Norte";
 
 describe("evento de Google Calendar", () => {
   it("lleva la franja horaria de la cita", () => {
-    const event = buildGoogleEvent(APPOINTMENT_ID, PAYLOAD);
+    const event = buildGoogleEvent(APPOINTMENT_ID, PAYLOAD, CLINICA);
 
     expect(event.start.dateTime).toBe(PAYLOAD.starts_at);
     expect(event.end.dateTime).toBe(PAYLOAD.ends_at);
   });
 
   it("enlaza de vuelta a la cita en Thalia", () => {
-    const event = buildGoogleEvent(APPOINTMENT_ID, PAYLOAD);
+    const event = buildGoogleEvent(APPOINTMENT_ID, PAYLOAD, CLINICA);
 
     expect(event.description).toContain(`/appointments/${APPOINTMENT_ID}`);
   });
 
   it("avisa de que editar en Google no sirve de nada", () => {
-    expect(buildGoogleEvent(APPOINTMENT_ID, PAYLOAD).description).toContain(
-      "no se sincronizan",
-    );
+    expect(
+      buildGoogleEvent(APPOINTMENT_ID, PAYLOAD, CLINICA).description,
+    ).toContain("no se sincronizan");
   });
 
   /*
@@ -45,7 +46,7 @@ describe("evento de Google Calendar", () => {
    * mejor», esto tiene que ponerse en rojo.
    */
   it("no filtra ningún dato clínico, mire donde mire", () => {
-    const event = buildGoogleEvent(APPOINTMENT_ID, PAYLOAD);
+    const event = buildGoogleEvent(APPOINTMENT_ID, PAYLOAD, CLINICA);
     const serializado = JSON.stringify(event).toLowerCase();
 
     for (const prohibido of [
@@ -65,15 +66,50 @@ describe("evento de Google Calendar", () => {
     }
   });
 
-  it("el título no identifica a nadie", () => {
-    expect(buildGoogleEvent(APPOINTMENT_ID, PAYLOAD).summary).toBe("Cita");
+  /*
+   * El nombre de la clínica es suyo, no del paciente: no dice quién va ni a
+   * qué. Y es lo único que distingue las citas de un profesional que trabaja en
+   * varios sitios, porque todas caen en el mismo calendario.
+   */
+  it("el título lleva la clínica, y a nadie más", () => {
+    expect(buildGoogleEvent(APPOINTMENT_ID, PAYLOAD, CLINICA).summary).toBe(
+      "Cita · Clínica Norte",
+    );
   });
 
-  it("retira del calendario las citas que liberan el hueco", () => {
-    expect(isReleasedStatus("cancelled")).toBe(true);
-    expect(isReleasedStatus("no_show")).toBe(true);
-    expect(isReleasedStatus("scheduled")).toBe(false);
-    expect(isReleasedStatus("confirmed")).toBe(false);
-    expect(isReleasedStatus("completed")).toBe(false);
+  it("sin clínica se queda en «Cita» en lugar de dejar un hueco", () => {
+    expect(buildGoogleEvent(APPOINTMENT_ID, PAYLOAD, null).summary).toBe(
+      "Cita",
+    );
+  });
+
+  /*
+   * La regla de negocio: el recordatorio al paciente y el calendario del
+   * profesional dependen de que este haya aceptado la cita. Una propuesta que
+   * todavía no ha respondido no le ocupa hueco en su agenda.
+   */
+  it("no saca a Google una cita que el profesional aún no ha aceptado", () => {
+    expect(shouldSyncStatus("pending_external")).toBe(false);
+    expect(shouldSyncStatus("rejected_external")).toBe(false);
+  });
+
+  it("no saca a Google una cita cancelada o con ausencia", () => {
+    expect(shouldSyncStatus("cancelled")).toBe(false);
+    expect(shouldSyncStatus("no_show")).toBe(false);
+  });
+
+  it("sí saca las que el profesional ha tomado", () => {
+    expect(shouldSyncStatus("scheduled")).toBe(true);
+    expect(shouldSyncStatus("confirmed")).toBe(true);
+    expect(shouldSyncStatus("in_progress")).toBe(true);
+    expect(shouldSyncStatus("completed")).toBe(true);
+  });
+
+  /*
+   * Lista blanca: un estado que nadie ha contemplado no debe viajar a Google
+   * por omisión. Este test rompe si alguien invierte el criterio.
+   */
+  it("un estado desconocido no sale del sistema", () => {
+    expect(shouldSyncStatus("un_estado_que_no_existe_todavia")).toBe(false);
   });
 });

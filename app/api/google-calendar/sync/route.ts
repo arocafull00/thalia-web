@@ -7,7 +7,7 @@ import {
 } from "@/lib/google-calendar/calendar";
 import {
   buildGoogleEvent,
-  isReleasedStatus,
+  shouldSyncStatus,
   type CalendarSyncPayload,
 } from "@/lib/google-calendar/event";
 import { refreshAccessToken } from "@/lib/google-calendar/server";
@@ -26,6 +26,7 @@ type ClaimedRow = {
   calendar_id: string | null;
   connection_status: "active" | "needs_reauth" | null;
   google_event_id: string | null;
+  clinic_name: string | null;
 };
 
 /*
@@ -166,11 +167,11 @@ export async function POST(request: Request) {
       }
 
       /*
-       * Una cita cancelada o con el paciente ausente libera el hueco, así que su
-       * evento se retira en lugar de actualizarse: dejarlo ahí llevaría al
-       * profesional a creer que sigue ocupado.
+       * Una cita que el profesional no ha aceptado —o que rechazó, canceló o no
+       * se presentó— no pinta nada en su calendario. Si ya había evento se
+       * retira; si no lo había, esto no hace nada y la fila se cierra igual.
        */
-      if (isReleasedStatus(row.payload.status)) {
+      if (!shouldSyncStatus(row.payload.status)) {
         if (row.google_event_id) {
           await deleteEvent(accessToken, row.calendar_id, row.google_event_id);
         }
@@ -183,7 +184,11 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const body = buildGoogleEvent(row.appointment_id, row.payload);
+      const body = buildGoogleEvent(
+        row.appointment_id,
+        row.payload,
+        row.clinic_name,
+      );
 
       const event = row.google_event_id
         ? await patchEvent(

@@ -755,6 +755,7 @@ export type Database = {
           calendar_id: string | null;
           connection_status: GoogleCalendarConnectionStatus | null;
           google_event_id: string | null;
+          clinic_name: string | null;
         }[];
       };
       complete_calendar_sync: {

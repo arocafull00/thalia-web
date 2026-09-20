@@ -1,5 +1,18 @@
 # Changelog
 
+## 163-mitigacion-crear-citas-como-externo
+
+- Un profesional externo deja de ver el botón «Nueva cita» en Inicio, Citas y Agenda, en escritorio y en móvil. La base le permitía crear la cita pero no añadirle tratamientos, así que quedaba vacía y con un error que hablaba de una tabla que él no había tocado — y desde que existe la sincronización, además le aparecía en su Google Calendar
+- Es una mitigación, no la decisión: queda por resolver en la #163 si un autónomo debe poder crear y completar sus propias citas
+
+
+## respond-external-appointment-cast
+
+- **Un profesional externo no podía aceptar ni rechazar ninguna cita.** `respond_external_appointment` asigna el estado con un `CASE` que devuelve texto, y la migración de enums nativos del 16 de septiembre convirtió la columna sin actualizar la función: `column "status" is of type public.appointment_status but expression is of type text`
+- La cita se quedaba en `pending_external` para siempre, y de ahí cuelgan otras dos cosas: ni recordatorio al paciente ni evento en el calendario, porque los dos exigen que esté aceptada. Los dos flujos «funcionaban» negándose a actuar sobre citas que nunca podrían salir de ese estado
+- El cuerpo de la función es el que había en producción; el único cambio es el cast
+
+
 ## 96-cimientos-de-google-calendar
 
 - Las citas se sincronizan con Google Calendar. Cada profesional conecta su cuenta desde Ajustes y sus citas aparecen en un calendario «Thalia» propio, que Thalia crea y es lo único que puede tocar
@@ -17,6 +30,8 @@
 - `SettingsActionRow` deja de pintar la flecha cuando la fila no tiene destino ni acción. Una fila que parece un botón y no responde se lee como que la aplicación está rota
 - Alias de `server-only` en la configuración de Vitest: el paquete lanza nada más importarse fuera de Next, así que hasta ahora ningún test podía tocar un módulo de `src/lib/server/` ni de Stripe
 - **Las citas ya llegan a Google.** Un worker vacía la cola cada cinco minutos, pero el cron solo lo despierta si hay algo pendiente: con la base al límite de memoria, 288 llamadas diarias en vacío no se sostienen
+- El evento se titula «Cita · <clínica>». El nombre de la clínica es suyo, no del paciente, y no dice nada de su salud, así que no cruza la regla; y es lo único que distingue las citas de un profesional que pasa consulta en varios sitios, porque todas caen en el mismo calendario
+- **Solo llegan a Google las citas que el profesional ha tomado.** Lista blanca de estados, no lista negra: una cita que un autónomo todavía no ha aceptado —o que rechazó— no le ocupa hueco en su calendario, y un estado nuevo que nadie contemple no sale del sistema por omisión. Si una cita ya sincronizada pasa a uno de esos estados, su evento se retira
 - **A Google viaja el cuándo, nunca el qué.** El evento lleva la franja horaria y un enlace de vuelta a Thalia; ni paciente, ni tratamiento, ni notas. El nombre de un paciente ahí revelaría que se trata en una clínica estética —dato de salud cedido a un tercero—, así que hay un test que recorre el evento entero y se rompe si alguien lo añade
 - Una cita cancelada o con el paciente ausente retira su evento en lugar de actualizarlo: dejarlo llevaría al profesional a creer que sigue ocupado
 - La cola se reclama con `FOR UPDATE SKIP LOCKED` y el reintento se programa **antes** de intentar nada, para que una fila que tumbe al worker no vuelva de inmediato a tumbarlo otra vez. La espera crece de 1 a 60 minutos

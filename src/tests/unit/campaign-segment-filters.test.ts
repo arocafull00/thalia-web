@@ -123,12 +123,12 @@ describe("buildCampaignSegmentFilters", () => {
     ).toThrow();
   });
 
-  it("acepta 0 meses sin visitar", () => {
+  it("0 meses sin visitar no aplica el filtro", () => {
     const filters = buildCampaignSegmentFilters([
       segment("last_visit_date", { months_since_last_visit: 0 }),
     ]);
 
-    expect(filters.monthsSinceLastVisit).toBe(0);
+    expect(filters.monthsSinceLastVisit).toBeNull();
   });
 
   it("rechaza meses sin visitar negativos", () => {
@@ -163,14 +163,19 @@ describe("parseCampaignSegmentInputs", () => {
     expect(result.filters).toEqual(EMPTY_CAMPAIGN_SEGMENT_FILTERS);
   });
 
-  it("acepta 0 meses sin visitar", () => {
-    const result = parseCampaignSegmentInputs(
+  it("0 meses sin visitar es lo mismo que dejarlo vacío", () => {
+    const cero = parseCampaignSegmentInputs(
       inputs({ monthsSinceLastVisit: "0" }),
     );
+    const vacio = parseCampaignSegmentInputs(
+      inputs({ monthsSinceLastVisit: "" }),
+    );
 
-    expect(result.isValid).toBe(true);
-    expect(result.errors.monthsSinceLastVisit).toBeUndefined();
-    expect(result.filters.monthsSinceLastVisit).toBe(0);
+    expect(cero.isValid).toBe(true);
+    expect(cero.errors.monthsSinceLastVisit).toBeUndefined();
+    expect(cero.filters).toEqual(vacio.filters);
+    expect(cero.filters.monthsSinceLastVisit).toBeNull();
+    expect(buildSegmentsFromFilters(cero.filters)).toEqual([]);
   });
 
   it("rechaza meses sin visitar negativos", () => {
@@ -192,13 +197,14 @@ describe("parseCampaignSegmentInputs", () => {
     expect(result.filters.monthsSinceLastVisit).toBe(1);
   });
 
-  it("distingue vacío de cero", () => {
+  it("un campo en blanco no aplica el filtro de última visita", () => {
     const vacio = parseCampaignSegmentInputs(
       inputs({ monthsSinceLastVisit: "   " }),
     );
 
     expect(vacio.isValid).toBe(true);
     expect(vacio.filters.monthsSinceLastVisit).toBeNull();
+    expect(buildSegmentsFromFilters(vacio.filters)).toEqual([]);
   });
 
   it("0 visitas mínimas sí es válido: significa sin visitas", () => {
@@ -285,10 +291,6 @@ describe("buildSegmentsFromFilters", () => {
 
     expect(segments).toEqual([
       { segment_type: "visit_count", config: { min_visits: 0 } },
-      {
-        segment_type: "last_visit_date",
-        config: { months_since_last_visit: 0 },
-      },
     ]);
   });
 

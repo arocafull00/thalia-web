@@ -7,7 +7,9 @@ export async function getTransactionCategories(
 ): Promise<TransactionCategory[]> {
   let query = supabase
     .from("transaction_categories")
-    .select("id, clinic_id, type, name, is_active, created_at, updated_at")
+    .select(
+      "id, clinic_id, type, name, system_key, is_active, created_at, updated_at",
+    )
     .order("type")
     .order("name");
 

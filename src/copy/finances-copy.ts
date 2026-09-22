@@ -77,5 +77,8 @@ export const FINANCES_COPY = {
   },
   movements: {
     title: "Movimientos recientes",
+    origin: "Origen",
+    appointment: "Cita",
+    manual: "Manual",
   },
 } as const;

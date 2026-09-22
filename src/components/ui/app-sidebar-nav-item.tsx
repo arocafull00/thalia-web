@@ -134,7 +134,7 @@ export default function AppSidebarNavItem({
           href={item.href}
           onClick={onNavigate}
           onMouseEnter={() => setPrefetch(true)}
-          prefetch={prefetch}
+          prefetch={prefetch ? "auto" : false}
           className="flex items-center gap-3"
         >
           {item.icon}

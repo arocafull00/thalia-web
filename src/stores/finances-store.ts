@@ -129,6 +129,7 @@ type FinancesStore = {
     categoryId: string,
     summary: FinancialSummary,
   ) => void;
+  refreshCaches: () => Promise<void>;
   invalidateCaches: () => void;
   exportTransactions: (query: TransactionExportQuery) => Promise<Transaction[]>;
   createTransaction: (input: TransactionInput) => Promise<Transaction>;
@@ -252,6 +253,8 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       });
     }
   },
+
+  refreshCaches: () => refreshFinancesCaches(get),
 
   invalidateCaches: () => set({ byPage: {}, summaryByKey: {} }),
 

@@ -118,11 +118,15 @@ export type ExternalAppointmentResponseResult =
 
 export type TransactionType = "income" | "expense";
 
+export type TransactionCategorySystemKey =
+  "appointment_treatments" | "appointment_materials";
+
 export type TransactionCategory = {
   id: string;
   clinic_id: string;
   type: TransactionType;
   name: string;
+  system_key: TransactionCategorySystemKey | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -876,6 +880,7 @@ export type Database = {
       appointment_status: AppointmentStatus;
       inventory_movement_type: InventoryMovementType;
       transaction_type: TransactionType;
+      transaction_category_system_key: TransactionCategorySystemKey;
       patient_image_phase: PatientImagePhase;
       patient_file_category: PatientFileCategory;
       appointment_reminder_status: AppointmentReminderStatus;

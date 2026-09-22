@@ -37,6 +37,7 @@ import {
   unsubscribeAppointmentsRealtime,
 } from "@/stores/appointments-realtime";
 import { useDashboardStore } from "@/stores/dashboard-store";
+import { useFinancesStore } from "@/stores/finances-store";
 import { useInventoryStore } from "@/stores/inventory-store";
 import {
   errorQueryEntry,
@@ -594,7 +595,10 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       ]);
 
       if (status === "completed") {
-        void useInventoryStore.getState().fetchInventoryItems();
+        await Promise.all([
+          useInventoryStore.getState().fetchInventoryItems(),
+          useFinancesStore.getState().refreshCaches(),
+        ]);
       }
 
       set({ updatingStatus: false });

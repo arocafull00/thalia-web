@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type CSSProperties, type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ type DataTableProps<TData, TValue> = {
   initialSorting?: SortingState;
   getRowHref?: (row: TData) => string | undefined;
   onRowActivate?: (row: TData) => void;
+  clickableRow?: boolean;
   getRowStyle?: (row: TData) => CSSProperties | undefined;
   pageSize?: number;
   manualPagination?: {
@@ -59,11 +61,18 @@ function wrapPrimaryCellContent<TData>(
   row: TData,
   getRowHref: DataTableProps<TData, unknown>["getRowHref"],
   onRowActivate: DataTableProps<TData, unknown>["onRowActivate"],
+  clickableRow: boolean,
 ) {
   const href = getRowHref?.(row);
   if (href) {
     return (
-      <Link href={href} className={rowPrimaryControlClassName}>
+      <Link
+        href={href}
+        className={rowPrimaryControlClassName}
+        onClick={
+          clickableRow ? (event) => event.stopPropagation() : undefined
+        }
+      >
         {content}
       </Link>
     );
@@ -76,7 +85,10 @@ function wrapPrimaryCellContent<TData>(
   return (
     <button
       type="button"
-      onClick={() => onRowActivate(row)}
+      onClick={(event) => {
+        if (clickableRow) event.stopPropagation();
+        onRowActivate(row);
+      }}
       className={rowPrimaryControlClassName}
     >
       {content}
@@ -93,6 +105,7 @@ export function DataTable<TData, TValue>({
   initialSorting = EMPTY_SORTING,
   getRowHref,
   onRowActivate,
+  clickableRow = false,
   getRowStyle,
   pageSize = 10,
   manualPagination,
@@ -101,6 +114,7 @@ export function DataTable<TData, TValue>({
   renderMobileActions,
   getMobileRowKey,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const rowInteractive = Boolean(getRowHref ?? onRowActivate);
 
@@ -203,10 +217,22 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   className={
                     rowInteractive
-                      ? "table-row-wash"
+                      ? `table-row-wash${clickableRow ? " cursor-pointer" : ""}`
                       : "hover:bg-transparent"
                   }
                   style={getRowStyle?.(row.original)}
+                  onClick={
+                    clickableRow
+                      ? () => {
+                          const href = getRowHref?.(row.original);
+                          if (href) {
+                            router.push(href);
+                            return;
+                          }
+                          onRowActivate?.(row.original);
+                        }
+                      : undefined
+                  }
                 >
                   {row.getVisibleCells().map((cell, cellIndex) => {
                     const cellContent = flexRender(
@@ -227,6 +253,7 @@ export function DataTable<TData, TValue>({
                               row.original,
                               getRowHref,
                               onRowActivate,
+                              clickableRow,
                             )
                           : cellContent}
                       </TableCell>

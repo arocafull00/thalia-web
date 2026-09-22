@@ -158,19 +158,45 @@ Deno.serve(async (req) => {
         .maybeSingle(),
       supabase
         .from("clinic_billing")
-        .select("subscription_status")
+        .select("subscription_status, billing_exempt")
         .eq("clinic_id", campaign.clinic_id)
         .maybeSingle(),
     ]);
 
-  if (
-    !membership ||
-    employee?.account_type !== "internal" ||
-    !["admin", "reception"].includes(employee.role) ||
-    !billing ||
-    !["trialing", "active"].includes(billing.subscription_status)
-  ) {
-    return errorResponse("forbidden", "Forbidden", 403);
+  if (!membership) {
+    return errorResponse(
+      "campaign_membership_required",
+      "Active membership required",
+      403,
+    );
+  }
+
+  if (!employee || employee.account_type !== "internal") {
+    return errorResponse(
+      "campaign_account_type_not_allowed",
+      "Account type not allowed",
+      403,
+    );
+  }
+
+  if (!["admin", "reception"].includes(employee.role)) {
+    return errorResponse("campaign_role_not_allowed", "Role not allowed", 403);
+  }
+
+  if (!billing) {
+    return errorResponse("campaign_billing_missing", "Billing missing", 403);
+  }
+
+  const subscriptionAllowsSend =
+    billing.billing_exempt ||
+    ["trialing", "active"].includes(billing.subscription_status);
+
+  if (!subscriptionAllowsSend) {
+    return errorResponse(
+      "campaign_subscription_inactive",
+      "Subscription inactive",
+      403,
+    );
   }
 
   // Reenviar una campaña ya enviada duplicaría mensajes reales: se rechaza en

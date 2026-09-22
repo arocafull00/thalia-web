@@ -13,7 +13,9 @@ export async function getTransactionCategories(
   const supabase = await createClient();
   let query = supabase
     .from("transaction_categories")
-    .select("id, clinic_id, type, name, is_active, created_at, updated_at")
+    .select(
+      "id, clinic_id, type, name, system_key, is_active, created_at, updated_at",
+    )
     .order("type")
     .order("name");
 
@@ -38,7 +40,9 @@ export async function insertTransactionCategory(input: {
       name: input.name,
       type: input.type,
     })
-    .select("id, clinic_id, type, name, is_active, created_at, updated_at")
+    .select(
+      "id, clinic_id, type, name, system_key, is_active, created_at, updated_at",
+    )
     .single();
 
   return unwrapSupabase(data, error) as TransactionCategory;
@@ -55,7 +59,9 @@ export async function renameTransactionCategory(input: {
     .update({ name: input.name })
     .eq("id", input.categoryId)
     .eq("clinic_id", input.clinicId)
-    .select("id, clinic_id, type, name, is_active, created_at, updated_at")
+    .select(
+      "id, clinic_id, type, name, system_key, is_active, created_at, updated_at",
+    )
     .single();
 
   return unwrapSupabase(data, error) as TransactionCategory;
@@ -72,7 +78,9 @@ export async function setTransactionCategoryActive(input: {
     .update({ is_active: input.isActive })
     .eq("id", input.categoryId)
     .eq("clinic_id", input.clinicId)
-    .select("id, clinic_id, type, name, is_active, created_at, updated_at")
+    .select(
+      "id, clinic_id, type, name, system_key, is_active, created_at, updated_at",
+    )
     .single();
 
   return unwrapSupabase(data, error) as TransactionCategory;

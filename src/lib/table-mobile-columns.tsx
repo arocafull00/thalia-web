@@ -1,10 +1,12 @@
 "use client";
 
 import { format } from "date-fns";
+import { CalendarDays, PencilLine } from "lucide-react";
 
 import PatientMarketingBadge from "@/components/patients/components/list/patient-marketing-badge";
 import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import type { MobileCardColumn } from "@/components/ui/mobile-card-view";
+import { FINANCES_COPY } from "@/copy/finances-copy";
 import { PATIENTS_COPY } from "@/copy/patients-copy";
 import {
   appointmentStatusLabel,
@@ -287,6 +289,31 @@ export const transactionsMobileColumns: MobileCardColumn<Transaction>[] = [
     label: "Descripcion",
     priority: "secondary",
     render: (transaction) => transaction.description ?? "-",
+  },
+  {
+    key: "origin",
+    label: FINANCES_COPY.movements.origin,
+    priority: "secondary",
+    render: (transaction) => {
+      const Icon = transaction.appointment_id ? CalendarDays : PencilLine;
+      const label = transaction.appointment_id
+        ? FINANCES_COPY.movements.appointment
+        : FINANCES_COPY.movements.manual;
+
+      return (
+        <span
+          className="inline-flex items-center gap-1.5"
+          data-testid={
+            transaction.appointment_id
+              ? `transaction-appointment-${transaction.appointment_id}`
+              : undefined
+          }
+        >
+          <Icon className="size-3.5" aria-hidden="true" />
+          {label}
+        </span>
+      );
+    },
   },
   {
     key: "type",

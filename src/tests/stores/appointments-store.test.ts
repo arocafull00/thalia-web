@@ -16,6 +16,11 @@ import {
   APPOINTMENT_ID,
 } from "@/tests/mocks";
 
+const storeMocks = vi.hoisted(() => ({
+  fetchInventoryItems: vi.fn().mockResolvedValue(undefined),
+  refreshFinancesCaches: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     auth: { getSession: vi.fn() },
@@ -65,7 +70,15 @@ vi.mock("@/stores/dashboard-store", () => ({
 vi.mock("@/stores/inventory-store", () => ({
   useInventoryStore: {
     getState: vi.fn(() => ({
-      fetchInventoryItems: vi.fn().mockResolvedValue(undefined),
+      fetchInventoryItems: storeMocks.fetchInventoryItems,
+    })),
+  },
+}));
+
+vi.mock("@/stores/finances-store", () => ({
+  useFinancesStore: {
+    getState: vi.fn(() => ({
+      refreshCaches: storeMocks.refreshFinancesCaches,
     })),
   },
 }));
@@ -93,6 +106,7 @@ const end = new Date("2030-06-30T23:59:59Z");
 
 describe("appointments-store", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     useAppointmentsStore.setState(initialState);
   });
 
@@ -260,7 +274,26 @@ describe("appointments-store", () => {
       .updateAppointmentStatus(APPOINTMENT_ID, "completed");
 
     expect(result.status).toBe("completed");
+    expect(storeMocks.fetchInventoryItems).toHaveBeenCalledOnce();
+    expect(storeMocks.refreshFinancesCaches).toHaveBeenCalledOnce();
     expect(useAppointmentsStore.getState().updatingStatus).toBe(false);
     expect(useAppointmentsStore.getState().updateStatusError).toBeNull();
+  });
+
+  it("does not refresh inventory or finances for another status", async () => {
+    vi.mocked(appointmentsDal.updateAppointmentStatus).mockResolvedValue({
+      ...mockAppointment,
+      status: "confirmed",
+    } as never);
+    vi.mocked(appointmentsDal.getAppointment).mockResolvedValue(
+      mockAppointment as never,
+    );
+
+    await useAppointmentsStore
+      .getState()
+      .updateAppointmentStatus(APPOINTMENT_ID, "confirmed");
+
+    expect(storeMocks.fetchInventoryItems).not.toHaveBeenCalled();
+    expect(storeMocks.refreshFinancesCaches).not.toHaveBeenCalled();
   });
 });

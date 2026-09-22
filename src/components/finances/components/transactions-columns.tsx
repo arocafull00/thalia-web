@@ -1,8 +1,10 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { CalendarDays, PencilLine } from "lucide-react";
 
 import SortableTableHead from "@/components/ui/sortable-table-head";
+import { FINANCES_COPY } from "@/copy/finances-copy";
 import { formatCurrency, transactionTypeLabel } from "@/lib/format";
 import type { Transaction } from "@/types/database.types";
 
@@ -50,6 +52,31 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
       const leftDescription = (left.original.description ?? "").toLowerCase();
       const rightDescription = (right.original.description ?? "").toLowerCase();
       return leftDescription.localeCompare(rightDescription, "es");
+    },
+  },
+  {
+    id: "origin",
+    accessorFn: (transaction) => transaction.appointment_id ?? "",
+    header: FINANCES_COPY.movements.origin,
+    cell: ({ row }) => {
+      const Icon = row.original.appointment_id ? CalendarDays : PencilLine;
+      const label = row.original.appointment_id
+        ? FINANCES_COPY.movements.appointment
+        : FINANCES_COPY.movements.manual;
+
+      return (
+        <span
+          className="inline-flex items-center gap-1.5 text-ink-secondary"
+          data-testid={
+            row.original.appointment_id
+              ? `transaction-appointment-${row.original.appointment_id}`
+              : undefined
+          }
+        >
+          <Icon className="size-3.5" aria-hidden="true" />
+          {label}
+        </span>
+      );
     },
   },
   {

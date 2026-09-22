@@ -1,6 +1,7 @@
 "use client";
 
 import { Download, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FinancesCategoryBreakdown from "@/components/finances/components/finances-category-breakdown";
@@ -72,6 +73,7 @@ export default function FinancesPageClient({
   initialSummary,
   initialSummaryKey,
 }: FinancesPageClientProps) {
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTransactionId, setEditingTransactionId] = useState<
     string | null
@@ -219,6 +221,13 @@ export default function FinancesPageClient({
   };
 
   const handleRowActivate = (id: string) => {
+    const transaction = listData.find((item) => item.id === id);
+
+    if (transaction?.appointment_id) {
+      router.push(`/appointments/${transaction.appointment_id}`);
+      return;
+    }
+
     setEditingTransactionId(id);
     setDialogOpen(true);
   };

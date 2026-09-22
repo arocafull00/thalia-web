@@ -8,7 +8,7 @@ import {
   selectFirstAvailableAppointmentSlot,
 } from "./e2e-helpers";
 
-async function createAndGoToAppointmentDetail(page: Page): Promise<void> {
+async function createAndGoToAppointmentDetail(page: Page): Promise<string> {
   await page.goto("/appointments");
   await expect(page.getByTestId("appointments-page")).toBeVisible();
   await clickTopbarTrigger(page, "appointment-create-trigger");
@@ -53,6 +53,7 @@ async function createAndGoToAppointmentDetail(page: Page): Promise<void> {
   await expect(page.getByTestId("appointment-detail-page")).toBeVisible({
     timeout: 15_000,
   });
+  return appointmentId;
 }
 
 test("crea una cita y abre su detalle", async ({ page }) => {
@@ -155,4 +156,33 @@ test("elimina una cita nueva", async ({ page }) => {
     timeout: 15_000,
   });
   await expect(page).toHaveURL(/\/appointments$/, { timeout: 15_000 });
+});
+
+test("completa una cita y enlaza sus movimientos financieros", async ({
+  page,
+}) => {
+  const appointmentId = await createAndGoToAppointmentDetail(page);
+
+  await clickTopbarMenuAction(page, "Confirmar cita");
+  await expect(
+    page.getByTestId("appointment-detail-page").getByText("Confirmada").first(),
+  ).toBeVisible({ timeout: 15_000 });
+
+  await clickTopbarMenuAction(page, "Marcar como completada");
+  await expect(
+    page.getByTestId("appointment-detail-page").getByText("Completada").first(),
+  ).toBeVisible({ timeout: 15_000 });
+
+  await page.goto("/finances");
+  const appointmentOrigin = page.locator(
+    `[data-testid="transaction-appointment-${appointmentId}"]:visible`,
+  );
+  await expect(appointmentOrigin).toBeVisible({ timeout: 15_000 });
+  await expect(appointmentOrigin).toHaveText("Cita");
+
+  const transactionRow = page
+    .getByRole("row")
+    .filter({ has: appointmentOrigin });
+  await transactionRow.getByRole("button").first().click();
+  await expect(page).toHaveURL(new RegExp(`/appointments/${appointmentId}$`));
 });

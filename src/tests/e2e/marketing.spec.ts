@@ -156,24 +156,22 @@ test("crea una campaña y segmenta a los pacientes con consentimiento", async ({
   ).toContainText("Borrador");
 });
 
-test("no deja avanzar con 0 meses sin visitar", async ({ page }) => {
+test("acepta 0 meses sin visitar y rechaza un negativo", async ({ page }) => {
   await page.goto("/marketing");
   await clickTopbarTrigger(page, "campaign-create-trigger");
 
   const dialog = await fillCampaignWizard(page, {
     title: `E2E Cero ${Date.now()}`,
     content: "Mensaje de prueba.",
-    monthsSinceLastVisit: "0",
+    monthsSinceLastVisit: "-1",
   });
 
-  // El 0 se marca como error y el asistente no pasa al paso de revisión.
-  await expect(dialog.getByText("Debe ser 1 mes o más.")).toBeVisible();
+  await expect(dialog.getByText("No puede ser negativo.")).toBeVisible();
   await expect(page.getByTestId("campaign-create-next")).toBeDisabled();
-  await expect(dialog.getByText("Debe ser 1 mes o más.")).toBeVisible();
   await expect(page.getByTestId("campaign-create-submit")).toHaveCount(0);
 
-  // Corregido a 1, avanza.
-  await dialog.getByLabel(/No viene desde hace/).fill("1");
+  await dialog.getByLabel(/No viene desde hace/).fill("0");
+  await expect(dialog.getByText("No puede ser negativo.")).toHaveCount(0);
   await page.getByTestId("campaign-create-next").click();
   await expect(page.getByTestId("campaign-create-submit")).toBeVisible();
 });

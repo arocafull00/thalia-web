@@ -66,7 +66,7 @@ export default function CampaignSegmentFields({
           ))}
         </select>
       </label>
-      {numericField("monthsSinceLastVisit", fields.monthsSinceLastVisit, 1)}
+      {numericField("monthsSinceLastVisit", fields.monthsSinceLastVisit, 0)}
       <div className="grid gap-4 sm:grid-cols-2">
         {numericField("minVisits", fields.minVisits, 0)}
         {numericField("maxVisits", fields.maxVisits, 0)}

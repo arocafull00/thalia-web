@@ -123,10 +123,18 @@ describe("buildCampaignSegmentFilters", () => {
     ).toThrow();
   });
 
-  it("rechaza meses sin visitar en cero o negativos", () => {
+  it("acepta 0 meses sin visitar", () => {
+    const filters = buildCampaignSegmentFilters([
+      segment("last_visit_date", { months_since_last_visit: 0 }),
+    ]);
+
+    expect(filters.monthsSinceLastVisit).toBe(0);
+  });
+
+  it("rechaza meses sin visitar negativos", () => {
     expect(() =>
       buildCampaignSegmentFilters([
-        segment("last_visit_date", { months_since_last_visit: 0 }),
+        segment("last_visit_date", { months_since_last_visit: -1 }),
       ]),
     ).toThrow();
   });
@@ -155,15 +163,23 @@ describe("parseCampaignSegmentInputs", () => {
     expect(result.filters).toEqual(EMPTY_CAMPAIGN_SEGMENT_FILTERS);
   });
 
-  // El bug: un 0 se colaba como filtro y la condición SQL pasaba a incluir a
-  // cualquiera que hubiese venido alguna vez.
-  it("rechaza 0 meses sin visitar y no lo deja pasar al filtro", () => {
+  it("acepta 0 meses sin visitar", () => {
     const result = parseCampaignSegmentInputs(
       inputs({ monthsSinceLastVisit: "0" }),
     );
 
+    expect(result.isValid).toBe(true);
+    expect(result.errors.monthsSinceLastVisit).toBeUndefined();
+    expect(result.filters.monthsSinceLastVisit).toBe(0);
+  });
+
+  it("rechaza meses sin visitar negativos", () => {
+    const result = parseCampaignSegmentInputs(
+      inputs({ monthsSinceLastVisit: "-1" }),
+    );
+
     expect(result.isValid).toBe(false);
-    expect(result.errors.monthsSinceLastVisit).toBeDefined();
+    expect(result.errors.monthsSinceLastVisit).toBe("No puede ser negativo.");
     expect(result.filters.monthsSinceLastVisit).toBeNull();
   });
 
@@ -264,10 +280,15 @@ describe("buildSegmentsFromFilters", () => {
     const segments = buildSegmentsFromFilters({
       ...EMPTY_CAMPAIGN_SEGMENT_FILTERS,
       minVisits: 0,
+      monthsSinceLastVisit: 0,
     });
 
     expect(segments).toEqual([
       { segment_type: "visit_count", config: { min_visits: 0 } },
+      {
+        segment_type: "last_visit_date",
+        config: { months_since_last_visit: 0 },
+      },
     ]);
   });
 

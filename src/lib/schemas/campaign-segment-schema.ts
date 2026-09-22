@@ -43,7 +43,7 @@ const lastVisitDateConfigSchema = z.object({
   months_since_last_visit: z.coerce
     .number({ message: "Los meses sin visitar no son válidos." })
     .int("Los meses sin visitar deben ser un número entero.")
-    .positive("Los meses sin visitar deben ser mayores que cero.")
+    .nonnegative("Los meses sin visitar no pueden ser negativos.")
     .max(120, "Los meses sin visitar son demasiados."),
 });
 
@@ -178,13 +178,10 @@ const NUMERIC_RULES: Record<
   Exclude<keyof CampaignSegmentInputs, "treatmentId">,
   NumericFieldRule
 > = {
-  // Mínimo 1: con 0 la condición SQL queda "última visita anterior a ahora",
-  // que incluye a cualquiera que haya venido alguna vez. El filtro dejaría de
-  // filtrar sin dar ningún error.
   monthsSinceLastVisit: {
-    min: 1,
+    min: 0,
     max: 120,
-    belowMinMessage: "Debe ser 1 mes o más.",
+    belowMinMessage: "No puede ser negativo.",
     invalidMessage: "Los meses sin visitar no son válidos.",
     aboveMaxMessage: "Como máximo 120 meses.",
   },
@@ -247,9 +244,7 @@ function parseNumericField(raw: string, rule: NumericFieldRule): ParsedField {
 /**
  * Valida lo que se escribe en el editor y produce los filtros de la consulta.
  *
- * Un campo inválido no aporta valor a los filtros: así un error de escritura
- * nunca llega al DAL convertido en un filtro que no filtra, que es justo lo que
- * pasaba escribiendo 0 en "no viene desde hace meses".
+ * Un campo inválido no aporta valor a los filtros.
  */
 export function parseCampaignSegmentInputs(inputs: CampaignSegmentInputs): {
   filters: CampaignSegmentFilters;

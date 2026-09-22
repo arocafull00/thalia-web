@@ -58,14 +58,14 @@ export default function DashboardPageClient({
 
   return (
     <div data-testid="dashboard-page" className="flex min-h-0 flex-1 flex-col">
-      <PageCard>
-        <div className="space-y-8 pt-3.5">
+      <PageCard fill>
+        <div className="flex min-h-0 flex-1 flex-col gap-8 overflow-hidden pt-3.5">
           <DashboardHeader
             firstName={firstName}
             appointmentsCount={appointments.length}
             confirmedCount={confirmedCount}
           />
-          <div className="grid gap-8 xl:grid-cols-[1.8fr_1fr] xl:items-start">
+          <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-8 xl:grid-cols-[1.8fr_1fr]">
             <DashboardAgenda
               appointments={agendaAppointments}
               isLoading={isLoading && !data}

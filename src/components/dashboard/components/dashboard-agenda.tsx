@@ -18,8 +18,8 @@ export default function DashboardAgenda({
   error,
 }: DashboardAgendaProps) {
   return (
-    <section className="space-y-6">
-      <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+    <section className="flex min-h-0 flex-col gap-6 overflow-hidden">
+      <div className="flex shrink-0 items-center justify-between border-b border-border-subtle pb-3">
         <h2>{DASHBOARD_COPY.agenda.title}</h2>
         <Link
           href="/calendar"
@@ -28,7 +28,7 @@ export default function DashboardAgenda({
           {DASHBOARD_COPY.agenda.viewCalendar}
         </Link>
       </div>
-      <div className="max-h-96 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         {isLoading ? (
           <SkeletonList count={3} />
         ) : error ? (

@@ -19,9 +19,6 @@ export const LOGIN_COPY = {
   },
   divider: "O continúa con",
   google: "Continuar con Google",
-  install: {
-    ariaLabel: "Instalar la aplicación Thalia en este dispositivo",
-  },
   supabaseWarning:
     "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
   footer: {

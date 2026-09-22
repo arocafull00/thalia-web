@@ -5,11 +5,10 @@ import { notFound, useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import CampaignDetailHeader from "@/components/marketing/components/detail/campaign-detail-header";
-import CampaignDetailImage from "@/components/marketing/components/detail/campaign-detail-image";
+import CampaignDetailMessagePreview from "@/components/marketing/components/detail/campaign-detail-message-preview";
 import CampaignReachSummary from "@/components/marketing/components/detail/campaign-reach-summary";
 import CampaignRecipientsList from "@/components/marketing/components/detail/campaign-recipients-list";
 import CampaignFormDialog from "@/components/marketing/components/form/campaign-form-dialog";
-import CampaignMessagePreview from "@/components/marketing/components/form/campaign-message-preview";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import AppConfirmDialog from "@/components/ui/app-confirm-dialog";
 import PageSurface from "@/components/ui/page-surface";
@@ -152,34 +151,39 @@ export default function CampaignDetailPageClient() {
   return (
     <div
       data-testid="campaign-detail-page"
-      className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog"
+      className="surface-card-glass no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto rounded-dialog lg:overflow-hidden"
     >
-      <CampaignDetailHeader campaign={campaign} />
-      <div className="flex flex-col gap-8 px-4 pb-8 lg:px-8">
-        {sendError ? <Notice tone="danger" message={sendError} /> : null}
-        {/* Imagen y mensaje en columnas a partir de lg: apilados obligaban a
-            bajar hasta los destinatarios en cualquier pantalla de escritorio. */}
-        <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
-          {campaign.image_url ? (
-            <CampaignDetailImage storageKey={campaign.image_url} />
-          ) : null}
-          {/* Sin imagen: aquí ya tiene columna propia y duplicarla dentro de
-              la burbuja sólo repetiría lo mismo al lado. */}
-          <CampaignMessagePreview
-            content={campaign.content}
-            footerText={campaign.footer_text ?? ""}
-            footerWebsite={campaign.footer_website ?? ""}
-            footerPhone={campaign.footer_phone ?? ""}
-            imageUrl={null}
-          />
-          <section className="space-y-3">
-            <h2 className="text-sm font-medium text-ink">
+      <div className="shrink-0 border-b border-border-subtle px-4 py-6 lg:px-8">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
+          <CampaignDetailHeader campaign={campaign} />
+          <CampaignReachSummary recipients={recipients} />
+        </div>
+      </div>
+      {sendError ? (
+        <div className="shrink-0 px-4 pt-4 lg:px-8">
+          <Notice tone="danger" message={sendError} />
+        </div>
+      ) : null}
+      <div className="grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,2fr)_minmax(28rem,3fr)]">
+        <section className="border-b border-border-subtle px-4 py-6 lg:min-h-0 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:px-8">
+          <h2 className="text-base font-medium text-ink">
+            {detail.sections.message}
+          </h2>
+          <div className="mt-5">
+            <CampaignDetailMessagePreview campaign={campaign} />
+          </div>
+        </section>
+        <section className="flex min-h-0 flex-col px-4 py-6 lg:px-8">
+          <div className="mb-4 flex shrink-0 items-baseline justify-between gap-4">
+            <h2 className="text-base font-medium text-ink">
               {detail.sections.recipients}
             </h2>
-            <CampaignReachSummary recipients={recipients} />
-            <CampaignRecipientsList recipients={recipients} />
-          </section>
-        </div>
+            <p className="text-sm tabular-nums text-ink-muted">
+              {detail.recipientCount(recipients.length)}
+            </p>
+          </div>
+          <CampaignRecipientsList recipients={recipients} />
+        </section>
       </div>
       {isDraft ? (
         <CampaignFormDialog

@@ -34,12 +34,12 @@ export default function LoginRegisterSlider({
         registerTabId={registerTabId}
       />
       <div
-        className="mt-6 overflow-hidden transition-[height] duration-300 ease-out motion-reduce:transition-none"
+        className="mt-6 overflow-hidden transition-[height] duration-[var(--duration-fast)] ease-[var(--ease-smooth-out)] motion-reduce:transition-none"
         style={height > 0 ? { height } : undefined}
       >
         <div
           className={cn(
-            "flex w-[200%] items-start transition-transform duration-300 ease-out motion-reduce:transition-none",
+            "flex w-[200%] items-start transition-transform duration-[var(--duration-fast)] ease-[var(--ease-smooth-out)] motion-reduce:transition-none",
             mode === "register" && "-translate-x-1/2",
           )}
         >

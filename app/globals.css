@@ -40,6 +40,9 @@
   --danger-subtle: var(--danger);
   --hover-overlay: color-mix(in srgb, var(--primary) 7%, transparent);
   --disabled-opacity: 0.45;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
   /* Halo homogéneo en los cuatro lados, sin dirección de luz. */
   --shadow-float:
     0 0 20px rgba(28, 48, 44, 0.055), 0 0 2px rgba(28, 48, 44, 0.04);
@@ -50,11 +53,8 @@
   /* Colapso del sidebar. Los comparten el hueco reservado, el panel, el logo y
      las etiquetas: si cualquiera de ellos usa otra curva o duración, las piezas
      llegan desacompasadas y el movimiento se ve a saltos. */
-  --sidebar-duration: 260ms;
-  /* Retardo entre etiqueta y etiqueta al expandir, para que el menú aparezca
-     en cascada de arriba abajo en vez de todo a la vez. */
-  --sidebar-stagger: 20ms;
-  --sidebar-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --sidebar-duration: var(--duration-fast);
+  --sidebar-ease: var(--ease-smooth-out);
 
   /* Filete del marco: lo comparten la navbar y el sidebar, las dos únicas
      superficies opacas que quedan. En un sitio para no tener que acordarse de
@@ -223,6 +223,74 @@
     opacity: 1;
   }
 }
+
+@keyframes motionSurfaceIn {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes motionSurfaceOut {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 0.99;
+  }
+}
+
+@keyframes motionDialogIn {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes motionDialogOut {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+.motion-surface:is([data-open], [data-state="open"]) {
+  animation: motionSurfaceIn var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+.motion-surface:is([data-closed], [data-state="closed"]) {
+  animation: motionSurfaceOut var(--duration-quick) var(--ease-smooth-out) both;
+}
+
+.motion-dialog[data-state="open"] {
+  animation: motionDialogIn var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+.motion-dialog[data-state="closed"] {
+  animation: motionDialogOut var(--duration-quick) var(--ease-smooth-out) both;
+}
+
+.motion-dialog-overlay[data-state="open"] {
+  animation: overlayIn var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+.motion-dialog-overlay[data-state="closed"] {
+  animation: overlayOut var(--duration-quick) var(--ease-smooth-out) both;
+}
 @keyframes overlayOut {
   from {
     opacity: 1;
@@ -361,6 +429,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .motion-surface,
+  .motion-dialog,
+  .motion-dialog-overlay {
+    animation: none !important;
+    scale: 1;
+  }
+
   .loader-motion,
   .loader-motion::before,
   .loader-motion::after {
@@ -705,7 +780,6 @@ input[type="search"],
 
   :root {
     --sidebar-duration: 0ms;
-    --sidebar-stagger: 0ms;
   }
 
   [data-open].animate-in,

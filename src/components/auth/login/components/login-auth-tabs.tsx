@@ -29,7 +29,7 @@ export default function LoginAuthTabs({
       <span
         aria-hidden="true"
         className={cn(
-          "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-lg border border-border bg-surface shadow-sm transition-transform duration-300 ease-out motion-reduce:transition-none",
+          "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-lg border border-border bg-surface shadow-sm transition-transform duration-[var(--duration-fast)] ease-[var(--ease-smooth-out)] motion-reduce:transition-none",
           mode === "register" && "translate-x-full",
         )}
       />

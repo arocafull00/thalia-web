@@ -9,6 +9,7 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type CSSProperties, type ReactNode, useState } from "react";
@@ -41,7 +42,6 @@ type DataTableProps<TData, TValue> = {
   initialSorting?: SortingState;
   getRowHref?: (row: TData) => string | undefined;
   onRowActivate?: (row: TData) => void;
-  clickableRow?: boolean;
   getRowStyle?: (row: TData) => CSSProperties | undefined;
   pageSize?: number;
   manualPagination?: {
@@ -61,7 +61,6 @@ function wrapPrimaryCellContent<TData>(
   row: TData,
   getRowHref: DataTableProps<TData, unknown>["getRowHref"],
   onRowActivate: DataTableProps<TData, unknown>["onRowActivate"],
-  clickableRow: boolean,
 ) {
   const href = getRowHref?.(row);
   if (href) {
@@ -69,9 +68,7 @@ function wrapPrimaryCellContent<TData>(
       <Link
         href={href}
         className={rowPrimaryControlClassName}
-        onClick={
-          clickableRow ? (event) => event.stopPropagation() : undefined
-        }
+        onClick={(event) => event.stopPropagation()}
       >
         {content}
       </Link>
@@ -86,7 +83,7 @@ function wrapPrimaryCellContent<TData>(
     <button
       type="button"
       onClick={(event) => {
-        if (clickableRow) event.stopPropagation();
+        event.stopPropagation();
         onRowActivate(row);
       }}
       className={rowPrimaryControlClassName}
@@ -105,7 +102,6 @@ export function DataTable<TData, TValue>({
   initialSorting = EMPTY_SORTING,
   getRowHref,
   onRowActivate,
-  clickableRow = false,
   getRowStyle,
   pageSize = 10,
   manualPagination,
@@ -217,12 +213,12 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   className={
                     rowInteractive
-                      ? `table-row-wash${clickableRow ? " cursor-pointer" : ""}`
+                      ? "table-row-wash cursor-pointer"
                       : "hover:bg-transparent"
                   }
                   style={getRowStyle?.(row.original)}
                   onClick={
-                    clickableRow
+                    rowInteractive
                       ? () => {
                           const href = getRowHref?.(row.original);
                           if (href) {
@@ -253,7 +249,6 @@ export function DataTable<TData, TValue>({
                               row.original,
                               getRowHref,
                               onRowActivate,
-                              clickableRow,
                             )
                           : cellContent}
                       </TableCell>
@@ -296,6 +291,7 @@ export function DataTable<TData, TValue>({
                   : table.previousPage()
               }
             >
+              <ChevronLeft aria-hidden="true" />
               Anterior
             </Button>
             <Button
@@ -312,6 +308,7 @@ export function DataTable<TData, TValue>({
               }
             >
               Siguiente
+              <ChevronRight aria-hidden="true" />
             </Button>
           </div>
         </div>

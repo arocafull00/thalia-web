@@ -21,10 +21,10 @@ export async function expectSearchParam(
 }
 
 /*
- * La fila ya no navega entera: `DataTable` envuelve en un enlace únicamente la
- * celda principal (`getRowHref`), así que hay que pinchar ese enlace. Se busca
- * por nombre y no con `.first()` porque la fila lleva un segundo enlace, el de
- * la acción «Ver detalle», y el orden del DOM no es algo en lo que apoyarse.
+ * La fila navega entera y la celda principal es además un enlace. Se pincha
+ * ese enlace, por nombre y no con `.first()`, porque la fila lleva un segundo
+ * enlace, el de la acción «Ver detalle», y el orden del DOM no es algo en lo
+ * que apoyarse.
  */
 export async function openRowDetail(page: Page, name: string | RegExp) {
   const row = page.getByRole("table").getByRole("row", { name });

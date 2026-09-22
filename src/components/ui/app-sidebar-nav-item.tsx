@@ -2,7 +2,8 @@
 
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import AppSidebarNavPending from "@/components/ui/app-sidebar-nav-pending";
 import AppSidebarNavSubmenu from "@/components/ui/app-sidebar-nav-submenu";
@@ -19,8 +20,6 @@ type AppSidebarNavItemProps = {
   active: boolean;
   pathname: string;
   onNavigate: () => void;
-  /** Posición en el menú completo; marca su turno en la cascada al expandir. */
-  index: number;
 };
 
 export default function AppSidebarNavItem({
@@ -28,9 +27,8 @@ export default function AppSidebarNavItem({
   active,
   pathname,
   onNavigate,
-  index,
 }: AppSidebarNavItemProps) {
-  const [prefetch, setPrefetch] = useState(false);
+  const router = useRouter();
   const { state, setOpen } = useSidebar();
   const collapsed = state === "collapsed";
   const hasSubmenu = Boolean(item.subItems?.length);
@@ -53,22 +51,10 @@ export default function AppSidebarNavItem({
     setSubmenuOpenOverride(!submenuOpen);
   };
 
-  /*
-   * El retardo vive en el estado expandido, no en el colapsado, porque una
-   * transición usa las propiedades del estado al que va: así la cascada se ve
-   * al abrir y al cerrar las etiquetas se van todas a la vez. Escalonar el
-   * cierre las dejaría con ancho durante su espera y descentraría los iconos.
-   */
-  const staggerStyle = {
-    "--label-delay": `calc(var(--sidebar-stagger) * ${index})`,
-  } as CSSProperties;
-
   const labelClassName = cn(
     "overflow-hidden whitespace-nowrap transition-[opacity,width]",
     "duration-[var(--sidebar-duration)] ease-[var(--sidebar-ease)]",
-    "[transition-delay:var(--label-delay)]",
     "group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0",
-    "group-data-[collapsible=icon]:[transition-delay:0ms]",
   );
 
   const buttonClassName = cn(
@@ -98,7 +84,7 @@ export default function AppSidebarNavItem({
           onClick={handleSubmenuToggle}
         >
           {item.icon}
-          <span className={labelClassName} style={staggerStyle}>
+          <span className={labelClassName}>
             {item.label}
           </span>
           <ChevronRight
@@ -133,12 +119,12 @@ export default function AppSidebarNavItem({
         <Link
           href={item.href}
           onClick={onNavigate}
-          onMouseEnter={() => setPrefetch(true)}
-          prefetch={prefetch ? "auto" : false}
+          onMouseEnter={() => router.prefetch(item.href)}
+          prefetch={false}
           className="flex items-center gap-3"
         >
           {item.icon}
-          <span className={labelClassName} style={staggerStyle}>
+          <span className={labelClassName}>
             {item.label}
           </span>
           <AppSidebarNavPending />

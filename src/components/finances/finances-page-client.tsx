@@ -345,10 +345,10 @@ export default function FinancesPageClient({
               entra y lo que sale. En pantallas estrechas se apilan.
             */}
             <div className="grid gap-4 py-4 lg:grid-cols-3">
-              <div className="rounded-card border border-primary bg-surface p-4">
+              <div className="rounded-card border border-primary/25 bg-surface p-4">
                 <FinancesWeeklyBreakdown weekly={summary.data.weekly} />
               </div>
-              <div className="rounded-card border border-primary bg-surface p-4">
+              <div className="rounded-card border border-primary/25 bg-surface p-4">
                 <FinancesCategoryBreakdown
                   items={categoryBreakdown}
                   type={breakdownType}
@@ -358,7 +358,7 @@ export default function FinancesPageClient({
                   onManageCategories={() => setCategoryManagerOpen(true)}
                 />
               </div>
-              <div className="rounded-card border border-primary bg-surface p-4">
+              <div className="rounded-card border border-primary/25 bg-surface p-4">
                 <FinancesIncomeExpenseRatio
                   income={summary.data.income}
                   expenses={summary.data.expenses}

@@ -1,23 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import CampaignFormDialog from "@/components/marketing/components/form/campaign-form-dialog";
-import CampaignImageDialog from "@/components/marketing/components/list/campaign-image-dialog";
 import CampaignsEmptyState from "@/components/marketing/components/list/campaigns-empty-state";
 import CampaignsFilters from "@/components/marketing/components/list/campaigns-filters";
 import CampaignsFiltersSheet from "@/components/marketing/components/list/campaigns-filters-sheet";
-import CampaignsTable from "@/components/marketing/components/list/campaigns-table";
+import CampaignsGallery from "@/components/marketing/components/list/campaigns-gallery";
+import CampaignsGallerySkeleton from "@/components/marketing/components/list/campaigns-gallery-skeleton";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { Notice } from "@/components/ui/primitives/notice";
-import {
-  PAGE_LIST_SKELETON_ROWS,
-  SkeletonList,
-} from "@/components/ui/primitives/skeleton-list";
 import type { CampaignPageResult } from "@/dal/campaigns.dal";
 import type { CampaignQuota } from "@/lib/campaign-limits";
 import { CAMPAIGNS_PAGE_SIZE } from "@/lib/campaign-pagination";
@@ -49,17 +44,13 @@ export default function MarketingPageClient({
   initialQuery,
   initialQuota,
 }: MarketingPageClientProps) {
-  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [imageKey, setImageKey] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetKey, setSheetKey] = useState(0);
   const { filters, setFilter, setFilters } = useUrlFilters(
     MARKETING_FILTER_DEFAULTS,
   );
 
-  // Cualquier cambio de filtro, búsqueda incluida, vuelve a la página 1:
-  // quedarse en la 5 tras filtrar deja la tabla vacía sin explicar por qué.
   const setFilterAndResetPage = useCallback(
     (key: string, value: string) => {
       setFilters({ [key]: value, page: "" });
@@ -104,15 +95,25 @@ export default function MarketingPageClient({
     [treatments.data],
   );
 
-  const showEmptyState = !campaigns.isLoading && !hasCampaigns;
+  const showEmptyState =
+    !campaigns.isLoading && !campaigns.error && !hasCampaigns;
 
   const handleCancelCreate = () => {
     dialog.reset();
     setDialogOpen(false);
   };
 
-  // Estable para que las columnas no se reconstruyan en cada render.
-  const handleOpenImage = useCallback((key: string) => setImageKey(key), []);
+  const handleCreate = () => {
+    if (quota.data?.reached) {
+      toast.error(MARKETING_COPY.limits.sentLimitReached);
+      return;
+    }
+
+    setDialogOpen(true);
+  };
+
+  const handleClearFilters = () =>
+    setFilters({ q: "", status: "", from: "", to: "", page: "" });
 
   // La clave remonta la hoja para que abra siempre con los filtros vigentes.
   const handleOpenFiltersSheet = () => {
@@ -123,14 +124,7 @@ export default function MarketingPageClient({
   useTopbarAction({
     title: MARKETING_COPY.actions.create,
     testId: "campaign-create-trigger",
-    onClick: () => {
-      if (quota.data?.reached) {
-        toast.error(MARKETING_COPY.limits.sentLimitReached);
-        return;
-      }
-
-      setDialogOpen(true);
-    },
+    onClick: handleCreate,
   });
 
   return (
@@ -153,17 +147,15 @@ export default function MarketingPageClient({
           ) : null
         }
       >
-        {campaigns.isLoading ? (
-          <SkeletonList count={PAGE_LIST_SKELETON_ROWS} />
-        ) : null}
+        {campaigns.isLoading ? <CampaignsGallerySkeleton /> : null}
         {campaigns.error ? (
           <Notice tone="danger" message={MARKETING_COPY.page.loadError} />
         ) : null}
         {showEmptyState ? <CampaignsEmptyState /> : null}
-        {!campaigns.isLoading && hasCampaigns ? (
-          <CampaignsTable
+        {!campaigns.isLoading && !campaigns.error && hasCampaigns ? (
+          <CampaignsGallery
             campaigns={campaigns.campaigns}
-            onOpenImage={handleOpenImage}
+            onClearFilters={handleClearFilters}
             pagination={{
               pageIndex,
               pageSize: CAMPAIGNS_PAGE_SIZE,
@@ -193,19 +185,7 @@ export default function MarketingPageClient({
         onClear={() => setFilters({ status: "", from: "", to: "", page: "" })}
         onDismiss={() => setSheetOpen(false)}
       />
-      <CampaignImageDialog
-        storageKey={imageKey}
-        open={imageKey !== null}
-        onOpenChange={(next) => {
-          if (!next) {
-            setImageKey(null);
-          }
-        }}
-      />
-      <MobileFab
-        label={MARKETING_COPY.actions.create}
-        onClick={() => setDialogOpen(true)}
-      />
+      <MobileFab label={MARKETING_COPY.actions.create} onClick={handleCreate} />
     </div>
   );
 }

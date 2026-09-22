@@ -1,14 +1,12 @@
 "use client";
 
-import { Bell, Download, MoreVertical, Plus } from "lucide-react";
+import { Bell, MoreVertical, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import ClinicInvitationDialog from "@/components/notifications/components/clinic-invitation-dialog";
-import PwaInstallDialog from "@/components/pwa/components/pwa-install-dialog";
-import { usePwaInstall } from "@/components/pwa/hooks/use-pwa-install";
 import AppDialog from "@/components/ui/app-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -29,7 +27,6 @@ import ProfileActionsMenu from "@/components/ui/profile/profile-actions-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import TopbarClinicSelector from "@/components/ui/topbar-clinic-selector";
 import { NOTIFICATIONS_COPY } from "@/copy/external-appointment-copy";
-import { PWA_INSTALL_COPY } from "@/copy/pwa-install-copy";
 import { TOPBAR_COPY } from "@/copy/topbar-copy";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import type { PendingClinicRequest } from "@/lib/clinic-requests";
@@ -69,7 +66,6 @@ export default function AppTopbar() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [selectedInvitation, setSelectedInvitation] =
     useState<PendingClinicRequest | null>(null);
-  const [pwaInstallOpen, setPwaInstallOpen] = useState(false);
   const {
     accountType,
     clinicTimezone: timezone,
@@ -93,7 +89,6 @@ export default function AppTopbar() {
       markAsRead: state.markAsRead,
     })),
   );
-  const { canPromptInstall, handleInstall, showInstallCta } = usePwaInstall();
   const {
     notifications,
     unreadCount: clinicUnreadCount,
@@ -134,15 +129,6 @@ export default function AppTopbar() {
   const hasOverflowMenu =
     menu?.sections.some((section) => section.actions.length > 0) ?? false;
 
-  const handlePwaInstallClick = () => {
-    if (canPromptInstall) {
-      void handleInstall();
-      return;
-    }
-
-    setPwaInstallOpen(true);
-  };
-
   const handleNotificationsClick = () => {
     setNotificationsOpen(true);
     const clinicId = getActiveClinicId();
@@ -167,10 +153,10 @@ export default function AppTopbar() {
   };
 
   /*
-   * En móvil no caben la campana, el CTA de instalar y los botones de la
-   * pantalla junto al título: se apilaban y partían la barra en dos filas. Se
-   * refunden en un único menú de tres puntos, como el de las filas de tabla.
-   * El selector de clínica se queda fuera: tiene su propia fila.
+   * En móvil no caben la campana y los botones de la pantalla junto al
+   * título: se apilaban y partían la barra en dos filas. Se refunden en un
+   * único menú de tres puntos, como el de las filas de tabla. El selector de
+   * clínica se queda fuera: tiene su propia fila.
    */
   const mobileMenuSections = useMemo<ProfileActionSection[]>(() => {
     const appActions: ProfileAction[] = [
@@ -181,15 +167,6 @@ export default function AppTopbar() {
         testId: "topbar-notifications-mobile",
       },
     ];
-
-    if (showInstallCta) {
-      appActions.push({
-        label: PWA_INSTALL_COPY.installButton,
-        icon: Download,
-        onClick: handlePwaInstallClick,
-        testId: "pwa-install-topbar-mobile",
-      });
-    }
 
     const pageActions: ProfileAction[] = topbarActions
       // `desktopOnly` deja de ser decorativo: lo que se marque así no baja al
@@ -216,7 +193,6 @@ export default function AppTopbar() {
     canSeeInventoryAlerts,
     combinedUnreadCount,
     menu,
-    showInstallCta,
     topbarActions,
   ]);
 
@@ -293,16 +269,6 @@ export default function AppTopbar() {
                 </Badge>
               ) : null}
             </Button>
-            {showInstallCta ? (
-              <ActionButton
-                title={PWA_INSTALL_COPY.installButton}
-                icon={Download}
-                variant="ghost"
-                testId="pwa-install-topbar"
-                onClick={handlePwaInstallClick}
-                className="control-chip h-[38px] rounded-button text-[13.5px]"
-              />
-            ) : null}
             {topbarActions.map((topbarAction, index) => (
               <ActionButton
                 key={`${topbarAction.testId ?? topbarAction.title}-${index}`}
@@ -335,7 +301,7 @@ export default function AppTopbar() {
               ariaLabel={TOPBAR_COPY.moreActions}
               className="control-chip size-[38px] rounded-button text-ink-secondary hover:text-ink"
               // El mínimo por defecto son 8rem y ahí parten en dos líneas
-              // etiquetas como «Instalar Thalia» o «Editar paciente».
+              // etiquetas como «Editar paciente».
               contentClassName="min-w-56"
             />
             {combinedUnreadCount > 0 ? (
@@ -379,10 +345,6 @@ export default function AppTopbar() {
           onClose={() => setSelectedInvitation(null)}
         />
       ) : null}
-      <PwaInstallDialog
-        open={pwaInstallOpen}
-        onOpenChange={setPwaInstallOpen}
-      />
     </header>
   );
 }

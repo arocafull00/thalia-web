@@ -15,7 +15,7 @@ export default function CampaignDateCell({ campaign }: CampaignDateCellProps) {
 
   if (campaign.status === "scheduled" && campaign.scheduled_at) {
     return (
-      <span className="text-sm text-ink-secondary">
+      <span className="text-xs text-ink-secondary">
         {list.scheduledFor} {formatDate(campaign.scheduled_at)}
       </span>
     );
@@ -23,14 +23,14 @@ export default function CampaignDateCell({ campaign }: CampaignDateCellProps) {
 
   if (campaign.status === "sent" && campaign.sent_at) {
     return (
-      <span className="text-sm text-ink-secondary">
+      <span className="text-xs text-ink-secondary">
         {list.sentOn} {formatDate(campaign.sent_at)}
       </span>
     );
   }
 
   return (
-    <span className="text-sm text-ink-muted">
+    <span className="text-xs text-ink-muted">
       {list.createdOn} {formatDate(campaign.created_at)}
     </span>
   );

@@ -8,6 +8,7 @@ type PageCardProps = {
   filters?: ReactNode;
   /** Pie fijado al borde inferior, fuera del área de scroll. */
   footer?: ReactNode;
+  fill?: boolean;
 };
 
 /**
@@ -17,7 +18,12 @@ type PageCardProps = {
  * Los elementos `fixed` de la pantalla (el FAB móvil) van FUERA de esta
  * tarjeta: `overflow-hidden` los recortaría al recortar el radio.
  */
-export default function PageCard({ children, filters, footer }: PageCardProps) {
+export default function PageCard({
+  children,
+  filters,
+  footer,
+  fill = false,
+}: PageCardProps) {
   return (
     <div className="surface-card-glass relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-dialog">
       {/*
@@ -30,9 +36,15 @@ export default function PageCard({ children, filters, footer }: PageCardProps) {
       {filters ? (
         <PageStickyFiltersSection>{filters}</PageStickyFiltersSection>
       ) : null}
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
-        <div className="space-y-4 px-3.5 pb-3.5">{children}</div>
-      </div>
+      {fill ? (
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3.5 pb-3.5">
+          {children}
+        </div>
+      ) : (
+        <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
+          <div className="space-y-4 px-3.5 pb-3.5">{children}</div>
+        </div>
+      )}
       {footer}
     </div>
   );

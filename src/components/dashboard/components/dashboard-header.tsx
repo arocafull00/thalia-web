@@ -16,7 +16,7 @@ export default function DashboardHeader({
   confirmedCount,
 }: DashboardHeaderProps) {
   return (
-    <header className="space-y-6 lg:space-y-0">
+    <header className="shrink-0 space-y-6 lg:space-y-0">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-row lg:items-end lg:gap-8">
           <div className="min-w-0">

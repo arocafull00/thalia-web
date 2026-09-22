@@ -9,6 +9,7 @@ type CampaignMessagePreviewProps = {
   footerPhone: string;
   /** URL efímera de la imagen elegida; null si la campaña no lleva. */
   imageUrl: string | null;
+  variant?: "editor" | "detail";
 };
 
 /**
@@ -24,6 +25,7 @@ export default function CampaignMessagePreview({
   footerWebsite,
   footerPhone,
   imageUrl,
+  variant = "editor",
 }: CampaignMessagePreviewProps) {
   const footerParts = [
     footerText.trim(),
@@ -38,37 +40,61 @@ export default function CampaignMessagePreview({
   const trimmedContent = content.trim();
 
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium text-ink">
-        {createDialog.sections.preview}
-      </h3>
+    <div className={variant === "detail" ? "w-full" : "space-y-2"}>
+      {variant === "editor" ? (
+        <h3 className="text-sm font-medium text-ink">
+          {createDialog.sections.preview}
+        </h3>
+      ) : null}
       {/* Un solo fondo: el contenedor exterior. La burbuja interior tenía el
           suyo propio y se veían dos superficies anidadas. */}
-      <div className="rounded-2xl bg-surface-secondary p-4">
-        <div data-testid="campaign-message-preview" className="max-w-sm">
+      <div
+        className={
+          variant === "detail"
+            ? "mx-auto max-w-md overflow-hidden rounded-2xl bg-surface-secondary"
+            : "rounded-2xl bg-surface-secondary p-4"
+        }
+      >
+        <div data-testid="campaign-message-preview" className="w-full">
           {imageUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={imageUrl}
               alt={messagePreview.imageAlt}
-              data-testid="campaign-message-preview-image"
-              className="mb-2 max-h-64 w-full rounded-xl object-contain"
+              data-testid={
+                variant === "detail"
+                  ? "campaign-detail-image"
+                  : "campaign-message-preview-image"
+              }
+              className={
+                variant === "detail"
+                  ? "block h-auto w-full"
+                  : "mb-2 max-h-64 w-full rounded-xl object-contain"
+              }
             />
           ) : null}
-          {trimmedContent ? (
-            <p className="whitespace-pre-wrap text-sm text-ink">
-              {trimmedContent}
-            </p>
-          ) : (
-            <p className="text-sm italic text-ink-muted">
-              {messagePreview.empty}
-            </p>
-          )}
-          {footerParts.length > 0 ? (
-            <p className="mt-3 border-t border-border-subtle pt-2 text-xs text-ink-secondary">
-              {footerParts.join(" · ")}
-            </p>
-          ) : null}
+          <div className={variant === "detail" ? "px-4 pb-4 pt-3" : ""}>
+            {trimmedContent ? (
+              <p className="whitespace-pre-wrap break-words text-sm text-ink">
+                {trimmedContent}
+              </p>
+            ) : (
+              <p className="text-sm italic text-ink-muted">
+                {messagePreview.empty}
+              </p>
+            )}
+            {footerParts.length > 0 ? (
+              <p
+                className={
+                  variant === "detail"
+                    ? "mt-3 break-words text-xs text-ink-secondary"
+                    : "mt-3 border-t border-border-subtle pt-2 text-xs text-ink-secondary"
+                }
+              >
+                {footerParts.join(" · ")}
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

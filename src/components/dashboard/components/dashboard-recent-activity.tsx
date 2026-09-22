@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { DASHBOARD_COPY } from "@/components/dashboard/dashboard-copy";
 import { appointmentStatusLabel } from "@/lib/format";
 import type { AppointmentWithRelations } from "@/types/database.types";
@@ -21,13 +23,17 @@ export default function DashboardRecentActivity({
       ) : (
         <div className="divide-y divide-border-subtle">
           {recent.map((appointment) => (
-            <div key={appointment.id} className="py-4">
+            <Link
+              key={appointment.id}
+              href={`/appointments/${appointment.id}`}
+              className="block py-4 transition-colors hover:bg-[var(--hover-overlay)]"
+            >
               <p className="text-sm font-medium text-ink">
                 Cita {appointmentStatusLabel(appointment.status)} -{" "}
                 {appointment.patients?.full_name ?? "Paciente"}
               </p>
               <p className="mt-1 text-xs text-ink-muted">Hoy</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

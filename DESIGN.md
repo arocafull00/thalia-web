@@ -103,7 +103,7 @@ components:
 
 Thalia is a product UI for staff who move between reception, treatment rooms, and back-office tasks. The visual system stays calm: a cool off-white canvas, white content panels, and turquoise for actions, selection, and active states. Typography reads quickly at arm's length on a desktop monitor or tablet.
 
-Density is moderate. Lists and tables carry real clinic data without decorative chrome. Surfaces are flat at rest: depth comes from panels and 1px borders, not from heavy shadows. The one translucent surface is the content section, which floats on a turquoise gradient backdrop; the frame around it — sidebar and navbar — stays opaque white.
+Density is moderate. Lists and tables carry operational clinic data; the campaigns index uses a visual gallery because the campaign image and message are part of the content being managed. Surfaces are flat at rest: depth comes from panels and 1px borders, not from heavy shadows. The one translucent surface is the content section, which floats on a turquoise gradient backdrop; the frame around it — sidebar and navbar — stays opaque white.
 
 **Key Characteristics:**
 
@@ -225,6 +225,14 @@ Depth is tonal, not shadow-driven. Panels sit on the backdrop; borders define ed
 ### Skeleton
 
 - **List skeleton:** primary-subtle rounded-lg bars, pulse animation.
+
+### Campaign gallery (`/marketing`)
+
+- Use a compact responsive grid of one to four campaign cards inside the existing content surface. Keep the app frame, Geist typography, and semantic theme tokens; the gallery does not introduce another brand palette or display font.
+- Each card leads with the campaign's actual private image when present, followed by its real status, title, a two-line message excerpt, and the date relevant to that status. A calm primary-subtle placeholder identifies campaigns without an image; do not invent campaign artwork.
+- The entire card, including its image, opens the campaign detail through one keyboard-accessible link with a visible focus state.
+- Keep search, status and date filters, URL-backed server pagination, empty and filtered-empty states, and the existing creation and quota behavior. The gallery never implies that a draft has been sent or that an unavailable action exists.
+- Cards use a flat surface and thin border at rest. Hover changes the border tone only; avoid lift, broad shadows, image overlays, and decorative motion.
 
 ## 6. Do's and Don'ts
 

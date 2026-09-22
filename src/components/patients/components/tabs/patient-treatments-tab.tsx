@@ -29,6 +29,7 @@ export default function PatientTreatmentsTab({
         data={treatmentUsage}
         enableSorting
         emptyMessage={PATIENT_DETAIL_COPY.treatmentsTab.empty}
+        getRowHref={(usage) => `/treatments/${usage.treatmentId}`}
       />
     </div>
   );

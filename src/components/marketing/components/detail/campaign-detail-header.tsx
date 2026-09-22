@@ -13,9 +13,11 @@ export default function CampaignDetailHeader({
   const { list } = MARKETING_COPY;
 
   return (
-    <div className="flex flex-col gap-2 px-4 pb-4 pt-6 lg:px-8">
+    <div className="flex min-w-0 flex-col gap-2">
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-xl font-medium text-ink">{campaign.title}</h1>
+        <h1 className="min-w-0 text-2xl font-medium tracking-tight text-ink">
+          {campaign.title}
+        </h1>
         <CampaignStatusBadge status={campaign.status} />
       </div>
       <p className="text-sm text-ink-muted">

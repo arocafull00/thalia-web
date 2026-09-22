@@ -37,26 +37,27 @@ export default function PatientFileRow({
 
   return (
     <div className="flex items-center gap-4 border-b border-border-subtle py-4 last:border-b-0">
-      <PatientFileIcon mimeType={file.mime_type} />
-
       <button
         type="button"
         onClick={() => (viewable ? onView(file) : onDownload(file))}
-        className="min-w-0 flex-1 text-left"
+        className="flex min-w-0 flex-1 items-center gap-4 text-left"
       >
-        <p className="truncate text-sm font-medium text-ink">
-          {file.original_filename}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-secondary">
-          <span>{getPatientFileCategoryLabel(file.category)}</span>
-          <span>{formatFileSize(file.file_size_bytes)}</span>
-          <span>{formatDate(file.created_at)}</span>
-        </div>
-        {file.notes ? (
-          <p className="mt-1 line-clamp-1 text-xs text-ink-muted">
-            {file.notes}
+        <PatientFileIcon mimeType={file.mime_type} />
+        <span className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-ink">
+            {file.original_filename}
           </p>
-        ) : null}
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-secondary">
+            <span>{getPatientFileCategoryLabel(file.category)}</span>
+            <span>{formatFileSize(file.file_size_bytes)}</span>
+            <span>{formatDate(file.created_at)}</span>
+          </div>
+          {file.notes ? (
+            <p className="mt-1 line-clamp-1 text-xs text-ink-muted">
+              {file.notes}
+            </p>
+          ) : null}
+        </span>
       </button>
 
       <DropdownMenu>

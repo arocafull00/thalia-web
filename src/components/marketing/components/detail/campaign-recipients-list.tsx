@@ -1,4 +1,4 @@
-import CampaignRecipientStatusBadge from "@/components/marketing/components/detail/campaign-recipient-status-badge";
+import CampaignRecipientListItem from "@/components/marketing/components/detail/campaign-recipient-list-item";
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
 import type { CampaignRecipientWithPatient } from "@/types/database.types";
 
@@ -15,7 +15,7 @@ export default function CampaignRecipientsList({
     return (
       <p
         data-testid="campaign-recipients-empty"
-        className="rounded-xl border border-border-subtle px-4 py-6 text-center text-sm text-ink-muted"
+        className="py-6 text-sm text-ink-secondary"
       >
         {detail.recipients.empty}
       </p>
@@ -23,28 +23,20 @@ export default function CampaignRecipientsList({
   }
 
   return (
-    <ul data-testid="campaign-recipients-list" className="space-y-2">
-      {recipients.map((recipient) => (
-        <li
-          key={recipient.id}
-          className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border-subtle px-4 py-3"
-        >
-          <span className="min-w-0">
-            <span className="block truncate text-sm font-medium text-ink">
-              {recipient.patients?.full_name ?? recipient.phone}
-            </span>
-            <span className="text-xs text-ink-muted">{recipient.phone}</span>
-          </span>
-          <span className="flex items-center gap-2">
-            {recipient.error_message ? (
-              <span className="max-w-[16rem] truncate text-xs text-danger">
-                {recipient.error_message}
-              </span>
-            ) : null}
-            <CampaignRecipientStatusBadge status={recipient.status} />
-          </span>
-        </li>
-      ))}
-    </ul>
+    <div className="min-h-0 lg:flex lg:flex-1 lg:flex-col">
+      <div className="hidden shrink-0 grid-cols-[minmax(0,1fr)_10rem_minmax(12rem,1fr)] gap-4 border-b border-border px-4 pb-3 text-xs font-medium uppercase tracking-wide text-ink-muted md:grid">
+        <span>{detail.recipients.columnPatient}</span>
+        <span>{detail.recipients.columnPhone}</span>
+        <span>{detail.recipients.columnStatus}</span>
+      </div>
+      <ul
+        data-testid="campaign-recipients-list"
+        className="divide-y divide-border-subtle lg:min-h-0 lg:flex-1 lg:overflow-y-auto"
+      >
+        {recipients.map((recipient) => (
+          <CampaignRecipientListItem key={recipient.id} recipient={recipient} />
+        ))}
+      </ul>
+    </div>
   );
 }

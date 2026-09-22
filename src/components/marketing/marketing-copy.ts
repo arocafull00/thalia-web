@@ -6,6 +6,7 @@ import {
 export const MARKETING_COPY = {
   page: {
     title: "Marketing",
+    campaignsTitle: "Campañas",
     description:
       "Las campañas y acciones de marketing estarán disponibles próximamente.",
     loadError: "No se pudieron cargar las campañas.",
@@ -30,7 +31,11 @@ export const MARKETING_COPY = {
     date: "Fecha",
   },
   list: {
-    emptyFiltered: "No hay campañas con ese criterio.",
+    count: (count: number) => (count === 1 ? "1 campaña" : `${count} campañas`),
+    emptyFiltered: "Sin resultados para estos filtros",
+    emptyFilteredHint:
+      "Prueba con otro término de búsqueda o quita algún filtro.",
+    clearFilters: "Quitar filtros",
     columns: {
       title: "Campaña",
       content: "Mensaje",
@@ -38,18 +43,12 @@ export const MARKETING_COPY = {
       status: "Estado",
       date: "Fecha",
     },
-    viewImage: "Ver imagen",
+    viewDetail: (title: string) => `Ver campaña ${title}`,
     noImage: "Sin imagen",
     noDate: "Sin fecha",
     scheduledFor: "Programada para el",
     sentOn: "Enviada el",
     createdOn: "Creada el",
-  },
-  imageDialog: {
-    title: "Imagen de la campaña",
-    loading: "Cargando imagen...",
-    error: "No se pudo cargar la imagen.",
-    close: "Cerrar",
   },
   status: {
     draft: "Borrador",
@@ -148,6 +147,8 @@ export const MARKETING_COPY = {
       message: "Mensaje",
       recipients: "Destinatarios",
     },
+    recipientCount: (count: number) =>
+      count === 1 ? "1 destinatario" : `${count} destinatarios`,
     recipients: {
       empty: "Todavía no se ha enviado a nadie.",
       pending: "Pendiente",
@@ -207,8 +208,7 @@ export const MARKETING_COPY = {
       accountType: "Las cuentas externas no pueden enviar campañas.",
       role: "Solo administración y recepción pueden enviar campañas.",
       billing: "Esta clínica no tiene suscripción.",
-      subscription:
-        "La suscripción de la clínica no está en prueba ni activa.",
+      subscription: "La suscripción de la clínica no está en prueba ni activa.",
     },
     alreadySent: "Esta campaña ya se envió.",
   },

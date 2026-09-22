@@ -1,5 +1,6 @@
 "use client";
 
+import AppSidebarInstallItem from "@/components/ui/app-sidebar-install-item";
 import AppSidebarNavItem from "@/components/ui/app-sidebar-nav-item";
 import {
   SidebarGroup,
@@ -14,19 +15,16 @@ type AppSidebarNavSectionProps = {
   section: AppNavSection;
   pathname: string;
   onNavigate: () => void;
-  /**
-   * Cuántos ítems hay por encima de esta sección. La cascada al expandir tiene
-   * que recorrer el menú entero de arriba abajo, así que el índice no puede
-   * reiniciarse en cada sección.
-   */
-  indexOffset: number;
+  showInstall: boolean;
+  onInstall: () => void;
 };
 
 export default function AppSidebarNavSection({
   section,
   pathname,
   onNavigate,
-  indexOffset,
+  showInstall,
+  onInstall,
 }: AppSidebarNavSectionProps) {
   if (section.items.length === 0) {
     return null;
@@ -50,7 +48,7 @@ export default function AppSidebarNavSection({
         {/* Colapsado los botones miden 32px en una tarjeta de 36: sin centrar la
             lista quedarían pegados al borde izquierdo. */}
         <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
-          {section.items.map((item, index) => {
+          {section.items.map((item) => {
             const active =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
 
@@ -61,10 +59,12 @@ export default function AppSidebarNavSection({
                 active={active}
                 pathname={pathname}
                 onNavigate={onNavigate}
-                index={indexOffset + index}
               />
             );
           })}
+          {section.id === "configuration" && showInstall ? (
+            <AppSidebarInstallItem onClick={onInstall} />
+          ) : null}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

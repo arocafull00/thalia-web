@@ -5,7 +5,6 @@ import {
   clickTopbarMenuAction,
   clickTopbarTrigger,
   expectSearchParam,
-  openRowDetail,
   selectComboboxOption,
 } from "./e2e-helpers";
 
@@ -148,12 +147,9 @@ test("crea una campaña y segmenta a los pacientes con consentimiento", async ({
   await page.getByTestId("campaign-create-submit").click();
 
   await expect(dialog).toBeHidden({ timeout: 15_000 });
-  await expect(
-    page.getByRole("row", { name: new RegExp(title) }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("row", { name: new RegExp(title) }),
-  ).toContainText("Borrador");
+  const card = page.getByRole("article", { name: title });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("Borrador");
 });
 
 test("acepta 0 meses sin visitar y rechaza un negativo", async ({ page }) => {
@@ -176,11 +172,11 @@ test("acepta 0 meses sin visitar y rechaza un negativo", async ({ page }) => {
   await expect(page.getByTestId("campaign-create-submit")).toBeVisible();
 });
 
-test("la tabla trunca el mensaje y abre la imagen en un modal", async ({
+test("la galería trunca el mensaje y la imagen lleva al detalle", async ({
   page,
 }) => {
   const suffix = Date.now();
-  const title = `E2E Tabla ${suffix}`;
+  const title = `E2E Galería ${suffix}`;
   const longContent = `INICIO ${"a".repeat(150)} FINAL`;
 
   await page.goto("/marketing");
@@ -196,20 +192,19 @@ test("la tabla trunca el mensaje y abre la imagen en un modal", async ({
   await page.getByTestId("campaign-create-next").click();
   await page.getByTestId("campaign-create-submit").click();
 
-  const row = page.getByRole("row", { name: new RegExp(title) });
-  await expect(row).toBeVisible();
+  const card = page.getByRole("article", { name: title });
+  await expect(card).toBeVisible();
 
   // El mensaje se corta: se ve el principio pero no el final.
-  await expect(row).toContainText("INICIO");
-  await expect(row).not.toContainText("FINAL");
+  await expect(card).toContainText("INICIO");
+  await expect(card).not.toContainText("FINAL");
 
-  // El icono abre el modal sin navegar al detalle.
-  await row.getByTestId("campaign-image-trigger").click();
-  await expect(page.getByTestId("campaign-image-dialog")).toBeVisible();
-  await expect(
-    page.getByTestId("campaign-image-dialog").getByRole("img"),
-  ).toBeVisible({ timeout: 15_000 });
-  await expect(page).toHaveURL(/\/marketing$/);
+  await card.getByTestId("campaign-card-image").click();
+  await expect(page).toHaveURL(/\/marketing\/[^/?#]+/, { timeout: 15_000 });
+  await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
+  await expect(page.getByTestId("campaign-detail-image")).toBeVisible({
+    timeout: 15_000,
+  });
 });
 
 test("abre el detalle de una campaña y confirma a cuántos se enviará", async ({
@@ -236,8 +231,11 @@ test("abre el detalle de una campaña y confirma a cuántos se enviará", async 
   await page.getByTestId("campaign-create-submit").click();
   await expect(dialog).toBeHidden({ timeout: 15_000 });
 
-  // Al pinchar el nombre de la campaña se navega al detalle.
-  await openRowDetail(page, new RegExp(title));
+  // La tarjeta completa lleva al detalle.
+  await page
+    .getByRole("article", { name: title })
+    .getByRole("link", { name: `Ver campaña ${title}` })
+    .click();
   await expect(page).toHaveURL(/\/marketing\/[^/?#]+/, { timeout: 15_000 });
   await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
   await expect(page.getByTestId("campaign-message-preview")).toContainText(
@@ -288,7 +286,10 @@ test("envía la campaña y la marca como enviada", async ({ page }) => {
   await page.getByTestId("campaign-create-submit").click();
   await expect(dialog).toBeHidden({ timeout: 15_000 });
 
-  await openRowDetail(page, new RegExp(title));
+  await page
+    .getByRole("article", { name: title })
+    .getByRole("link", { name: `Ver campaña ${title}` })
+    .click();
   await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
 
   await clickTopbarTrigger(page, "campaign-send-trigger");
@@ -335,7 +336,10 @@ test("duplica una campaña en un borrador nuevo", async ({ page }) => {
   await page.getByTestId("campaign-create-next").click();
   await page.getByTestId("campaign-create-submit").click();
 
-  await openRowDetail(page, new RegExp(title));
+  await page
+    .getByRole("article", { name: title })
+    .getByRole("link", { name: `Ver campaña ${title}` })
+    .click();
   await expect(page.getByTestId("campaign-detail-page")).toBeVisible();
   const originalUrl = page.url();
 
@@ -372,26 +376,20 @@ test("filtra campañas por nombre y por estado", async ({ page }) => {
     await fillCampaignWizard(page, { title, content: "Mensaje de filtro." });
     await page.getByTestId("campaign-create-next").click();
     await page.getByTestId("campaign-create-submit").click();
-    await expect(
-      page.getByRole("row", { name: new RegExp(title) }),
-    ).toBeVisible();
+    await expect(page.getByRole("article", { name: title })).toBeVisible();
   }
 
   // Por nombre: solo queda la buscada.
   await page.getByPlaceholder("Buscar campañas...").fill(borrador);
   await expectSearchParam(page, "q", borrador);
-  await expect(
-    page.getByRole("row", { name: new RegExp(borrador) }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("table").getByRole("row", { name: new RegExp(otra) }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("article", { name: borrador })).toBeVisible();
+  await expect(page.getByRole("article", { name: otra })).toHaveCount(0);
 
   // Al limpiar la búsqueda vuelven las dos. Hay que esperar a que la URL se
   // asiente: el debounce de la búsqueda hace su propio router.replace y, si se
   // solapa con el del estado, uno pisa al otro por partir de parámetros viejos.
   await page.getByPlaceholder("Buscar campañas...").fill("");
-  await expect(page.getByRole("row", { name: new RegExp(otra) })).toBeVisible();
+  await expect(page.getByRole("article", { name: otra })).toBeVisible();
   await expect
     .poll(() => new URL(page.url()).searchParams.get("q"), {
       timeout: 15_000,
@@ -399,7 +397,7 @@ test("filtra campañas por nombre y por estado", async ({ page }) => {
     .toBeNull();
 
   // Por estado: las dos son borradores, así que filtrando por "Enviada"
-  // desaparecen. No se comprueba que la tabla quede vacía porque otros tests
+  // desaparecen. No se comprueba que la galería quede vacía porque otros tests
   // dejan campañas enviadas en la misma base de datos.
   await selectComboboxOption(
     page,
@@ -407,12 +405,8 @@ test("filtra campañas por nombre y por estado", async ({ page }) => {
     "Enviada",
   );
   await expectSearchParam(page, "status", "sent");
-  await expect(
-    page.getByRole("table").getByRole("row", { name: new RegExp(borrador) }),
-  ).toHaveCount(0);
-  await expect(
-    page.getByRole("table").getByRole("row", { name: new RegExp(otra) }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("article", { name: borrador })).toHaveCount(0);
+  await expect(page.getByRole("article", { name: otra })).toHaveCount(0);
 
   // Y volviendo a "Borrador" reaparecen.
   await selectComboboxOption(
@@ -421,7 +415,5 @@ test("filtra campañas por nombre y por estado", async ({ page }) => {
     "Borrador",
   );
   await expectSearchParam(page, "status", "draft");
-  await expect(
-    page.getByRole("row", { name: new RegExp(borrador) }),
-  ).toBeVisible();
+  await expect(page.getByRole("article", { name: borrador })).toBeVisible();
 });

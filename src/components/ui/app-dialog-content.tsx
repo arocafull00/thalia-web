@@ -20,10 +20,10 @@ export default function AppDialogContent({
 }: AppDialogContentProps) {
   return (
     <Dialog.Portal>
-      <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40" />
+      <Dialog.Overlay className="motion-dialog-overlay fixed inset-0 z-50 bg-ink/40" />
       <Dialog.Content
         className={cn(
-          "fixed z-[51] bg-surface focus:outline-none",
+          "motion-dialog fixed z-[51] bg-surface focus:outline-none",
           defaultDialogContentClassName,
           className,
         )}

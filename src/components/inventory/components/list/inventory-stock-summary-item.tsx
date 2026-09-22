@@ -59,7 +59,7 @@ export default function InventoryStockSummaryItem({
       // Plana en reposo, como el resto de superficies de la app: el estado
       // activo se marca con el tinte del propio tono, no con sombra.
       className={`rounded-card border p-4 text-left outline-none ring-primary transition-colors focus-visible:ring-2 ${
-        isActive ? toneActive[tone] : "border-primary bg-surface"
+        isActive ? toneActive[tone] : "border-primary/25 bg-surface"
       }`}
     >
       {/* Icono y cifra en la misma línea: el icono acompaña al número en lugar

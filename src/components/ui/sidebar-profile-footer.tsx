@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -24,30 +25,34 @@ export default function SidebarProfileFooter() {
   const initials = profile?.full_name
     ? getProfileInitials(profile.full_name)
     : "?";
+  const profileLabel = profile?.full_name ?? SIDEBAR_COPY.profileFallback;
 
   return (
     <>
       <div className="flex items-center gap-2.5 px-1.5 py-3.5 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0">
-        <ProfileAvatarImage
-          src={displayUri}
-          initials={initials}
-          size="sm"
-          avatarStyle={{ borderRadius: "var(--radius-button)" }}
-          fallbackClassName="bg-[image:var(--gradient-avatar)] text-[12.5px] font-semibold text-primary-hover"
-        />
-        <div className="min-w-0 flex-1 overflow-hidden transition-[opacity,width] duration-[var(--sidebar-duration)] ease-[var(--sidebar-ease)] group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:opacity-0">
-          <p
-            className="truncate text-[13.5px] font-medium text-ink"
-            title={profile?.full_name ?? undefined}
-          >
-            {profile?.full_name ?? SIDEBAR_COPY.profileFallback}
-          </p>
-          {profile?.role ? (
-            <p className="truncate text-[11px] text-ink-muted">
-              {employeeRoleLabel(profile.role)}
+        <Link
+          href="/settings/usuario"
+          title={profileLabel}
+          className="flex min-w-0 flex-1 items-center gap-2.5 rounded-button outline-none transition-colors hover:bg-(--hover-overlay) focus-visible:ring-2 focus-visible:ring-primary group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:gap-0"
+        >
+          <ProfileAvatarImage
+            src={displayUri}
+            initials={initials}
+            size="sm"
+            avatarStyle={{ borderRadius: "var(--radius-button)" }}
+            fallbackClassName="bg-[image:var(--gradient-avatar)] text-[12.5px] font-semibold text-primary-hover"
+          />
+          <div className="min-w-0 flex-1 overflow-hidden transition-[opacity,width] duration-[var(--sidebar-duration)] ease-[var(--sidebar-ease)] group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:opacity-0">
+            <p className="truncate text-[13.5px] font-medium text-ink">
+              {profileLabel}
             </p>
-          ) : null}
-        </div>
+            {profile?.role ? (
+              <p className="truncate text-[11px] text-ink-muted">
+                {employeeRoleLabel(profile.role)}
+              </p>
+            ) : null}
+          </div>
+        </Link>
         <Button
           type="button"
           variant="ghost"

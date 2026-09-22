@@ -22,6 +22,8 @@ import {
 import { assertCanMutateClinicalData } from "@/lib/permissions";
 import type { PatientImageUploadInput } from "@/lib/schemas/patient-image-schema";
 import { useAuthStore } from "@/stores/auth-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
+import { CLINICAL_QUERY_STALE_TIME } from "@/stores/query-state";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientImageDeleteConfirmState = {
@@ -49,6 +51,7 @@ export type PatientImagesEntry = {
   requestId: string;
   filters: PatientImagesFilters;
   data: PatientImage[] | null;
+  fetchedAt?: number;
   total: number;
   loading: boolean;
   loadingMore: boolean;
@@ -151,6 +154,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
   deleteConfirm: null,
 
   fetchPatientImages: async (patientId, filters, force = false) => {
+    const epoch = getQueryEpoch();
     const clinicId = getActiveClinicId();
 
     if (!clinicId) {
@@ -166,6 +170,15 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       return;
     }
 
+    if (
+      !force &&
+      previous?.data != null &&
+      previous.fetchedAt != null &&
+      Date.now() - previous.fetchedAt < CLINICAL_QUERY_STALE_TIME
+    ) {
+      return;
+    }
+
     set({
       imagesByPatientId: {
         ...get().imagesByPatientId,
@@ -175,6 +188,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
           requestId,
           filters,
           data: previous?.data ?? null,
+          fetchedAt: previous?.fetchedAt,
           total: previous?.total ?? 0,
           loading: true,
           loadingMore: false,
@@ -195,7 +209,11 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       });
       const latest = get().imagesByPatientId[patientId];
 
-      if (latest?.queryKey !== queryKey || latest.requestId !== requestId) {
+      if (
+        !isCurrentQueryEpoch(epoch) ||
+        latest?.queryKey !== queryKey ||
+        latest.requestId !== requestId
+      ) {
         return;
       }
 
@@ -205,6 +223,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
           [patientId]: {
             ...latest,
             data: page.images,
+            fetchedAt: Date.now(),
             total: page.total,
             loading: false,
             hasMore: page.hasMore,
@@ -214,6 +233,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       });
     } catch (cause) {
       const error = toError(cause);
+      if (!isCurrentQueryEpoch(epoch)) return;
       logger.captureException(error, {
         store: "patient-images-store",
         action: "fetchPatientImages",

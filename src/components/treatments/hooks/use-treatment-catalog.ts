@@ -4,7 +4,12 @@ import { SEARCH_COPY } from "@/copy/search-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
 import { TREATMENTS_PAGE_SIZE } from "@/lib/treatment-pagination";
-import { isInitialLoading } from "@/stores/query-state";
+import {
+  isInitialLoading,
+  isQueryFresh,
+  REFERENCE_QUERY_STALE_TIME,
+  shouldFetchQuery,
+} from "@/stores/query-state";
 import {
   treatmentsPageKey,
   useTreatmentStore,
@@ -83,27 +88,31 @@ export function useTreatmentCatalog(
   }, [hasClientData, query, seedTreatmentsPage, seededResult]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (
+      seededResult !== undefined ||
+      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
+    ) {
       return;
     }
 
     void fetchTreatmentsPage(query);
-  }, [fetchTreatmentsPage, query, seededResult]);
+  }, [entry, fetchTreatmentsPage, query, seededResult]);
 
   // Las categorías no dependen de la página, así que se piden una vez por
   // clínica y no en cada cambio de filtro.
-  const hasCategories = categoriesEntry.data != null;
-
   useEffect(() => {
-    if (hasCategories || seed?.initialCategories) {
+    if (
+      seed?.initialCategories ||
+      !shouldFetchQuery(categoriesEntry, REFERENCE_QUERY_STALE_TIME)
+    ) {
       return;
     }
 
     void fetchTreatmentCategories();
   }, [
     clinicId,
+    categoriesEntry,
     fetchTreatmentCategories,
-    hasCategories,
     seed?.initialCategories,
   ]);
 
@@ -115,7 +124,9 @@ export function useTreatmentCatalog(
     return fetchTreatmentsPage(query);
   }, [fetchTreatmentsPage, key, query]);
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
   const filteredTreatments = useMemo(
     () => resolved?.treatments ?? [],
     [resolved],
@@ -125,7 +136,9 @@ export function useTreatmentCatalog(
   const categories = useMemo(
     () => [
       SEARCH_COPY.filters.all,
-      ...(categoriesEntry.data ?? seed?.initialCategories ?? []),
+      ...(isQueryFresh(categoriesEntry, REFERENCE_QUERY_STALE_TIME)
+        ? (categoriesEntry.data ?? [])
+        : (seed?.initialCategories ?? categoriesEntry.data ?? [])),
     ],
     [categoriesEntry.data, seed?.initialCategories],
   );
@@ -138,7 +151,7 @@ export function useTreatmentCatalog(
     treatments: {
       data: resolved,
       error: entry?.error ?? null,
-      isLoading: isInitialLoading(entry),
+      isLoading: resolved == null && isInitialLoading(entry),
       // `loading` con datos ya en pantalla es un refresco, no una carga inicial.
       isRefreshing: entry?.loading ?? false,
       refresh,

@@ -3,7 +3,7 @@
 import { LoaderCircle } from "lucide-react";
 import { useLinkStatus } from "next/link";
 
-export default function AppSidebarNavPending() {
+export default function AppBottomNavPending() {
   const { pending } = useLinkStatus();
 
   if (!pending) {
@@ -13,7 +13,7 @@ export default function AppSidebarNavPending() {
   return (
     <LoaderCircle
       aria-hidden="true"
-      className="ml-auto animate-spin text-primary-light motion-reduce:animate-none"
+      className="absolute right-2 top-1 size-3 animate-spin text-primary"
     />
   );
 }

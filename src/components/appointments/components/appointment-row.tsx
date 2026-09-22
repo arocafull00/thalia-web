@@ -15,6 +15,7 @@ import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
 type AppointmentRowProps = {
   appointment: AgendaAppointment;
   onClick?: () => void;
+  prefetch?: boolean;
   actions?: ProfileAction[];
   respondingExternalId?: string | null;
   onAccept?: () => void;
@@ -24,6 +25,7 @@ type AppointmentRowProps = {
 export default function AppointmentRow({
   appointment,
   onClick,
+  prefetch,
   actions,
   respondingExternalId = null,
   onAccept,
@@ -74,6 +76,7 @@ export default function AppointmentRow({
       ) : (
         <Link
           href={`/appointments/${appointment.id}`}
+          prefetch={prefetch}
           className="flex min-w-0 flex-1 items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           {content}

@@ -197,12 +197,6 @@
 }
 
 @theme {
-  --animate-overlay-in: overlayIn 0.2s ease-out;
-  --animate-overlay-out: overlayOut 0.2s ease-in;
-  --animate-sheet-in: sheetIn 0.3s ease-out;
-  --animate-sheet-out: sheetOut 0.2s ease-in;
-  --animate-sheet-in-left: sheetInLeft 0.3s ease-out;
-  --animate-sheet-out-left: sheetOutLeft 0.2s ease-in;
   --animate-boot-orbit: bootOrbitSpin 2.2s linear infinite;
   --animate-boot-orbit-slow: bootOrbitSpin 10s linear infinite;
   --animate-boot-spin: bootOrbitSpin 1.15s linear infinite;
@@ -284,12 +278,134 @@
   animation: motionDialogOut var(--duration-quick) var(--ease-smooth-out) both;
 }
 
-.motion-dialog-overlay[data-state="open"] {
+.motion-dialog-overlay:is([data-open], [data-state="open"]) {
   animation: overlayIn var(--duration-fast) var(--ease-smooth-out) both;
 }
 
-.motion-dialog-overlay[data-state="closed"] {
+.motion-dialog-overlay:is([data-closed], [data-state="closed"]) {
   animation: overlayOut var(--duration-quick) var(--ease-smooth-out) both;
+}
+
+.motion-sheet {
+  --motion-sheet-x: 100%;
+  --motion-sheet-y: 0;
+}
+
+.motion-sheet[data-side="left"] {
+  --motion-sheet-x: -100%;
+}
+
+.motion-sheet[data-side="top"] {
+  --motion-sheet-x: 0;
+  --motion-sheet-y: -100%;
+}
+
+.motion-sheet[data-side="bottom"] {
+  --motion-sheet-x: 0;
+  --motion-sheet-y: 100%;
+}
+
+.motion-sheet:is([data-open], [data-state="open"]) {
+  animation: motionSheetIn var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+.motion-sheet:is([data-closed], [data-state="closed"]) {
+  animation: motionSheetOut var(--duration-quick) var(--ease-smooth-out) both;
+}
+
+.motion-sheet-fade:is([data-open], [data-state="open"]) {
+  animation: overlayIn var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+.motion-sheet-fade:is([data-closed], [data-state="closed"]) {
+  animation: overlayOut var(--duration-quick) var(--ease-smooth-out) both;
+}
+
+@keyframes motionSheetIn {
+  from {
+    opacity: 0.94;
+    transform: translate(var(--motion-sheet-x), var(--motion-sheet-y));
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes motionSheetOut {
+  from {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 0.94;
+    transform: translate(var(--motion-sheet-x), var(--motion-sheet-y));
+  }
+}
+
+.motion-tooltip:is([data-open], [data-state="delayed-open"], [data-state="instant-open"]) {
+  animation: motionTooltipIn var(--duration-quick) ease-out both;
+}
+
+.motion-tooltip:is([data-closed], [data-state="closed"]) {
+  animation: motionTooltipOut 50ms ease-out both;
+}
+
+@keyframes motionTooltipIn {
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes motionTooltipOut {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+.motion-tab-indicator {
+  transition:
+    transform var(--duration-fast) var(--ease-smooth-out),
+    width var(--duration-fast) var(--ease-smooth-out);
+}
+
+[data-slot="tabs"][data-orientation="vertical"] .motion-tab-indicator {
+  display: none;
+}
+
+.motion-tab-content:is([data-active], [data-state="active"]) {
+  animation: overlayIn var(--duration-quick) ease-out both;
+}
+
+.motion-calendar-toggle {
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.motion-notification-badge {
+  animation: motionBadgeIn var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+@keyframes motionBadgeIn {
+  from {
+    opacity: 0;
+    scale: 0.75;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
 }
 @keyframes overlayOut {
   from {
@@ -299,39 +415,6 @@
     opacity: 0;
   }
 }
-@keyframes sheetIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-@keyframes sheetOut {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-@keyframes sheetInLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-@keyframes sheetOutLeft {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
-
 @keyframes bootOrbitSpin {
   to {
     transform: rotate(360deg);
@@ -431,9 +514,18 @@
 @media (prefers-reduced-motion: reduce) {
   .motion-surface,
   .motion-dialog,
-  .motion-dialog-overlay {
+  .motion-dialog-overlay,
+  .motion-sheet,
+  .motion-tooltip,
+  .motion-tab-content,
+  .motion-notification-badge {
     animation: none !important;
     scale: 1;
+  }
+
+  .motion-tab-indicator,
+  .motion-calendar-toggle {
+    transition: none !important;
   }
 
   .loader-motion,

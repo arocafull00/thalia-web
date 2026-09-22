@@ -12,13 +12,20 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type CSSProperties, type ReactNode, useState } from "react";
+import {
+  cloneElement,
+  type CSSProperties,
+  type ReactNode,
+  useState,
+} from "react";
 
 import { Button } from "@/components/ui/button";
 import MobileCardView, {
   type MobileCardAction,
   type MobileCardColumn,
 } from "@/components/ui/mobile-card-view";
+import type { ProfileAction } from "@/components/ui/profile/profile-action";
+import RowContextMenu from "@/components/ui/row-context-menu";
 import {
   Table,
   TableBody,
@@ -41,7 +48,9 @@ type DataTableProps<TData, TValue> = {
   enableSorting?: boolean;
   initialSorting?: SortingState;
   getRowHref?: (row: TData) => string | undefined;
+  prefetchRowLinks?: boolean;
   onRowActivate?: (row: TData) => void;
+  getRowActions?: (row: TData) => ProfileAction[];
   getRowStyle?: (row: TData) => CSSProperties | undefined;
   pageSize?: number;
   manualPagination?: {
@@ -61,12 +70,14 @@ function wrapPrimaryCellContent<TData>(
   row: TData,
   getRowHref: DataTableProps<TData, unknown>["getRowHref"],
   onRowActivate: DataTableProps<TData, unknown>["onRowActivate"],
+  prefetchRowLinks: DataTableProps<TData, unknown>["prefetchRowLinks"],
 ) {
   const href = getRowHref?.(row);
   if (href) {
     return (
       <Link
         href={href}
+        prefetch={prefetchRowLinks}
         className={rowPrimaryControlClassName}
         onClick={(event) => event.stopPropagation()}
       >
@@ -101,7 +112,9 @@ export function DataTable<TData, TValue>({
   enableSorting = false,
   initialSorting = EMPTY_SORTING,
   getRowHref,
+  prefetchRowLinks,
   onRowActivate,
+  getRowActions,
   getRowStyle,
   pageSize = 10,
   manualPagination,
@@ -208,54 +221,68 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody className="[&_tr>td]:border-b [&_tr>td]:border-border-subtle [&_tr:last-child>td]:border-0">
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className={
-                    rowInteractive
-                      ? "table-row-wash cursor-pointer"
-                      : "hover:bg-transparent"
-                  }
-                  style={getRowStyle?.(row.original)}
-                  onClick={
-                    rowInteractive
-                      ? () => {
-                          const href = getRowHref?.(row.original);
-                          if (href) {
-                            router.push(href);
-                            return;
-                          }
-                          onRowActivate?.(row.original);
-                        }
-                      : undefined
-                  }
-                >
-                  {row.getVisibleCells().map((cell, cellIndex) => {
-                    const cellContent = flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext(),
-                    );
+              table.getRowModel().rows.map((row) => {
+                const rowActions = getRowActions?.(row.original) ?? [];
+                const rowCells = row.getVisibleCells().map((cell, cellIndex) => {
+                  const cellContent = flexRender(
+                    cell.column.columnDef.cell,
+                    cell.getContext(),
+                  );
 
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        className={`px-3.5 py-3.5 text-sm${
-                          cell.column.id === "actions" ? " text-center" : ""
-                        }`}
-                      >
-                        {cellIndex === 0
-                          ? wrapPrimaryCellContent(
-                              cellContent,
-                              row.original,
-                              getRowHref,
-                              onRowActivate,
-                            )
-                          : cellContent}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      className={`px-3.5 py-3.5 text-sm${
+                        cell.column.id === "actions" ? " text-center" : ""
+                      }`}
+                    >
+                      {cellIndex === 0
+                        ? wrapPrimaryCellContent(
+                            cellContent,
+                            row.original,
+                            getRowHref,
+                            onRowActivate,
+                            prefetchRowLinks,
+                          )
+                        : cellContent}
+                    </TableCell>
+                  );
+                });
+                const tableRow = (
+                  <TableRow
+                    className={
+                      rowInteractive
+                        ? "table-row-wash cursor-pointer"
+                        : "hover:bg-transparent"
+                    }
+                    style={getRowStyle?.(row.original)}
+                    onClick={
+                      rowInteractive
+                        ? () => {
+                            const href = getRowHref?.(row.original);
+                            if (href) {
+                              router.push(href);
+                              return;
+                            }
+                            onRowActivate?.(row.original);
+                          }
+                        : undefined
+                    }
+                  >
+                    {rowCells}
+                  </TableRow>
+                );
+
+                if (rowActions.length === 0) {
+                  return cloneElement(tableRow, { key: row.id });
+                }
+
+                return (
+                  <RowContextMenu key={row.id} actions={rowActions}>
+                    {tableRow}
+                  </RowContextMenu>
+                );
+              })
             ) : (
               <TableRow className="hover:bg-transparent">
                 <TableCell

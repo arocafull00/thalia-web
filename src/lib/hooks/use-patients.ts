@@ -13,7 +13,11 @@ import {
   type PatientFormInput,
   type PatientsPageQuery,
 } from "@/stores/patients-store";
-import { isInitialLoading } from "@/stores/query-state";
+import {
+  isInitialLoading,
+  isQueryFresh,
+  shouldFetchQuery,
+} from "@/stores/query-state";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
 export type { PatientFormInput };
@@ -70,7 +74,6 @@ export function usePatientsPage(
       : undefined,
   );
   const hasClientData = entry?.data != null;
-
   useEffect(() => {
     if (seededResult === undefined || hasClientData) {
       return;
@@ -80,12 +83,12 @@ export function usePatientsPage(
   }, [hasClientData, query, seedPatientsPage, seededResult]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchPatientsPage(query);
-  }, [fetchPatientsPage, query, seededResult]);
+  }, [entry, fetchPatientsPage, query, seededResult]);
 
   const refresh = useCallback(() => {
     if (usePatientsStore.getState().byPage[key]?.loading) {
@@ -95,7 +98,9 @@ export function usePatientsPage(
     return fetchPatientsPage(query);
   }, [fetchPatientsPage, key, query]);
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
   const patients = useMemo(() => resolved?.patients ?? [], [resolved]);
 
   return {
@@ -115,17 +120,17 @@ export function usePatients(search: string, initialData?: Patient[]) {
   const fetchPatients = usePatientsStore((state) => state.fetchPatients);
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
-  const hasClientData = entry?.data != null;
-
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchPatients(search);
-  }, [clinicId, fetchPatients, hasClientData, search, seededData]);
+  }, [clinicId, entry, fetchPatients, search, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
   const refresh = useCallback(() => {
     if (usePatientsStore.getState().listBySearch[key]?.loading) {
       return Promise.resolve();
@@ -154,17 +159,17 @@ export function usePatient(patientOrId: Patient | string) {
     initialData?.id ?? "",
     initialData,
   );
-  const hasClientData = entry?.data != null;
-
   useEffect(() => {
-    if (!patientId.trim() || (seededData !== undefined && !hasClientData)) {
+    if (!patientId.trim() || seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchPatient(patientId);
-  }, [fetchPatient, hasClientData, patientId, seededData]);
+  }, [entry, fetchPatient, patientId, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,
@@ -188,17 +193,18 @@ export function usePatientAppointments(
     initialData === undefined ? "" : patientId,
     initialData,
   );
-  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchPatientAppointments(patientId);
-  }, [fetchPatientAppointments, hasClientData, patientId, seededData]);
+  }, [entry, fetchPatientAppointments, patientId, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,
@@ -216,8 +222,12 @@ export function useUpcomingPatientAppointments(patientId: string) {
   );
 
   useEffect(() => {
+    if (!patientId || !shouldFetchQuery(entry)) {
+      return;
+    }
+
     void fetchUpcomingPatientAppointments(patientId);
-  }, [fetchUpcomingPatientAppointments, patientId]);
+  }, [entry, fetchUpcomingPatientAppointments, patientId]);
 
   return {
     data: entry?.data ?? undefined,

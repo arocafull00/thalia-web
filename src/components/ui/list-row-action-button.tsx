@@ -24,7 +24,7 @@ export default function ListRowActionButton({
         title={action.label}
         aria-label={action.label}
       >
-        <Link href={action.href}>
+        <Link href={action.href} prefetch={action.prefetch}>
           <Icon aria-hidden="true" />
         </Link>
       </Button>

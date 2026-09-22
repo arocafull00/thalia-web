@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { ContextMenuItem } from "@/components/ui/context-menu";
 import type { ProfileAction } from "@/components/ui/profile/profile-action";
 
-export default function ProfileActionMenuItem({
+export default function ProfileActionContextMenuItem({
   action,
 }: {
   action: ProfileAction;
@@ -13,7 +13,7 @@ export default function ProfileActionMenuItem({
 
   if (action.href) {
     return (
-      <DropdownMenuItem
+      <ContextMenuItem
         variant={variant}
         disabled={action.disabled}
         data-testid={action.testId}
@@ -23,12 +23,12 @@ export default function ProfileActionMenuItem({
           <Icon aria-hidden="true" />
           {action.label}
         </Link>
-      </DropdownMenuItem>
+      </ContextMenuItem>
     );
   }
 
   return (
-    <DropdownMenuItem
+    <ContextMenuItem
       variant={variant}
       disabled={action.disabled}
       data-testid={action.testId}
@@ -36,6 +36,6 @@ export default function ProfileActionMenuItem({
     >
       <Icon aria-hidden="true" />
       {action.label}
-    </DropdownMenuItem>
+    </ContextMenuItem>
   );
 }

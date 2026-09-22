@@ -15,6 +15,7 @@ import {
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
 import { assertCanMutateClinicalData } from "@/lib/permissions";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useAuthStore } from "@/stores/auth-store";
 import {
   emptyQueryEntry,
@@ -135,8 +136,10 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   fetchTreatmentsPage: async (query) => {
+    const epoch = getQueryEpoch();
     const key = treatmentsPageKey(query);
     const previous = get().byPage[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -144,6 +147,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         ...query,
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -151,6 +155,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         action: "fetchTreatmentsPage",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byPage: {
           ...get().byPage,
@@ -164,10 +169,13 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   fetchTreatmentCategories: async () => {
+    const epoch = getQueryEpoch();
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ categories: loadingQueryEntry(get().categories) });
 
     try {
       const categories = await getTreatmentCategories(getActiveClinicId());
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ categories: successQueryEntry(categories) });
     } catch (cause) {
       logger.captureException(cause, {
@@ -175,6 +183,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         action: "fetchTreatmentCategories",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         categories: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -185,11 +194,14 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   fetchTreatments: async () => {
+    const epoch = getQueryEpoch();
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ list: loadingQueryEntry(get().list) });
 
     try {
       const clinicId = getActiveClinicId();
       const treatments = await getTreatments(clinicId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ list: successQueryEntry(treatments) });
     } catch (cause) {
       logger.captureException(cause, {
@@ -197,6 +209,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         action: "fetchTreatments",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         list: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -207,13 +220,16 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
   },
 
   fetchTreatment: async (treatmentId) => {
+    const epoch = getQueryEpoch();
     const previous = get().byId[treatmentId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       byId: { ...get().byId, [treatmentId]: loadingQueryEntry(previous) },
     });
 
     try {
       const treatment = await getTreatment(treatmentId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: { ...get().byId, [treatmentId]: successQueryEntry(treatment) },
       });
@@ -223,6 +239,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         action: "fetchTreatment",
         treatmentId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,

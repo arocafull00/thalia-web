@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import AppBottomNavPending from "@/components/ui/app-bottom-nav-pending";
+
 type AppBottomNavItemProps = {
   href: string;
   label: string;
@@ -24,7 +26,7 @@ export default function AppBottomNavItem({
       aria-label={label}
       aria-current={active ? "page" : undefined}
       onClick={onClick}
-      className={`flex min-h-12 flex-col items-center justify-center gap-0.5 px-2 text-[11px] transition motion-reduce:transition-none ${
+      className={`relative flex min-h-12 flex-col items-center justify-center gap-0.5 px-2 text-[11px] transition motion-reduce:transition-none ${
         active ? "text-primary" : "text-ink-muted hover:text-ink-secondary"
       }`}
     >
@@ -32,6 +34,7 @@ export default function AppBottomNavItem({
         {icon}
       </span>
       <span>{label}</span>
+      <AppBottomNavPending />
     </Link>
   );
 }

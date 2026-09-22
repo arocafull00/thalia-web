@@ -52,6 +52,7 @@ export default function InventoryTable({
       )}
       emptyMessage={emptyMessage ?? "No hay materiales con ese criterio."}
       getRowHref={(item) => `/inventory/${item.id}`}
+      getRowActions={(item) => getInventoryRowActions(item, actionHandlers)}
     />
   );
 }

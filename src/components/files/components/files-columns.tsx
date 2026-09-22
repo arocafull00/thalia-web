@@ -1,16 +1,59 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { Download, Eye, Trash2 } from "lucide-react";
 
 import FileActionsMenu from "@/components/files/components/file-actions-menu";
+import type { ProfileAction } from "@/components/ui/profile/profile-action";
 import PatientFileIcon from "@/components/patients/components/files/patient-file-icon";
 import { Badge } from "@/components/ui/badge";
 import { FILES_COPY } from "@/copy/files-copy";
-import { getPatientFileCategoryLabel } from "@/copy/patient-files-copy";
+import {
+  getPatientFileCategoryLabel,
+  PATIENT_FILES_COPY,
+} from "@/copy/patient-files-copy";
 import { formatDate, formatFileSize } from "@/lib/format";
+import { isPatientFileViewable } from "@/lib/patient-file-storage";
 import type { PatientFileWithPatient } from "@/types/database.types";
 
 type FileAction = (file: PatientFileWithPatient) => void;
+
+type FileActionHandlers = {
+  onView: FileAction;
+  onDownload: FileAction;
+  onDelete: FileAction;
+};
+
+export function getFileRowActions(
+  file: PatientFileWithPatient,
+  handlers: FileActionHandlers,
+): ProfileAction[] {
+  const actions: ProfileAction[] = [];
+
+  if (isPatientFileViewable(file.mime_type)) {
+    actions.push({
+      label: PATIENT_FILES_COPY.actions.view,
+      icon: Eye,
+      onClick: () => handlers.onView(file),
+    });
+  }
+
+  actions.push(
+    {
+      label: PATIENT_FILES_COPY.actions.download,
+      icon: Download,
+      onClick: () => handlers.onDownload(file),
+    },
+    {
+      label: PATIENT_FILES_COPY.actions.delete,
+      icon: Trash2,
+      onClick: () => handlers.onDelete(file),
+      variant: "danger",
+    },
+  );
+
+  return actions;
+}
 
 export function buildFilesColumns(
   onView: FileAction,

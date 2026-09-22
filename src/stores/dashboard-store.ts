@@ -9,6 +9,7 @@ import {
   resolveAppointmentTimezone,
 } from "@/lib/appointment-datetime";
 import { logger } from "@/lib/logger";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useClinicStore } from "@/stores/clinic-store";
 import {
   emptyQueryEntry,
@@ -32,6 +33,8 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   data: emptyQueryEntry(),
 
   fetchDashboard: async () => {
+    const epoch = getQueryEpoch();
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ data: loadingQueryEntry(get().data) });
 
     try {
@@ -52,6 +55,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         clinicId,
       );
 
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         data: successQueryEntry({
           appointments,
@@ -63,6 +67,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         action: "fetchDashboard",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         data: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),

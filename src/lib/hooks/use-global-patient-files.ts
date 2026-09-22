@@ -12,7 +12,7 @@ import {
   globalPatientFilesKey,
   usePatientFilesStore,
 } from "@/stores/patient-files-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
 
 type GlobalPatientFilesFilters = Omit<GlobalPatientFilesParams, "clinicId">;
 
@@ -65,14 +65,16 @@ export function useGlobalPatientFiles(
   }, [clinicId, fetchGlobalPatientFiles, params]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void refresh();
-  }, [refresh, seededResult]);
+  }, [entry, refresh, seededResult]);
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
 
   return {
     data: resolved,

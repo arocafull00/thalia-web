@@ -2,18 +2,18 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 
-import { clearBrowserQueryClient } from "@/lib/query/query-client";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicRequestsStore } from "@/stores/clinic-requests-store";
 import { useClinicStore } from "@/stores/clinic-store";
+import { resetClinicQueryData } from "@/stores/reset-clinic-query-data";
 
 type AuthProviderProps = {
   children: React.ReactNode;
 };
 
 function clearAuthState() {
-  clearBrowserQueryClient();
+  resetClinicQueryData();
   useClinicRequestsStore.getState().clearRequests();
   useClinicStore.getState().clearClinicState();
   useAuthStore.setState({ profile: null });
@@ -46,6 +46,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
       const { data } = await supabase.auth.getSession();
       const { setSession, setLoading } = useAuthStore.getState();
+      const previousUserId = useAuthStore.getState().session?.user.id;
+      if (previousUserId && previousUserId !== data.session?.user.id) {
+        resetClinicQueryData();
+      }
       setSession(data.session);
 
       if (!data.session?.user.id) {
@@ -67,6 +71,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      const previousUserId = useAuthStore.getState().session?.user.id;
+      if (previousUserId && nextSession?.user.id && previousUserId !== nextSession.user.id) {
+        resetClinicQueryData();
+      }
       useAuthStore.getState().setSession(nextSession);
 
       setTimeout(() => {

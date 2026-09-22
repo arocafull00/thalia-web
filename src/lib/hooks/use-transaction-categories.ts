@@ -2,7 +2,12 @@ import { useEffect, useMemo } from "react";
 
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useClinicServerSeed } from "@/lib/hooks/use-server-seed";
-import { isInitialLoading } from "@/stores/query-state";
+import {
+  isInitialLoading,
+  isQueryFresh,
+  REFERENCE_QUERY_STALE_TIME,
+  shouldFetchQuery,
+} from "@/stores/query-state";
 import { useTransactionCategoriesStore } from "@/stores/transaction-categories-store";
 import type { TransactionCategory } from "@/types/database.types";
 
@@ -29,16 +34,23 @@ export function useTransactionCategories(initialData?: TransactionCategory[]) {
   }, [clinicId, hasClientData, seedCategories, seededData]);
 
   useEffect(() => {
-    if (!clinicId || seededData !== undefined || hasClientData) {
+    if (
+      !clinicId ||
+      seededData !== undefined ||
+      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
+    ) {
       return;
     }
 
     void fetchCategories(clinicId);
-  }, [clinicId, fetchCategories, hasClientData, seededData]);
+  }, [clinicId, entry, fetchCategories, seededData]);
 
   return {
     categories: useMemo(
-      () => entry?.data ?? seededData ?? [],
+      () =>
+        isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
+          ? (entry?.data ?? [])
+          : (seededData ?? entry?.data ?? []),
       [entry?.data, seededData],
     ),
     error: entry?.error ?? null,

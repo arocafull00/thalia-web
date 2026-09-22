@@ -1,3 +1,4 @@
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -35,11 +36,14 @@ export const useInventoryAlertsStore = create<InventoryAlertsStore>(
     unreadCount: 0,
 
     fetchAlerts: async (clinicId) => {
+      const epoch = getQueryEpoch();
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ alerts: loadingQueryEntry(get().alerts) });
 
       try {
         const alerts = await getInventoryAlerts(clinicId);
         const unreadCount = alerts.filter((a) => !a.read_at).length;
+        if (!isCurrentQueryEpoch(epoch)) return;
         set({ alerts: successQueryEntry(alerts), unreadCount });
       } catch (cause) {
         logger.captureException(cause, {
@@ -47,6 +51,7 @@ export const useInventoryAlertsStore = create<InventoryAlertsStore>(
           action: "fetchAlerts",
           clinicId,
         });
+        if (!isCurrentQueryEpoch(epoch)) return;
         set({
           alerts: errorQueryEntry(
             cause instanceof Error ? cause : new Error(String(cause)),

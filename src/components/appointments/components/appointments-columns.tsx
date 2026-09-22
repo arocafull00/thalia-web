@@ -159,6 +159,7 @@ export function getAppointmentRowActions(
       label: APPOINTMENTS_COPY.list.actions.view,
       icon: Eye,
       href: `/appointments/${appointment.id}`,
+      prefetch: false,
     },
   ];
 

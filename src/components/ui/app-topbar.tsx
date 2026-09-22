@@ -262,8 +262,9 @@ export default function AppTopbar() {
               <Bell size={20} strokeWidth={1.75} />
               {combinedUnreadCount > 0 ? (
                 <Badge
+                  key={combinedUnreadCount}
                   variant="danger"
-                  className="absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
+                  className="motion-notification-badge absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
                 >
                   {combinedUnreadCount > 99 ? "99+" : combinedUnreadCount}
                 </Badge>
@@ -308,9 +309,10 @@ export default function AppTopbar() {
               // El contador vive dentro del menú, pero sin esta señal en el
               // disparador no habría forma de saber que hay avisos sin abrirlo.
               <Badge
+                key={combinedUnreadCount}
                 aria-hidden="true"
                 variant="danger"
-                className="pointer-events-none absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
+                className="motion-notification-badge pointer-events-none absolute right-0 top-0 min-w-4 -translate-y-1/4 translate-x-1/4 justify-center px-1 py-0 text-[9px] leading-4"
               >
                 {combinedUnreadCount > 99 ? "99+" : combinedUnreadCount}
               </Badge>

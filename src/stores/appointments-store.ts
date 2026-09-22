@@ -36,6 +36,7 @@ import {
   subscribeAppointmentsRealtime,
   unsubscribeAppointmentsRealtime,
 } from "@/stores/appointments-realtime";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useFinancesStore } from "@/stores/finances-store";
 import { useInventoryStore } from "@/stores/inventory-store";
@@ -266,8 +267,10 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   },
 
   fetchAppointmentsPage: async (query) => {
+    const epoch = getQueryEpoch();
     const key = appointmentsPageKey(query);
     const previous = get().byPage[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -281,6 +284,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         page: query.page,
         pageSize: query.pageSize,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -289,6 +293,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         clinicId: getActiveClinicId(),
         employeeId: query.employeeId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byPage: {
           ...get().byPage,
@@ -302,10 +307,12 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   },
 
   fetchAppointments: async ({ start, end, employeeId }) => {
+    const epoch = getQueryEpoch();
     const startIso = start.toISOString();
     const endIso = end.toISOString();
     const key = appointmentsKey(startIso, endIso, employeeId);
     const previous = get().byRange[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byRange: { ...get().byRange, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -316,6 +323,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         clinicId,
         employeeId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byRange: { ...get().byRange, [key]: successQueryEntry(appointments) },
       });
@@ -326,6 +334,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         clinicId: getActiveClinicId(),
         employeeId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byRange: {
           ...get().byRange,
@@ -339,13 +348,16 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   },
 
   fetchAppointment: async (appointmentId) => {
+    const epoch = getQueryEpoch();
     const previous = get().byId[appointmentId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       byId: { ...get().byId, [appointmentId]: loadingQueryEntry(previous) },
     });
 
     try {
       const appointment = await getAppointment(appointmentId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,
@@ -358,6 +370,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         action: "fetchAppointment",
         appointmentId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,
@@ -371,7 +384,9 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   },
 
   fetchAppointmentInventoryItems: async (appointmentId) => {
+    const epoch = getQueryEpoch();
     const previous = get().appointmentInventoryById[appointmentId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       appointmentInventoryById: {
         ...get().appointmentInventoryById,
@@ -381,6 +396,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
     try {
       const items = await getAppointmentInventoryItems(appointmentId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         appointmentInventoryById: {
           ...get().appointmentInventoryById,
@@ -393,6 +409,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         action: "fetchAppointmentInventoryItems",
         appointmentId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         appointmentInventoryById: {
           ...get().appointmentInventoryById,
@@ -406,8 +423,10 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
   },
 
   fetchDefaultMaterials: async (treatmentIds) => {
+    const epoch = getQueryEpoch();
     const key = defaultMaterialsKey(treatmentIds);
     const previous = get().defaultMaterialsByKey[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       defaultMaterialsByKey: {
         ...get().defaultMaterialsByKey,
@@ -417,6 +436,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
 
     try {
       const materials = await getDefaultMaterials(treatmentIds);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         defaultMaterialsByKey: {
           ...get().defaultMaterialsByKey,
@@ -429,6 +449,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         action: "fetchDefaultMaterials",
         treatmentIds,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         defaultMaterialsByKey: {
           ...get().defaultMaterialsByKey,

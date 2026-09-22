@@ -3,7 +3,10 @@
 import { type CSSProperties, useMemo } from "react";
 
 import { appointmentStatusColor } from "@/components/appointments/appointment-status-color";
-import { buildAppointmentsColumns } from "@/components/appointments/components/appointments-columns";
+import {
+  buildAppointmentsColumns,
+  getAppointmentRowActions,
+} from "@/components/appointments/components/appointments-columns";
 import AppointmentsMobileList from "@/components/appointments/components/appointments-mobile-list";
 import { DataTable } from "@/components/ui/data-table";
 import { useActiveClinicTimezone } from "@/lib/hooks/use-active-clinic";
@@ -88,10 +91,14 @@ export default function AppointmentsTable({
           data={appointments}
           manualPagination={pagination}
           getRowHref={(appointment) => `/appointments/${appointment.id}`}
+          prefetchRowLinks={false}
           getRowStyle={(appointment) =>
             ({
               "--glow": appointmentStatusColor(appointment.status),
             }) as CSSProperties
+          }
+          getRowActions={(appointment) =>
+            getAppointmentRowActions(appointment, actionHandlers)
           }
         />
       </div>

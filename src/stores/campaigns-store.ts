@@ -12,6 +12,7 @@ import {
   type CampaignUpdate,
 } from "@/dal/campaigns.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { CampaignQuota } from "@/lib/campaign-limits";
 import { logger } from "@/lib/logger";
 import {
@@ -88,8 +89,10 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
   },
 
   fetchCampaignsPage: async (query) => {
+    const epoch = getQueryEpoch();
     const key = campaignsPageKey(query);
     const previous = get().byPage[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -97,6 +100,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         ...query,
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -104,6 +108,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         action: "fetchCampaignsPage",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byPage: {
           ...get().byPage,
@@ -130,11 +135,14 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
   },
 
   fetchCampaign: async (campaignId) => {
+    const epoch = getQueryEpoch();
     const previous = get().byId[campaignId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byId: { ...get().byId, [campaignId]: loadingQueryEntry(previous) } });
 
     try {
       const campaign = await getCampaign(campaignId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: { ...get().byId, [campaignId]: successQueryEntry(campaign) },
       });
@@ -144,6 +152,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         action: "fetchCampaign",
         campaignId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,
@@ -158,6 +167,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
   },
 
   fetchCampaignQuota: async () => {
+    const epoch = getQueryEpoch();
     const previous = get().quota;
     const clinicId = getActiveClinicId();
     set({ quota: loadingQueryEntry(previous) });
@@ -170,6 +180,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
 
     try {
       const quota = await getCampaignQuota(clinicId);
+      if (!isCurrentQueryEpoch(epoch)) return quota;
       set({ quota: successQueryEntry(quota) });
       return quota;
     } catch (cause) {
@@ -179,6 +190,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         clinicId,
       });
       const error = toError(cause);
+      if (!isCurrentQueryEpoch(epoch)) throw error;
       set({ quota: errorQueryEntry(error, previous) });
       throw error;
     }

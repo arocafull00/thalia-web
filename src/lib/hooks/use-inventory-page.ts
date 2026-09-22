@@ -13,7 +13,12 @@ import {
   useInventoryStore,
   type InventoryPageQuery,
 } from "@/stores/inventory-store";
-import { isInitialLoading } from "@/stores/query-state";
+import {
+  isInitialLoading,
+  isQueryFresh,
+  REFERENCE_QUERY_STALE_TIME,
+  shouldFetchQuery,
+} from "@/stores/query-state";
 
 const EMPTY_SUMMARY: InventoryStockSummary = {
   critical: 0,
@@ -119,12 +124,12 @@ export function useInventoryPage(
   }, [hasClientData, query, seedInventoryItemsPage, seededResult]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchInventoryItemsPage(query);
-  }, [fetchInventoryItemsPage, query, seededResult]);
+  }, [entry, fetchInventoryItemsPage, query, seededResult]);
 
   // Categorías y resumen no dependen de la página: se piden una vez por
   // clínica. Derivarlos de las 10 filas visibles dejaría el desplegable corto y
@@ -137,13 +142,14 @@ export function useInventoryPage(
       return;
     }
 
-    if (hasCategories) {
+    if (!shouldFetchQuery(categoriesEntry, REFERENCE_QUERY_STALE_TIME)) {
       return;
     }
 
     void fetchInventoryCategories();
   }, [
     clinicId,
+    categoriesEntry,
     fetchInventoryCategories,
     hasCategories,
     seedInventoryCategories,
@@ -158,13 +164,14 @@ export function useInventoryPage(
       return;
     }
 
-    if (hasSummary) {
+    if (!shouldFetchQuery(summaryEntry)) {
       return;
     }
 
     void fetchInventoryStockSummary();
   }, [
     clinicId,
+    summaryEntry,
     fetchInventoryStockSummary,
     hasSummary,
     seedInventoryStockSummary,
@@ -176,7 +183,9 @@ export function useInventoryPage(
     [fetchInventoryItemsPage, query],
   );
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
   const items = useMemo(() => resolved?.items ?? [], [resolved]);
 
   const categories = useMemo(

@@ -57,6 +57,9 @@ export default function TreatmentsTable({
         />
       )}
       getRowHref={(treatment) => `/treatments/${treatment.id}`}
+      getRowActions={(treatment) =>
+        getTreatmentRowActions(treatment, actionHandlers)
+      }
     />
   );
 }

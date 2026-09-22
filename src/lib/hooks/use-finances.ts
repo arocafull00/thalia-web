@@ -15,7 +15,7 @@ import {
   type TransactionInput,
   type TransactionUpdatePayload,
 } from "@/stores/finances-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
 import type { Transaction } from "@/types/database.types";
 
 export type {
@@ -70,19 +70,21 @@ export function useTransactionsPage(
   }, [hasClientData, query, seedTransactionsPage, seededResult]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchTransactionsPage(query);
-  }, [fetchTransactionsPage, query, seededResult]);
+  }, [entry, fetchTransactionsPage, query, seededResult]);
 
   const refresh = useCallback(
     () => fetchTransactionsPage(query),
     [fetchTransactionsPage, query],
   );
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
   const transactions = useMemo(() => resolved?.transactions ?? [], [resolved]);
 
   return {
@@ -120,14 +122,16 @@ export function useFinancialSummary(
   }, [categoryId, hasClientData, month, seedFinancialSummary, seededData]);
 
   useEffect(() => {
-    if (seededData !== undefined) {
+    if (seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchFinancialSummary(month, categoryId);
-  }, [categoryId, clinicId, fetchFinancialSummary, key, month, seededData]);
+  }, [categoryId, clinicId, entry, fetchFinancialSummary, key, month, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,

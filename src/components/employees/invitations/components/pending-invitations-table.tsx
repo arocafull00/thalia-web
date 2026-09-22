@@ -45,6 +45,9 @@ export default function PendingInvitationsTable({
           variant="menu"
         />
       )}
+      getRowActions={(invitation) =>
+        getPendingInvitationActions(invitation, handlers)
+      }
     />
   );
 }

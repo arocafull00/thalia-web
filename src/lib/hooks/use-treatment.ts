@@ -5,7 +5,12 @@ import {
   useClinicServerSeed,
   useServerSeed,
 } from "@/lib/hooks/use-server-seed";
-import { isInitialLoading } from "@/stores/query-state";
+import {
+  isInitialLoading,
+  isQueryFresh,
+  REFERENCE_QUERY_STALE_TIME,
+  shouldFetchQuery,
+} from "@/stores/query-state";
 import {
   useTreatmentStore,
   type TreatmentInput,
@@ -24,17 +29,21 @@ export function useTreatments(initialData?: TreatmentWithInventory[]) {
   const fetchTreatments = useTreatmentStore((state) => state.fetchTreatments);
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
-  const hasClientData = entry.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (
+      seededData !== undefined ||
+      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
+    ) {
       return;
     }
 
     void fetchTreatments();
-  }, [clinicId, fetchTreatments, hasClientData, seededData]);
+  }, [clinicId, entry, fetchTreatments, seededData]);
 
-  const data = entry.data ?? seededData;
+  const data = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
+    ? (entry.data ?? undefined)
+    : (seededData ?? entry.data ?? undefined);
   const refresh = useCallback(() => {
     if (useTreatmentStore.getState().list.loading) {
       return Promise.resolve();
@@ -64,17 +73,22 @@ export function useTreatment(treatmentOrId: TreatmentWithInventory | string) {
     initialData?.id ?? "",
     initialData,
   );
-  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (!treatmentId || (seededData !== undefined && !hasClientData)) {
+    if (
+      !treatmentId ||
+      seededData !== undefined ||
+      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
+    ) {
       return;
     }
 
     void fetchTreatment(treatmentId);
-  }, [fetchTreatment, hasClientData, seededData, treatmentId]);
+  }, [entry, fetchTreatment, seededData, treatmentId]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,

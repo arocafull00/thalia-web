@@ -20,6 +20,7 @@ import {
 } from "@/lib/schemas/patient-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { uploadFile } from "@/lib/storage";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useAuthStore } from "@/stores/auth-store";
 import {
   errorQueryEntry,
@@ -123,8 +124,10 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   uploadAvatarError: null,
 
   fetchPatients: async (search) => {
+    const epoch = getQueryEpoch();
     const key = patientsListKey(search);
     const previous = get().listBySearch[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       listBySearch: {
         ...get().listBySearch,
@@ -135,6 +138,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     try {
       const clinicId = getActiveClinicId();
       const patients = await getPatients(clinicId, search);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         listBySearch: {
           ...get().listBySearch,
@@ -148,6 +152,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         clinicId: getActiveClinicId(),
         search: key,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         listBySearch: {
           ...get().listBySearch,
@@ -175,8 +180,10 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   },
 
   fetchPatientsPage: async (query) => {
+    const epoch = getQueryEpoch();
     const key = patientsPageKey(query);
     const previous = get().byPage[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -184,6 +191,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         ...query,
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -191,6 +199,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         action: "fetchPatientsPage",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byPage: {
           ...get().byPage,
@@ -204,11 +213,14 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   },
 
   fetchPatient: async (patientId) => {
+    const epoch = getQueryEpoch();
     const previous = get().byId[patientId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byId: { ...get().byId, [patientId]: loadingQueryEntry(previous) } });
 
     try {
       const patient = await getPatient(patientId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byId: { ...get().byId, [patientId]: successQueryEntry(patient) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -216,6 +228,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         action: "fetchPatient",
         patientId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,
@@ -229,7 +242,9 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   },
 
   fetchPatientAppointments: async (patientId) => {
+    const epoch = getQueryEpoch();
     const previous = get().appointmentsByPatientId[patientId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       appointmentsByPatientId: {
         ...get().appointmentsByPatientId,
@@ -239,6 +254,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
 
     try {
       const appointments = await getPatientAppointments(patientId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         appointmentsByPatientId: {
           ...get().appointmentsByPatientId,
@@ -251,6 +267,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         action: "fetchPatientAppointments",
         patientId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         appointmentsByPatientId: {
           ...get().appointmentsByPatientId,
@@ -264,7 +281,9 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
   },
 
   fetchUpcomingPatientAppointments: async (patientId) => {
+    const epoch = getQueryEpoch();
     const previous = get().upcomingByPatientId[patientId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       upcomingByPatientId: {
         ...get().upcomingByPatientId,
@@ -274,6 +293,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
 
     try {
       const appointments = await getUpcomingPatientAppointments(patientId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         upcomingByPatientId: {
           ...get().upcomingByPatientId,
@@ -286,6 +306,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         action: "fetchUpcomingPatientAppointments",
         patientId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         upcomingByPatientId: {
           ...get().upcomingByPatientId,

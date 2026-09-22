@@ -20,6 +20,7 @@ import {
 } from "@/lib/patient-file-storage";
 import { assertCanMutateClinicalData } from "@/lib/permissions";
 import type { PatientFileUploadInput } from "@/lib/schemas/patient-file-schema";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useAuthStore } from "@/stores/auth-store";
 import {
   errorQueryEntry,
@@ -175,8 +176,10 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   deleteConfirm: null,
 
   fetchPatientFiles: async (patientId) => {
+    const epoch = getQueryEpoch();
     const previous = get().filesByPatientId[patientId];
 
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       filesByPatientId: {
         ...get().filesByPatientId,
@@ -186,6 +189,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
 
     try {
       const files = await getPatientFiles(patientId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         filesByPatientId: {
           ...get().filesByPatientId,
@@ -198,6 +202,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
         action: "fetchPatientFiles",
         patientId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         filesByPatientId: {
           ...get().filesByPatientId,
@@ -227,6 +232,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
   },
 
   fetchGlobalPatientFiles: async (params) => {
+    const epoch = getQueryEpoch();
     const clinicId = getActiveClinicId();
 
     if (!clinicId) {
@@ -236,6 +242,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
     const key = globalPatientFilesKey(clinicId, params);
     const previous = get().globalFilesByQuery[key];
 
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       globalFilesByQuery: {
         ...get().globalFilesByQuery,
@@ -245,6 +252,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
 
     try {
       const page = await getGlobalPatientFiles({ clinicId, ...params });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         globalFilesByQuery: {
           ...get().globalFilesByQuery,
@@ -259,6 +267,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
         clinicId,
         page: params.page,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         globalFilesByQuery: {
           ...get().globalFilesByQuery,

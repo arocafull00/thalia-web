@@ -5,6 +5,7 @@ export type ProfileAction = {
   icon: LucideIcon;
   onClick?: () => void;
   href?: string;
+  prefetch?: boolean;
   variant?: "default" | "danger";
   buttonVariant?: "solid" | "ghost";
   disabled?: boolean;

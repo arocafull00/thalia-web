@@ -21,6 +21,10 @@ import CalendarOverlapGroupSheet, {
 import CalendarToolbar from "@/components/calendar/components/calendar-toolbar";
 import ClinicStatusBadge from "@/components/calendar/components/clinic-status-badge";
 import { useCalendarPage } from "@/components/calendar/hooks/use-calendar-page";
+import {
+  useCalendarViewMotion,
+  type CalendarMotionIntent,
+} from "@/components/calendar/hooks/use-calendar-view-motion";
 import { useSwipeNavigation } from "@/components/calendar/hooks/use-swipe-navigation";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
 import { SkeletonBlock } from "@/components/ui/primitives/skeleton-block";
@@ -75,7 +79,9 @@ export default function CalendarPageClient({
     useState<CalendarOverlapGroupSheetState>(CLOSED_GROUP_SHEET);
   const isMobile = useIsMobile();
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
+  const motionIntentRef = useRef<CalendarMotionIntent>(null);
   const isExternal = useIsExternalProfessional();
+  const weekAnchor = useCalendarStore((state) => state.weekAnchor);
   const employeeId = useCalendarStore((state) => state.employeeId);
   const setEmployeeId = useCalendarStore((state) => state.setEmployeeId);
   const setWeekAnchor = useCalendarStore((state) => state.setWeekAnchor);
@@ -100,6 +106,39 @@ export default function CalendarPageClient({
   const timezone = clinic?.timezone ?? activeClinicTimezone;
   const isLoadingAppointment =
     Boolean(editingAppointmentId) && !editingAppointment.data;
+
+  useCalendarViewMotion(
+    calendarWrapperRef,
+    weekAnchor,
+    viewMode,
+    motionIntentRef,
+  );
+
+  const handlePrevious = () => {
+    motionIntentRef.current = "previous";
+    onPrevious();
+  };
+
+  const handleNext = () => {
+    motionIntentRef.current = "next";
+    onNext();
+  };
+
+  const handleToday = () => {
+    motionIntentRef.current = "fade";
+    onToday();
+    if (useCalendarStore.getState().weekAnchor.getTime() === weekAnchor.getTime()) {
+      motionIntentRef.current = null;
+    }
+  };
+
+  const handleChangeViewMode = (mode: CalendarViewMode) => {
+    motionIntentRef.current = "fade";
+    onChangeViewMode(mode);
+    if (mode === viewMode && useCalendarStore.getState().weekAnchor.getTime() === weekAnchor.getTime()) {
+      motionIntentRef.current = null;
+    }
+  };
 
   const handleOpenGroupSheet = useCallback(
     (groupId: string) => {
@@ -136,6 +175,7 @@ export default function CalendarPageClient({
 
   const handleNavigateToDay = useCallback(
     (date: Date) => {
+      motionIntentRef.current = "fade";
       setWeekAnchor(date);
       setViewMode("day");
     },
@@ -159,8 +199,8 @@ export default function CalendarPageClient({
 
   useSwipeNavigation(calendarWrapperRef, {
     enabled: isMobile,
-    onSwipeLeft: onNext,
-    onSwipeRight: onPrevious,
+    onSwipeLeft: handleNext,
+    onSwipeRight: handlePrevious,
   });
 
   useEffect(() => {
@@ -228,10 +268,10 @@ export default function CalendarPageClient({
           )
         }
         statusBadge={<ClinicStatusBadge clinic={clinic} />}
-        onPrevious={onPrevious}
-        onNext={onNext}
-        onToday={onToday}
-        onChangeViewMode={onChangeViewMode}
+        onPrevious={handlePrevious}
+        onNext={handleNext}
+        onToday={handleToday}
+        onChangeViewMode={handleChangeViewMode}
         onOpenFiltersSheet={handleOpenFiltersSheet}
       />
       <div ref={calendarWrapperRef} className="min-h-0 flex-1">
@@ -272,7 +312,7 @@ export default function CalendarPageClient({
         onApply={handleApplyFilters}
         onClear={handleClearFilters}
         onDismiss={() => setSheetOpen(false)}
-        onToday={onToday}
+        onToday={handleToday}
       />
       <CalendarOverlapGroupSheet
         state={groupSheet}

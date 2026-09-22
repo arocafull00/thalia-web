@@ -54,6 +54,9 @@ export default function EmployeesTable({
         />
       )}
       getRowHref={(employee) => `/employees/${employee.id}`}
+      getRowActions={(employee) =>
+        getEmployeeRowActions(employee, actionHandlers)
+      }
     />
   );
 }

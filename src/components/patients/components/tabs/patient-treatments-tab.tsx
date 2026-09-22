@@ -1,8 +1,10 @@
 "use client";
 
+import { Eye } from "lucide-react";
 import { useMemo } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
+import { TREATMENTS_COPY } from "@/components/treatments/treatments-copy";
 import { PATIENT_DETAIL_COPY } from "@/copy/patient-detail-copy";
 import { derivePatientTreatmentUsage } from "@/lib/patient-detail-stats";
 import type { AppointmentWithRelations } from "@/types/database.types";
@@ -30,6 +32,13 @@ export default function PatientTreatmentsTab({
         enableSorting
         emptyMessage={PATIENT_DETAIL_COPY.treatmentsTab.empty}
         getRowHref={(usage) => `/treatments/${usage.treatmentId}`}
+        getRowActions={(usage) => [
+          {
+            label: TREATMENTS_COPY.row.view,
+            icon: Eye,
+            href: `/treatments/${usage.treatmentId}`,
+          },
+        ]}
       />
     </div>
   );

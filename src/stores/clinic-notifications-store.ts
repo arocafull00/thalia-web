@@ -1,3 +1,4 @@
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -38,10 +39,13 @@ export const useClinicNotificationsStore = create<ClinicNotificationsStore>(
     unreadCount: 0,
 
     fetchNotifications: async (clinicId) => {
+      const epoch = getQueryEpoch();
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ notifications: loadingQueryEntry(get().notifications) });
 
       try {
         const result = await getClinicNotifications(clinicId);
+        if (!isCurrentQueryEpoch(epoch)) return;
         set({
           notifications: successQueryEntry(result.notifications),
           unreadCount: result.unreadCount,
@@ -53,6 +57,7 @@ export const useClinicNotificationsStore = create<ClinicNotificationsStore>(
           action: "fetchNotifications",
           clinicId,
         });
+        if (!isCurrentQueryEpoch(epoch)) return;
         set({
           notifications: errorQueryEntry(error, get().notifications),
         });

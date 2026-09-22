@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 
 import { useAppointmentsStore } from "@/stores/appointments-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, shouldFetchQuery } from "@/stores/query-state";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 function defaultMaterialsKey(treatmentIds: string[]) {
@@ -34,20 +34,20 @@ export function useAppointmentMaterials(
   );
 
   useEffect(() => {
-    if (!appointmentId) {
+    if (!appointmentId || !shouldFetchQuery(inventoryEntry)) {
       return;
     }
 
     void fetchAppointmentInventoryItems(appointmentId);
-  }, [appointmentId, fetchAppointmentInventoryItems]);
+  }, [appointmentId, fetchAppointmentInventoryItems, inventoryEntry]);
 
   useEffect(() => {
-    if (treatmentIds.length === 0) {
+    if (treatmentIds.length === 0 || !shouldFetchQuery(defaultsEntry)) {
       return;
     }
 
     void fetchDefaultMaterials(treatmentIds);
-  }, [fetchDefaultMaterials, materialsKey, treatmentIds]);
+  }, [defaultsEntry, fetchDefaultMaterials, materialsKey, treatmentIds]);
 
   const overrideItems = inventoryEntry?.data ?? [];
   const defaultMaterials = defaultsEntry?.data ?? [];

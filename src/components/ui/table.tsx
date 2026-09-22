@@ -50,9 +50,10 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   );
 }
 
-function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+function TableRow({ className, ref, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
+      ref={ref}
       data-slot="table-row"
       className={cn(
         "transition-colors hover:bg-[var(--hover-overlay)] has-aria-expanded:bg-surface-secondary data-[state=selected]:bg-primary-subtle",

@@ -25,7 +25,7 @@ export default function CalendarDayDialog({
 }: CalendarDayDialogProps) {
   return (
     <AppDialog open={open} onOpenChange={onOpenChange}>
-      <AppSheetContent className="fixed inset-0 z-50 flex h-dvh w-full flex-col gap-0 overflow-hidden border-0 bg-surface p-0 outline-none data-[state=open]:animate-overlay-in data-[state=closed]:animate-overlay-out">
+      <AppSheetContent className="motion-sheet-fade fixed inset-0 z-50 flex h-dvh w-full flex-col gap-0 overflow-hidden border-0 bg-surface p-0 outline-none">
         <AppDialogHeader className="flex shrink-0 flex-col gap-1 border-b border-border-subtle px-6 py-4 pr-12">
           <AppDialogTitle>{day ? formatFullDayLabel(day) : ""}</AppDialogTitle>
         </AppDialogHeader>

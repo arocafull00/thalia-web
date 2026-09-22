@@ -52,6 +52,9 @@ export default function PatientsTable({
         />
       )}
       getRowHref={(patient) => `/patients/${patient.id}`}
+      getRowActions={(patient) =>
+        getPatientRowActions(patient, actionHandlers)
+      }
     />
   );
 }

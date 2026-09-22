@@ -23,7 +23,7 @@ export default function FinancesCategoryManagementDialogs({
   return (
     <>
       <AppDialog open={open} onOpenChange={onOpenChange}>
-        <AppSheetContent className="fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-4xl flex-col border-l border-border/60 bg-surface p-6 shadow-float outline-none data-[state=open]:animate-sheet-in data-[state=closed]:animate-sheet-out">
+        <AppSheetContent className="fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-4xl flex-col border-l border-border/60 bg-surface p-6 shadow-float outline-none">
           <AppDialogTitle className="sr-only">
             {FINANCES_COPY.categories.manageTitle}
           </AppDialogTitle>

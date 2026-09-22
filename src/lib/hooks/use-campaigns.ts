@@ -13,7 +13,7 @@ import {
   useCampaignsStore,
   type CampaignsPageQuery,
 } from "@/stores/campaigns-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
 
 type CampaignsPageFilters = {
   createdFrom: string | null;
@@ -83,14 +83,16 @@ export function useCampaignsPage(
   }, [hasClientData, query, seedCampaignsPage, seededResult]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchCampaignsPage(query);
-  }, [fetchCampaignsPage, query, seededResult]);
+  }, [entry, fetchCampaignsPage, query, seededResult]);
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
   const campaigns = useMemo(() => resolved?.campaigns ?? [], [resolved]);
 
   return {
@@ -106,8 +108,12 @@ export function useCampaign(campaignId: string) {
   const fetchCampaign = useCampaignsStore((state) => state.fetchCampaign);
 
   useEffect(() => {
+    if (!campaignId || !shouldFetchQuery(entry)) {
+      return;
+    }
+
     void fetchCampaign(campaignId);
-  }, [campaignId, fetchCampaign]);
+  }, [campaignId, entry, fetchCampaign]);
 
   return {
     data: entry?.data ?? null,
@@ -134,12 +140,12 @@ export function useCampaignQuota(initialQuota?: CampaignQuota) {
   }, [initialQuota, seedCampaignQuota]);
 
   useEffect(() => {
-    if (initialQuota || entry.data != null || entry.loading) {
+    if (initialQuota || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchCampaignQuota().catch(() => undefined);
-  }, [entry.data, entry.loading, fetchCampaignQuota, initialQuota]);
+  }, [entry, fetchCampaignQuota, initialQuota]);
 
   return {
     data: entry.data ?? initialQuota ?? null,

@@ -9,7 +9,12 @@ import {
   useInventoryStore,
   type InventoryItemInput,
 } from "@/stores/inventory-store";
-import { isInitialLoading } from "@/stores/query-state";
+import {
+  isInitialLoading,
+  isQueryFresh,
+  REFERENCE_QUERY_STALE_TIME,
+  shouldFetchQuery,
+} from "@/stores/query-state";
 import type {
   InventoryItem,
   InventoryMovementType,
@@ -25,17 +30,21 @@ export function useInventoryItems(initialData?: InventoryItem[]) {
   );
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
-  const hasClientData = entry.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (
+      seededData !== undefined ||
+      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
+    ) {
       return;
     }
 
     void fetchInventoryItems();
-  }, [clinicId, fetchInventoryItems, hasClientData, seededData]);
+  }, [clinicId, entry, fetchInventoryItems, seededData]);
 
-  const data = entry.data ?? seededData;
+  const data = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
+    ? entry.data
+    : (seededData ?? entry.data);
 
   return {
     data,
@@ -52,17 +61,18 @@ export function useInventoryItem(itemOrId: InventoryItem | string) {
     (state) => state.fetchInventoryItem,
   );
   const seededData = useServerSeed(itemId, initialData?.id ?? "", initialData);
-  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchInventoryItem(itemId);
-  }, [fetchInventoryItem, hasClientData, itemId, seededData]);
+  }, [entry, fetchInventoryItem, itemId, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,
@@ -84,17 +94,18 @@ export function useInventoryMovements(
     initialData === undefined ? "" : itemId,
     initialData,
   );
-  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (seededData !== undefined && !hasClientData) {
+    if (seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchInventoryMovements(itemId);
-  }, [fetchInventoryMovements, hasClientData, itemId, seededData]);
+  }, [entry, fetchInventoryMovements, itemId, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,

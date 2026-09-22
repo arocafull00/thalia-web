@@ -113,7 +113,7 @@ Density is moderate. Lists and tables carry operational clinic data; the campaig
 - Pill-shaped primary actions; rounded-xl inputs and nav items
 - Radix UI for accessible primitives (callouts, popovers, theme)
 - Spanish-first copy; labels often uppercase with wide tracking
-- Motion limited to hover backgrounds and focus rings (150–250ms)
+- Brief contextual motion for controls, selection, and calendar navigation (50–250ms)
 
 ## 2. Colors
 
@@ -242,7 +242,9 @@ Depth is tonal, not shadow-driven. Panels sit on the backdrop; borders define ed
 - **Do** use pill buttons with verb + object labels in Spanish ("Entrar", "Continuar con Google").
 - **Do** show focus rings on all interactive controls for keyboard users.
 - **Do** use skeleton loaders for list and block loading states.
-- **Do** respect `prefers-reduced-motion` by keeping transitions to color and opacity only.
+- **Do** use 250ms entrances and 150ms exits for anchored surfaces and dialogs; tooltips use an 80ms intent delay, a 150ms entrance, and a 50ms exit.
+- **Do** use brief motion to show selection and calendar direction. Keep the calendar mounted while its content changes, and cancel an unfinished animation when another navigation starts.
+- **Do** respect `prefers-reduced-motion`: remove displacement and scale, leaving immediate state changes or brief opacity only.
 
 ### Don't:
 
@@ -250,7 +252,7 @@ Depth is tonal, not shadow-driven. Panels sit on the backdrop; borders define ed
 - **Don't** use gradients anywhere but the app backdrop, and never on text or buttons.
 - **Don't** use oversized rounded cards beyond the xl/2xl scale already in code.
 - **Don't** use generic illustration packs or marketing metric hero blocks inside the app shell.
-- **Don't** use unnecessary animations or orchestrated page-load sequences.
+- **Don't** add decorative loops, unnecessary animations, or orchestrated page-load sequences.
 - **Don't** use marketing buzzwords that could describe any software.
 - **Don't** pair a 1px border with a wide soft shadow on the same element.
 - **Don't** introduce DM Sans or other display faces; Geist is the committed stack.

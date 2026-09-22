@@ -3,7 +3,10 @@
 import { Download, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 
-import { buildFilesColumns } from "@/components/files/components/files-columns";
+import {
+  buildFilesColumns,
+  getFileRowActions,
+} from "@/components/files/components/files-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { FILES_COPY } from "@/copy/files-copy";
 import {
@@ -28,6 +31,10 @@ export default function FilesTable({
   onDownload,
   onDelete,
 }: FilesTableProps) {
+  const fileHandlers = useMemo(
+    () => ({ onView, onDownload, onDelete }),
+    [onDelete, onDownload, onView],
+  );
   const columns = useMemo(
     () => buildFilesColumns(onView, onDownload, onDelete),
     [onDelete, onDownload, onView],
@@ -100,6 +107,7 @@ export default function FilesTable({
       mobileColumns={mobileColumns}
       mobileActions={mobileActions}
       onRowActivate={onView}
+      getRowActions={(file) => getFileRowActions(file, fileHandlers)}
       getMobileRowKey={(file) => file.id}
     />
   );

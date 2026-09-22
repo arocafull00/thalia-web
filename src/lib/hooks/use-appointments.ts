@@ -17,7 +17,7 @@ import {
   type AppointmentInventoryLinkInput,
   type AppointmentUpdateInput,
 } from "@/stores/appointments-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 export type {
@@ -65,7 +65,6 @@ export function useAppointments(
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
   const hasClientData = entry?.data != null;
-
   useEffect(() => {
     if (seededData === undefined || hasClientData) {
       return;
@@ -80,7 +79,7 @@ export function useAppointments(
   }, [employeeId, end, hasClientData, seedAppointments, seededData, start]);
 
   useEffect(() => {
-    if (seededData !== undefined) {
+    if (seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
@@ -89,9 +88,11 @@ export function useAppointments(
       end: new Date(end),
       employeeId,
     });
-  }, [clinicId, employeeId, end, fetchAppointments, seededData, start]);
+  }, [clinicId, employeeId, end, entry, fetchAppointments, seededData, start]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
   const refresh = useCallback(() => {
     if (useAppointmentsStore.getState().byRange[key]?.loading) {
       return Promise.resolve();
@@ -129,17 +130,18 @@ export function useAppointment(
     initialData?.id ?? "",
     initialData,
   );
-  const hasClientData = entry?.data != null;
 
   useEffect(() => {
-    if (!appointmentId || (seededData !== undefined && !hasClientData)) {
+    if (!appointmentId || seededData !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchAppointment(appointmentId);
-  }, [appointmentId, fetchAppointment, hasClientData, seededData]);
+  }, [appointmentId, entry, fetchAppointment, seededData]);
 
-  const data = entry?.data ?? seededData;
+  const data = isQueryFresh(entry)
+    ? entry!.data
+    : (seededData ?? entry?.data);
 
   return {
     data,
@@ -249,12 +251,12 @@ export function useAppointmentInventoryItems(appointmentId: string) {
   );
 
   useEffect(() => {
-    if (!appointmentId) {
+    if (!appointmentId || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchAppointmentInventoryItems(appointmentId);
-  }, [appointmentId, fetchAppointmentInventoryItems]);
+  }, [appointmentId, entry, fetchAppointmentInventoryItems]);
 
   return {
     data: entry?.data,

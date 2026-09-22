@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getFileUrl } from "@/dal/patient-files.dal";
 import { peekCachedPatientFileUrl } from "@/lib/patient-file-storage";
 import { usePatientFilesStore } from "@/stores/patient-files-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, shouldFetchQuery } from "@/stores/query-state";
 import type { PatientFile, PatientFileUpdate } from "@/types/database.types";
 
 export function usePatientFiles(patientId: string) {
@@ -15,12 +15,12 @@ export function usePatientFiles(patientId: string) {
   );
 
   useEffect(() => {
-    if (!patientId.trim()) {
+    if (!patientId.trim() || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchPatientFiles(patientId);
-  }, [fetchPatientFiles, patientId]);
+  }, [entry, fetchPatientFiles, patientId]);
 
   return {
     data: entry?.data ?? undefined,

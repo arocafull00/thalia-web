@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
     staleTimes: {
-      dynamic: 31_536_000,
+      dynamic: 120,
+      static: 120,
     },
   },
   images: {

@@ -19,6 +19,7 @@ import {
   successQueryEntry,
   type QueryEntry,
 } from "@/stores/query-state";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { Transaction, TransactionType } from "@/types/database.types";
 
 export type TransactionInput = {
@@ -179,8 +180,10 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   },
 
   fetchTransactionsPage: async (query) => {
+    const epoch = getQueryEpoch();
     const key = transactionsPageKey(query);
     const previous = get().byPage[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -188,6 +191,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         ...query,
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -195,6 +199,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         action: "fetchTransactionsPage",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byPage: {
           ...get().byPage,
@@ -208,8 +213,10 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
   },
 
   fetchFinancialSummary: async (month, categoryId) => {
+    const epoch = getQueryEpoch();
     const key = summaryKey(month, categoryId);
     const previous = get().summaryByKey[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       summaryByKey: {
         ...get().summaryByKey,
@@ -230,6 +237,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       ]);
       const summary = buildFinancialSummary(current, previousTransactions);
 
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         summaryByKey: {
           ...get().summaryByKey,
@@ -242,6 +250,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         action: "fetchFinancialSummary",
         month: key,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         summaryByKey: {
           ...get().summaryByKey,

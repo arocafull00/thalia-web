@@ -49,7 +49,7 @@ export default function CalendarViewModeToggle({
           value={option.value}
           aria-label={option.label}
           data-cuelume-toggle=""
-          className={cn(fullWidth && "flex-1")}
+          className={cn("motion-calendar-toggle", fullWidth && "flex-1")}
         >
           {option.label}
         </ToggleGroupItem>

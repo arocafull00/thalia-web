@@ -18,7 +18,7 @@ import {
   useAppointmentsStore,
   type AppointmentsPageQuery,
 } from "@/stores/appointments-store";
-import { isInitialLoading } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -148,14 +148,16 @@ export function useAppointmentsPage(
   }, [hasClientData, query, seedAppointmentsPage, seededResult]);
 
   useEffect(() => {
-    if (seededResult !== undefined) {
+    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
       return;
     }
 
     void fetchAppointmentsPage(query);
-  }, [fetchAppointmentsPage, query, seededResult]);
+  }, [entry, fetchAppointmentsPage, query, seededResult]);
 
-  const resolved = entry?.data ?? seededResult ?? null;
+  const resolved = isQueryFresh(entry)
+    ? entry!.data
+    : (seededResult ?? entry?.data ?? null);
 
   const refresh = useCallback(() => {
     if (useAppointmentsStore.getState().byPage[key]?.loading) {
@@ -168,7 +170,7 @@ export function useAppointmentsPage(
   const appointments = {
     data: resolved,
     error: entry?.error ?? null,
-    isLoading: isInitialLoading(entry),
+    isLoading: resolved == null && isInitialLoading(entry),
     // `loading` con datos ya en pantalla es un refresco, no una carga inicial.
     isRefreshing: entry?.loading ?? false,
     refresh,

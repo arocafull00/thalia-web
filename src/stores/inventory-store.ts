@@ -25,6 +25,7 @@ import {
   successQueryEntry,
   type QueryEntry,
 } from "@/stores/query-state";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type {
   InventoryItem,
   InventoryMovementType,
@@ -157,8 +158,10 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   },
 
   fetchInventoryItemsPage: async (query) => {
+    const epoch = getQueryEpoch();
     const key = inventoryPageKey(query);
     const previous = get().byPage[key];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byPage: { ...get().byPage, [key]: loadingQueryEntry(previous) } });
 
     try {
@@ -166,6 +169,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         ...query,
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -173,6 +177,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         action: "fetchInventoryItemsPage",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byPage: {
           ...get().byPage,
@@ -194,10 +199,13 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   },
 
   fetchInventoryCategories: async () => {
+    const epoch = getQueryEpoch();
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ categories: loadingQueryEntry(get().categories) });
 
     try {
       const categories = await getInventoryCategories(getActiveClinicId());
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ categories: successQueryEntry(categories) });
     } catch (cause) {
       logger.captureException(cause, {
@@ -205,6 +213,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         action: "fetchInventoryCategories",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         categories: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -223,10 +232,13 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   },
 
   fetchInventoryStockSummary: async () => {
+    const epoch = getQueryEpoch();
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ summary: loadingQueryEntry(get().summary) });
 
     try {
       const summary = await getInventoryStockSummary(getActiveClinicId());
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ summary: successQueryEntry(summary) });
     } catch (cause) {
       logger.captureException(cause, {
@@ -234,6 +246,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         action: "fetchInventoryStockSummary",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         summary: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -244,11 +257,14 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   },
 
   fetchInventoryItems: async () => {
+    const epoch = getQueryEpoch();
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ list: loadingQueryEntry(get().list) });
 
     try {
       const clinicId = getActiveClinicId();
       const items = await getInventoryItems(clinicId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ list: successQueryEntry(items) });
     } catch (cause) {
       logger.captureException(cause, {
@@ -256,6 +272,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         action: "fetchInventoryItems",
         clinicId: getActiveClinicId(),
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         list: errorQueryEntry(
           cause instanceof Error ? cause : new Error(String(cause)),
@@ -266,11 +283,14 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   },
 
   fetchInventoryItem: async (itemId) => {
+    const epoch = getQueryEpoch();
     const previous = get().byId[itemId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({ byId: { ...get().byId, [itemId]: loadingQueryEntry(previous) } });
 
     try {
       const item = await getInventoryItem(itemId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({ byId: { ...get().byId, [itemId]: successQueryEntry(item) } });
     } catch (cause) {
       logger.captureException(cause, {
@@ -278,6 +298,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         action: "fetchInventoryItem",
         itemId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,
@@ -291,7 +312,9 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   },
 
   fetchInventoryMovements: async (itemId) => {
+    const epoch = getQueryEpoch();
     const previous = get().movementsByItemId[itemId];
+    if (!isCurrentQueryEpoch(epoch)) return;
     set({
       movementsByItemId: {
         ...get().movementsByItemId,
@@ -301,6 +324,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
 
     try {
       const movements = await getInventoryMovements(itemId);
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         movementsByItemId: {
           ...get().movementsByItemId,
@@ -313,6 +337,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         action: "fetchInventoryMovements",
         itemId,
       });
+      if (!isCurrentQueryEpoch(epoch)) return;
       set({
         movementsByItemId: {
           ...get().movementsByItemId,

@@ -13,6 +13,7 @@ import type {
   TransactionCategoryCreateInput,
   TransactionCategoryRenameInput,
 } from "@/lib/schemas/transaction-category-schema";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useFinancesStore } from "@/stores/finances-store";
 import {
   errorQueryEntry,
@@ -111,7 +112,9 @@ export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
       },
 
       fetchCategories: async (clinicId) => {
+        const epoch = getQueryEpoch();
         const previous = get().byClinic[clinicId];
+        if (!isCurrentQueryEpoch(epoch)) return;
         set({
           byClinic: {
             ...get().byClinic,
@@ -121,6 +124,7 @@ export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
 
         try {
           const categories = await getTransactionCategories(clinicId);
+          if (!isCurrentQueryEpoch(epoch)) return;
           set({
             byClinic: {
               ...get().byClinic,
@@ -135,6 +139,7 @@ export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
             clinicId,
             store: "transaction-categories-store",
           });
+          if (!isCurrentQueryEpoch(epoch)) return;
           set({
             byClinic: {
               ...get().byClinic,

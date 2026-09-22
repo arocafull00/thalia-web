@@ -47,7 +47,7 @@ function toRpcArgs(
     args.p_max_visits = filters.maxVisits;
   }
 
-  if (filters.monthsSinceLastVisit != null) {
+  if (filters.monthsSinceLastVisit != null && filters.monthsSinceLastVisit > 0) {
     args.p_months_since_last_visit = filters.monthsSinceLastVisit;
   }
 

@@ -8,6 +8,14 @@ type CampaignErrorBody = {
   error?: unknown;
 };
 
+const SEND_FORBIDDEN_MESSAGES: Record<string, string> = {
+  campaign_membership_required: MARKETING_COPY.send.forbidden.membership,
+  campaign_account_type_not_allowed: MARKETING_COPY.send.forbidden.accountType,
+  campaign_role_not_allowed: MARKETING_COPY.send.forbidden.role,
+  campaign_billing_missing: MARKETING_COPY.send.forbidden.billing,
+  campaign_subscription_inactive: MARKETING_COPY.send.forbidden.subscription,
+};
+
 function asString(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
@@ -48,6 +56,14 @@ export async function createCampaignError(cause: unknown): Promise<Error> {
     )
   ) {
     return new Error(MARKETING_COPY.limits.sendInProgress);
+  }
+
+  const forbiddenMessage = candidates
+    .map((value) => SEND_FORBIDDEN_MESSAGES[value])
+    .find((message) => message);
+
+  if (forbiddenMessage) {
+    return new Error(forbiddenMessage);
   }
 
   return error;

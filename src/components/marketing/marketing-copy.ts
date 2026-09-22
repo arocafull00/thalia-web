@@ -202,6 +202,14 @@ export const MARKETING_COPY = {
         ? "Campaña enviada a 1 paciente."
         : `Campaña enviada a ${count} pacientes.`,
     error: "No se pudo enviar la campaña.",
+    forbidden: {
+      membership: "No tienes una membresía activa en esta clínica.",
+      accountType: "Las cuentas externas no pueden enviar campañas.",
+      role: "Solo administración y recepción pueden enviar campañas.",
+      billing: "Esta clínica no tiene suscripción.",
+      subscription:
+        "La suscripción de la clínica no está en prueba ni activa.",
+    },
     alreadySent: "Esta campaña ya se envió.",
   },
   limits: {

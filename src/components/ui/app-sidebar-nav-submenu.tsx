@@ -54,7 +54,7 @@ export default function AppSidebarNavSubmenu({
                 aria-current={active ? "page" : undefined}
                 onClick={onNavigate}
                 onMouseEnter={() => enablePrefetch(item.href)}
-                prefetch={prefetchHrefs.has(item.href)}
+                prefetch={prefetchHrefs.has(item.href) ? "auto" : false}
               >
                 <span>{item.label}</span>
                 <AppSidebarNavPending />

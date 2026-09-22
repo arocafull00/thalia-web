@@ -132,7 +132,9 @@ export function buildCampaignSegmentFilters(
 
     if (segment.segment_type === "last_visit_date") {
       const config = lastVisitDateConfigSchema.parse(segment.config);
-      filters.monthsSinceLastVisit = config.months_since_last_visit;
+      filters.monthsSinceLastVisit = monthsSinceLastVisitOrNull(
+        config.months_since_last_visit,
+      );
       continue;
     }
 
@@ -215,6 +217,14 @@ const NUMERIC_RULES: Record<
   },
 };
 
+function monthsSinceLastVisitOrNull(value: number | null): number | null {
+  if (value == null || value === 0) {
+    return null;
+  }
+
+  return value;
+}
+
 type ParsedField = { value: number | null; error: string | null };
 
 function parseNumericField(raw: string, rule: NumericFieldRule): ParsedField {
@@ -290,7 +300,9 @@ export function parseCampaignSegmentInputs(inputs: CampaignSegmentInputs): {
       treatmentId: inputs.treatmentId || null,
       minVisits: parsed.minVisits,
       maxVisits: parsed.maxVisits,
-      monthsSinceLastVisit: parsed.monthsSinceLastVisit,
+      monthsSinceLastVisit: monthsSinceLastVisitOrNull(
+        parsed.monthsSinceLastVisit,
+      ),
       minAge: parsed.minAge,
       maxAge: parsed.maxAge,
     },
@@ -326,10 +338,14 @@ export function buildSegmentsFromFilters(
     });
   }
 
-  if (filters.monthsSinceLastVisit != null) {
+  const monthsSinceLastVisit = monthsSinceLastVisitOrNull(
+    filters.monthsSinceLastVisit,
+  );
+
+  if (monthsSinceLastVisit != null) {
     segments.push({
       segment_type: "last_visit_date",
-      config: { months_since_last_visit: filters.monthsSinceLastVisit },
+      config: { months_since_last_visit: monthsSinceLastVisit },
     });
   }
 

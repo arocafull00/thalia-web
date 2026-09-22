@@ -36,6 +36,7 @@ export default function CampaignsTable({
       manualPagination={pagination}
       emptyMessage={MARKETING_COPY.list.emptyFiltered}
       getRowHref={(campaign) => `/marketing/${campaign.id}`}
+      clickableRow
     />
   );
 }

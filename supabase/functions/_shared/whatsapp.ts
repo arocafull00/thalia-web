@@ -16,7 +16,10 @@
 
 export type WhatsAppMode = "mock" | "sandbox" | "production";
 
+export type WhatsAppPurpose = "care" | "marketing";
+
 export type WhatsAppMessage = {
+  purpose: WhatsAppPurpose;
   from: string;
   to: string;
   body: string;
@@ -102,7 +105,7 @@ export async function sendWhatsApp(
 
   if (mode === "mock") {
     console.log("[whatsapp:mock]", {
-      to: message.to,
+      purpose: message.purpose,
       body: message.body.slice(0, 120),
       mediaUrl: message.mediaUrl ?? null,
       templateSid: message.templateSid ?? null,
@@ -130,9 +133,9 @@ export async function sendWhatsApp(
   }
 
   console.log("[whatsapp] llamando a Twilio", {
+    purpose: message.purpose,
     mode,
     from: message.from,
-    to: message.to,
     conImagen: Boolean(message.mediaUrl),
   });
 

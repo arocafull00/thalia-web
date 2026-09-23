@@ -1,6 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { buildMessage, dropSentenceWith } from "../_shared/message-template.ts";
+import {
+  buildCareReminderMessage,
+  buildCareReminderTemplateVariables,
+} from "../_shared/care-reminder-message.ts";
 import { sendWhatsApp } from "../_shared/whatsapp.ts";
 
 const corsHeaders = {
@@ -82,18 +85,6 @@ async function buildConfirmationLink(
   }
 
   return `${appUrl.replace(/\/+$/, "")}/cita/${data.token}`;
-}
-
-/**
- * Identificador del token dentro del enlace.
- *
- * En una plantilla aprobada por Meta con botón de URL sólo el sufijo puede ser
- * variable, así que la plantilla es del tipo `https://…/cita/{{6}}` y lo que
- * viaja es el token, no la URL entera. En modo mock y sandbox el enlace va
- * completo dentro del texto y esto no se usa.
- */
-function tokenFromLink(link: string | null): string {
-  return link ? (link.split("/").pop() ?? "") : "";
 }
 
 /*
@@ -188,7 +179,7 @@ Deno.serve(async (req) => {
   const { data: configs, error: clinicsError } = await supabase
     .from("whatsapp_config")
     .select(
-      "clinic_id, whatsapp_reminder_enabled:reminder_enabled, whatsapp_reminder_hours:reminder_hours, whatsapp_phone_number_id:phone_number_id, whatsapp_message_template:message_template, whatsapp_confirmation_enabled:confirmation_enabled, clinic:clinics!inner(id, name, address, timezone)",
+      "clinic_id, whatsapp_reminder_enabled:reminder_enabled, whatsapp_reminder_hours:reminder_hours, whatsapp_phone_number_id:phone_number_id, whatsapp_confirmation_enabled:confirmation_enabled, clinic:clinics!inner(id, name, timezone)",
     )
     .eq("reminder_enabled", true)
     .not("phone_number_id", "is", null);
@@ -284,9 +275,7 @@ Deno.serve(async (req) => {
 
       let appointmentsQuery = supabase
         .from("appointments")
-        .select(
-          "id, starts_at, status, patients(full_name, phone), employees(full_name)",
-        )
+        .select("id, starts_at, status, patients(phone)")
         .eq("clinic_id", clinic.id)
         .in("status", ["scheduled", "confirmed"]);
 
@@ -368,11 +357,7 @@ Deno.serve(async (req) => {
       });
 
       for (const appointment of appointments) {
-        const patient = appointment.patients as {
-          full_name: string;
-          phone: string | null;
-        } | null;
-        const employee = appointment.employees as { full_name: string } | null;
+        const patient = appointment.patients as { phone: string | null } | null;
 
         if (!patient?.phone) {
           skip(summary, "paciente_sin_telefono", {
@@ -387,19 +372,9 @@ Deno.serve(async (req) => {
         }
 
         const appointmentDate = new Date(appointment.starts_at);
-        const fecha = appointmentDate.toLocaleDateString("es-ES", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          timeZone: clinic.timezone,
-        });
-        const hora = appointmentDate.toLocaleTimeString("es-ES", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: clinic.timezone,
-        });
+        const sentAt = new Date();
 
-        const enlace = clinic.whatsapp_confirmation_enabled
+        const confirmationUrl = clinic.whatsapp_confirmation_enabled
           ? await buildConfirmationLink(
               supabase,
               appointment as { id: string; status: string; starts_at: string },
@@ -408,37 +383,23 @@ Deno.serve(async (req) => {
             )
           : null;
 
-        // Sin enlace se retira la frase que lo menciona. Dejarla apuntando a
-        // la nada es lo que hace que el mensaje parezca cortado.
-        const plantilla = enlace
-          ? clinic.whatsapp_message_template
-          : dropSentenceWith(clinic.whatsapp_message_template, "{enlace}");
+        const reminderInput = {
+          clinicName: clinic.name,
+          appointmentStartsAt: appointmentDate,
+          sentAt,
+          timezone: clinic.timezone,
+          confirmationUrl,
+        };
 
-        const message = buildMessage(plantilla, {
-          paciente: patient.full_name,
-          clinica: clinic.name,
-          fecha,
-          hora,
-          profesional: employee?.full_name ?? "tu profesional",
-          enlace: enlace ?? "",
-        });
+        const message = buildCareReminderMessage(reminderInput);
 
         const result = await sendWhatsApp({
+          purpose: "care",
           from: clinic.whatsapp_phone_number_id,
           to: patient.phone,
           body: message,
-          // WHATSAPP_MODE=production no admite texto libre: sin plantilla el
-          // adaptador rechaza el envío y el recordatorio no sale. El texto de
-          // arriba sigue siendo el que se manda en mock y sandbox.
           templateSid: Deno.env.get("WHATSAPP_REMINDER_TEMPLATE_SID") ?? null,
-          templateVariables: {
-            "1": patient.full_name,
-            "2": clinic.name,
-            "3": fecha,
-            "4": hora,
-            "5": employee?.full_name ?? "tu profesional",
-            "6": tokenFromLink(enlace),
-          },
+          templateVariables: buildCareReminderTemplateVariables(reminderInput),
         });
 
         const ok = result.ok;

@@ -120,7 +120,7 @@ export const MARKETING_COPY = {
     overLimit: (count: number) =>
       `${count} pacientes cumplen los criterios. El máximo por campaña es ${MAX_CAMPAIGN_RECIPIENTS}; ajusta los filtros.`,
     consentNote:
-      "Solo se cuentan pacientes con consentimiento de marketing y teléfono.",
+      "Comunicación promocional: solo pacientes con consentimiento de marketing y teléfono. Es distinta del recordatorio de cita.",
   },
   messagePreview: {
     empty: "El mensaje aparecerá aquí mientras lo escribes.",

@@ -69,16 +69,12 @@ export const SETTINGS_COPY = {
     phoneNumberIdLabel: "Número de envío",
     reminderHoursLabel: "Enviar recordatorio",
     reminderHoursHint: "Se envía un único aviso por cita",
-    templateLabel: "Mensaje",
+    templateLabel: "Mensaje del recordatorio",
     templateHint:
-      "Variables disponibles: {paciente}, {clinica}, {fecha}, {hora}, {profesional}",
-    templateHintWithLink:
-      "Variables disponibles: {paciente}, {clinica}, {fecha}, {hora}, {profesional} y {enlace}, el botón para confirmar",
+      "Aviso de cita: solo hora y nombre de la clínica. No incluye datos clínicos ni el nombre del profesional. Si activas la confirmación, se añade un enlace al final.",
     confirmationEnableLabel: "Pedir confirmación en el recordatorio",
     confirmationEnableHint:
       "Añade al recordatorio un enlace para que el paciente confirme la cita",
-    reminderTemplateMissingLink:
-      "Añade {enlace} al mensaje o el paciente no podrá confirmar.",
     saveLabel: "Guardar",
     savingLabel: "Guardando...",
   },

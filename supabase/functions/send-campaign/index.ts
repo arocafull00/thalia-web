@@ -281,7 +281,7 @@ Deno.serve(async (req) => {
 
   console.log("[send-campaign] segmento resuelto", {
     total: recipients.length,
-    telefonos: recipients.map((patient) => patient.phone),
+    patientIds: recipients.map((patient) => patient.id),
   });
 
   if (recipients.length > MAX_CAMPAIGN_RECIPIENTS) {
@@ -434,6 +434,7 @@ Deno.serve(async (req) => {
       const results = await Promise.all(
         batch.map(async (recipient) => {
           const result = await sendWhatsApp({
+            purpose: "marketing",
             from: whatsappConfig?.phone_number_id ?? "mock",
             to: recipient.phone,
             body,
@@ -450,12 +451,14 @@ Deno.serve(async (req) => {
       for (const { recipient, result } of results) {
         if (result.ok) {
           console.log("[send-campaign] enviado", {
-            to: recipient.phone,
+            recipientId: recipient.id,
+            patientId: recipient.patient_id,
             providerMessageId: result.providerMessageId,
           });
         } else {
           console.error("[send-campaign] fallo de envío", {
-            to: recipient.phone,
+            recipientId: recipient.id,
+            patientId: recipient.patient_id,
             error: result.error,
           });
         }

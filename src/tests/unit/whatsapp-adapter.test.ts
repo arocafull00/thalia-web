@@ -28,6 +28,7 @@ function bodyOf(fetchMock: ReturnType<typeof vi.fn>): URLSearchParams {
 }
 
 const baseMessage = {
+  purpose: "marketing" as const,
   from: "+34600000000",
   to: "+34610000010",
   body: "Hola, tenemos una promoción.",

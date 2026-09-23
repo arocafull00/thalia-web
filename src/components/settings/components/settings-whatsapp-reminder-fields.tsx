@@ -1,36 +1,47 @@
-import { Notice } from "@/components/ui/primitives/notice";
-import { Textarea } from "@/components/ui/textarea";
+import { useMemo } from "react";
+
 import { SETTINGS_COPY } from "@/copy/settings-copy";
+import { buildCareReminderMessage } from "../../../../supabase/functions/_shared/care-reminder-message";
 
 const REMINDER_HOUR_OPTIONS = [1, 2, 6, 12, 24, 48];
+
+const PREVIEW_TIMEZONE = "Europe/Madrid";
+const PREVIEW_CLINIC = "Clínica Thalia";
 
 type Props = {
   selectedHour: number;
   onSelectHour: (hour: number) => void;
-  template: string;
-  onTemplateChange: (value: string) => void;
   confirmationEnabled: boolean;
-  missingLink: boolean;
 };
 
 export default function SettingsWhatsAppReminderFields({
   selectedHour,
   onSelectHour,
-  template,
-  onTemplateChange,
   confirmationEnabled,
-  missingLink,
 }: Props) {
+  const previewMessage = useMemo(() => {
+    const sentAt = new Date();
+    const appointmentStartsAt = new Date(sentAt);
+    appointmentStartsAt.setDate(appointmentStartsAt.getDate() + 1);
+    appointmentStartsAt.setHours(17, 0, 0, 0);
+
+    return buildCareReminderMessage({
+      clinicName: PREVIEW_CLINIC,
+      appointmentStartsAt,
+      sentAt,
+      timezone: PREVIEW_TIMEZONE,
+      confirmationUrl: confirmationEnabled
+        ? "https://app.thalia.es/cita/ejemplo"
+        : null,
+    });
+  }, [confirmationEnabled]);
+
   return (
     <>
       <div className="flex flex-col gap-2">
         <p id="reminder-hour-label" className="text-sm font-medium text-ink">
           {SETTINGS_COPY.whatsapp.reminderHoursLabel}
         </p>
-        {/*
-          Elección única: se envía un solo aviso por cita. Semántica de radio y
-          no de casilla, porque marcar uno desmarca el anterior.
-        */}
         <div
           role="radiogroup"
           aria-labelledby="reminder-hour-label"
@@ -63,28 +74,17 @@ export default function SettingsWhatsAppReminderFields({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label
-          htmlFor="whatsapp-template"
-          className="text-sm font-medium text-ink"
-        >
+        <p className="text-sm font-medium text-ink">
           {SETTINGS_COPY.whatsapp.templateLabel}
-        </label>
-        <Textarea
-          id="whatsapp-template"
-          rows={4}
-          value={template}
-          onChange={(e) => onTemplateChange(e.target.value)}
-        />
-        {missingLink ? (
-          <Notice
-            tone="danger"
-            message={SETTINGS_COPY.whatsapp.reminderTemplateMissingLink}
-          />
-        ) : null}
+        </p>
+        <p
+          data-testid="whatsapp-reminder-preview"
+          className="rounded-xl border border-border-subtle bg-surface px-4 py-3 text-sm text-ink whitespace-pre-wrap"
+        >
+          {previewMessage}
+        </p>
         <p className="text-xs text-ink-muted">
-          {confirmationEnabled
-            ? SETTINGS_COPY.whatsapp.templateHintWithLink
-            : SETTINGS_COPY.whatsapp.templateHint}
+          {SETTINGS_COPY.whatsapp.templateHint}
         </p>
       </div>
     </>

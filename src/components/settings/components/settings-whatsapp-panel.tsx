@@ -18,7 +18,6 @@ export default function SettingsWhatsAppPanel() {
     saving,
     selectHour,
     selectedHour,
-    reminderTemplateMissingLink,
   } = useWhatsAppSettings();
 
   if (loading) {
@@ -97,12 +96,7 @@ export default function SettingsWhatsAppPanel() {
           <SettingsWhatsAppReminderFields
             selectedHour={selectedHour}
             onSelectHour={selectHour}
-            template={form.messageTemplate}
-            onTemplateChange={(value) =>
-              setForm((prev) => ({ ...prev, messageTemplate: value }))
-            }
             confirmationEnabled={form.confirmationEnabled}
-            missingLink={reminderTemplateMissingLink}
           />
         ) : null}
 

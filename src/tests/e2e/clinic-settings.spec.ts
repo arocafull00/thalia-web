@@ -29,20 +29,25 @@ test("valida y guarda la configuración de recordatorios con confirmación", asy
     if ((await reminderSwitch.getAttribute("aria-checked")) === "false") {
       await reminderSwitch.click();
     }
+
+    await settings.getByRole("radio", { name: "12h antes" }).click();
+    await expect(settings.getByTestId("whatsapp-reminder-preview")).toContainText(
+      "Tienes una cita",
+    );
+    await expect(settings.getByTestId("whatsapp-reminder-preview")).not.toContainText(
+      "{paciente}",
+    );
+
     const confirmationSwitch = settings.getByRole("switch", {
       name: "Pedir confirmación en el recordatorio",
     });
     if ((await confirmationSwitch.getAttribute("aria-checked")) === "false") {
       await confirmationSwitch.click();
     }
+    await expect(settings.getByTestId("whatsapp-reminder-preview")).toContainText(
+      "Confírmala aquí:",
+    );
 
-    await settings.getByRole("radio", { name: "12h antes" }).click();
-    await settings.getByLabel("Mensaje").fill("Hola {paciente}, tu cita es el {fecha}.");
-    await settings.getByRole("button", { name: "Guardar" }).click();
-    await expect(settings.getByText("Añade {enlace} al mensaje o el paciente no podrá confirmar.")).toBeVisible();
-
-    const message = "Hola {paciente}, confirma tu cita del {fecha}: {enlace}";
-    await settings.getByLabel("Mensaje").fill(message);
     await settings.getByRole("button", { name: "Guardar" }).click();
     await expect(page.getByText("Configuración de WhatsApp guardada.")).toBeVisible();
 
@@ -51,7 +56,9 @@ test("valida y guarda la configuración de recordatorios con confirmación", asy
     await expect(reloaded.getByRole("switch", { name: "Activar recordatorios automáticos (WhatsApp)" })).toHaveAttribute("aria-checked", "true");
     await expect(reloaded.getByRole("switch", { name: "Pedir confirmación en el recordatorio" })).toHaveAttribute("aria-checked", "true");
     await expect(reloaded.getByRole("radio", { name: "12h antes" })).toHaveAttribute("aria-checked", "true");
-    await expect(reloaded.getByLabel("Mensaje")).toHaveValue(message);
+    await expect(reloaded.getByTestId("whatsapp-reminder-preview")).toContainText(
+      "Confírmala aquí:",
+    );
   } finally {
     if (original) {
       await admin.from("whatsapp_config").update(original).eq("clinic_id", E2E_DATA.clinicId);

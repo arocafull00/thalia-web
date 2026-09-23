@@ -830,6 +830,12 @@ input[type="search"],
   box-shadow: var(--shadow-float);
 }
 
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
 /* ---------- barrido de fila de tabla ----------
    El tinte lo aporta `--glow`, que cada fila puede fijar por estilo en línea
    (lo hace citas, con el color de su estado). Sin `--glow` cae al color de

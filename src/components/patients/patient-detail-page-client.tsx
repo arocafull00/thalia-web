@@ -31,6 +31,7 @@ import { useTopbarBreadcrumb } from "@/lib/hooks/use-topbar-breadcrumb";
 import { usePatientFilesStore } from "@/stores/patient-files-store";
 import { usePatientImagesStore } from "@/stores/patient-images-store";
 import { usePatientsStore } from "@/stores/patients-store";
+import { isAccessDenied } from "@/stores/query-state";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
 type PatientDetailPageClientProps = {
@@ -136,7 +137,7 @@ export default function PatientDetailPageClient({
         <Notice
           tone="danger"
           message={
-            patientQuery.error
+            patientQuery.error && !isAccessDenied(patientQuery.error)
               ? PATIENT_DETAIL_COPY.errors.load
               : PATIENT_DETAIL_COPY.errors.notFound
           }

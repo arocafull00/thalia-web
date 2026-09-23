@@ -175,9 +175,11 @@ test("completa una cita y enlaza sus movimientos financieros", async ({
   ).toBeVisible({ timeout: 15_000 });
 
   await page.goto("/finances");
-  const appointmentOrigin = page.locator(
-    `[data-testid="transaction-appointment-${appointmentId}"]:visible`,
-  );
+  const appointmentOrigin = page
+    .locator(
+      `[data-testid="transaction-appointment-${appointmentId}"]:visible`,
+    )
+    .first();
   await expect(appointmentOrigin).toBeVisible({ timeout: 15_000 });
   await expect(appointmentOrigin).toHaveText("Cita");
 

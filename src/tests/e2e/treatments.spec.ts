@@ -55,7 +55,9 @@ test("edita y elimina un tratamiento creado desde el catálogo", async ({ page }
   await expect(page.getByText("Tratamiento actualizado.")).toBeVisible();
 
   await page.reload();
-  await expect(page.getByText(updatedName, { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: updatedName, exact: true }).first(),
+  ).toBeVisible();
   await clickTopbarMenuAction(page, "Eliminar tratamiento");
   const deleteDialog = page.getByRole("dialog", { name: "Eliminar tratamiento" });
   await deleteDialog.getByRole("button", { name: "Eliminar", exact: true }).click();

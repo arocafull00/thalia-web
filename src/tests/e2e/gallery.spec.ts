@@ -100,9 +100,16 @@ test("pagina y combina filtros de la galería en servidor", async ({ page }) => 
   await page.getByRole("tab", { name: "Galería", exact: true }).click();
 
   const gallery = page.getByTestId("patient-gallery");
+  const filteredImages = page.waitForResponse(
+    (response) =>
+      response.url().includes("/patient_images") &&
+      response.url().includes(paginationRunId) &&
+      response.ok(),
+  );
   await gallery
     .getByLabel("Buscar imagen")
     .fill(`e2e-pagination-${paginationRunId}`);
+  await filteredImages;
 
   await expect(
     gallery.getByText("24 de 25 imágenes", { exact: true }),
@@ -177,10 +184,10 @@ test("mantiene editables los metadatos con 24 imágenes pendientes", async ({
   page,
 }) => {
   const session = await context.newCDPSession(page);
-  await session.send("Emulation.setCPUThrottlingRate", { rate: 6 });
 
   await page.goto(`/patients/${E2E_DATA.patientId}`);
   await expect(page.getByTestId("patient-detail-page")).toBeVisible();
+  await session.send("Emulation.setCPUThrottlingRate", { rate: 6 });
   await page.getByRole("tab", { name: "Galería", exact: true }).click();
   await page.getByTestId("patient-gallery-upload-trigger").click();
 

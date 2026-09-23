@@ -40,14 +40,8 @@ test("no llega al detalle de un paciente ajeno por URL directa", async ({
   // El id es el de "E2E Paciente Filtro", que no tiene ninguna cita con él.
   await page.goto("/patients/30000000-0000-4000-8000-000000000002");
 
-  /*
-   * Se comprueba el contenido y no el código HTTP: el layout ya se ha volcado
-   * cuando el Server Component llama a `notFound()`, así que Next ya no puede
-   * cambiar la cabecera y la respuesta sigue siendo 200 aunque pinte el "no
-   * encontrado". Lo que importa es que no se filtre el paciente.
-   */
   await expect(page.getByText(E2E_DATA.filterPatient)).toHaveCount(0);
-  await expect(
-    page.getByRole("heading", { name: /could not be found|no se encontr/i }),
-  ).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("Paciente no encontrado.")).toBeVisible({
+    timeout: 15_000,
+  });
 });

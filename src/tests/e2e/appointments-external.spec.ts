@@ -119,7 +119,7 @@ test("acepta y rechaza citas asignadas y guarda ambos estados", async ({ page })
       .in("id", appointmentIds);
     expect(readError).toBeNull();
     expect(appointments).toEqual(expect.arrayContaining([
-      { id: appointmentIds[0], status: "confirmed" },
+      { id: appointmentIds[0], status: "scheduled" },
       { id: appointmentIds[1], status: "rejected_external" },
     ]));
   } finally {

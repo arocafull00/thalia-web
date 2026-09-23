@@ -9,13 +9,19 @@ import {
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
 import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useAppointmentRemindersStore } from "@/stores/appointment-reminders-store";
+import type { AppointmentReminder } from "@/types/database.types";
+
+const noReminders: AppointmentReminder[] = [];
 
 export function useAppointmentReminders(
   appointmentId: string,
   reminderSent: boolean | null,
 ) {
   const { clinicId } = useActiveClinic();
-  const reminders = useAppointmentRemindersStore((state) => state.byAppointmentId[appointmentId]?.data ?? []);
+  const reminders =
+    useAppointmentRemindersStore(
+      (state) => state.byAppointmentId[appointmentId]?.data,
+    ) ?? noReminders;
   const sending = useAppointmentRemindersStore((state) => state.sending);
   const fetchReminders = useAppointmentRemindersStore((state) => state.fetchReminders);
   const sendManual = useAppointmentRemindersStore((state) => state.sendManual);

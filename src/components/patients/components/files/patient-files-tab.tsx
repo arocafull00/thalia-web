@@ -61,12 +61,12 @@ export default function PatientFilesTab({
 
   const handleDownload = async (file: PatientFile) => {
     try {
-      const url = await getFileUrl(file);
+      const signedUrl = await getFileUrl(file);
+      const downloadUrl = new URL(signedUrl);
+      downloadUrl.searchParams.set("download", file.original_filename);
       const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = file.original_filename;
+      anchor.href = downloadUrl.toString();
       anchor.rel = "noopener";
-      anchor.target = "_blank";
       anchor.click();
     } catch {
       toast.error(PATIENT_FILES_COPY.errors.signedUrl);

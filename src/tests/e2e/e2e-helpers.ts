@@ -51,7 +51,7 @@ export async function selectComboboxOption(
   option: string,
 ) {
   await trigger.click();
-  const popup = page.locator('[data-slot="combobox-content"]:visible');
+  const popup = page.locator('[data-slot="combobox-content"][data-open]');
   await expect(popup).toBeVisible();
   const search = popup.getByRole("combobox");
 

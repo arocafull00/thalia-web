@@ -6,11 +6,20 @@ export default function LoginFooter() {
   return (
     <footer className="flex flex-col gap-3 border-t border-border-subtle px-6 py-4 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between lg:px-8">
       <span>{LOGIN_COPY.footer.copyright}</span>
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-x-4 gap-y-2">
+        <Link
+          href="/aviso-legal"
+          className="text-primary hover:text-primary-hover"
+        >
+          {LOGIN_COPY.footer.legalNotice}
+        </Link>
         <Link href="/terms" className="text-primary hover:text-primary-hover">
           {LOGIN_COPY.footer.terms}
         </Link>
-        <Link href="/privacidad" className="text-primary hover:text-primary-hover">
+        <Link
+          href="/privacidad"
+          className="text-primary hover:text-primary-hover"
+        >
           {LOGIN_COPY.footer.privacy}
         </Link>
       </div>

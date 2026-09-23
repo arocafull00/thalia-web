@@ -15,6 +15,7 @@ const publicRoutes = [
   "/no-membership",
   "/terms",
   "/privacidad",
+  "/aviso-legal",
   "/cita",
   "/api/stripe/webhook",
   /*

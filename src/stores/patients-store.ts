@@ -26,6 +26,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
+  isAccessDenied,
   loadingQueryEntry,
   successQueryEntry,
   type QueryEntry,
@@ -80,7 +81,7 @@ type PatientsStore = {
     query: PatientsPageQuery,
     result: PatientPageResult,
   ) => void;
-  fetchPatient: (patientId: string) => Promise<void>;
+  fetchPatient: (patientId: string, clinicId?: string | null) => Promise<void>;
   fetchPatientAppointments: (patientId: string) => Promise<void>;
   fetchUpcomingPatientAppointments: (patientId: string) => Promise<void>;
   createPatient: (input: PatientFormInput) => Promise<Patient>;
@@ -214,30 +215,32 @@ export const usePatientsStore = create<PatientsStore>()(persist((set, get) => ({
     }
   },
 
-  fetchPatient: async (patientId) => {
+  fetchPatient: async (patientId, clinicId = getActiveClinicId()) => {
+    if (!clinicId) return;
+
     const epoch = getQueryEpoch();
     const previous = get().byId[patientId];
     if (!isCurrentQueryEpoch(epoch)) return;
     set({ byId: { ...get().byId, [patientId]: loadingQueryEntry(previous) } });
 
     try {
-      const patient = await getPatient(patientId);
+      const patient = await getPatient(patientId, clinicId);
       if (!isCurrentQueryEpoch(epoch)) return;
       set({ byId: { ...get().byId, [patientId]: successQueryEntry(patient, get().byId[patientId]) } });
     } catch (cause) {
-      logger.captureException(cause, {
-        store: "patients-store",
-        action: "fetchPatient",
-        patientId,
-      });
+      const error = cause instanceof Error ? cause : new Error(String(cause));
+      if (!isAccessDenied(error)) {
+        logger.captureException(error, {
+          store: "patients-store",
+          action: "fetchPatient",
+          patientId,
+        });
+      }
       if (!isCurrentQueryEpoch(epoch)) return;
       set({
         byId: {
           ...get().byId,
-          [patientId]: errorQueryEntry(
-            cause instanceof Error ? cause : new Error(String(cause)),
-            previous,
-          ),
+          [patientId]: errorQueryEntry(error, previous),
         },
       });
     }

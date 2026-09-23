@@ -96,11 +96,15 @@ export async function getPatientsPage(
   };
 }
 
-export async function getPatient(patientId: string): Promise<Patient> {
+export async function getPatient(
+  patientId: string,
+  clinicId: string,
+): Promise<Patient> {
   const { data, error } = await supabase
     .from("patients")
     .select("*")
     .eq("id", patientId)
+    .eq("clinic_id", clinicId)
     .single();
   return unwrapSupabase(data, error) as Patient;
 }

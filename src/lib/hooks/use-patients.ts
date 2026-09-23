@@ -137,6 +137,7 @@ export function usePatients(search: string, initialData?: Patient[]) {
 }
 
 export function usePatient(patientOrId: Patient | string) {
+  const clinicId = useClinicId();
   const patientId =
     typeof patientOrId === "string" ? patientOrId : patientOrId.id;
   const initialData = typeof patientOrId === "string" ? undefined : patientOrId;
@@ -147,15 +148,19 @@ export function usePatient(patientOrId: Patient | string) {
     initialData?.id ?? "",
     initialData,
   );
-  useRevalidateOnEntry(patientId.trim() ? `patient:${patientId}` : null, () => fetchPatient(patientId));
+  useRevalidateOnEntry(
+    patientId.trim() && clinicId ? `patient:${clinicId}:${patientId}` : null,
+    () => fetchPatient(patientId, clinicId),
+  );
 
-  const data = isQueryFresh(entry)
+  const stored = isQueryFresh(entry)
     ? entry!.data
     : (seededData ?? entry?.data);
+  const data = stored?.clinic_id === clinicId ? stored : null;
 
   return {
     data,
-    isLoading: data == null && isInitialLoading(entry),
+    isLoading: !clinicId || (data == null && isInitialLoading(entry)),
     error: entry?.error,
   };
 }

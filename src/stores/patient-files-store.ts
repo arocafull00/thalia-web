@@ -97,7 +97,7 @@ async function assertPatientBelongsToClinic(
   patientId: string,
   clinicId: string,
 ) {
-  const patient = await getPatient(patientId);
+  const patient = await getPatient(patientId, clinicId);
 
   if (patient.clinic_id !== clinicId) {
     throw new Error("El paciente no pertenece a la clínica activa.");

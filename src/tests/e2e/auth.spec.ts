@@ -53,6 +53,11 @@ test("protege las rutas privadas y permite cerrar sesión", async ({
     .click();
 
   await expect(page).toHaveURL(/\/login$/);
-  await page.goto("/patients");
+  await page.waitForLoadState("domcontentloaded");
+  await page.goto("/patients", { waitUntil: "commit" }).catch((error: unknown) => {
+    if (!(error instanceof Error) || !error.message.includes("ERR_ABORTED")) {
+      throw error;
+    }
+  });
   await expect(page).toHaveURL(/\/login$/);
 });

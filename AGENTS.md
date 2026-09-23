@@ -300,7 +300,7 @@ const fullName = user?.name ?? "";
 > Si un `useEffect` setea estado que está en sus propias `deps`, rediseña: el valor es derivado, no independiente.
 
 Utiliza siempre pnpm.
-Para comandos remotos de Supabase, usa la sesión autenticada de la CLI y el proyecto enlazado mediante `pnpm exec supabase`. No uses `--profile thalia`: `--profile` selecciona un perfil de plataforma avanzada, no la cuenta autenticada. Si la sesión no tiene acceso al proyecto, vuelve a autenticarla con `pnpm db:login`.
+Para comandos remotos de Supabase, usa `pnpm supabase …` (carga `SUPABASE_ACCESS_TOKEN` desde `.env.local`). No uses `pnpm exec supabase` ni `supabase login`: no pidas login interactivo. No uses `--profile thalia`. Comprueba acceso con `pnpm db:login` (lista proyectos).
 Utiliza siempre tailwind.
 Utiliza siempre lucide icons, nunca emojis.
 Los estados deben ser globales en muchas ocasiones. Evita el prop drilling. Si un componente no usa una prop, no deberia pasarlo a su hijo. Deberia accederse desde un estado de zustand.

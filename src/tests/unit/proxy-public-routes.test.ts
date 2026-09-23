@@ -33,6 +33,7 @@ describe("proxy public routes", () => {
   it.each([
     "/privacidad",
     "/terms",
+    "/aviso-legal",
     "/login",
     "/cita/token-de-prueba",
     // La llama pg_cron sin sesión; se protege con su propio secreto.

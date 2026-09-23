@@ -25,6 +25,7 @@ export const LOGIN_COPY = {
     copyright: "© Thalia. Todos los derechos reservados",
     terms: "Términos y condiciones",
     privacy: "Política de privacidad",
+    legalNotice: "Aviso legal",
   },
   hero: {
     headline: "Un centro unificado para gestionar tu clínica con claridad",

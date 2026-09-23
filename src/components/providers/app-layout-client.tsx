@@ -12,6 +12,10 @@ import { usePendingClinicRequests } from "@/lib/hooks/use-pending-clinic-request
 import { hasRegistrationProfile } from "@/lib/registration-metadata";
 import { initSounds } from "@/lib/sound";
 import { useClinicNotificationsStore } from "@/stores/clinic-notifications-store";
+import {
+  activateClinicQueryCache,
+  useClinicQueryCacheReady,
+} from "@/stores/clinic-query-cache";
 import { useInventoryAlertsStore } from "@/stores/inventory-alerts-store";
 import { useShellStore } from "@/stores/shell-store";
 
@@ -25,11 +29,12 @@ export default function AppLayoutClient({
   defaultSidebarOpen,
 }: AppLayoutClientProps) {
   const router = useRouter();
-  const { loading, user } = useAuth();
+  const { initialized, loading, session, user } = useAuth();
   const {
     accountType,
     hasBillingAccess,
     clinicId,
+    membership,
     platformRole,
     loading: clinicLoading,
   } = useActiveClinic();
@@ -53,6 +58,7 @@ export default function AppLayoutClient({
   );
 
   const canManageBusiness = platformRole === "owner";
+  const cacheReady = useClinicQueryCacheReady(user?.id ?? null, clinicId);
   const canReceiveClinicNotifications =
     platformRole === "owner" ||
     platformRole === "admin" ||
@@ -63,7 +69,22 @@ export default function AppLayoutClient({
   }, []);
 
   useEffect(() => {
-    if (!clinicId || !canManageBusiness) return;
+    if (
+      !initialized ||
+      !user?.id ||
+      session?.user.id !== user.id ||
+      !clinicId ||
+      membership?.clinicId !== clinicId ||
+      cacheReady
+    ) {
+      return;
+    }
+
+    void activateClinicQueryCache({ userId: user.id, clinicId });
+  }, [cacheReady, clinicId, initialized, membership?.clinicId, session?.user.id, user?.id]);
+
+  useEffect(() => {
+    if (!cacheReady || !clinicId || !canManageBusiness) return;
     void fetchAlerts(clinicId);
     subscribeRealtime(clinicId);
     return () => {
@@ -71,6 +92,7 @@ export default function AppLayoutClient({
     };
   }, [
     canManageBusiness,
+    cacheReady,
     clinicId,
     fetchAlerts,
     subscribeRealtime,
@@ -78,7 +100,7 @@ export default function AppLayoutClient({
   ]);
 
   useEffect(() => {
-    if (!clinicId || !canReceiveClinicNotifications) {
+    if (!cacheReady || !clinicId || !canReceiveClinicNotifications) {
       return;
     }
 
@@ -90,6 +112,7 @@ export default function AppLayoutClient({
     };
   }, [
     canReceiveClinicNotifications,
+    cacheReady,
     clinicId,
     fetchClinicNotifications,
     subscribeClinicNotifications,
@@ -150,13 +173,17 @@ export default function AppLayoutClient({
 
   if (
     clientReady &&
-    (!user || !clinicId || (accountType !== "external" && !hasBillingAccess))
+    (!user || !clinicId || !membership || (accountType !== "external" && !hasBillingAccess))
   ) {
     return <RedirectScreen />;
   }
 
-  if (!user) {
+  if (!user || !membership || session?.user.id !== user.id) {
     return <RedirectScreen />;
+  }
+
+  if (!cacheReady) {
+    return <BootLoadingScreen authLoading={false} clinicLoading={true} />;
   }
 
   return (

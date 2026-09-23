@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import AppSidebarNavPending from "@/components/ui/app-sidebar-nav-pending";
 import {
@@ -22,8 +21,6 @@ export default function AppSidebarNavSubmenu({
   pathname,
   onNavigate,
 }: AppSidebarNavSubmenuProps) {
-  const router = useRouter();
-
   return (
     <SidebarMenuSub className="mt-1 border-border-subtle">
       {items.map((item) => {
@@ -41,8 +38,6 @@ export default function AppSidebarNavSubmenu({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 onClick={onNavigate}
-                onMouseEnter={() => router.prefetch(item.href)}
-                prefetch={false}
               >
                 <span>{item.label}</span>
                 <AppSidebarNavPending />

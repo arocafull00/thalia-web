@@ -48,9 +48,9 @@ import type { Patient } from "@/types/database.types";
 const PATIENT_FILTER_DEFAULTS = { marketing: "", page: "", q: "" };
 
 type PatientsPageClientProps = {
-  initialPatients: Patient[];
-  initialTotal: number;
-  initialQuery: PatientsPageQuery;
+  initialPatients?: Patient[];
+  initialTotal?: number;
+  initialQuery?: PatientsPageQuery;
 };
 
 export default function PatientsPageClient({

@@ -1,7 +1,8 @@
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   getInventoryAlerts,
@@ -9,6 +10,7 @@ import {
 } from "@/dal/inventory-alerts.dal";
 import { logger } from "@/lib/logger";
 import { supabase } from "@/lib/supabase";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -30,7 +32,7 @@ type InventoryAlertsStore = {
 let inventoryAlertsChannel: RealtimeChannel | null = null;
 let inventoryAlertsSubscribers = 0;
 
-export const useInventoryAlertsStore = create<InventoryAlertsStore>(
+export const useInventoryAlertsStore = create<InventoryAlertsStore>()(persist(
   (set, get) => ({
     alerts: emptyQueryEntry(),
     unreadCount: 0,
@@ -44,7 +46,7 @@ export const useInventoryAlertsStore = create<InventoryAlertsStore>(
         const alerts = await getInventoryAlerts(clinicId);
         const unreadCount = alerts.filter((a) => !a.read_at).length;
         if (!isCurrentQueryEpoch(epoch)) return;
-        set({ alerts: successQueryEntry(alerts), unreadCount });
+        set({ alerts: successQueryEntry(alerts, get().alerts), unreadCount });
       } catch (cause) {
         logger.captureException(cause, {
           store: "inventory-alerts-store",
@@ -136,4 +138,5 @@ export const useInventoryAlertsStore = create<InventoryAlertsStore>(
       inventoryAlertsChannel = null;
     },
   }),
-);
+  clinicPersistOptions<InventoryAlertsStore>("inventory-alerts", ["alerts", "unreadCount"]),
+));

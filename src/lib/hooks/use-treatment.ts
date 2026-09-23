@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
@@ -9,7 +10,6 @@ import {
   isInitialLoading,
   isQueryFresh,
   REFERENCE_QUERY_STALE_TIME,
-  shouldFetchQuery,
 } from "@/stores/query-state";
 import {
   useTreatmentStore,
@@ -30,16 +30,7 @@ export function useTreatments(initialData?: TreatmentWithInventory[]) {
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
 
-  useEffect(() => {
-    if (
-      seededData !== undefined ||
-      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
-    ) {
-      return;
-    }
-
-    void fetchTreatments();
-  }, [clinicId, entry, fetchTreatments, seededData]);
+  useRevalidateOnEntry(clinicId ? `treatments-list:${clinicId}` : null, () => fetchTreatments());
 
   const data = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
     ? (entry.data ?? undefined)
@@ -74,17 +65,7 @@ export function useTreatment(treatmentOrId: TreatmentWithInventory | string) {
     initialData,
   );
 
-  useEffect(() => {
-    if (
-      !treatmentId ||
-      seededData !== undefined ||
-      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
-    ) {
-      return;
-    }
-
-    void fetchTreatment(treatmentId);
-  }, [entry, fetchTreatment, seededData, treatmentId]);
+  useRevalidateOnEntry(treatmentId ? `treatment:${treatmentId}` : null, () => fetchTreatment(treatmentId));
 
   const data = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
     ? entry!.data

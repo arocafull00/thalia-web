@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   getInventoryCategories,
@@ -18,6 +20,7 @@ import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
 import { inventorySchema } from "@/lib/schemas/inventory-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -25,7 +28,6 @@ import {
   successQueryEntry,
   type QueryEntry,
 } from "@/stores/query-state";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type {
   InventoryItem,
   InventoryMovementType,
@@ -129,7 +131,7 @@ async function refreshInventoryQueries(get: () => InventoryStore) {
   ]);
 }
 
-export const useInventoryStore = create<InventoryStore>((set, get) => ({
+export const useInventoryStore = create<InventoryStore>()(persist((set, get) => ({
   list: emptyQueryEntry(),
   byPage: {},
   categories: emptyQueryEntry(),
@@ -153,7 +155,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         return state;
       }
 
-      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result, get().byPage[key]) } };
     });
   },
 
@@ -170,7 +172,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
         clinicId: getActiveClinicId(),
       });
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result, get().byPage[key]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "inventory-store",
@@ -194,7 +196,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     set((state) =>
       state.categories.data != null
         ? state
-        : { categories: successQueryEntry(categories) },
+        : { categories: successQueryEntry(categories, get().categories) },
     );
   },
 
@@ -206,7 +208,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     try {
       const categories = await getInventoryCategories(getActiveClinicId());
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ categories: successQueryEntry(categories) });
+      set({ categories: successQueryEntry(categories, get().categories) });
     } catch (cause) {
       logger.captureException(cause, {
         store: "inventory-store",
@@ -227,7 +229,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     set((state) =>
       state.summary.data != null
         ? state
-        : { summary: successQueryEntry(summary) },
+        : { summary: successQueryEntry(summary, get().summary) },
     );
   },
 
@@ -239,7 +241,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     try {
       const summary = await getInventoryStockSummary(getActiveClinicId());
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ summary: successQueryEntry(summary) });
+      set({ summary: successQueryEntry(summary, get().summary) });
     } catch (cause) {
       logger.captureException(cause, {
         store: "inventory-store",
@@ -265,7 +267,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       const clinicId = getActiveClinicId();
       const items = await getInventoryItems(clinicId);
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ list: successQueryEntry(items) });
+      set({ list: successQueryEntry(items, get().list) });
     } catch (cause) {
       logger.captureException(cause, {
         store: "inventory-store",
@@ -291,7 +293,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
     try {
       const item = await getInventoryItem(itemId);
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byId: { ...get().byId, [itemId]: successQueryEntry(item) } });
+      set({ byId: { ...get().byId, [itemId]: successQueryEntry(item, get().byId[itemId]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "inventory-store",
@@ -328,7 +330,7 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       set({
         movementsByItemId: {
           ...get().movementsByItemId,
-          [itemId]: successQueryEntry(movements),
+          [itemId]: successQueryEntry(movements, get().movementsByItemId[itemId]),
         },
       });
     } catch (cause) {
@@ -419,4 +421,4 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
       throw error;
     }
   },
-}));
+}), clinicPersistOptions<InventoryStore>("inventory", ["list", "byPage", "categories", "summary", "byId", "movementsByItemId"])));

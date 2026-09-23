@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { SEARCH_COPY } from "@/copy/search-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useServerSeed } from "@/lib/hooks/use-server-seed";
@@ -8,7 +9,6 @@ import {
   isInitialLoading,
   isQueryFresh,
   REFERENCE_QUERY_STALE_TIME,
-  shouldFetchQuery,
 } from "@/stores/query-state";
 import {
   treatmentsPageKey,
@@ -87,34 +87,11 @@ export function useTreatmentCatalog(
     seedTreatmentsPage(query, seededResult);
   }, [hasClientData, query, seedTreatmentsPage, seededResult]);
 
-  useEffect(() => {
-    if (
-      seededResult !== undefined ||
-      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
-    ) {
-      return;
-    }
-
-    void fetchTreatmentsPage(query);
-  }, [entry, fetchTreatmentsPage, query, seededResult]);
+  useRevalidateOnEntry(`treatments-page:${key}`, () => fetchTreatmentsPage(query));
 
   // Las categorías no dependen de la página, así que se piden una vez por
   // clínica y no en cada cambio de filtro.
-  useEffect(() => {
-    if (
-      seed?.initialCategories ||
-      !shouldFetchQuery(categoriesEntry, REFERENCE_QUERY_STALE_TIME)
-    ) {
-      return;
-    }
-
-    void fetchTreatmentCategories();
-  }, [
-    clinicId,
-    categoriesEntry,
-    fetchTreatmentCategories,
-    seed?.initialCategories,
-  ]);
+  useRevalidateOnEntry(clinicId ? `treatment-categories:${clinicId}` : null, () => fetchTreatmentCategories());
 
   const refresh = useCallback(() => {
     if (useTreatmentStore.getState().byPage[key]?.loading) {
@@ -133,15 +110,12 @@ export function useTreatmentCatalog(
   );
   const total = resolved?.total ?? 0;
 
-  const categories = useMemo(
-    () => [
-      SEARCH_COPY.filters.all,
-      ...(isQueryFresh(categoriesEntry, REFERENCE_QUERY_STALE_TIME)
-        ? (categoriesEntry.data ?? [])
-        : (seed?.initialCategories ?? categoriesEntry.data ?? [])),
-    ],
-    [categoriesEntry.data, seed?.initialCategories],
-  );
+  const categories = [
+    SEARCH_COPY.filters.all,
+    ...(isQueryFresh(categoriesEntry, REFERENCE_QUERY_STALE_TIME)
+      ? (categoriesEntry.data ?? [])
+      : (seed?.initialCategories ?? categoriesEntry.data ?? [])),
+  ];
 
   return {
     categories,

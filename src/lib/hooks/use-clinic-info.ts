@@ -1,66 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { getClinicById } from "@/dal/clinics.dal";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
+import { useClinicInfoStore, type ClinicInfo } from "@/stores/clinic-info-store";
 import { useClinicStore } from "@/stores/clinic-store";
-import type { Clinic } from "@/types/database.types";
 
-export type ClinicInfo = Pick<
-  Clinic,
-  | "id"
-  | "name"
-  | "address"
-  | "phone"
-  | "specialty"
-  | "logo_url"
-  | "opening_time"
-  | "closing_time"
-  | "open_days"
-  | "timezone"
->;
+export type { ClinicInfo };
 
 export function useClinicInfo(initialClinic?: ClinicInfo | null) {
-  const activeClinicId = useClinicStore((s) => s.activeClinicId);
-  const [clinic, setClinic] = useState<ClinicInfo | null>(
-    initialClinic ?? null,
-  );
-  const [version, setVersion] = useState(0);
-  const initialClinicMatches = initialClinic?.id === activeClinicId;
-  const resolvedClinic =
-    clinic?.id === activeClinicId
-      ? clinic
-      : initialClinicMatches
-        ? initialClinic
-        : null;
-
-  useEffect(() => {
-    if (!activeClinicId) {
-      return;
-    }
-
-    if (version === 0 && initialClinicMatches) {
-      return;
-    }
-
-    let cancelled = false;
-
-    void getClinicById(activeClinicId).then((data) => {
-      if (cancelled) {
-        return;
-      }
-
-      setClinic(data);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [activeClinicId, initialClinicMatches, version]);
+  const activeClinicId = useClinicStore((state) => state.activeClinicId);
+  const entry = useClinicInfoStore((state) => activeClinicId ? state.byId[activeClinicId] : undefined);
+  const fetchClinic = useClinicInfoStore((state) => state.fetchClinic);
+  useRevalidateOnEntry(activeClinicId ? `clinic-info:${activeClinicId}` : null, () => fetchClinic(activeClinicId!));
+  const clinic = entry?.data ?? (initialClinic?.id === activeClinicId ? initialClinic : null);
 
   return {
-    clinic: resolvedClinic,
-    loading: Boolean(activeClinicId && !resolvedClinic),
-    refetch: () => setVersion((v) => v + 1),
+    clinic,
+    loading: Boolean(activeClinicId && !clinic),
+    refetch: () => activeClinicId ? fetchClinic(activeClinicId) : Promise.resolve(),
   };
 }

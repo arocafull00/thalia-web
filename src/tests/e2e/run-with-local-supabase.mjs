@@ -137,6 +137,7 @@ const playwrightResult = spawnSync(
       NEXT_PUBLIC_SUPABASE_URL: apiUrl,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: publishableKey,
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey,
+      NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3001",
       E2E_SUPABASE_URL: apiUrl,
       E2E_SUPABASE_SECRET_KEY: secretKey,
       PORT: "3001",

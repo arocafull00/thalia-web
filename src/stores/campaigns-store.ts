@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   getCampaign,
@@ -11,10 +13,11 @@ import {
   type CampaignPageResult,
   type CampaignUpdate,
 } from "@/dal/campaigns.dal";
+import { countCampaignPatients, getCampaignRecipients } from "@/dal/campaign-recipients.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { CampaignQuota } from "@/lib/campaign-limits";
 import { logger } from "@/lib/logger";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
   emptyQueryEntry,
@@ -22,7 +25,9 @@ import {
   successQueryEntry,
   type QueryEntry,
 } from "@/stores/query-state";
-import type { Campaign } from "@/types/database.types";
+import type { Campaign, CampaignRecipientWithPatient } from "@/types/database.types";
+
+type CampaignRecipientsData = { recipients: CampaignRecipientWithPatient[]; pendingCount: number };
 
 export type CampaignsPageQuery = Omit<CampaignPageParams, "clinicId">;
 
@@ -41,6 +46,7 @@ type CampaignsStore = {
   byPage: Record<string, QueryEntry<CampaignPageResult>>;
   byId: Record<string, QueryEntry<Campaign>>;
   quota: QueryEntry<CampaignQuota>;
+  recipientsByCampaignId: Record<string, QueryEntry<CampaignRecipientsData>>;
   creating: boolean;
   createError: Error | null;
   updating: boolean;
@@ -52,6 +58,7 @@ type CampaignsStore = {
   ) => void;
   refreshCampaignPages: () => Promise<void>;
   fetchCampaign: (campaignId: string) => Promise<void>;
+  fetchCampaignRecipients: (campaignId: string) => Promise<void>;
   fetchCampaignQuota: () => Promise<CampaignQuota>;
   seedCampaignQuota: (quota: CampaignQuota) => void;
   createCampaign: (input: CampaignInsert) => Promise<Campaign>;
@@ -65,10 +72,11 @@ function toError(cause: unknown): Error {
   return cause instanceof Error ? cause : new Error(String(cause));
 }
 
-export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
+export const useCampaignsStore = create<CampaignsStore>()(persist((set, get) => ({
   byPage: {},
   byId: {},
   quota: emptyQueryEntry(),
+  recipientsByCampaignId: {},
   creating: false,
   createError: null,
   updating: false,
@@ -84,7 +92,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         return state;
       }
 
-      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result, get().byPage[key]) } };
     });
   },
 
@@ -101,7 +109,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
         clinicId: getActiveClinicId(),
       });
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result, get().byPage[key]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "campaigns-store",
@@ -144,7 +152,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
       const campaign = await getCampaign(campaignId);
       if (!isCurrentQueryEpoch(epoch)) return;
       set({
-        byId: { ...get().byId, [campaignId]: successQueryEntry(campaign) },
+        byId: { ...get().byId, [campaignId]: successQueryEntry(campaign, get().byId[campaignId]) },
       });
     } catch (cause) {
       logger.captureException(cause, {
@@ -162,8 +170,26 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
     }
   },
 
+  fetchCampaignRecipients: async (campaignId) => {
+    const epoch = getQueryEpoch();
+    const previous = get().recipientsByCampaignId[campaignId];
+    set({ recipientsByCampaignId: { ...get().recipientsByCampaignId, [campaignId]: loadingQueryEntry(previous) } });
+    try {
+      const [recipients, pendingCount] = await Promise.all([
+        getCampaignRecipients(campaignId),
+        countCampaignPatients(campaignId),
+      ]);
+      if (!isCurrentQueryEpoch(epoch)) return;
+      set({ recipientsByCampaignId: { ...get().recipientsByCampaignId, [campaignId]: successQueryEntry({ recipients, pendingCount }, get().recipientsByCampaignId[campaignId]) } });
+    } catch (cause) {
+      if (!isCurrentQueryEpoch(epoch)) return;
+      logger.captureException(cause, { store: "campaigns-store", action: "fetchCampaignRecipients", campaignId });
+      set({ recipientsByCampaignId: { ...get().recipientsByCampaignId, [campaignId]: errorQueryEntry(toError(cause), previous) } });
+    }
+  },
+
   seedCampaignQuota: (quota) => {
-    set({ quota: successQueryEntry(quota) });
+    set({ quota: successQueryEntry(quota, get().quota) });
   },
 
   fetchCampaignQuota: async () => {
@@ -181,7 +207,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
     try {
       const quota = await getCampaignQuota(clinicId);
       if (!isCurrentQueryEpoch(epoch)) return quota;
-      set({ quota: successQueryEntry(quota) });
+      set({ quota: successQueryEntry(quota, get().quota) });
       return quota;
     } catch (cause) {
       logger.captureException(cause, {
@@ -227,7 +253,7 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
     try {
       const campaign = await updateCampaign(campaignId, input);
       set({
-        byId: { ...get().byId, [campaignId]: successQueryEntry(campaign) },
+        byId: { ...get().byId, [campaignId]: successQueryEntry(campaign, get().byId[campaignId]) },
       });
       await get().refreshCampaignPages();
       set({ updating: false });
@@ -243,4 +269,4 @@ export const useCampaignsStore = create<CampaignsStore>((set, get) => ({
       throw error;
     }
   },
-}));
+}), clinicPersistOptions<CampaignsStore>("campaigns", ["byPage", "byId", "quota", "recipientsByCampaignId"])));

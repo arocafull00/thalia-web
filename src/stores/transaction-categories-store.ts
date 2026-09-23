@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   archiveTransactionCategoryAction,
@@ -13,8 +15,8 @@ import type {
   TransactionCategoryCreateInput,
   TransactionCategoryRenameInput,
 } from "@/lib/schemas/transaction-category-schema";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useFinancesStore } from "@/stores/finances-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -50,7 +52,7 @@ function sortCategories(categories: TransactionCategory[]) {
   });
 }
 
-export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
+export const useTransactionCategoriesStore = create<TransactionCategoriesStore>()(persist(
   (set, get) => {
     const replaceCategory = (category: TransactionCategory) => {
       const clinicEntry = get().byClinic[category.clinic_id];
@@ -105,7 +107,7 @@ export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
           return {
             byClinic: {
               ...state.byClinic,
-              [clinicId]: successQueryEntry(sortCategories(categories)),
+              [clinicId]: successQueryEntry(sortCategories(categories), state.byClinic[clinicId]),
             },
           };
         });
@@ -128,7 +130,7 @@ export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
           set({
             byClinic: {
               ...get().byClinic,
-              [clinicId]: successQueryEntry(sortCategories(categories)),
+              [clinicId]: successQueryEntry(sortCategories(categories), get().byClinic[clinicId]),
             },
           });
         } catch (cause) {
@@ -174,4 +176,5 @@ export const useTransactionCategoriesStore = create<TransactionCategoriesStore>(
         ),
     };
   },
-);
+  clinicPersistOptions<TransactionCategoriesStore>("transaction-categories", ["byClinic"]),
+));

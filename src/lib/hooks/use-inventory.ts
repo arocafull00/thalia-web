@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
@@ -13,7 +14,6 @@ import {
   isInitialLoading,
   isQueryFresh,
   REFERENCE_QUERY_STALE_TIME,
-  shouldFetchQuery,
 } from "@/stores/query-state";
 import type {
   InventoryItem,
@@ -31,16 +31,7 @@ export function useInventoryItems(initialData?: InventoryItem[]) {
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
 
-  useEffect(() => {
-    if (
-      seededData !== undefined ||
-      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
-    ) {
-      return;
-    }
-
-    void fetchInventoryItems();
-  }, [clinicId, entry, fetchInventoryItems, seededData]);
+  useRevalidateOnEntry(clinicId ? `inventory-list:${clinicId}` : null, () => fetchInventoryItems());
 
   const data = isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
     ? entry.data
@@ -62,13 +53,7 @@ export function useInventoryItem(itemOrId: InventoryItem | string) {
   );
   const seededData = useServerSeed(itemId, initialData?.id ?? "", initialData);
 
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchInventoryItem(itemId);
-  }, [entry, fetchInventoryItem, itemId, seededData]);
+  useRevalidateOnEntry(itemId ? `inventory-item:${itemId}` : null, () => fetchInventoryItem(itemId));
 
   const data = isQueryFresh(entry)
     ? entry!.data
@@ -95,13 +80,7 @@ export function useInventoryMovements(
     initialData,
   );
 
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchInventoryMovements(itemId);
-  }, [entry, fetchInventoryMovements, itemId, seededData]);
+  useRevalidateOnEntry(itemId ? `inventory-movements:${itemId}` : null, () => fetchInventoryMovements(itemId));
 
   const data = isQueryFresh(entry)
     ? entry!.data

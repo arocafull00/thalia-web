@@ -187,6 +187,7 @@ export function DataTable<TData, TValue>({
             actions={mobileActions}
             renderActions={renderMobileActions}
             getRowHref={getRowHref}
+            prefetchRowLinks={prefetchRowLinks}
             onRowActivate={onRowActivate}
             emptyMessage={emptyMessage}
             getRowKey={resolveMobileRowKey}

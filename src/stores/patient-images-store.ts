@@ -1,5 +1,7 @@
 import { fromZonedTime } from "date-fns-tz";
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   createPatientImage,
@@ -23,7 +25,7 @@ import { assertCanMutateClinicalData } from "@/lib/permissions";
 import type { PatientImageUploadInput } from "@/lib/schemas/patient-image-schema";
 import { useAuthStore } from "@/stores/auth-store";
 import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
-import { CLINICAL_QUERY_STALE_TIME } from "@/stores/query-state";
+import { isAccessDenied, shareEqualData } from "@/stores/query-state";
 import type { PatientImage } from "@/types/database.types";
 
 type PatientImageDeleteConfirmState = {
@@ -62,6 +64,7 @@ export type PatientImagesEntry = {
 
 type PatientImagesStore = {
   imagesByPatientId: Record<string, PatientImagesEntry>;
+  imagesByQuery: Record<string, PatientImagesEntry>;
   uploading: boolean;
   uploadProgress: number;
   uploadCurrentFile: number;
@@ -75,8 +78,8 @@ type PatientImagesStore = {
     filters: PatientImagesFilters,
     force?: boolean,
   ) => Promise<void>;
-  loadMorePatientImages: (patientId: string) => Promise<void>;
-  refreshPatientImages: (patientId: string) => Promise<void>;
+  loadMorePatientImages: (patientId: string, queryKey: string) => Promise<void>;
+  refreshPatientImages: (patientId: string, queryKey?: string) => Promise<void>;
   uploadPatientImage: (input: UploadPatientImageInput) => Promise<PatientImage>;
   uploadPatientImages: (
     input: UploadPatientImagesInput,
@@ -86,7 +89,7 @@ type PatientImagesStore = {
   closeDeleteConfirm: () => void;
 };
 
-function patientImagesQueryKey(
+export function patientImagesQueryKey(
   clinicId: string,
   patientId: string,
   filters: PatientImagesFilters,
@@ -142,8 +145,9 @@ function resolveCapturedAt(metadata: PatientImageUploadInput) {
   ).toISOString();
 }
 
-export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
+export const usePatientImagesStore = create<PatientImagesStore>()(persist((set, get) => ({
   imagesByPatientId: {},
+  imagesByQuery: {},
   uploading: false,
   uploadProgress: 0,
   uploadCurrentFile: 0,
@@ -163,40 +167,32 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
 
     const queryKey = patientImagesQueryKey(clinicId, patientId, filters);
     const requestId = crypto.randomUUID();
-    const current = get().imagesByPatientId[patientId];
-    const previous = current?.queryKey === queryKey ? current : undefined;
+    const previous = get().imagesByQuery[queryKey];
 
     if (previous?.loading && !force) {
       return;
     }
 
-    if (
-      !force &&
-      previous?.data != null &&
-      previous.fetchedAt != null &&
-      Date.now() - previous.fetchedAt < CLINICAL_QUERY_STALE_TIME
-    ) {
-      return;
-    }
-
+    const loadingEntry: PatientImagesEntry = {
+      clinicId,
+      queryKey,
+      requestId,
+      filters,
+      data: previous?.data ?? null,
+      fetchedAt: previous?.fetchedAt,
+      total: previous?.total ?? 0,
+      loading: true,
+      loadingMore: false,
+      hasMore: previous?.hasMore ?? false,
+      error: null,
+      loadMoreError: null,
+    };
     set({
       imagesByPatientId: {
         ...get().imagesByPatientId,
-        [patientId]: {
-          clinicId,
-          queryKey,
-          requestId,
-          filters,
-          data: previous?.data ?? null,
-          fetchedAt: previous?.fetchedAt,
-          total: previous?.total ?? 0,
-          loading: true,
-          loadingMore: false,
-          hasMore: previous?.hasMore ?? false,
-          error: null,
-          loadMoreError: null,
-        },
+        [patientId]: loadingEntry,
       },
+      imagesByQuery: { ...get().imagesByQuery, [queryKey]: loadingEntry },
     });
 
     try {
@@ -207,7 +203,7 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         offset: 0,
         limit: PATIENT_IMAGES_PAGE_SIZE,
       });
-      const latest = get().imagesByPatientId[patientId];
+      const latest = get().imagesByQuery[queryKey];
 
       if (
         !isCurrentQueryEpoch(epoch) ||
@@ -217,19 +213,21 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         return;
       }
 
+      const nextEntry = {
+        ...latest,
+        data: latest.data === null ? page.images : shareEqualData(latest.data, page.images),
+        fetchedAt: Date.now(),
+        total: page.total,
+        loading: false,
+        hasMore: page.hasMore,
+        error: null,
+      };
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
-          [patientId]: {
-            ...latest,
-            data: page.images,
-            fetchedAt: Date.now(),
-            total: page.total,
-            loading: false,
-            hasMore: page.hasMore,
-            error: null,
-          },
+          [patientId]: nextEntry,
         },
+        imagesByQuery: { ...get().imagesByQuery, [queryKey]: nextEntry },
       });
     } catch (cause) {
       const error = toError(cause);
@@ -240,27 +238,26 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         clinicId,
         patientId,
       });
-      const latest = get().imagesByPatientId[patientId];
+      const latest = get().imagesByQuery[queryKey];
 
       if (latest?.queryKey !== queryKey || latest.requestId !== requestId) {
         return;
       }
 
+      const nextEntry = { ...latest, data: isAccessDenied(error) ? null : latest.data, loading: false, error };
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
-          [patientId]: {
-            ...latest,
-            loading: false,
-            error,
-          },
+          [patientId]: nextEntry,
         },
+        imagesByQuery: { ...get().imagesByQuery, [queryKey]: nextEntry },
       });
     }
   },
 
-  loadMorePatientImages: async (patientId) => {
-    const current = get().imagesByPatientId[patientId];
+  loadMorePatientImages: async (patientId, queryKey) => {
+    const epoch = getQueryEpoch();
+    const current = get().imagesByQuery[queryKey];
 
     if (
       !current ||
@@ -272,16 +269,14 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
       return;
     }
 
-    const { clinicId, queryKey, requestId, filters } = current;
+    const { clinicId, requestId, filters } = current;
+    const loadingEntry = { ...current, loadingMore: true, loadMoreError: null };
     set({
       imagesByPatientId: {
         ...get().imagesByPatientId,
-        [patientId]: {
-          ...current,
-          loadingMore: true,
-          loadMoreError: null,
-        },
+        [patientId]: loadingEntry,
       },
+      imagesByQuery: { ...get().imagesByQuery, [queryKey]: loadingEntry },
     });
 
     try {
@@ -292,9 +287,10 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         offset: current.data.length,
         limit: PATIENT_IMAGES_PAGE_SIZE,
       });
-      const latest = get().imagesByPatientId[patientId];
+      const latest = get().imagesByQuery[queryKey];
 
       if (
+        !isCurrentQueryEpoch(epoch) ||
         latest?.queryKey !== queryKey ||
         latest.requestId !== requestId ||
         latest.data === null
@@ -307,20 +303,23 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         (image) => !existingIds.has(image.id),
       );
 
+      const nextEntry = {
+        ...latest,
+        data: [...latest.data, ...newImages],
+        total: page.total,
+        loadingMore: false,
+        hasMore: page.hasMore,
+        loadMoreError: null,
+      };
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
-          [patientId]: {
-            ...latest,
-            data: [...latest.data, ...newImages],
-            total: page.total,
-            loadingMore: false,
-            hasMore: page.hasMore,
-            loadMoreError: null,
-          },
+          [patientId]: nextEntry,
         },
+        imagesByQuery: { ...get().imagesByQuery, [queryKey]: nextEntry },
       });
     } catch (cause) {
+      if (!isCurrentQueryEpoch(epoch)) return;
       const error = toError(cause);
       logger.captureException(error, {
         store: "patient-images-store",
@@ -328,27 +327,25 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
         clinicId,
         patientId,
       });
-      const latest = get().imagesByPatientId[patientId];
+      const latest = get().imagesByQuery[queryKey];
 
       if (latest?.queryKey !== queryKey || latest.requestId !== requestId) {
         return;
       }
 
+      const nextEntry = { ...latest, loadingMore: false, loadMoreError: error };
       set({
         imagesByPatientId: {
           ...get().imagesByPatientId,
-          [patientId]: {
-            ...latest,
-            loadingMore: false,
-            loadMoreError: error,
-          },
+          [patientId]: nextEntry,
         },
+        imagesByQuery: { ...get().imagesByQuery, [queryKey]: nextEntry },
       });
     }
   },
 
-  refreshPatientImages: async (patientId) => {
-    const current = get().imagesByPatientId[patientId];
+  refreshPatientImages: async (patientId, queryKey) => {
+    const current = queryKey ? get().imagesByQuery[queryKey] : get().imagesByPatientId[patientId];
 
     if (!current) {
       return;
@@ -490,4 +487,4 @@ export const usePatientImagesStore = create<PatientImagesStore>((set, get) => ({
     set({ deleteConfirm: { image, onSuccess: onSuccess ?? null } }),
 
   closeDeleteConfirm: () => set({ deleteConfirm: null }),
-}));
+}), clinicPersistOptions<PatientImagesStore>("patient-images", ["imagesByQuery"])));

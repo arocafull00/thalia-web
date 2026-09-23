@@ -1,14 +1,9 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useServerBootstrap } from "@/components/providers/store-hydrator";
-import { useClinicId } from "@/lib/hooks/use-active-clinic";
-import {
-  invalidateEmployeeDirectory,
-  setEmployeeQueryData,
-} from "@/lib/query/employees-query";
 import { useAuthStore, type UpdateProfileInput } from "@/stores/auth-store";
+import { useEmployeesStore } from "@/stores/employees-store";
 import type { Employee } from "@/types/database.types";
 
 export function useAuth() {
@@ -98,21 +93,14 @@ export function useUploadProfileAvatar() {
 }
 
 function useSyncEmployeeQueries() {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-  const clinicId = useClinicId();
-  const userId = user?.id ?? null;
+  const updateEmployeeData = useEmployeesStore((state) => state.updateEmployeeData);
+  const refreshDirectory = useEmployeesStore((state) => state.refreshDirectory);
 
   return useCallback(
     async (employee: Employee) => {
-      if (!userId || !clinicId) {
-        return;
-      }
-
-      const scope = { userId, clinicId };
-      setEmployeeQueryData(queryClient, scope, employee);
-      await invalidateEmployeeDirectory(queryClient, scope);
+      updateEmployeeData(employee);
+      await refreshDirectory();
     },
-    [clinicId, queryClient, userId],
+    [refreshDirectory, updateEmployeeData],
   );
 }

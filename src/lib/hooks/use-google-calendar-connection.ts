@@ -1,49 +1,36 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 import { SETTINGS_COPY } from "@/copy/settings-copy";
-import {
-  disconnectGoogleCalendar,
-  getGoogleCalendarConnection,
-} from "@/dal/google-calendar.dal";
+import { disconnectGoogleCalendar } from "@/dal/google-calendar.dal";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { logger } from "@/lib/logger";
 import { useAuthStore } from "@/stores/auth-store";
+import { useCalendarConnectionStore } from "@/stores/calendar-connection-store";
 
 const OUTCOME_PARAM = "calendario";
-
-function connectionQueryKey(employeeId: string | undefined) {
-  return ["google-calendar-connection", employeeId] as const;
-}
 
 export function useGoogleCalendarConnection() {
   const profile = useAuthStore((state) => state.profile);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
-
   const employeeId = profile?.id;
-
-  /*
-   * Con React Query y no con `useState` más `useEffect`: cargar en un efecto
-   * obliga a llamar a `setState` dentro de él, que es justo lo que el lint del
-   * proyecto prohíbe —y con razón, porque encadena renderizados—.
-   */
-  const connectionQuery = useQuery({
-    queryKey: connectionQueryKey(employeeId),
-    queryFn: () => getGoogleCalendarConnection(employeeId as string),
-    enabled: Boolean(employeeId),
-  });
+  const entry = useCalendarConnectionStore((state) => employeeId ? state.byEmployeeId[employeeId] : undefined);
+  const fetchConnection = useCalendarConnectionStore((state) => state.fetchConnection);
+  const clearConnection = useCalendarConnectionStore((state) => state.clearConnection);
+  useRevalidateOnEntry(employeeId ? `calendar-connection:${employeeId}` : null, () => fetchConnection(employeeId!));
 
   const disconnectMutation = useMutation({
     mutationFn: disconnectGoogleCalendar,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: connectionQueryKey(employeeId),
-      });
+      if (employeeId) {
+        clearConnection(employeeId);
+        await fetchConnection(employeeId);
+      }
       toast.success(SETTINGS_COPY.calendar.disconnected);
     },
     onError: (cause) => {
@@ -88,10 +75,10 @@ export function useGoogleCalendarConnection() {
   }, []);
 
   return {
-    connection: connectionQuery.data ?? null,
+    connection: entry?.data?.connection ?? null,
     connect,
     disconnect: disconnectMutation.mutate,
     disconnecting: disconnectMutation.isPending,
-    loading: connectionQuery.isPending && Boolean(employeeId),
+    loading: Boolean(employeeId && !entry?.data && !entry?.error),
   };
 }

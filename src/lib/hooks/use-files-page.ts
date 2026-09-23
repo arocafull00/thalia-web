@@ -20,7 +20,6 @@ import { isPatientFileViewable } from "@/lib/patient-file-storage";
 import { usePatientFilesStore } from "@/stores/patient-files-store";
 import type {
   PatientFile,
-  PatientFileCategory,
   PatientFileWithPatient,
 } from "@/types/database.types";
 

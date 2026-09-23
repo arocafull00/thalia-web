@@ -1,12 +1,12 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useClinicServerSeed } from "@/lib/hooks/use-server-seed";
 import {
   isInitialLoading,
   isQueryFresh,
   REFERENCE_QUERY_STALE_TIME,
-  shouldFetchQuery,
 } from "@/stores/query-state";
 import { useTransactionCategoriesStore } from "@/stores/transaction-categories-store";
 import type { TransactionCategory } from "@/types/database.types";
@@ -33,26 +33,12 @@ export function useTransactionCategories(initialData?: TransactionCategory[]) {
     seedCategories(clinicId, seededData);
   }, [clinicId, hasClientData, seedCategories, seededData]);
 
-  useEffect(() => {
-    if (
-      !clinicId ||
-      seededData !== undefined ||
-      !shouldFetchQuery(entry, REFERENCE_QUERY_STALE_TIME)
-    ) {
-      return;
-    }
-
-    void fetchCategories(clinicId);
-  }, [clinicId, entry, fetchCategories, seededData]);
+  useRevalidateOnEntry(clinicId ? `transaction-categories:${clinicId}` : null, () => fetchCategories(clinicId!));
 
   return {
-    categories: useMemo(
-      () =>
-        isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
-          ? (entry?.data ?? [])
-          : (seededData ?? entry?.data ?? []),
-      [entry?.data, seededData],
-    ),
+    categories: isQueryFresh(entry, REFERENCE_QUERY_STALE_TIME)
+      ? (entry?.data ?? [])
+      : (seededData ?? entry?.data ?? []),
     error: entry?.error ?? null,
     isLoading:
       !clinicId ||

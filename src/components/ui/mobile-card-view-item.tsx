@@ -16,6 +16,7 @@ type MobileCardViewItemProps<T> = {
   actions?: MobileCardAction<T>[];
   renderActions?: (row: T) => ReactNode;
   getRowHref?: (row: T) => string | undefined;
+  prefetchRowLinks?: boolean;
   onRowActivate?: (row: T) => void;
 };
 
@@ -36,6 +37,7 @@ export default function MobileCardViewItem<T>({
   actions,
   renderActions,
   getRowHref,
+  prefetchRowLinks,
   onRowActivate,
 }: MobileCardViewItemProps<T>) {
   const primaryColumns = columns.filter(
@@ -84,7 +86,11 @@ export default function MobileCardViewItem<T>({
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-4 transition-colors hover:bg-[var(--hover-overlay)]">
       {href ? (
-        <Link href={href} className={rowPrimaryControlClassName}>
+        <Link
+          href={href}
+          prefetch={prefetchRowLinks}
+          className={rowPrimaryControlClassName}
+        >
           {content}
         </Link>
       ) : null}

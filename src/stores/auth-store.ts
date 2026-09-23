@@ -172,10 +172,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   signOut: async () => {
+    const userId = get().session?.user.id;
     const { error } = await supabase.auth.signOut({ scope: "local" });
 
     if (error) {
       throw error;
+    }
+
+    if (userId) {
+      const { clearUserQueryCache } = await import("@/stores/clinic-query-cache");
+      await clearUserQueryCache(userId);
     }
 
     useClinicStore.getState().clearClinicState();

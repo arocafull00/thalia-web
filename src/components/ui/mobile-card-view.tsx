@@ -23,6 +23,7 @@ type MobileCardViewProps<T> = {
   actions?: MobileCardAction<T>[];
   renderActions?: (row: T) => ReactNode;
   getRowHref?: (row: T) => string | undefined;
+  prefetchRowLinks?: boolean;
   onRowActivate?: (row: T) => void;
   emptyMessage?: string;
   getRowKey: (row: T, index: number) => string;
@@ -34,6 +35,7 @@ export default function MobileCardView<T>({
   actions,
   renderActions,
   getRowHref,
+  prefetchRowLinks,
   onRowActivate,
   emptyMessage = "No hay resultados.",
   getRowKey,
@@ -56,6 +58,7 @@ export default function MobileCardView<T>({
           actions={actions}
           renderActions={renderActions}
           getRowHref={getRowHref}
+          prefetchRowLinks={prefetchRowLinks}
           onRowActivate={onRowActivate}
         />
       ))}

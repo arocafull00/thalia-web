@@ -34,9 +34,9 @@ const MARKETING_FILTER_DEFAULTS = {
 };
 
 type MarketingPageClientProps = {
-  initialPage: CampaignPageResult;
-  initialQuery: CampaignsPageQuery;
-  initialQuota: CampaignQuota;
+  initialPage?: CampaignPageResult;
+  initialQuery?: CampaignsPageQuery;
+  initialQuota?: CampaignQuota;
 };
 
 export default function MarketingPageClient({

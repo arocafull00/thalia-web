@@ -30,10 +30,10 @@ import type { TreatmentWithInventory } from "@/types/database.types";
 const TREATMENT_FILTER_DEFAULTS = { category: "", page: "", q: "" };
 
 type TreatmentsPageClientProps = {
-  initialTreatments: TreatmentWithInventory[];
-  initialTotal: number;
-  initialQuery: TreatmentsPageQuery;
-  initialCategories: string[];
+  initialTreatments?: TreatmentWithInventory[];
+  initialTotal?: number;
+  initialQuery?: TreatmentsPageQuery;
+  initialCategories?: string[];
 };
 
 export default function TreatmentsPageClient({

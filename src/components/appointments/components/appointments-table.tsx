@@ -91,7 +91,6 @@ export default function AppointmentsTable({
           data={appointments}
           manualPagination={pagination}
           getRowHref={(appointment) => `/appointments/${appointment.id}`}
-          prefetchRowLinks={false}
           getRowStyle={(appointment) =>
             ({
               "--glow": appointmentStatusColor(appointment.status),

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
@@ -16,7 +17,6 @@ import {
 import {
   isInitialLoading,
   isQueryFresh,
-  shouldFetchQuery,
 } from "@/stores/query-state";
 import type { AppointmentWithRelations, Patient } from "@/types/database.types";
 
@@ -82,13 +82,7 @@ export function usePatientsPage(
     seedPatientsPage(query, seededResult);
   }, [hasClientData, query, seedPatientsPage, seededResult]);
 
-  useEffect(() => {
-    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchPatientsPage(query);
-  }, [entry, fetchPatientsPage, query, seededResult]);
+  useRevalidateOnEntry(`patients-page:${key}`, () => fetchPatientsPage(query));
 
   const refresh = useCallback(() => {
     if (usePatientsStore.getState().byPage[key]?.loading) {
@@ -120,13 +114,7 @@ export function usePatients(search: string, initialData?: Patient[]) {
   const fetchPatients = usePatientsStore((state) => state.fetchPatients);
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchPatients(search);
-  }, [clinicId, entry, fetchPatients, search, seededData]);
+  useRevalidateOnEntry(clinicId ? `patients-list:${key}` : null, () => fetchPatients(search));
 
   const data = isQueryFresh(entry)
     ? entry!.data
@@ -159,13 +147,7 @@ export function usePatient(patientOrId: Patient | string) {
     initialData?.id ?? "",
     initialData,
   );
-  useEffect(() => {
-    if (!patientId.trim() || seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchPatient(patientId);
-  }, [entry, fetchPatient, patientId, seededData]);
+  useRevalidateOnEntry(patientId.trim() ? `patient:${patientId}` : null, () => fetchPatient(patientId));
 
   const data = isQueryFresh(entry)
     ? entry!.data
@@ -194,13 +176,7 @@ export function usePatientAppointments(
     initialData,
   );
 
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchPatientAppointments(patientId);
-  }, [entry, fetchPatientAppointments, patientId, seededData]);
+  useRevalidateOnEntry(patientId ? `patient-appointments:${patientId}` : null, () => fetchPatientAppointments(patientId));
 
   const data = isQueryFresh(entry)
     ? entry!.data
@@ -221,13 +197,7 @@ export function useUpcomingPatientAppointments(patientId: string) {
     (state) => state.fetchUpcomingPatientAppointments,
   );
 
-  useEffect(() => {
-    if (!patientId || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchUpcomingPatientAppointments(patientId);
-  }, [entry, fetchUpcomingPatientAppointments, patientId]);
+  useRevalidateOnEntry(patientId ? `patient-upcoming:${patientId}` : null, () => fetchUpcomingPatientAppointments(patientId));
 
   return {
     data: entry?.data ?? undefined,

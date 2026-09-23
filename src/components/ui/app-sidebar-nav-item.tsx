@@ -2,7 +2,6 @@
 
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import AppSidebarNavPending from "@/components/ui/app-sidebar-nav-pending";
@@ -28,7 +27,6 @@ export default function AppSidebarNavItem({
   pathname,
   onNavigate,
 }: AppSidebarNavItemProps) {
-  const router = useRouter();
   const { state, setOpen } = useSidebar();
   const collapsed = state === "collapsed";
   const hasSubmenu = Boolean(item.subItems?.length);
@@ -119,8 +117,6 @@ export default function AppSidebarNavItem({
         <Link
           href={item.href}
           onClick={onNavigate}
-          onMouseEnter={() => router.prefetch(item.href)}
-          prefetch={false}
           className="flex items-center gap-3"
         >
           {item.icon}

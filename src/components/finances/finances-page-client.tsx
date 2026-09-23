@@ -40,7 +40,7 @@ import { Notice } from "@/components/ui/primitives/notice";
 import { FINANCES_COPY } from "@/copy/finances-copy";
 import { TRANSACTION_CREATE_COPY } from "@/copy/transaction-create-copy";
 import { TRANSACTIONS_PAGE_SIZE } from "@/lib/finances-pagination";
-import { parseFinancesMonthParam } from "@/lib/finances-summary";
+import { formatFinancesMonthParam, parseFinancesMonthParam } from "@/lib/finances-summary";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useFinancesPage } from "@/lib/hooks/use-finances-page";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
@@ -53,14 +53,14 @@ import type {
 import type { Transaction, TransactionCategory } from "@/types/database.types";
 
 type FinancesPageClientProps = {
-  initialMonth: string;
-  initialTab: FinancesTabValue;
-  initialTransactions: Transaction[];
-  initialTotal: number;
-  initialQuery: TransactionsPageQuery;
-  initialCategories: TransactionCategory[];
+  initialMonth?: string;
+  initialTab?: FinancesTabValue;
+  initialTransactions?: Transaction[];
+  initialTotal?: number;
+  initialQuery?: TransactionsPageQuery;
+  initialCategories?: TransactionCategory[];
   initialSummary?: FinancialSummary;
-  initialSummaryKey: string;
+  initialSummaryKey?: string;
 };
 
 export default function FinancesPageClient({
@@ -85,10 +85,10 @@ export default function FinancesPageClient({
   const filterDefaults = useMemo(
     () => ({
       category: "",
-      month: initialMonth,
+      month: initialMonth ?? formatFinancesMonthParam(new Date()),
       page: "",
       q: "",
-      tab: initialTab,
+      tab: initialTab ?? "summary",
     }),
     [initialMonth, initialTab],
   );
@@ -166,7 +166,7 @@ export default function FinancesPageClient({
     categories,
     editingTransaction,
   );
-  const categoryManager = useTransactionCategoriesManager(initialCategories, {
+  const categoryManager = useTransactionCategoriesManager(initialCategories ?? [], {
     onCreated: (category) => {
       if (dialogOpen && category.type === dialog.type) {
         dialog.selectCategory(category.id);

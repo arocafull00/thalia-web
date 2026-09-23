@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useShallow } from "zustand/react/shallow";
 
 import type {
@@ -17,7 +18,6 @@ import {
   isInitialLoading,
   isQueryFresh,
   REFERENCE_QUERY_STALE_TIME,
-  shouldFetchQuery,
 } from "@/stores/query-state";
 
 const EMPTY_SUMMARY: InventoryStockSummary = {
@@ -123,60 +123,18 @@ export function useInventoryPage(
     seedInventoryItemsPage(query, seededResult);
   }, [hasClientData, query, seedInventoryItemsPage, seededResult]);
 
-  useEffect(() => {
-    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchInventoryItemsPage(query);
-  }, [entry, fetchInventoryItemsPage, query, seededResult]);
+  useRevalidateOnEntry(`inventory-page:${key}`, () => fetchInventoryItemsPage(query));
 
   // Categorías y resumen no dependen de la página: se piden una vez por
   // clínica. Derivarlos de las 10 filas visibles dejaría el desplegable corto y
   // haría que las tarjetas de cabecera contasen sólo la página.
   const hasCategories = categoriesEntry.data != null;
 
-  useEffect(() => {
-    if (seed?.initialCategories && !hasCategories) {
-      seedInventoryCategories(seed.initialCategories);
-      return;
-    }
-
-    if (!shouldFetchQuery(categoriesEntry, REFERENCE_QUERY_STALE_TIME)) {
-      return;
-    }
-
-    void fetchInventoryCategories();
-  }, [
-    clinicId,
-    categoriesEntry,
-    fetchInventoryCategories,
-    hasCategories,
-    seedInventoryCategories,
-    seed?.initialCategories,
-  ]);
+  useRevalidateOnEntry(clinicId ? `inventory-categories:${clinicId}` : null, () => fetchInventoryCategories());
 
   const hasSummary = summaryEntry.data != null;
 
-  useEffect(() => {
-    if (seed?.initialSummary && !hasSummary) {
-      seedInventoryStockSummary(seed.initialSummary);
-      return;
-    }
-
-    if (!shouldFetchQuery(summaryEntry)) {
-      return;
-    }
-
-    void fetchInventoryStockSummary();
-  }, [
-    clinicId,
-    summaryEntry,
-    fetchInventoryStockSummary,
-    hasSummary,
-    seedInventoryStockSummary,
-    seed?.initialSummary,
-  ]);
+  useRevalidateOnEntry(clinicId ? `inventory-summary:${clinicId}` : null, () => fetchInventoryStockSummary());
 
   const refresh = useCallback(
     () => fetchInventoryItemsPage(query),

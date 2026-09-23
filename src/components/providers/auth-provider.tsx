@@ -5,6 +5,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/stores/auth-store";
 import { useClinicRequestsStore } from "@/stores/clinic-requests-store";
+import { clearUserQueryCache } from "@/stores/clinic-query-cache";
 import { useClinicStore } from "@/stores/clinic-store";
 import { resetClinicQueryData } from "@/stores/reset-clinic-query-data";
 
@@ -49,6 +50,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       const previousUserId = useAuthStore.getState().session?.user.id;
       if (previousUserId && previousUserId !== data.session?.user.id) {
         resetClinicQueryData();
+        useClinicStore.getState().clearClinicState();
+        void clearUserQueryCache(previousUserId);
       }
       setSession(data.session);
 
@@ -74,6 +77,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       const previousUserId = useAuthStore.getState().session?.user.id;
       if (previousUserId && nextSession?.user.id && previousUserId !== nextSession.user.id) {
         resetClinicQueryData();
+        useClinicStore.getState().clearClinicState();
+        void clearUserQueryCache(previousUserId);
       }
       useAuthStore.getState().setSession(nextSession);
 
@@ -85,6 +90,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         if (!nextSession?.user.id) {
           if (event === "SIGNED_OUT") {
             clearAuthState();
+            if (previousUserId) void clearUserQueryCache(previousUserId);
             useAuthStore.getState().setLoading(false);
           }
           return;

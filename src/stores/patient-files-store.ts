@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   createPatientFile,
@@ -20,8 +22,8 @@ import {
 } from "@/lib/patient-file-storage";
 import { assertCanMutateClinicalData } from "@/lib/permissions";
 import type { PatientFileUploadInput } from "@/lib/schemas/patient-file-schema";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useAuthStore } from "@/stores/auth-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -161,7 +163,7 @@ async function uploadSinglePatientFile(
   }
 }
 
-export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
+export const usePatientFilesStore = create<PatientFilesStore>()(persist((set, get) => ({
   filesByPatientId: {},
   globalFilesByQuery: {},
   uploading: false,
@@ -193,7 +195,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
       set({
         filesByPatientId: {
           ...get().filesByPatientId,
-          [patientId]: successQueryEntry(files),
+          [patientId]: successQueryEntry(files, get().filesByPatientId[patientId]),
         },
       });
     } catch (cause) {
@@ -226,7 +228,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
     set({
       globalFilesByQuery: {
         ...get().globalFilesByQuery,
-        [key]: successQueryEntry(page),
+        [key]: successQueryEntry(page, get().globalFilesByQuery[key]),
       },
     });
   },
@@ -256,7 +258,7 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
       set({
         globalFilesByQuery: {
           ...get().globalFilesByQuery,
-          [key]: successQueryEntry(page),
+          [key]: successQueryEntry(page, get().globalFilesByQuery[key]),
         },
       });
     } catch (cause) {
@@ -487,4 +489,4 @@ export const usePatientFilesStore = create<PatientFilesStore>((set, get) => ({
     set({ deleteConfirm: { file, onSuccess: onSuccess ?? null } }),
 
   closeDeleteConfirm: () => set({ deleteConfirm: null }),
-}));
+}), clinicPersistOptions<PatientFilesStore>("patient-files", ["filesByPatientId", "globalFilesByQuery"])));

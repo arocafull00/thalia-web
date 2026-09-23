@@ -1,33 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { APPOINTMENT_DETAIL_COPY } from "@/copy/appointment-detail-copy";
 import {
   firstSkipReason,
-  getRemindersForAppointment,
-  sendManualReminder,
 } from "@/dal/appointment-reminders.dal";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
-import type { AppointmentReminder } from "@/types/database.types";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
+import { useAppointmentRemindersStore } from "@/stores/appointment-reminders-store";
 
 export function useAppointmentReminders(
   appointmentId: string,
   reminderSent: boolean | null,
 ) {
   const { clinicId } = useActiveClinic();
-  const [reminders, setReminders] = useState<AppointmentReminder[]>([]);
-  const [sending, setSending] = useState(false);
-
-  const refreshReminders = useCallback(async () => {
-    const data = await getRemindersForAppointment(appointmentId);
-    setReminders(Array.isArray(data) ? data : []);
-  }, [appointmentId]);
-
-  useEffect(() => {
-    void refreshReminders().catch(() => {});
-  }, [refreshReminders]);
+  const reminders = useAppointmentRemindersStore((state) => state.byAppointmentId[appointmentId]?.data ?? []);
+  const sending = useAppointmentRemindersStore((state) => state.sending);
+  const fetchReminders = useAppointmentRemindersStore((state) => state.fetchReminders);
+  const sendManual = useAppointmentRemindersStore((state) => state.sendManual);
+  useRevalidateOnEntry(clinicId && appointmentId ? `appointment-reminders:${appointmentId}` : null, () => fetchReminders(appointmentId));
 
   const lastSent = reminders.find((reminder) => reminder.status === "sent");
   const hasSent = Boolean(lastSent) || Boolean(reminderSent);
@@ -37,10 +29,8 @@ export function useAppointmentReminders(
       return;
     }
 
-    setSending(true);
-
     try {
-      const summary = await sendManualReminder(appointmentId, clinicId);
+      const summary = await sendManual(appointmentId, clinicId);
 
       if (summary?.sent) {
         toast.success(APPOINTMENT_DETAIL_COPY.reminderManualSuccess);
@@ -55,11 +45,8 @@ export function useAppointmentReminders(
         );
       }
 
-      await refreshReminders();
     } catch {
       toast.error(APPOINTMENT_DETAIL_COPY.reminderManualError);
-    } finally {
-      setSending(false);
     }
   };
 

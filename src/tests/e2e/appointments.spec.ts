@@ -1,4 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
+import { createClient } from "@supabase/supabase-js";
 
 import { E2E_DATA } from "./e2e-constants";
 import {
@@ -185,4 +186,38 @@ test("completa una cita y enlaza sus movimientos financieros", async ({
     .filter({ has: appointmentOrigin });
   await transactionRow.getByRole("button").first().click();
   await expect(page).toHaveURL(new RegExp(`/appointments/${appointmentId}$`));
+});
+
+test("descuenta materiales al completar y repone stock al eliminar", async ({ page }) => {
+  const adminUrl = process.env.E2E_SUPABASE_URL;
+  const adminKey = process.env.E2E_SUPABASE_SECRET_KEY;
+  test.skip(!adminUrl || !adminKey, "Requiere Supabase local");
+
+  const admin = createClient(adminUrl!, adminKey!, {
+    auth: { persistSession: false },
+  });
+  const readStock = async () => {
+    const { data, error } = await admin
+      .from("inventory_items")
+      .select("stock")
+      .eq("id", E2E_DATA.inventoryItemId)
+      .single();
+    if (error) throw error;
+    return data.stock;
+  };
+  const initialStock = await readStock();
+  await createAndGoToAppointmentDetail(page);
+
+  await clickTopbarMenuAction(page, "Confirmar cita");
+  await expect(page.getByTestId("appointment-detail-page").getByText("Confirmada").first()).toBeVisible();
+  await clickTopbarMenuAction(page, "Marcar como completada");
+  await expect(page.getByTestId("appointment-detail-page").getByText("Completada").first()).toBeVisible();
+  await expect.poll(readStock).toBe(initialStock - 1);
+
+  await clickTopbarMenuAction(page, "Eliminar cita");
+  const deleteDialog = page.getByRole("dialog", { name: "Eliminar cita" });
+  await deleteDialog.getByRole("checkbox", { name: "Reponer los materiales descontados del stock" }).check();
+  await deleteDialog.getByRole("button", { name: "Eliminar definitivamente" }).click();
+  await expect(page).toHaveURL(/\/appointments$/, { timeout: 15_000 });
+  await expect.poll(readStock).toBe(initialStock);
 });

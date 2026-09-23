@@ -6,8 +6,9 @@ import {
   type PatientImagesFilters,
 } from "@/dal/patient-images.dal";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { peekCachedPatientImageUrl } from "@/lib/patient-image-storage";
-import { usePatientImagesStore } from "@/stores/patient-images-store";
+import { patientImagesQueryKey, usePatientImagesStore } from "@/stores/patient-images-store";
 import type { PatientImage } from "@/types/database.types";
 
 export type PatientImageViewerSlide = {
@@ -20,9 +21,8 @@ export function usePatientImages(
   filters: PatientImagesFilters,
 ) {
   const clinicId = useClinicId();
-  const entry = usePatientImagesStore(
-    (state) => state.imagesByPatientId[patientId],
-  );
+  const queryKey = clinicId && patientId.trim() ? patientImagesQueryKey(clinicId, patientId, filters) : null;
+  const entry = usePatientImagesStore((state) => queryKey ? state.imagesByQuery[queryKey] : undefined);
   const fetchPatientImages = usePatientImagesStore(
     (state) => state.fetchPatientImages,
   );
@@ -33,18 +33,8 @@ export function usePatientImages(
     (state) => state.refreshPatientImages,
   );
 
-  useEffect(() => {
-    if (!patientId.trim()) {
-      return;
-    }
-
-    void fetchPatientImages(patientId, filters);
-  }, [clinicId, fetchPatientImages, filters, patientId]);
-
-  const matchesCurrentQuery =
-    entry?.clinicId === clinicId &&
-    JSON.stringify(entry.filters) === JSON.stringify(filters);
-  const currentEntry = matchesCurrentQuery ? entry : undefined;
+  useRevalidateOnEntry(queryKey ? `patient-images:${queryKey}` : null, () => fetchPatientImages(patientId, filters, true));
+  const currentEntry = entry;
 
   return {
     data: currentEntry?.data ?? undefined,
@@ -57,8 +47,8 @@ export function usePatientImages(
     isLoadingMore: currentEntry?.loadingMore ?? false,
     error: currentEntry?.error,
     loadMoreError: currentEntry?.loadMoreError,
-    loadMore: () => loadMorePatientImages(patientId),
-    refresh: () => refreshPatientImages(patientId),
+    loadMore: () => queryKey ? loadMorePatientImages(patientId, queryKey) : Promise.resolve(),
+    refresh: () => queryKey ? refreshPatientImages(patientId, queryKey) : Promise.resolve(),
   };
 }
 

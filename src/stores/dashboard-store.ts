@@ -1,5 +1,7 @@
 import { endOfDay, startOfDay } from "date-fns";
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import { getTodayAppointments } from "@/dal/dashboard.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
@@ -9,8 +11,8 @@ import {
   resolveAppointmentTimezone,
 } from "@/lib/appointment-datetime";
 import { logger } from "@/lib/logger";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useClinicStore } from "@/stores/clinic-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -29,7 +31,7 @@ type DashboardStore = {
   fetchDashboard: () => Promise<void>;
 };
 
-export const useDashboardStore = create<DashboardStore>((set, get) => ({
+export const useDashboardStore = create<DashboardStore>()(persist((set, get) => ({
   data: emptyQueryEntry(),
 
   fetchDashboard: async () => {
@@ -57,9 +59,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
 
       if (!isCurrentQueryEpoch(epoch)) return;
       set({
-        data: successQueryEntry({
-          appointments,
-        }),
+        data: successQueryEntry({ appointments }, get().data),
       });
     } catch (cause) {
       logger.captureException(cause, {
@@ -76,4 +76,4 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       });
     }
   },
-}));
+}), clinicPersistOptions<DashboardStore>("dashboard", ["data"])));

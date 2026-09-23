@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
+import { formatAppointmentDateParam, getDefaultAppointmentDateRange } from "@/components/appointments/components/appointment-date-range";
 import AppointmentDeleteDialog from "@/components/appointments/components/appointment-delete-dialog";
 import AppointmentFilters from "@/components/appointments/components/appointment-filters";
 import AppointmentFiltersSheet from "@/components/appointments/components/appointment-filters-sheet";
@@ -23,7 +24,7 @@ import {
 } from "@/components/ui/primitives/skeleton-list";
 import { APPOINTMENTS_COPY } from "@/copy/appointments-copy";
 import { APPOINTMENTS_PAGE_SIZE } from "@/lib/appointment-pagination";
-import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
+import { useActiveClinicTimezone, useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
 import { useAppointmentsPage } from "@/lib/hooks/use-appointments-page";
 import { useFilterSearch } from "@/lib/hooks/use-filter-search";
 import { useTopbarActions } from "@/lib/hooks/use-topbar-actions";
@@ -39,10 +40,10 @@ import type {
 } from "@/types/database.types";
 
 type AppointmentsPageClientProps = {
-  initialAppointments: AppointmentWithRelations[];
-  initialTotal: number;
-  initialQuery: AppointmentsPageQuery;
-  initialRange: {
+  initialAppointments?: AppointmentWithRelations[];
+  initialTotal?: number;
+  initialQuery?: AppointmentsPageQuery;
+  initialRange?: {
     employeeId: string;
     from: string;
     to: string;
@@ -65,6 +66,8 @@ export default function AppointmentsPageClient({
   const appointmentDelete = useAppointmentListDelete();
   const externalResponse = useExternalAppointmentResponse();
   const isExternalProfessional = useIsExternalProfessional();
+  const timezone = useActiveClinicTimezone();
+  const defaultRange = useMemo(() => getDefaultAppointmentDateRange(timezone), [timezone]);
   const filterDefaults = useMemo(
     () => ({
       // Vacío, y no `initialRange.employeeId`: al borrar un filtro de la URL,
@@ -74,13 +77,13 @@ export default function AppointmentsPageClient({
       employeeId: "",
       // Las fechas sí son un defecto real: la semana en curso de la clínica,
       // que es lo que se muestra cuando la URL no trae rango.
-      from: initialRange.from,
+      from: initialRange?.from ?? formatAppointmentDateParam(defaultRange.from),
       page: "",
       q: "",
       status: "",
-      to: initialRange.to,
+      to: initialRange?.to ?? formatAppointmentDateParam(defaultRange.to),
     }),
-    [initialRange.from, initialRange.to],
+    [defaultRange.from, defaultRange.to, initialRange?.from, initialRange?.to],
   );
   const { filters, setFilter, setFilters } = useUrlFilters(filterDefaults);
 

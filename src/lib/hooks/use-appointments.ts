@@ -1,4 +1,5 @@
 import { endOfDay, startOfDay } from "date-fns";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useCallback, useEffect } from "react";
 
 import { getClinicRangeIso } from "@/lib/appointment-datetime";
@@ -17,7 +18,7 @@ import {
   type AppointmentInventoryLinkInput,
   type AppointmentUpdateInput,
 } from "@/stores/appointments-store";
-import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh } from "@/stores/query-state";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 export type {
@@ -78,17 +79,7 @@ export function useAppointments(
     });
   }, [employeeId, end, hasClientData, seedAppointments, seededData, start]);
 
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchAppointments({
-      start: new Date(start),
-      end: new Date(end),
-      employeeId,
-    });
-  }, [clinicId, employeeId, end, entry, fetchAppointments, seededData, start]);
+  useRevalidateOnEntry(`appointments-range:${key}`, () => fetchAppointments({ start: new Date(start), end: new Date(end), employeeId }));
 
   const data = isQueryFresh(entry)
     ? entry!.data
@@ -131,13 +122,7 @@ export function useAppointment(
     initialData,
   );
 
-  useEffect(() => {
-    if (!appointmentId || seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchAppointment(appointmentId);
-  }, [appointmentId, entry, fetchAppointment, seededData]);
+  useRevalidateOnEntry(appointmentId ? `appointment:${appointmentId}` : null, () => fetchAppointment(appointmentId));
 
   const data = isQueryFresh(entry)
     ? entry!.data
@@ -250,13 +235,7 @@ export function useAppointmentInventoryItems(appointmentId: string) {
     (state) => state.fetchAppointmentInventoryItems,
   );
 
-  useEffect(() => {
-    if (!appointmentId || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchAppointmentInventoryItems(appointmentId);
-  }, [appointmentId, entry, fetchAppointmentInventoryItems]);
+  useRevalidateOnEntry(appointmentId ? `appointment-inventory:${appointmentId}` : null, () => fetchAppointmentInventoryItems(appointmentId));
 
   return {
     data: entry?.data,

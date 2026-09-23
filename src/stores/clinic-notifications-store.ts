@@ -1,7 +1,8 @@
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import { CLINIC_NOTIFICATION_COPY } from "@/copy/external-appointment-copy";
 import {
@@ -10,6 +11,7 @@ import {
   unsubscribeClinicNotifications,
 } from "@/dal/clinic-notifications.dal";
 import { logger } from "@/lib/logger";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -33,7 +35,7 @@ type ClinicNotificationsStore = {
 
 let channel: RealtimeChannel | null = null;
 
-export const useClinicNotificationsStore = create<ClinicNotificationsStore>(
+export const useClinicNotificationsStore = create<ClinicNotificationsStore>()(persist(
   (set, get) => ({
     notifications: emptyQueryEntry(),
     unreadCount: 0,
@@ -47,7 +49,7 @@ export const useClinicNotificationsStore = create<ClinicNotificationsStore>(
         const result = await getClinicNotifications(clinicId);
         if (!isCurrentQueryEpoch(epoch)) return;
         set({
-          notifications: successQueryEntry(result.notifications),
+          notifications: successQueryEntry(result.notifications, get().notifications),
           unreadCount: result.unreadCount,
         });
       } catch (cause) {
@@ -121,4 +123,5 @@ export const useClinicNotificationsStore = create<ClinicNotificationsStore>(
       channel = null;
     },
   }),
-);
+  clinicPersistOptions<ClinicNotificationsStore>("clinic-notifications", ["notifications", "unreadCount"]),
+));

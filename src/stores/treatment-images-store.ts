@@ -1,8 +1,12 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import { getTreatmentPatientImagesPage } from "@/dal/patient-images.dal";
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
+import { isAccessDenied, shareEqualData } from "@/stores/query-state";
 import type { PatientImageWithPatient } from "@/types/database.types";
 
 const TREATMENT_IMAGES_PAGE_SIZE = 12;
@@ -10,6 +14,7 @@ const TREATMENT_IMAGES_PAGE_SIZE = 12;
 type TreatmentImagesEntry = {
   clinicId: string;
   data: PatientImageWithPatient[] | null;
+  fetchedAt?: number;
   loading: boolean;
   loadingMore: boolean;
   hasMore: boolean;
@@ -26,11 +31,12 @@ function toError(cause: unknown) {
   return cause instanceof Error ? cause : new Error(String(cause));
 }
 
-export const useTreatmentImagesStore = create<TreatmentImagesStore>(
+export const useTreatmentImagesStore = create<TreatmentImagesStore>()(persist(
   (set, get) => ({
     byTreatmentId: {},
 
     fetchTreatmentImages: async (treatmentId) => {
+      const epoch = getQueryEpoch();
       const clinicId = getActiveClinicId();
 
       if (!clinicId) {
@@ -51,6 +57,7 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
           [treatmentId]: {
             clinicId,
             data: previous?.data ?? null,
+            fetchedAt: previous?.fetchedAt,
             loading: true,
             loadingMore: false,
             hasMore: previous?.hasMore ?? false,
@@ -68,7 +75,7 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
         );
         const latest = get().byTreatmentId[treatmentId];
 
-        if (latest?.clinicId !== clinicId) {
+        if (!isCurrentQueryEpoch(epoch) || latest?.clinicId !== clinicId) {
           return;
         }
 
@@ -77,7 +84,8 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
             ...get().byTreatmentId,
             [treatmentId]: {
               clinicId,
-              data: page.images,
+              data: latest.data === null ? page.images : shareEqualData(latest.data, page.images),
+              fetchedAt: Date.now(),
               loading: false,
               loadingMore: false,
               hasMore: page.hasMore,
@@ -95,7 +103,7 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
         });
         const latest = get().byTreatmentId[treatmentId];
 
-        if (latest?.clinicId !== clinicId) {
+        if (!isCurrentQueryEpoch(epoch) || latest?.clinicId !== clinicId) {
           return;
         }
 
@@ -104,7 +112,7 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
             ...get().byTreatmentId,
             [treatmentId]: {
               clinicId,
-              data: previous?.data ?? null,
+              data: isAccessDenied(error) ? null : (previous?.data ?? null),
               loading: false,
               loadingMore: false,
               hasMore: previous?.hasMore ?? false,
@@ -116,6 +124,7 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
     },
 
     loadMoreTreatmentImages: async (treatmentId) => {
+      const epoch = getQueryEpoch();
       const clinicId = getActiveClinicId();
       const current = get().byTreatmentId[treatmentId];
 
@@ -145,7 +154,11 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
         );
         const latest = get().byTreatmentId[treatmentId];
 
-        if (latest?.clinicId !== clinicId || latest.data === null) {
+        if (
+          !isCurrentQueryEpoch(epoch) ||
+          latest?.clinicId !== clinicId ||
+          latest.data === null
+        ) {
           return;
         }
 
@@ -176,7 +189,7 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
         });
         const latest = get().byTreatmentId[treatmentId];
 
-        if (latest?.clinicId !== clinicId) {
+        if (!isCurrentQueryEpoch(epoch) || latest?.clinicId !== clinicId) {
           return;
         }
 
@@ -193,4 +206,5 @@ export const useTreatmentImagesStore = create<TreatmentImagesStore>(
       }
     },
   }),
-);
+  clinicPersistOptions<TreatmentImagesStore>("treatment-images", ["byTreatmentId"]),
+));

@@ -39,7 +39,6 @@ export default function AppointmentsMobileList({
         <AppointmentRow
           key={appointment.id}
           appointment={appointment}
-          prefetch={false}
           respondingExternalId={respondingExternalId}
           onAccept={
             canRespondToExternal && appointment.status === "pending_external"

@@ -3,6 +3,7 @@ type SupabaseQueryError = {
   code?: string;
   details?: string;
   hint?: string;
+  status?: number;
 };
 
 function toSupabaseQueryError(error: SupabaseQueryError): Error {

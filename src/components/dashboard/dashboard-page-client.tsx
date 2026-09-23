@@ -17,7 +17,7 @@ import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
 import type { DashboardData } from "@/stores/dashboard-store";
 
 type DashboardPageClientProps = {
-  initialData: DashboardData;
+  initialData?: DashboardData;
 };
 
 export default function DashboardPageClient({

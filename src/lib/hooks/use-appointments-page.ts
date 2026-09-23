@@ -1,4 +1,5 @@
 import { endOfDay, startOfDay } from "date-fns";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useCallback, useEffect, useMemo } from "react";
 
 import {
@@ -18,7 +19,7 @@ import {
   useAppointmentsStore,
   type AppointmentsPageQuery,
 } from "@/stores/appointments-store";
-import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh } from "@/stores/query-state";
 import type {
   AppointmentStatus,
   AppointmentWithRelations,
@@ -147,13 +148,7 @@ export function useAppointmentsPage(
     seedAppointmentsPage(query, seededResult);
   }, [hasClientData, query, seedAppointmentsPage, seededResult]);
 
-  useEffect(() => {
-    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchAppointmentsPage(query);
-  }, [entry, fetchAppointmentsPage, query, seededResult]);
+  useRevalidateOnEntry(`appointments-page:${key}`, () => fetchAppointmentsPage(query));
 
   const resolved = isQueryFresh(entry)
     ? entry!.data

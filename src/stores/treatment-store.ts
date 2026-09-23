@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   deleteTreatment,
@@ -15,8 +17,8 @@ import {
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { logger } from "@/lib/logger";
 import { assertCanMutateClinicalData } from "@/lib/permissions";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useAuthStore } from "@/stores/auth-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   emptyQueryEntry,
   errorQueryEntry,
@@ -109,7 +111,7 @@ async function refreshTreatmentQueries(get: () => TreatmentStore) {
   ]);
 }
 
-export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
+export const useTreatmentStore = create<TreatmentStore>()(persist((set, get) => ({
   list: emptyQueryEntry(),
   byPage: {},
   categories: emptyQueryEntry(),
@@ -131,7 +133,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         return state;
       }
 
-      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result, get().byPage[key]) } };
     });
   },
 
@@ -148,7 +150,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
         clinicId: getActiveClinicId(),
       });
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result, get().byPage[key]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "treatment-store",
@@ -176,7 +178,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
     try {
       const categories = await getTreatmentCategories(getActiveClinicId());
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ categories: successQueryEntry(categories) });
+      set({ categories: successQueryEntry(categories, get().categories) });
     } catch (cause) {
       logger.captureException(cause, {
         store: "treatment-store",
@@ -202,7 +204,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       const clinicId = getActiveClinicId();
       const treatments = await getTreatments(clinicId);
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ list: successQueryEntry(treatments) });
+      set({ list: successQueryEntry(treatments, get().list) });
     } catch (cause) {
       logger.captureException(cause, {
         store: "treatment-store",
@@ -231,7 +233,7 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       const treatment = await getTreatment(treatmentId);
       if (!isCurrentQueryEpoch(epoch)) return;
       set({
-        byId: { ...get().byId, [treatmentId]: successQueryEntry(treatment) },
+        byId: { ...get().byId, [treatmentId]: successQueryEntry(treatment, get().byId[treatmentId]) },
       });
     } catch (cause) {
       logger.captureException(cause, {
@@ -348,4 +350,4 @@ export const useTreatmentStore = create<TreatmentStore>((set, get) => ({
       throw error;
     }
   },
-}));
+}), clinicPersistOptions<TreatmentStore>("treatment", ["list", "byPage", "categories", "byId"])));

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { unwrapSupabase } from "@/lib/supabase-query";
 import type { ClinicBillingSummary } from "@/types/database.types";
 
 type ClinicMembershipClinic = {
@@ -44,8 +45,7 @@ export async function getClinicById(clinicId: string) {
     .eq("id", clinicId)
     .single();
 
-  if (error) throw new Error(error.message);
-  return data;
+  return unwrapSupabase(data, error);
 }
 
 export async function updateClinicHours(

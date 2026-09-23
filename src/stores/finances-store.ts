@@ -1,5 +1,7 @@
 import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   getTransactions,
@@ -13,13 +15,13 @@ import {
 import { getActiveClinicId } from "@/lib/active-clinic-id";
 import { buildFinancialSummary } from "@/lib/finances-summary";
 import { logger } from "@/lib/logger";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
   loadingQueryEntry,
   successQueryEntry,
   type QueryEntry,
 } from "@/stores/query-state";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import type { Transaction, TransactionType } from "@/types/database.types";
 
 export type TransactionInput = {
@@ -140,7 +142,7 @@ type FinancesStore = {
   ) => Promise<Transaction>;
 };
 
-export const useFinancesStore = create<FinancesStore>((set, get) => ({
+export const useFinancesStore = create<FinancesStore>()(persist((set, get) => ({
   byPage: {},
   summaryByKey: {},
   creating: false,
@@ -159,7 +161,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       return {
         summaryByKey: {
           ...state.summaryByKey,
-          [key]: successQueryEntry(summary),
+          [key]: successQueryEntry(summary, get().summaryByKey[key]),
         },
       };
     });
@@ -175,7 +177,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         return state;
       }
 
-      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result, get().byPage[key]) } };
     });
   },
 
@@ -192,7 +194,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
         clinicId: getActiveClinicId(),
       });
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result, get().byPage[key]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "finances-store",
@@ -241,7 +243,7 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       set({
         summaryByKey: {
           ...get().summaryByKey,
-          [key]: successQueryEntry(summary),
+          [key]: successQueryEntry(summary, get().summaryByKey[key]),
         },
       });
     } catch (cause) {
@@ -335,6 +337,6 @@ export const useFinancesStore = create<FinancesStore>((set, get) => ({
       throw error;
     }
   },
-}));
+}), clinicPersistOptions<FinancesStore>("finances", ["byPage", "summaryByKey"])));
 
 export { summaryKey };

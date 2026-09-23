@@ -32,13 +32,15 @@ export default function StoreHydrator({
   children,
 }: StoreHydratorProps) {
   useEffect(() => {
+    const authState = useAuthStore.getState();
+    if (authState.initialized && authState.session?.user.id !== user?.id) return;
     useAuthStore.setState({ profile });
     useClinicStore.setState({
       memberships,
       activeClinicId,
       loading: false,
     });
-  }, [activeClinicId, memberships, profile]);
+  }, [activeClinicId, memberships, profile, user?.id]);
 
   const value = useMemo(
     () => ({ user, profile, memberships, activeClinicId }),

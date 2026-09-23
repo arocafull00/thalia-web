@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import {
   useClinicServerSeed,
@@ -15,7 +16,7 @@ import {
   type TransactionInput,
   type TransactionUpdatePayload,
 } from "@/stores/finances-store";
-import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh } from "@/stores/query-state";
 import type { Transaction } from "@/types/database.types";
 
 export type {
@@ -69,13 +70,7 @@ export function useTransactionsPage(
     seedTransactionsPage(query, seededResult);
   }, [hasClientData, query, seedTransactionsPage, seededResult]);
 
-  useEffect(() => {
-    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchTransactionsPage(query);
-  }, [entry, fetchTransactionsPage, query, seededResult]);
+  useRevalidateOnEntry(`transactions-page:${key}`, () => fetchTransactionsPage(query));
 
   const refresh = useCallback(
     () => fetchTransactionsPage(query),
@@ -121,13 +116,7 @@ export function useFinancialSummary(
     seedFinancialSummary(month, categoryId, seededData);
   }, [categoryId, hasClientData, month, seedFinancialSummary, seededData]);
 
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchFinancialSummary(month, categoryId);
-  }, [categoryId, clinicId, entry, fetchFinancialSummary, key, month, seededData]);
+  useRevalidateOnEntry(clinicId ? `financial-summary:${key}` : null, () => fetchFinancialSummary(month, categoryId));
 
   const data = isQueryFresh(entry)
     ? entry!.data

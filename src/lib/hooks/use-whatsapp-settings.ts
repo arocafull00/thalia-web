@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { toast } from "sonner";
 
 import { SETTINGS_COPY } from "@/copy/settings-copy";
-import {
-  getClinicReminderSettings,
-  updateClinicReminderSettings,
-} from "@/dal/appointment-reminders.dal";
 import { useActiveClinic } from "@/lib/hooks/use-active-clinic";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
+import { useWhatsAppSettingsStore } from "@/stores/whatsapp-settings-store";
 
 export type WhatsAppSettingsForm = {
   enabled: boolean;
@@ -28,37 +26,37 @@ export const CONFIRMATION_LINK_PLACEHOLDER = "{enlace}";
 
 export function useWhatsAppSettings() {
   const { clinicId } = useActiveClinic();
-  const [loaded, setLoaded] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState<WhatsAppSettingsForm>({
+  const entry = useWhatsAppSettingsStore((state) => clinicId ? state.byClinicId[clinicId] : undefined);
+  const saving = useWhatsAppSettingsStore((state) => state.saving);
+  const fetchSettings = useWhatsAppSettingsStore((state) => state.fetchSettings);
+  const saveSettings = useWhatsAppSettingsStore((state) => state.saveSettings);
+  useRevalidateOnEntry(clinicId ? `whatsapp-settings:${clinicId}` : null, () => fetchSettings(clinicId!));
+  useEffect(() => {
+    if (entry?.error) toast.error("No se pudo cargar la configuración de WhatsApp.");
+  }, [entry?.error]);
+
+  const defaultForm: WhatsAppSettingsForm = {
     enabled: false,
     reminderHours: [DEFAULT_REMINDER_HOUR],
     phoneNumberId: "",
     messageTemplate: DEFAULT_TEMPLATE,
     confirmationEnabled: false,
-  });
-  const fetchedForRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!clinicId || fetchedForRef.current === clinicId) return;
-
-    fetchedForRef.current = clinicId;
-    getClinicReminderSettings(clinicId)
-      .then((data) => {
-        setForm({
-          enabled: data.reminder_enabled,
-          reminderHours: data.reminder_hours,
-          phoneNumberId: data.phone_number_id ?? "",
-          messageTemplate: data.message_template,
-          confirmationEnabled: data.confirmation_enabled,
-        });
-        setLoaded(true);
-      })
-      .catch(() => {
-        toast.error("No se pudo cargar la configuración de WhatsApp.");
-        setLoaded(true);
-      });
-  }, [clinicId]);
+  };
+  const cachedForm: WhatsAppSettingsForm = entry?.data ? {
+    enabled: entry.data.reminder_enabled,
+    reminderHours: entry.data.reminder_hours,
+    phoneNumberId: entry.data.phone_number_id ?? "",
+    messageTemplate: entry.data.message_template,
+    confirmationEnabled: entry.data.confirmation_enabled,
+  } : defaultForm;
+  const [draft, setDraft] = useState<{ clinicId: string; form: WhatsAppSettingsForm } | null>(null);
+  const form = draft?.clinicId === clinicId ? draft.form : cachedForm;
+  const setForm: Dispatch<SetStateAction<WhatsAppSettingsForm>> = useCallback((next) => {
+    setDraft((current) => {
+      const previous = current?.clinicId === clinicId ? current.form : cachedForm;
+      return { clinicId: clinicId ?? "", form: typeof next === "function" ? next(previous) : next };
+    });
+  }, [cachedForm, clinicId]);
 
   // Una fila antigua puede traer varios valores guardados; se muestra
   // seleccionado el más lejano a la cita, que es el que ya venía por defecto.
@@ -81,20 +79,18 @@ export function useWhatsAppSettings() {
       return;
     }
 
-    setSaving(true);
     try {
-      await updateClinicReminderSettings(clinicId, {
+      await saveSettings(clinicId, {
         reminder_enabled: form.enabled,
         reminder_hours: [selectedHour],
         phone_number_id: form.phoneNumberId.trim() || null,
         message_template: form.messageTemplate.trim() || DEFAULT_TEMPLATE,
         confirmation_enabled: form.confirmationEnabled,
       });
+      setDraft(null);
       toast.success("Configuración de WhatsApp guardada.");
     } catch {
       toast.error("No se pudo guardar la configuración.");
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -112,7 +108,7 @@ export function useWhatsAppSettings() {
     form,
     setForm,
     handleSave,
-    loading: !loaded,
+    loading: Boolean(clinicId && !entry?.data && !entry?.error),
     saving,
     selectHour,
     selectedHour,

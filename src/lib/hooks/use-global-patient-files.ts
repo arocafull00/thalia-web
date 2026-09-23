@@ -1,5 +1,6 @@
 "use client";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useCallback, useEffect, useMemo } from "react";
 
 import type {
@@ -12,7 +13,7 @@ import {
   globalPatientFilesKey,
   usePatientFilesStore,
 } from "@/stores/patient-files-store";
-import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh } from "@/stores/query-state";
 
 type GlobalPatientFilesFilters = Omit<GlobalPatientFilesParams, "clinicId">;
 
@@ -64,13 +65,7 @@ export function useGlobalPatientFiles(
     return fetchGlobalPatientFiles(params);
   }, [clinicId, fetchGlobalPatientFiles, params]);
 
-  useEffect(() => {
-    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void refresh();
-  }, [entry, refresh, seededResult]);
+  useRevalidateOnEntry(key ? `global-files:${key}` : null, () => refresh());
 
   const resolved = isQueryFresh(entry)
     ? entry!.data

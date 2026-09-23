@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { getFileUrl } from "@/dal/patient-files.dal";
 import { peekCachedPatientFileUrl } from "@/lib/patient-file-storage";
 import { usePatientFilesStore } from "@/stores/patient-files-store";
-import { isInitialLoading, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading } from "@/stores/query-state";
 import type { PatientFile, PatientFileUpdate } from "@/types/database.types";
 
 export function usePatientFiles(patientId: string) {
@@ -14,13 +15,7 @@ export function usePatientFiles(patientId: string) {
     (state) => state.fetchPatientFiles,
   );
 
-  useEffect(() => {
-    if (!patientId.trim() || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchPatientFiles(patientId);
-  }, [entry, fetchPatientFiles, patientId]);
+  useRevalidateOnEntry(patientId.trim() ? `patient-files:${patientId}` : null, () => fetchPatientFiles(patientId));
 
   return {
     data: entry?.data ?? undefined,

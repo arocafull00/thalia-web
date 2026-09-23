@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useAppointmentsStore } from "@/stores/appointments-store";
-import { isInitialLoading, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading } from "@/stores/query-state";
 import type { AppointmentWithRelations } from "@/types/database.types";
 
 function defaultMaterialsKey(treatmentIds: string[]) {
@@ -33,21 +34,9 @@ export function useAppointmentMaterials(
     (state) => state.fetchDefaultMaterials,
   );
 
-  useEffect(() => {
-    if (!appointmentId || !shouldFetchQuery(inventoryEntry)) {
-      return;
-    }
+  useRevalidateOnEntry(appointmentId ? `appointment-materials:${appointmentId}` : null, () => fetchAppointmentInventoryItems(appointmentId));
 
-    void fetchAppointmentInventoryItems(appointmentId);
-  }, [appointmentId, fetchAppointmentInventoryItems, inventoryEntry]);
-
-  useEffect(() => {
-    if (treatmentIds.length === 0 || !shouldFetchQuery(defaultsEntry)) {
-      return;
-    }
-
-    void fetchDefaultMaterials(treatmentIds);
-  }, [defaultsEntry, fetchDefaultMaterials, materialsKey, treatmentIds]);
+  useRevalidateOnEntry(materialsKey ? `default-materials:${materialsKey}` : null, () => fetchDefaultMaterials(treatmentIds));
 
   const overrideItems = inventoryEntry?.data ?? [];
   const defaultMaterials = defaultsEntry?.data ?? [];

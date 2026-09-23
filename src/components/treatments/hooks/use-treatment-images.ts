@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { TreatmentImageGalleryItem } from "@/components/treatments/treatment-images.types";
 import { TREATMENT_DETAIL_COPY } from "@/copy/treatment-detail-copy";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { usePatientImageViewerSlides } from "@/lib/hooks/use-patient-images";
 import { useTreatmentImagesStore } from "@/stores/treatment-images-store";
 import type { PatientImageWithPatient } from "@/types/database.types";
@@ -27,13 +28,7 @@ export function useTreatmentImages(treatmentId: string) {
   const images = currentEntry?.data ?? EMPTY_IMAGES;
   const resolvedSlides = usePatientImageViewerSlides(images);
 
-  useEffect(() => {
-    if (!clinicId || !treatmentId.trim()) {
-      return;
-    }
-
-    void fetchTreatmentImages(treatmentId);
-  }, [clinicId, fetchTreatmentImages, treatmentId]);
+  useRevalidateOnEntry(clinicId && treatmentId.trim() ? `treatment-images:${clinicId}:${treatmentId}` : null, () => fetchTreatmentImages(treatmentId));
 
   useEffect(() => {
     if (!currentEntry?.error) {

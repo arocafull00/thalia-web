@@ -24,6 +24,8 @@ type ClinicStore = {
   getExternalMemberships: () => ClinicMembershipView[];
 };
 
+let membershipRequestId = 0;
+
 export const useClinicStore = create<ClinicStore>()(
   persist(
     (set, get) => ({
@@ -33,10 +35,12 @@ export const useClinicStore = create<ClinicStore>()(
       hydrated: false,
 
       fetchMemberships: async (userId) => {
+        const requestId = ++membershipRequestId;
         set({ loading: true });
 
         try {
           const rows = await getMemberships(userId);
+          if (requestId !== membershipRequestId) return [];
 
           const memberships: ClinicMembershipView[] = rows.map((row) => {
             const clinicRaw = row.clinics as
@@ -85,6 +89,7 @@ export const useClinicStore = create<ClinicStore>()(
           writeActiveClinicCookie(validActive);
           return memberships;
         } catch {
+          if (requestId !== membershipRequestId) return [];
           set({ loading: false });
           return get().memberships;
         }
@@ -107,6 +112,7 @@ export const useClinicStore = create<ClinicStore>()(
       },
 
       clearClinicState: () => {
+        membershipRequestId += 1;
         set({ memberships: [], activeClinicId: null, loading: false });
         writeActiveClinicCookie(null);
       },

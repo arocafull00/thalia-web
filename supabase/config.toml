@@ -37,7 +37,7 @@ file_size_limit = "50MiB"
 [auth]
 enabled = true
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["http://127.0.0.1:3000/reset-password", "http://127.0.0.1:3000/callback"]
+additional_redirect_urls = ["http://127.0.0.1:3000/reset-password", "http://127.0.0.1:3000/callback", "http://127.0.0.1:3001/reset-password", "http://127.0.0.1:3001/callback"]
 jwt_expiry = 3600
 enable_signup = false
 enable_anonymous_sign_ins = false
@@ -48,7 +48,7 @@ enable_signup = true
 enable_confirmations = false
 
 [edge_runtime]
-enabled = false
+enabled = true
 
 [functions.lookup-employee-invitation]
 verify_jwt = false

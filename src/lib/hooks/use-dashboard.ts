@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { useClinicId } from "@/lib/hooks/use-active-clinic";
 import { useClinicServerSeed } from "@/lib/hooks/use-server-seed";
 import type { DashboardData } from "@/stores/dashboard-store";
 import { useDashboardStore } from "@/stores/dashboard-store";
-import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh } from "@/stores/query-state";
 
 export function useDashboard(initialData?: DashboardData) {
   const entry = useDashboardStore((state) => state.data);
@@ -12,13 +13,7 @@ export function useDashboard(initialData?: DashboardData) {
   const clinicId = useClinicId();
   const seededData = useClinicServerSeed(clinicId, initialData);
 
-  useEffect(() => {
-    if (seededData !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchDashboard();
-  }, [clinicId, entry, fetchDashboard, seededData]);
+  useRevalidateOnEntry(clinicId ? `dashboard:${clinicId}` : null, () => fetchDashboard());
 
   const data = isQueryFresh(entry)
     ? entry.data

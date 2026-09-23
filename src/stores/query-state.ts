@@ -48,21 +48,67 @@ export function loadingQueryEntry<T>(
   };
 }
 
-export function successQueryEntry<T>(data: T): QueryEntry<T> {
-  return { data, loading: false, error: null, fetchedAt: Date.now() };
+export function shareEqualData<T>(previous: T, next: T): T {
+  if (Object.is(previous, next)) return previous;
+  if (Array.isArray(previous) && Array.isArray(next)) {
+    if (previous.length !== next.length) return next;
+    const shared = next.map((item, index) => shareEqualData(previous[index], item));
+    return shared.every((item, index) => item === previous[index])
+      ? previous
+      : (shared as T);
+  }
+  if (
+    previous !== null &&
+    next !== null &&
+    typeof previous === "object" &&
+    typeof next === "object" &&
+    !Array.isArray(previous) &&
+    !Array.isArray(next)
+  ) {
+    const oldRecord = previous as Record<string, unknown>;
+    const newRecord = next as Record<string, unknown>;
+    const keys = Object.keys(newRecord);
+    if (keys.length !== Object.keys(oldRecord).length) return next;
+    const shared: Record<string, unknown> = {};
+    for (const key of keys) {
+      if (!(key in oldRecord)) return next;
+      shared[key] = shareEqualData(oldRecord[key], newRecord[key]);
+    }
+    return keys.every((key) => shared[key] === oldRecord[key])
+      ? previous
+      : (shared as T);
+  }
+  return next;
+}
+
+export function successQueryEntry<T>(
+  data: T,
+  previous?: QueryEntry<T>,
+): QueryEntry<T> {
+  const shared = previous?.data == null ? data : shareEqualData(previous.data, data);
+  if (previous && previous.data === shared && !previous.loading && !previous.error) {
+    return previous;
+  }
+  return { data: shared, loading: false, error: null, fetchedAt: Date.now() };
 }
 
 export function errorQueryEntry<T>(
   error: Error,
   previous: QueryEntry<T> | undefined,
 ): QueryEntry<T> {
+  const denied = isAccessDenied(error);
   return {
-    data: previous?.data ?? null,
+    data: denied ? null : (previous?.data ?? null),
     loading: false,
     error,
-    fetchedAt: previous?.fetchedAt,
+    fetchedAt: denied ? undefined : previous?.fetchedAt,
     requestedAt: previous?.requestedAt,
   };
+}
+
+export function isAccessDenied(error: Error): boolean {
+  const accessError = error as Error & { code?: string; status?: number };
+  return accessError.status === 401 || accessError.status === 403 || accessError.code === "42501" || accessError.code === "PGRST116" || accessError.code === "PGRST301";
 }
 
 export function isInitialLoading<T>(

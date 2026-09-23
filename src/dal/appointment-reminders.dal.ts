@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { unwrapSupabaseList } from "@/lib/supabase-query";
+import { unwrapSupabase, unwrapSupabaseList } from "@/lib/supabase-query";
 import type { AppointmentReminder } from "@/types/database.types";
 
 export async function getRemindersForAppointment(
@@ -64,11 +64,7 @@ export async function getClinicReminderSettings(clinicId: string) {
     .eq("clinic_id", clinicId)
     .single();
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
+  return unwrapSupabase(data, error);
 }
 
 export type ClinicReminderSettingsUpdate = {

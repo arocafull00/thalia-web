@@ -70,8 +70,6 @@ jobs:
           -x studio
           -x postgres-meta
           -x imgproxy
-          -x mailpit
-          -x edge-runtime
           -x logflare
           -x vector
           -x supavisor

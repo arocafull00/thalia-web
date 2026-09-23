@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import type {
   CampaignInsert,
   CampaignUpdate,
@@ -13,7 +14,7 @@ import {
   useCampaignsStore,
   type CampaignsPageQuery,
 } from "@/stores/campaigns-store";
-import { isInitialLoading, isQueryFresh, shouldFetchQuery } from "@/stores/query-state";
+import { isInitialLoading, isQueryFresh } from "@/stores/query-state";
 
 type CampaignsPageFilters = {
   createdFrom: string | null;
@@ -82,13 +83,7 @@ export function useCampaignsPage(
     seedCampaignsPage(query, seededResult);
   }, [hasClientData, query, seedCampaignsPage, seededResult]);
 
-  useEffect(() => {
-    if (seededResult !== undefined || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchCampaignsPage(query);
-  }, [entry, fetchCampaignsPage, query, seededResult]);
+  useRevalidateOnEntry(`campaigns-page:${key}`, () => fetchCampaignsPage(query));
 
   const resolved = isQueryFresh(entry)
     ? entry!.data
@@ -107,13 +102,7 @@ export function useCampaign(campaignId: string) {
   const entry = useCampaignsStore((state) => state.byId[campaignId]);
   const fetchCampaign = useCampaignsStore((state) => state.fetchCampaign);
 
-  useEffect(() => {
-    if (!campaignId || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchCampaign(campaignId);
-  }, [campaignId, entry, fetchCampaign]);
+  useRevalidateOnEntry(campaignId ? `campaign:${campaignId}` : null, () => fetchCampaign(campaignId));
 
   return {
     data: entry?.data ?? null,
@@ -139,13 +128,7 @@ export function useCampaignQuota(initialQuota?: CampaignQuota) {
     seedCampaignQuota(initialQuota);
   }, [initialQuota, seedCampaignQuota]);
 
-  useEffect(() => {
-    if (initialQuota || !shouldFetchQuery(entry)) {
-      return;
-    }
-
-    void fetchCampaignQuota().catch(() => undefined);
-  }, [entry, fetchCampaignQuota, initialQuota]);
+  useRevalidateOnEntry("campaign-quota", () => fetchCampaignQuota());
 
   return {
     data: entry.data ?? initialQuota ?? null,

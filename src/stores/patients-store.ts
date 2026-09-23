@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   getPatient,
@@ -20,8 +22,8 @@ import {
 } from "@/lib/schemas/patient-schema";
 import { formatZodError } from "@/lib/schemas/schema-helpers";
 import { uploadFile } from "@/lib/storage";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useAuthStore } from "@/stores/auth-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -110,7 +112,7 @@ async function refreshPatientQueries(get: () => PatientsStore) {
   ]);
 }
 
-export const usePatientsStore = create<PatientsStore>((set, get) => ({
+export const usePatientsStore = create<PatientsStore>()(persist((set, get) => ({
   listBySearch: {},
   byPage: {},
   byId: {},
@@ -142,7 +144,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       set({
         listBySearch: {
           ...get().listBySearch,
-          [key]: successQueryEntry(patients),
+          [key]: successQueryEntry(patients, get().listBySearch[key]),
         },
       });
     } catch (cause) {
@@ -175,7 +177,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         return state;
       }
 
-      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result, get().byPage[key]) } };
     });
   },
 
@@ -192,7 +194,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
         clinicId: getActiveClinicId(),
       });
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result, get().byPage[key]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "patients-store",
@@ -221,7 +223,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
     try {
       const patient = await getPatient(patientId);
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byId: { ...get().byId, [patientId]: successQueryEntry(patient) } });
+      set({ byId: { ...get().byId, [patientId]: successQueryEntry(patient, get().byId[patientId]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "patients-store",
@@ -258,7 +260,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       set({
         appointmentsByPatientId: {
           ...get().appointmentsByPatientId,
-          [patientId]: successQueryEntry(appointments),
+          [patientId]: successQueryEntry(appointments, get().appointmentsByPatientId[patientId]),
         },
       });
     } catch (cause) {
@@ -297,7 +299,7 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       set({
         upcomingByPatientId: {
           ...get().upcomingByPatientId,
-          [patientId]: successQueryEntry(appointments),
+          [patientId]: successQueryEntry(appointments, get().upcomingByPatientId[patientId]),
         },
       });
     } catch (cause) {
@@ -406,6 +408,6 @@ export const usePatientsStore = create<PatientsStore>((set, get) => ({
       throw error;
     }
   },
-}));
+}), clinicPersistOptions<PatientsStore>("patients", ["listBySearch", "byPage", "byId", "appointmentsByPatientId", "upcomingByPatientId"])));
 
 export { patientsListKey };

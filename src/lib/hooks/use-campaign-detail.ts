@@ -1,64 +1,36 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { MARKETING_COPY } from "@/components/marketing/marketing-copy";
-import {
-  countCampaignPatients,
-  getCampaignRecipients,
-} from "@/dal/campaign-recipients.dal";
 import { duplicateCampaign, sendCampaign } from "@/dal/campaigns.dal";
 import { MAX_CAMPAIGN_RECIPIENTS } from "@/lib/campaign-limits";
 import { useCampaign, useCampaignQuota } from "@/lib/hooks/use-campaigns";
+import { useRevalidateOnEntry } from "@/lib/hooks/use-revalidate-on-entry";
 import { logger } from "@/lib/logger";
 import { notifySuccess } from "@/lib/sound";
 import { useCampaignsStore } from "@/stores/campaigns-store";
-import type { CampaignRecipientWithPatient } from "@/types/database.types";
 
 export function useCampaignDetail(campaignId: string) {
   const campaign = useCampaign(campaignId);
   const { data: quota, refresh: refreshQuota } = useCampaignQuota();
   const fetchCampaign = useCampaignsStore((state) => state.fetchCampaign);
+  const recipientsEntry = useCampaignsStore((state) => state.recipientsByCampaignId[campaignId]);
+  const fetchCampaignRecipients = useCampaignsStore((state) => state.fetchCampaignRecipients);
+  useRevalidateOnEntry(campaignId ? `campaign-recipients:${campaignId}` : null, () => fetchCampaignRecipients(campaignId));
   // Enviar y duplicar van directos al DAL, sin pasar por el store, así que las
   // páginas cacheadas del listado se quedarían obsoletas: la campaña enviada
   // seguiría figurando como borrador y la copia no aparecería.
   const refreshCampaignPages = useCampaignsStore(
     (state) => state.refreshCampaignPages,
   );
-  const [recipients, setRecipients] = useState<CampaignRecipientWithPatient[]>(
-    [],
-  );
-  const [pendingCount, setPendingCount] = useState<number | null>(null);
+  const recipients = recipientsEntry?.data?.recipients ?? [];
+  const pendingCount = recipientsEntry?.data?.pendingCount ?? null;
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
-    let cancelled = false;
-
-    void Promise.all([
-      getCampaignRecipients(campaignId),
-      countCampaignPatients(campaignId),
-    ])
-      .then(([rows, count]) => {
-        if (cancelled) {
-          return;
-        }
-
-        setRecipients(rows);
-        setPendingCount(count);
-      })
-      .catch((cause) => {
-        logger.captureException(cause, {
-          hook: "use-campaign-detail",
-          campaignId,
-        });
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [campaignId]);
-
-  useEffect(() => refresh(), [refresh]);
+    void fetchCampaignRecipients(campaignId);
+  }, [campaignId, fetchCampaignRecipients]);
 
   const canStartSend = useCallback(() => {
     if (pendingCount == null) {

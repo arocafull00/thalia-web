@@ -1,5 +1,7 @@
 import { addMinutes } from "date-fns";
 import { create } from "zustand";
+import { clinicPersistOptions } from "@/stores/clinic-query-persist";
+import { persist } from "zustand/middleware";
 
 import {
   deleteAppointment as deleteAppointmentDal,
@@ -36,10 +38,10 @@ import {
   subscribeAppointmentsRealtime,
   unsubscribeAppointmentsRealtime,
 } from "@/stores/appointments-realtime";
-import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import { useDashboardStore } from "@/stores/dashboard-store";
 import { useFinancesStore } from "@/stores/finances-store";
 import { useInventoryStore } from "@/stores/inventory-store";
+import { getQueryEpoch, isCurrentQueryEpoch } from "@/stores/query-epoch";
 import {
   errorQueryEntry,
   loadingQueryEntry,
@@ -211,7 +213,7 @@ type AppointmentsStore = {
   deleteAppointment: (id: string, restoreStock: boolean) => Promise<void>;
 };
 
-export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
+export const useAppointmentsStore = create<AppointmentsStore>()(persist((set, get) => ({
   byRange: {},
   byPage: {},
   byId: {},
@@ -246,7 +248,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       return {
         byRange: {
           ...state.byRange,
-          [key]: successQueryEntry(appointments),
+          [key]: successQueryEntry(appointments, get().byRange[key]),
         },
       };
     });
@@ -262,7 +264,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         return state;
       }
 
-      return { byPage: { ...state.byPage, [key]: successQueryEntry(result) } };
+      return { byPage: { ...state.byPage, [key]: successQueryEntry(result, get().byPage[key]) } };
     });
   },
 
@@ -285,7 +287,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
         pageSize: query.pageSize,
       });
       if (!isCurrentQueryEpoch(epoch)) return;
-      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result) } });
+      set({ byPage: { ...get().byPage, [key]: successQueryEntry(result, get().byPage[key]) } });
     } catch (cause) {
       logger.captureException(cause, {
         store: "appointments-store",
@@ -325,7 +327,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       });
       if (!isCurrentQueryEpoch(epoch)) return;
       set({
-        byRange: { ...get().byRange, [key]: successQueryEntry(appointments) },
+        byRange: { ...get().byRange, [key]: successQueryEntry(appointments, get().byRange[key]) },
       });
     } catch (cause) {
       logger.captureException(cause, {
@@ -361,7 +363,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({
         byId: {
           ...get().byId,
-          [appointmentId]: successQueryEntry(appointment),
+          [appointmentId]: successQueryEntry(appointment, get().byId[appointmentId]),
         },
       });
     } catch (cause) {
@@ -400,7 +402,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({
         appointmentInventoryById: {
           ...get().appointmentInventoryById,
-          [appointmentId]: successQueryEntry(items),
+          [appointmentId]: successQueryEntry(items, get().appointmentInventoryById[appointmentId]),
         },
       });
     } catch (cause) {
@@ -440,7 +442,7 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       set({
         defaultMaterialsByKey: {
           ...get().defaultMaterialsByKey,
-          [key]: successQueryEntry(materials),
+          [key]: successQueryEntry(materials, get().defaultMaterialsByKey[key]),
         },
       });
     } catch (cause) {
@@ -753,6 +755,6 @@ export const useAppointmentsStore = create<AppointmentsStore>((set, get) => ({
       throw error;
     }
   },
-}));
+}), clinicPersistOptions<AppointmentsStore>("appointments", ["byRange", "byPage", "byId", "appointmentInventoryById", "defaultMaterialsByKey"])));
 
 export { appointmentsKey };

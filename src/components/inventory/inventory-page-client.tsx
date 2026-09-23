@@ -45,10 +45,10 @@ import type { InventoryPageQuery } from "@/stores/inventory-store";
 const INVENTORY_FILTER_DEFAULTS = { category: "", page: "", q: "", stock: "" };
 
 type InventoryPageClientProps = {
-  initialPage: InventoryPageResult;
-  initialQuery: InventoryPageQuery;
-  initialCategories: string[];
-  initialSummary: InventoryStockSummaryValue;
+  initialPage?: InventoryPageResult;
+  initialQuery?: InventoryPageQuery;
+  initialCategories?: string[];
+  initialSummary?: InventoryStockSummaryValue;
 };
 
 export default function InventoryPageClient({

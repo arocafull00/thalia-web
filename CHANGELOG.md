@@ -1,5 +1,14 @@
 # Changelog
 
+## recordatorios-en-clinicas-exentas
+
+- **Una clínica exenta de facturación no generaba recordatorios.** El filtro de `send-reminders` exigía suscripción en `trialing` o `active`, y una clínica con `billing_exempt = true` no tiene suscripción que mirar: se quedaba fuera y sus pacientes no recibían el aviso de su cita
+- Afectaba justo a las dos clínicas con datos reales de producción, que son las dos exentas
+- Pasa a un `.or()` que admite cualquiera de las dos condiciones. Es el criterio que ya aplicaba `send-campaign`, así que las dos funciones vuelven a decidir igual quién puede enviar
+- Va en `.or()` y no como filtro encadenado porque en PostgREST los filtros encadenados se combinan con **AND**: un `.eq("billing_exempt", true)` habría exigido suscripción activa *y además* exención. El `.or()` agrupa solo esas dos condiciones y deja el `.in("clinic_id", ...)` sumándose por fuera, que es lo que impide que cuele clínicas ajenas a la lista
+- Verificado contra la base local montando el caso que discrimina —suscripción `canceled` más exención—: el filtro viejo devuelve vacío, el nuevo devuelve la clínica, y acotando por un `clinic_id` inexistente sigue devolviendo vacío
+- `marketing_opt_in` no entra aquí y no se ha tocado: el recordatorio es asistencial (RGPD 6.1.b) y no depende del consentimiento promocional, como recoge `docs/whatsapp-message-bases.md`
+
 ## aurora-cristal-en-la-seccion-central
 
 - La sección central de la app pasa a ser cristal sobre un fondo en degradado de `--primary` a `--secondary`. El sidebar y la navbar se quedan opacos y ganan un filete de 1,5px en primary: son el marco, y un marco translúcido compite con lo que enmarca

@@ -203,7 +203,13 @@ Deno.serve(async (req) => {
         .from("clinic_billing")
         .select("clinic_id")
         .in("clinic_id", clinicIds)
-        .in("subscription_status", ["trialing", "active"])
+        /*
+         * Una clínica exenta de facturación no tiene suscripción que mirar, así
+         * que por estado se quedaba fuera y sus pacientes no recibían aviso.
+         * Mismo criterio que `send-campaign`. El `.or()` agrupa solo estas dos
+         * condiciones; el filtro por `clinic_id` sigue sumándose con AND.
+         */
+        .or("subscription_status.in.(trialing,active),billing_exempt.is.true")
     : { data: [], error: null };
 
   if (billingError) {

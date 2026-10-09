@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import AppointmentRow from "@/components/appointments/components/appointment-row";
+import DashboardAgendaRowMeta from "@/components/dashboard/components/dashboard-agenda-row-meta";
 import { DASHBOARD_COPY } from "@/components/dashboard/dashboard-copy";
 import { Notice } from "@/components/ui/primitives/notice";
 import { SkeletonList } from "@/components/ui/primitives/skeleton-list";
@@ -23,7 +24,7 @@ export default function DashboardAgenda({
         <h2>{DASHBOARD_COPY.agenda.title}</h2>
         <Link
           href="/calendar"
-          className="text-xs text-ink-muted hover:text-ink-secondary"
+          className="text-sm text-primary underline-offset-4 hover:underline"
         >
           {DASHBOARD_COPY.agenda.viewCalendar}
         </Link>
@@ -43,6 +44,8 @@ export default function DashboardAgenda({
               <AppointmentRow
                 key={appointment.id}
                 appointment={appointment}
+                accent="status"
+                trailing={<DashboardAgendaRowMeta appointment={appointment} />}
               />
             ))}
           </div>

@@ -1,5 +1,23 @@
 # Changelog
 
+## 168-pantalla-de-inicio
+
+- Inicio deja de ser «las citas de hoy y poco más» y pasa a ser **la pantalla del día**. Nada de gráficas ni de facturación: eso vive en Finanzas, y esta pantalla la ven también perfiles que no deben ver dinero
+- **Tarjetas de las citas en curso**, todas las que haya. Pueden solaparse varias —una por profesional— y antes para saber cuál era la siguiente había que recorrer la agenda con la vista
+- La forma cambia con la cantidad: una ocupa el ancho completo, dos o tres se reparten la fila, y a partir de cuatro pasan a una línea por cita. Se ven todas sin tope: un primer intento las recortaba a cuatro con un enlace «y N más», y escondía justo lo que la pantalla tiene que contar
+- **«En curso» es el estado `in_progress`, nunca la hora comparada con el reloj.** Una cita puede estar pasada de hora sin que nadie la haya iniciado, y pintarla como en curso diría que hay alguien en la sala cuando no lo hay
+- **Aviso de las citas que nadie cerró.** Nada en el sistema pasa una cita a completada por sí solo —ni trigger ni cron—, así que una sin marcar se queda en curso indefinidamente. Pasado un margen de 15 minutos, la tarjeta dice «debía terminar 10:15» y cuánto lleva de más. No se cierra sola a propósito: completar descuenta inventario y **crea un ingreso en finanzas**, y eso lo decide una persona
+- **Barra de jornada en tres tramos** —completadas, canceladas y no asistió— sobre el total del día, con los colores de los estados. Lo que queda sin pintar es el trabajo pendiente, así que el hueco también informa
+- El total pasa a incluir las canceladas, que antes quedaban fuera: son un tramo de la barra, y sin ellas los porcentajes no sumarían. Las rechazadas por un profesional externo siguen fuera, porque ese hueco nunca estuvo reservado
+- **Importe de cada cita en el listado**, distinguiendo lo cobrado de lo previsto. El ingreso solo existe al completar la cita, así que pintar el importe a secas en una programada afirmaría un dinero que no está en Finanzas. Sale del mismo `SUM(price_at_booking)` que calcula la base, con un test que lo afirma para que las dos pantallas no digan cifras distintas
+- Las filas del listado se marcan con el color del estado en lugar del color del profesional, van de la más reciente a la más antigua, y las que están en curso salen del listado porque ya se ven arriba
+- **Los badges de estado tenían un defecto:** repartían los ocho estados entre cinco variantes, así que «Confirmada» y «Completada» salían del mismo verde. Ya existía un mapa con un color por estado —lo usaban el punto del selector y el orbe de la tabla— y el badge lo ignoraba: tres sitios decían colores distintos del mismo estado. Ahora toman ese mapa, y afecta a las ocho pantallas que los pintan
+- El relleno del badge es el color diluido y el texto va en `ink`, no el color a plena saturación: con ocho colores, varios no llegarían al contraste mínimo a ese tamaño de letra
+- `in_progress` pasa a rojo en un token `--live` que comparten el estado, el punto que late y el canto de la tarjeta. Si no fueran el mismo valor, la señal se leería como tres cosas distintas
+- **El aviso de falta de stock se veía transparente y no se podía cerrar.** `toast.custom` no envuelve el contenido en el contenedor con estilo de sonner —las clases de `toastOptions` solo valen para los toasts normales—, así que el JSX se pintaba a pelo sobre la página. Y con `duration: Infinity` y sin botón, quedaba atrapado. Ahora pinta su propia superficie y lleva botón de cerrar
+- Desaparece el panel de «Actividad reciente», que no era actividad ni era reciente: eran las tres primeras citas de hoy con el texto «Hoy» escrito a mano
+- Clase `.surface-raised` para el contenido elevado dentro del cristal. No podía reutilizar `.surface-card` porque esa es el marco y lleva el filete de primary
+
 ## recordatorios-en-clinicas-exentas
 
 - **Una clínica exenta de facturación no generaba recordatorios.** El filtro de `send-reminders` exigía suscripción en `trialing` o `active`, y una clínica con `billing_exempt = true` no tiene suscripción que mirar: se quedaba fuera y sus pacientes no recibían el aviso de su cita

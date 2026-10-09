@@ -1,19 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import AppointmentCreateDialog from "@/components/appointments/components/appointment-create-dialog";
+import { notifyAppointmentStatusError } from "@/components/appointments/components/appointment-status-error-toast";
 import DashboardAgenda from "@/components/dashboard/components/dashboard-agenda";
+import DashboardCurrentAppointments from "@/components/dashboard/components/dashboard-current-appointments";
 import DashboardHeader from "@/components/dashboard/components/dashboard-header";
-import DashboardRecentActivity from "@/components/dashboard/components/dashboard-recent-activity";
 import { DASHBOARD_COPY } from "@/components/dashboard/dashboard-copy";
 import PageCard from "@/components/ui/page-card";
 import { MobileFab } from "@/components/ui/primitives/mobile-fab";
-import { toAgendaAppointments } from "@/lib/calendar-agenda";
-import { useIsExternalProfessional } from "@/lib/hooks/use-active-clinic";
+import {
+  useActiveClinicTimezone,
+  useIsExternalProfessional,
+} from "@/lib/hooks/use-active-clinic";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useDashboard } from "@/lib/hooks/use-dashboard";
 import { useTopbarAction } from "@/lib/hooks/use-topbar-action";
+import { notifySuccess } from "@/lib/sound";
+import { useAppointmentsStore } from "@/stores/appointments-store";
 import type { DashboardData } from "@/stores/dashboard-store";
 
 type DashboardPageClientProps = {
@@ -25,27 +30,38 @@ export default function DashboardPageClient({
 }: DashboardPageClientProps) {
   const { profile } = useAuth();
   const isExternal = useIsExternalProfessional();
-  const { data, isLoading, error } = useDashboard(initialData);
+  const timezone = useActiveClinicTimezone();
+  const { day, isLoading, error } = useDashboard(initialData);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [completingId, setCompletingId] = useState<string | null>(null);
 
-  const appointments = useMemo(
-    () => data?.appointments ?? [],
-    [data?.appointments],
-  );
-  const agendaAppointments = useMemo(
-    () => toAgendaAppointments(appointments),
-    [appointments],
-  );
-  const confirmedCount = appointments.filter(
-    (a) => a.status === "confirmed",
-  ).length;
   const firstName =
     profile?.full_name?.split(" ")[0] ?? DASHBOARD_COPY.fallbackName;
 
   /*
+   * Un identificador y no un booleano: con varias citas en curso a la vez, un
+   * `completing: boolean` deshabilitaría los botones de todas las tarjetas al
+   * pulsar una. Ya pasó en el listado de citas del profesional externo.
+   */
+  const handleComplete = async (id: string) => {
+    setCompletingId(id);
+
+    try {
+      await useAppointmentsStore
+        .getState()
+        .updateAppointmentStatus(id, "completed");
+      notifySuccess(DASHBOARD_COPY.current.statusUpdated);
+    } catch (cause) {
+      notifyAppointmentStatusError(cause);
+    } finally {
+      setCompletingId(null);
+    }
+  };
+
+  /*
    * Un profesional externo no crea citas: la base le deja insertar la cita pero
    * no añadirle tratamientos, así que quedaría vacía y con un error que habla
-   * de una tabla que él no ha tocado. Mitigación mientras se decide la #163.
+   * de una tabla que él no ha tocado.
    */
   useTopbarAction(
     isExternal
@@ -59,20 +75,23 @@ export default function DashboardPageClient({
   return (
     <div data-testid="dashboard-page" className="flex min-h-0 flex-1 flex-col">
       <PageCard fill>
-        <div className="flex min-h-0 flex-1 flex-col gap-8 overflow-hidden pt-3.5">
+        <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden pt-3.5">
           <DashboardHeader
             firstName={firstName}
-            appointmentsCount={appointments.length}
-            confirmedCount={confirmedCount}
+            segments={day.segments}
+            totalCount={day.totalCount}
           />
-          <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-8 xl:grid-cols-[1.8fr_1fr]">
-            <DashboardAgenda
-              appointments={agendaAppointments}
-              isLoading={isLoading && !data}
-              error={error}
-            />
-            <DashboardRecentActivity appointments={appointments} />
-          </div>
+          <DashboardCurrentAppointments
+            day={day}
+            timezone={timezone}
+            completingId={completingId}
+            onComplete={handleComplete}
+          />
+          <DashboardAgenda
+            appointments={day.agenda}
+            isLoading={isLoading}
+            error={error}
+          />
         </div>
       </PageCard>
       <AppointmentCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} />

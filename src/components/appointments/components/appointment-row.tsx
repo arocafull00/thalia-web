@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 
+import { appointmentStatusColor } from "@/components/appointments/appointment-status-color";
 import AppointmentStatusBadge from "@/components/appointments/components/appointment-status-badge";
 import AppointmentStockButton from "@/components/appointments/components/appointment-stock-button";
 import ExternalAppointmentResponseActions from "@/components/appointments/components/external-appointment-response-actions";
@@ -20,6 +22,23 @@ type AppointmentRowProps = {
   respondingExternalId?: string | null;
   onAccept?: () => void;
   onReject?: () => void;
+  /**
+   * Contenido al final de la fila, antes de las acciones.
+   *
+   * Existe para que Inicio pueda añadir el estado y el importe sin que aparezcan
+   * en el listado de Citas ni en la ficha del paciente, que comparten esta fila
+   * y no los quieren.
+   */
+  trailing?: ReactNode;
+  /**
+   * De qué habla la marca de color de la izquierda.
+   *
+   * `"employee"` —por omisión— es el color del profesional, que es lo que
+   * necesita el calendario para distinguir agendas. `"status"` la pinta del
+   * color del estado, que es lo que pide Inicio: ahí todas las citas son del
+   * día y lo que se busca de un vistazo es cuáles están hechas.
+   */
+  accent?: "employee" | "status";
 };
 
 export default function AppointmentRow({
@@ -30,16 +49,27 @@ export default function AppointmentRow({
   respondingExternalId = null,
   onAccept,
   onReject,
+  trailing,
+  accent = "employee",
 }: AppointmentRowProps) {
   const timezone = useActiveClinicTimezone();
   const content = (
     <>
+      {/*
+        El color es decorativo en los dos modos: el estado legible sigue en su
+        etiqueta y el profesional en su línea, así que nadie depende del color
+        para entender la fila.
+      */}
       <span
-        className={`w-1 shrink-0 self-stretch rounded-full ${appointment.employeeColor ? "" : "bg-border"}`}
+        className={`w-1 shrink-0 self-stretch rounded-full ${
+          accent === "employee" && !appointment.employeeColor ? "bg-border" : ""
+        }`}
         style={
-          appointment.employeeColor
-            ? { backgroundColor: appointment.employeeColor }
-            : undefined
+          accent === "status"
+            ? { backgroundColor: appointmentStatusColor(appointment.status) }
+            : appointment.employeeColor
+              ? { backgroundColor: appointment.employeeColor }
+              : undefined
         }
         aria-hidden
       />
@@ -82,6 +112,7 @@ export default function AppointmentRow({
           {content}
         </Link>
       )}
+      {trailing}
       <AppointmentStockButton issue={appointment.stockIssue} />
       {onAccept && onReject ? (
         <div className="order-last w-full pl-16">

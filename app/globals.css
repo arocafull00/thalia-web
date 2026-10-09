@@ -61,6 +61,11 @@
      tocar los dos. */
   --border-frame: 1.5px solid var(--primary);
 
+  /* Rojo de «ocurriendo ahora». Es el único rojo que no significa error: lo
+     llevan el estado `in_progress`, el punto que late y el canto de la tarjeta,
+     y los tres tienen que ser el mismo o la señal se lee como tres cosas. */
+  --live: #d92d20;
+
   --radius-button: 8px;
   --radius-input: 8px;
   --radius-card: 10px;
@@ -123,6 +128,7 @@
   --color-border-subtle: var(--border-subtle);
   --color-border-field: var(--border-field);
   --color-on-primary: var(--on-primary);
+  --color-live: var(--live);
   --color-danger: var(--danger-text);
   --color-danger-text: var(--danger-text);
   --color-danger-subtle: var(--danger);
@@ -759,6 +765,86 @@ body {
      esquinas y dibujan cuñas fuera del radio. */
   box-shadow: 0 2px 20px rgba(28, 48, 44, 0.12);
   backdrop-filter: blur(26px) saturate(180%);
+}
+
+/* Contenido deliberadamente elevado DENTRO de la tarjeta de cristal: la fila de
+   «en curso» de Inicio, y cualquier cosa que deba leerse por encima del resto.
+   Opaca y sin blur, que dentro de un cristal sería filtro sobre filtro y
+   aplicaría el `saturate` dos veces.
+
+   No usa `.surface-card`: esa es el marco —navbar y sidebar— y lleva el filete
+   de primary. Aquí el canto es sutil, porque el elemento no delimita la
+   aplicación, solo destaca dentro de una tarjeta.
+
+   Esto NO contradice la regla de que nada dentro del cristal pinte superficie
+   propia: esa regla es para las bandas a todo el ancho, como la de filtros, que
+   tienen que leerse como la misma tarjeta. Aquí el objetivo es el contrario, y
+   por eso vale pagar el blanco de más. */
+.surface-raised {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 14px rgba(28, 48, 44, 0.06);
+}
+
+/* Señal de «esto está pasando ahora mismo»: un punto que late y un canto de
+   primary en la tarjeta. Se anima solo la opacidad y el `box-shadow`, que es lo
+   que `DESIGN.md` permite; nada de mover, escalar ni desplazar, que en una
+   pantalla que se mira de reojo entre pacientes molesta más que informa.
+
+   El latido va en el punto y no en toda la tarjeta a propósito: una tarjeta
+   entera parpadeando con texto dentro es incómoda de leer, y con varias citas a
+   la vez serían varias tarjetas latiendo a destiempo. */
+.surface-live {
+  border-color: color-mix(in srgb, var(--live) 40%, transparent);
+  box-shadow: 0 2px 14px rgba(28, 48, 44, 0.06);
+  animation: live-halo 2.4s ease-in-out infinite;
+}
+
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--live);
+  flex-shrink: 0;
+}
+
+/* La onda es un pseudoelemento para que no haya un nodo vacío solo de adorno. */
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--live);
+  animation: live-pulse 2.4s ease-out infinite;
+}
+
+@keyframes live-pulse {
+  0%   { opacity: 0.55; transform: scale(1); }
+  70%  { opacity: 0;    transform: scale(3.4); }
+  100% { opacity: 0;    transform: scale(3.4); }
+}
+
+@keyframes live-halo {
+  0%, 100% { box-shadow: 0 2px 14px rgba(28, 48, 44, 0.06),
+                         0 0 0 0 color-mix(in srgb, var(--live) 22%, transparent); }
+  50%      { box-shadow: 0 2px 14px rgba(28, 48, 44, 0.06),
+                         0 0 0 4px color-mix(in srgb, var(--live) 10%, transparent); }
+}
+
+/* Quien ha pedido no tener movimiento conserva la señal: el punto y el canto de
+   primary siguen ahí, solo se quedan quietos. Apagarlo del todo le quitaría la
+   información, no solo la animación. */
+@media (prefers-reduced-motion: reduce) {
+  .surface-live,
+  .live-dot::after {
+    animation: none;
+  }
+
+  .live-dot::after {
+    opacity: 0;
+  }
 }
 
 /* El cristal llega también a los controles de la barra, o la franja queda con

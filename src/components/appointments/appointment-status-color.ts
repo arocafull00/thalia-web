@@ -13,7 +13,7 @@ export const APPOINTMENT_STATUS_COLOR: Record<AppointmentStatus, string> = {
   pending_external: "var(--color-warning)",
   rejected_external: "var(--color-ink-muted)",
   confirmed: "#eab308",
-  in_progress: "#f97316",
+  in_progress: "var(--color-live)",
   completed: "#14b8a6",
   cancelled: "#f43f5e",
   no_show: "#64748b",

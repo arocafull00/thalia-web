@@ -16,6 +16,7 @@ export const APPOINTMENT_STATUS_COPY = {
   stockColumn: "Stock",
   stockShortLabel: "Stock",
   viewProduct: "Ver producto",
+  dismiss: "Cerrar aviso",
   stockError: (issue: AppointmentStockIssue) => {
     if (issue.shortageCount > 1) {
       return `No hay stock suficiente para el tratamiento: faltan ${issue.shortageCount} productos. Revisa ${issue.itemName}, el de mayor déficit.`;

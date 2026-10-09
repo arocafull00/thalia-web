@@ -162,6 +162,23 @@ export function formatAppointmentDuration(
   return `${minutes} min`;
 }
 
+/**
+ * Minutos en horas y minutos: `25 min`, `1 h`, `3 h 20 min`.
+ *
+ * Redondea a minutos enteros porque se usa para rótulos leídos de reojo, no
+ * para cálculos.
+ */
+export function formatMinutesDuration(minutes: number) {
+  const total = Math.max(0, Math.round(minutes));
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+
+  if (hours === 0) return `${rest} min`;
+  if (rest === 0) return `${hours} h`;
+
+  return `${hours} h ${rest} min`;
+}
+
 export function formatPatientLastVisitLabel(lastVisitAt: string | Date | null) {
   if (!lastVisitAt) {
     return null;

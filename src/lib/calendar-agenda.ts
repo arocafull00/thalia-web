@@ -29,7 +29,37 @@ export type AgendaAppointment = {
   employeeColor: string | null;
   status: AppointmentStatus | null;
   stockIssue: AppointmentStockIssue | null;
+  /**
+   * Suma de los precios con los que se reservaron los tratamientos.
+   *
+   * Es el MISMO cálculo que hace la base al completar la cita
+   * (`private.handle_appointment_completed`: `SUM(price_at_booking)`), así que
+   * en una cita completada coincide con el ingreso que hay en finanzas.
+   *
+   * En una cita que no está completada es un importe PREVISTO: el ingreso no
+   * existe todavía, porque el trigger solo lo crea al pasar a `completed`.
+   * Quien lo pinte tiene que distinguir los dos casos o estará afirmando un
+   * ingreso que no se ha producido.
+   *
+   * `null` cuando ningún tratamiento tiene precio reservado: no es lo mismo que
+   * cero euros, y permite no pintar nada en lugar de pintar «0,00 €».
+   */
+  amount: number | null;
 };
+
+/* Separada para poder afirmarla en un test: es la cifra que el usuario va a
+   comparar con la pantalla de finanzas. */
+export function appointmentBookedAmount(
+  appointment: AppointmentWithRelations,
+): number | null {
+  const prices = appointment.appointment_treatments
+    .map((entry) => entry.price_at_booking)
+    .filter((price): price is number => typeof price === "number");
+
+  if (prices.length === 0) return null;
+
+  return prices.reduce((total, price) => total + price, 0);
+}
 
 export function toAgendaAppointments(
   data: AppointmentWithRelations[] | null | undefined,
@@ -48,6 +78,7 @@ export function toAgendaAppointments(
       employeeColor: appointment.employees?.color ?? null,
       status: appointment.status,
       stockIssue: getAppointmentStockIssue(appointment),
+      amount: appointmentBookedAmount(appointment),
     }))
     .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
 }
